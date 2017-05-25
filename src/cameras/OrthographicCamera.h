@@ -18,8 +18,9 @@ public:
         Camera(image_plane_width, image_plane_height, camera_position)
     {}
 
-//    void render_scene(std::vector<Object> &objects);
-    void render_scene1(Object &object);
+    OrthographicCamera(glm::vec3 &backg_c, float_t pixel_s) : Camera(backg_c, pixel_s) {}
+
+    void render_scene(std::vector<Object*> &objects);
 };
 
 

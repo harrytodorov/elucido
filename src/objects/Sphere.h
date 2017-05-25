@@ -5,8 +5,6 @@
 #ifndef ELUCIDO_SPHERE_H
 #define ELUCIDO_SPHERE_H
 
-#define kEpsilon 0.000001
-
 #include <glm/geometric.hpp>
 #include "Object.h"
 
