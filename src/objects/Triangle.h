@@ -32,6 +32,8 @@ public:
             v2(vec2),
             normal(nor)
     {}
+
+    bool intersect(Ray &r, float_t &t, glm::vec3 &p_hit, glm::vec3 &hit_norm);
 };
 
 

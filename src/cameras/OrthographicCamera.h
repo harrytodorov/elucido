@@ -10,18 +10,12 @@
 
 class OrthographicCamera : public Camera {
 public:
+
+    // default constructor
     OrthographicCamera() : Camera() {}
+    OrthographicCamera(const glm::vec3 &p, const glm::vec3 &d) : Camera(p, d) {}
 
-    OrthographicCamera(const uint32_t &image_plane_width,
-                       const uint32_t &image_plane_height,
-                       glm::vec3 &camera_position) :
-        Camera(image_plane_width, image_plane_height, camera_position)
-    {}
-
-    OrthographicCamera(glm::vec3 &backg_c, float_t pixel_s) : Camera(backg_c, pixel_s) {}
-
-    void render_scene(std::vector<Object*> &objects);
+    void render_scene(std::vector<Object*> &objects, std::vector<Light*> lights, ImagePlane &ip);
 };
-
 
 #endif //ELUCIDO_ORTHOGRAPHICCAMERA_H

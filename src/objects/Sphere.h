@@ -21,7 +21,7 @@ public:
 
     Sphere(const glm::dvec3 &c, const float_t &r) : Object(), radius(r), center(c) {}
 
-    bool intersect(Ray &r, float_t &t);
+    bool intersect(Ray &r, float_t &t, glm::vec3 &p_hit, glm::vec3 &hit_norm);
 };
 
 

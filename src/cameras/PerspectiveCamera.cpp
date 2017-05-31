@@ -1,32 +1,30 @@
 //
-// Created by Haralambi Todorov on 19/05/2017.
+// Created by Haralambi Todorov on 26/05/2017.
 //
 
 #include <iostream>
-#include "OrthographicCamera.h"
+#include "PerspectiveCamera.h"
 #include "../Utilities.h"
 
-
-void OrthographicCamera::render_scene(std::vector<Object*> &objects, std::vector<Light*> lights, ImagePlane &ip) {
-    // x & y position of the image plane
-    // according to this positions each ray would be shoot
-    // in this basic scenario the z-axis stays fixed
+void PerspectiveCamera::render_scene(std::vector<Object*> &objects, std::vector<Light*> lights, ImagePlane &ip) {
     float_t             x_pos = 0;
     float_t             y_pos = 0;
     float_t             infinity = std::numeric_limits<float_t>::max();
     float_t             t_near;
     const Object        *hit_object = nullptr;
     Ray                 ray;
-    glm::vec3           hit_color;
-    glm::vec3           hit_point;
-    glm::vec3           hit_normal;
+    glm::vec3           hit_color(0);
+    glm::vec3           hit_point(0);
+    glm::vec3           hit_normal(0);
 
-
-    // Set the ray direction same as the direction of the camera
-    ray.dir = lookat;
+    // set the origin of the rays
+    ray.orig = eye;
 
     // get pointer to the frame buffer
     glm::vec3 *pixels = ip.fb;
+
+    // compute u,v and w vectors
+    compute_uvw();
 
     // iterate through each pixel of the image plane
     //
@@ -39,18 +37,12 @@ void OrthographicCamera::render_scene(std::vector<Object*> &objects, std::vector
     // and in the inner loop through each column starting at: 0 until hres-1
     for (int r = ip.vres; r > 0; --r) {
         for (int c = 0; c < ip.hres; c++) {
-
-            // calculate the x/y coordinates for each pixel supposing the image plane is
-            // positioned orthogonal to the z-plane and the image plane is placed at (0, 0, 0)
-            // TODO: you have to make the orthogonal projection universal, so the camera is able to move through space
+            // calculate the x/y coordinates for each pixel
             x_pos = (float_t) (ip.s * (c - 0.5 * (ip.hres - 1)));
             y_pos = (float_t) (ip.s * (r - 0.5 * (ip.vres - 1)));
 
-            // set the ray origin for each separate pixel
-            // z position is fixed
-            ray.orig.x = x_pos;
-            ray.orig.y = y_pos;
-            ray.orig.z = eye.z;
+            // calculate the ray direction according to x/y coordinates pair
+            ray.dir = glm::normalize(x_pos*u + y_pos*v - d*w);
 
             // set the nearest point initially at infinity
             t_near = infinity;
@@ -62,7 +54,7 @@ void OrthographicCamera::render_scene(std::vector<Object*> &objects, std::vector
             hit_object = nullptr;
 
             // iterate through all objects and find the closest intersection
-            for (auto& object : objects) {
+            for (auto &object : objects) {
                 if (object->intersect(ray, t_near, hit_point, hit_normal)) {
                     hit_object = object;
                 }
@@ -83,7 +75,7 @@ void OrthographicCamera::render_scene(std::vector<Object*> &objects, std::vector
 
                 // iterate through all light sources and calculate specular and defuse components
                 for (auto& light : lights) {
-                    glm::vec3 light_direction, light_intensity;
+                    glm::vec3 light_direction(0), light_intensity(0);
                     light->illuminate(hit_point, light_direction, light_intensity, t_near);
 
                     // calculate the diffuse component
