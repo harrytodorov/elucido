@@ -14,8 +14,9 @@ void PerspectiveCamera::render_scene(std::vector<Object*> &objects, std::vector<
     const Object        *hit_object = nullptr;
     Ray                 ray;
     glm::vec3           hit_color(0);
-    glm::vec3           hit_point(0);
-    glm::vec3           hit_normal(0);
+    glm::vec4           hit_point(0, 0, 0, 1);
+    glm::vec4           hit_normal(0);
+
 
     // set the origin of the rays
     ray.orig = eye;
@@ -67,7 +68,7 @@ void PerspectiveCamera::render_scene(std::vector<Object*> &objects, std::vector<
                 // in case the default background color is not black
                 hit_color.x = hit_color.y = hit_color.z = 0;
 
-                // holders for diffuse and specular values
+                // holders for diffuse & specular values;
                 glm::vec3 diffuse(0), specular(0);
 
                 // calculate the ambient
@@ -75,11 +76,13 @@ void PerspectiveCamera::render_scene(std::vector<Object*> &objects, std::vector<
 
                 // iterate through all light sources and calculate specular and defuse components
                 for (auto& light : lights) {
-                    glm::vec3 light_direction(0), light_intensity(0);
+                    glm::vec4 light_direction(0);
+                    glm::vec3 light_intensity(0);
                     light->illuminate(hit_point, light_direction, light_intensity, t_near);
 
                     // calculate the diffuse component
                     diffuse += light_intensity * std::max(0.0f, glm::dot(hit_normal, -light_direction));
+
                 }
                 // add diffuse the the hit color
                 hit_color += kd * diffuse;

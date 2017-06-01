@@ -11,17 +11,17 @@
 class Sphere : public Object {
 public:
     float_t radius;
-    glm::vec3 center;
+    glm::vec4 center;
 
     Sphere() :
             Object(),
             radius(1.0),
-            center(glm::vec3(0))
+            center(0, 0, 0, 1)
     {}
 
-    Sphere(const glm::dvec3 &c, const float_t &r) : Object(), radius(r), center(c) {}
+    Sphere(const glm::dvec4 &c, const float_t &r) : Object(), radius(r), center(c) {}
 
-    bool intersect(Ray &r, float_t &t, glm::vec3 &p_hit, glm::vec3 &hit_norm);
+    bool intersect(Ray &r, float_t &t, glm::vec4 &p_hit, glm::vec4 &hit_norm);
 };
 
 

@@ -5,8 +5,8 @@
 #include "Sphere.h"
 #include "../Utilities.h"
 
-bool Sphere::intersect(Ray &r, float_t &t, glm::vec3 &p_hit, glm::vec3 &hit_norm) {
-    glm::vec3 temp = r.orig - center;
+bool Sphere::intersect(Ray &r, float_t &t, glm::vec4 &p_hit, glm::vec4 &hit_norm) {
+    glm::vec4 temp = r.orig - center;
     float_t t1, t2;
     float_t a       = (float_t) glm::dot(r.dir, r.dir);
     float_t b       = (float_t) (2.0 * glm::dot(temp, r.dir));

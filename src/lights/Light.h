@@ -19,7 +19,9 @@ public:
     Light(const glm::vec3 &c, const float_t &i) : color(c), intensity(i) {}
     Light() : color(glm::vec3(255)), intensity(100.0) {}
 
-    virtual void illuminate(const glm::vec3 &hit_point, glm::vec3 &light_dir, glm::vec3 &light_intensity, float_t distance) = 0;
+    virtual void illuminate(const glm::vec4 &hit_point, glm::vec4 &light_dir, glm::vec3 &light_intensity,
+                            float_t distance) = 0;
+    virtual void apply_transformation(glm::mat4 &t);
 };
 
 

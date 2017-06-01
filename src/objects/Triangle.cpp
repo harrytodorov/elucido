@@ -7,7 +7,7 @@
 #include "Triangle.h"
 #include "../Utilities.h"
 
-bool Triangle::intersect(Ray &r, float_t &t, glm::vec3 &p_hit, glm::vec3 &hit_norm) {
+bool Triangle::intersect(Ray &r, float_t &t, glm::vec4 &p_hit, glm::vec4 &hit_norm) {
     // solve the ray-triangle intersection using the Cramer's rule (Raytracing from the Ground Up)
     float_t a = v0.x - v1.x;
     float_t b = v0.x - v2.x;

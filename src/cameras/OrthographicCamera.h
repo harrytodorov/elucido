@@ -13,7 +13,7 @@ public:
 
     // default constructor
     OrthographicCamera() : Camera() {}
-    OrthographicCamera(const glm::vec3 &p, const glm::vec3 &d) : Camera(p, d) {}
+    OrthographicCamera(const glm::vec4 &p, const glm::vec4 &d) : Camera(p, d) {}
 
     void render_scene(std::vector<Object*> &objects, std::vector<Light*> lights, ImagePlane &ip);
 };

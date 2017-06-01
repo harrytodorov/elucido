@@ -18,8 +18,8 @@ void OrthographicCamera::render_scene(std::vector<Object*> &objects, std::vector
     const Object        *hit_object = nullptr;
     Ray                 ray;
     glm::vec3           hit_color;
-    glm::vec3           hit_point;
-    glm::vec3           hit_normal;
+    glm::vec4           hit_point;
+    glm::vec4           hit_normal;
 
 
     // Set the ray direction same as the direction of the camera
@@ -83,7 +83,8 @@ void OrthographicCamera::render_scene(std::vector<Object*> &objects, std::vector
 
                 // iterate through all light sources and calculate specular and defuse components
                 for (auto& light : lights) {
-                    glm::vec3 light_direction, light_intensity;
+                    glm::vec4 light_direction;
+                    glm::vec3 light_intensity;
                     light->illuminate(hit_point, light_direction, light_intensity, t_near);
 
                     // calculate the diffuse component

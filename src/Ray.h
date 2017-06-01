@@ -5,21 +5,21 @@
 #ifndef ELUCIDO_RAY_H
 #define ELUCIDO_RAY_H
 
-#include "glm/vec3.hpp"
+#include "glm/vec4.hpp"
 
 class Ray {
 
 public:
-    glm::vec3 orig;    // the origin point of the ray
-    glm::vec3 dir;     // the direction the ray is pointing to
+    glm::vec4 orig;    // the origin point of the ray
+    glm::vec4 dir;     // the direction the ray is pointing to
 
     // default Ray constructor
     Ray():
-            orig(glm::dvec3(0.0, 0.0, 0.0)),
-            dir(glm::dvec3(0.0, 0.0, -1.0))
+            orig(0, 0, 0, 1),
+            dir(0, 0, -1, 0)
     {}
 
-    Ray(const glm::dvec3 &o, const glm::dvec3 &d) {
+    Ray(const glm::vec4 &o, const glm::vec4 &d) {
         orig    = o;
         dir     = d;
     }

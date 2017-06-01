@@ -4,7 +4,6 @@
 #include "objects/Sphere.h"
 #include "cameras/OrthographicCamera.h"
 #include "lights/PointLight.h"
-#include "cameras/PerspectiveCamera.h"
 
 void save_to_ppm(uint32_t width, uint32_t height, glm::vec3 *(&fb), const char fn[50]) {
     // Save result to a PPM image (keep these flags if you compile under Windows)
@@ -26,7 +25,7 @@ void save_to_ppm(ImagePlane &ip, const char fn[50]) {
 int main(int argc,char **argv) {
     std::vector<Object*> objects;
     std::vector<Light*> lights;
-    Camera* camera = new PerspectiveCamera();
+    Camera* camera = new OrthographicCamera();
     ImagePlane ip = ImagePlane(640, 480);
 
 
@@ -53,27 +52,26 @@ int main(int argc,char **argv) {
 //        save_to_ppm(ip, "2_spheres_overlap_ortho_cam_ambient_only.ppm");
 //    }
 
-    // set up a basic scene with sphere and plane and one light (only diffuse)
     {
         // sphere set up
-        glm::vec3 s_pos = glm::vec3(0, 0, -41); // position (0, 0, 0) world space
-        glm::vec3 s_col = glm::vec3(255, 0, 0); // red color
-        float_t   s_rad = 30.0;                 // radius
+        glm::vec4 s_pos(0, 0, -41, 1); // position (0, 0, 0) world space
+        glm::vec3 s_col(255, 0, 0); // red color
+        float_t   s_rad(35.0);      // radius
 
         Object *s1 = new Sphere(s_pos, s_rad);
         s1->color = s_col;
         objects.push_back(s1);
 
         // light set up
-        glm::vec3 l_pos = glm::vec3(20, 0, -5);
-        glm::vec3 l_col = glm::vec3(255, 0, 0);
-        float_t   l_int = 150.0;
+        glm::vec4 l_pos(0, 10, -5, 1);
+        glm::vec3 l_col(255, 0, 0);
+        float_t   l_int(300.0);
 
         Light *l1 = new PointLight(l_pos, l_col, l_int);
         lights.push_back(l1);
 
         camera->render_scene(objects, lights, ip);
-        save_to_ppm(ip, "sphere_pers.ppm");
+        save_to_ppm(ip, "sphere_ortho.ppm");
     }
 
     return 0;
