@@ -1,9 +1,10 @@
 #include <iostream>
 #include <fstream>
 #include "objects/Object.h"
-#include "objects/Sphere.h"
 #include "cameras/OrthographicCamera.h"
-#include "lights/PointLight.h"
+#include "objects/Sphere.h"
+#include "cameras/PerspectiveCamera.h"
+#include <glm/gtc/matrix_transform.hpp>
 
 void save_to_ppm(uint32_t width, uint32_t height, glm::vec3 *(&fb), const char fn[50]) {
     // Save result to a PPM image (keep these flags if you compile under Windows)
@@ -25,55 +26,144 @@ void save_to_ppm(ImagePlane &ip, const char fn[50]) {
 int main(int argc,char **argv) {
     std::vector<Object*> objects;
     std::vector<Light*> lights;
-    Camera* camera = new OrthographicCamera();
+    Camera* camera = new PerspectiveCamera();
     ImagePlane ip = ImagePlane(640, 480);
 
-
-
-    // set up with two spheres diff colors
+//    // cube set-up
 //    {
-//        // sphere 1
-//        glm::vec3 s1_pos = glm::vec3(0, 0, 0);
-//        glm::vec3 s1_col = glm::vec3(255, 0, 0);
-//        float_t   s1_rad = 85.0;
-//        Object *s1 = new Sphere(s1_pos, s1_rad);
-//        s1->color = s1_col;
-//        objects.push_back(s1);
+//        // front face of the cube
+//        glm::vec4 ff_bl(-30, -30, -5, 1);  // front face bottom left
+//        glm::vec4 ff_br( 30, -30, -5, 1);  // front face bottom right
+//        glm::vec4 ff_tl(-30,  30, -5, 1);  // front face top left
+//        glm::vec4 ff_tr( 30,  30, -5, 1);  // front face top right
 //
-//        // sphere 2
-//        glm::vec3 s2_pos = glm::vec3(0, 0, -185);
-//        glm::vec3 s2_col = glm::vec3(0, 255, 0);
-//        float_t   s2_rad = 100.0;
-//        Object *s2 = new Sphere(s2_pos, s2_rad);
-//        s2->color = s2_col;
-//        objects.push_back(s2);
+//        // back face of the cube
+//        glm::vec4 bf_bl(-30, -30, -70, 1);  // back face bottom left
+//        glm::vec4 bf_br( 30, -30, -70, 1);  // back face bottom right
+//        glm::vec4 bf_tl(-30,  30, -70, 1);  // back face top left
+//        glm::vec4 bf_tr( 30,  30, -10, 1);  // back face top right
+//
+//        // face normals of the cube
+//        glm::vec4 ff_n( 0,  0,  1, 0);      // front face normal
+//        glm::vec4 bf_n( 0,  0, -1, 0);      // back face normal
+//        glm::vec4 lf_n(-1,  0,  0, 0);      // left face normal
+//        glm::vec4 rf_n( 1,  0,  0, 0);      // right face normal
+//        glm::vec4 df_n( 0, -1,  0, 0);      // bottom(down) face normal
+//        glm::vec4 tf_n( 0,  1,  0, 0);      // top face normal
+//
+//        // the cube is build from 12 triangles
+//
+//        glm::vec3 t_col(0, 0, 255);
+//
+//        // triangle 1; front face bottom left
+//        Object *t1 = new Triangle(ff_bl, ff_br, ff_tl, ff_n);
+//        t1->color = t_col;
+//        objects.push_back(t1);
+//
+//        // triangle 2; front face top right
+//        Object *t2 = new Triangle(ff_tr, ff_tl, ff_br, ff_n);
+//        t2->color = t_col;
+//        objects.push_back(t2);
+//
+//        // triangle 3; back face bottom left
+//        Object *t3 = new Triangle(bf_bl, bf_br, bf_tl, bf_n);
+//        t3->color = t_col;
+//        objects.push_back(t3);
+//
+////        // triangle 4; back face top right
+////        Object *t4 = new Triangle(bf_tl, bf_tr, bf_br, bf_n);
+////        t4->color = t_col;
+////        objects.push_back(t4);
+////
+////        // triangle 5; bottom face front left
+////        Object *t5 = new Triangle(bf_bl, ff_bl, ff_br, df_n);
+////        t5->color = t_col;
+////        objects.push_back(t5);
+////
+////        // triangle 6; bottom face back right
+////        Object *t6 = new Triangle(bf_bl, bf_br, ff_br, df_n);
+////        t6->color = t_col;
+////        objects.push_back(t6);
+////
+////        // triangle 7; top face front left
+////        Object *t7 = new Triangle(bf_tl, ff_tl, ff_tr, tf_n);
+////        t7->color = t_col;
+////        objects.push_back(t7);
+////
+////        // triangle 8; top face bottom right
+////        Object *t8 = new Triangle(bf_tl, bf_tr, ff_tr, tf_n);
+////        t8->color = t_col;
+////        objects.push_back(t8);
+////
+////        // triangle 9; left face front bottom
+////        Object *t9 = new Triangle(ff_tl, ff_bl, bf_bl, lf_n);
+////        t9->color = t_col;
+////        objects.push_back(t9);
+////
+////        // triangle 10; left face back top
+////        Object *t10 = new Triangle(ff_tl, bf_tl, bf_bl, lf_n);
+////        t10->color = t_col;
+////        objects.push_back(t10);
+////
+////        // triangle 11; right face front bottom
+////        Object *t11 = new Triangle(ff_tr, ff_br, bf_br, rf_n);
+////        t11->color = t_col;
+////        objects.push_back(t11);
+////
+////        // triangle 12; right face back top
+////        Object *t12 = new Triangle(ff_tr, bf_tr, bf_br, rf_n);
+////        t12->color = t_col;
+////        objects.push_back(t12);
+////
+//        // light set up
+//        glm::vec4 l_pos(0, 0, 15, 1);
+//        glm::vec3 l_col(255);
+//        float_t   l_int(3000);
+//
+//        Light *l1 = new PointLight(l_pos, l_col, l_int);
+//        lights.push_back(l1);
+//
+//
+//        // set up translation
+//        glm::mat4 translate_obj = glm::translate(glm::mat4(1), glm::vec3(0, 0, 0));
+//
+//        // apply translation
+//        for (auto& object : objects) {
+//            object->apply_transformation(translate_obj);
+//        }
 //
 //        camera->render_scene(objects, lights, ip);
-//        save_to_ppm(ip, "2_spheres_overlap_ortho_cam_ambient_only.ppm");
+//        save_to_ppm(ip, "cube.ppm");
+//
 //    }
-
+//
     {
-        // sphere set up
-        glm::vec4 s_pos(0, 0, -41, 1); // position (0, 0, 0) world space
-        glm::vec3 s_col(255, 0, 0); // red color
-        float_t   s_rad(35.0);      // radius
+        /// scene 01
 
-        Object *s1 = new Sphere(s_pos, s_rad);
-        s1->color = s_col;
+        // sphere 01
+        glm::vec4 s1_p(-0.5f, 0, -1.5f, 1);
+        float_t   s1_r(0.5f);
+        Object *s1 = new Sphere(s1_p, s1_r);
+        s1->om.c = green;
         objects.push_back(s1);
 
-        // light set up
-        glm::vec4 l_pos(0, 10, -5, 1);
-        glm::vec3 l_col(255, 0, 0);
-        float_t   l_int(300.0);
+        // sphere 02
+        glm::vec4 s2_p(0, 0, -2.8f, 1);
+        float_t   s2_r(0.6f);
+        Object *s2 = new Sphere(s2_p, s2_r);
+        s2->om.c = blue;
+        objects.push_back(s2);
 
-        Light *l1 = new PointLight(l_pos, l_col, l_int);
-        lights.push_back(l1);
+        /// transformations
+
+        // translate camera
+//        camera->translate(-2.1f, Z);
+
+        /// rendering
 
         camera->render_scene(objects, lights, ip);
-        save_to_ppm(ip, "sphere_ortho.ppm");
+        save_to_ppm(ip, "scene01.ppm");
     }
 
     return 0;
 }
-

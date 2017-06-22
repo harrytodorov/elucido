@@ -21,7 +21,7 @@ public:
 
     virtual void illuminate(const glm::vec4 &hit_point, glm::vec4 &light_dir, glm::vec3 &light_intensity,
                             float_t distance) = 0;
-    virtual void apply_transformation(glm::mat4 &t);
+    virtual void apply_transformation(glm::mat4 &t) = 0;
 };
 
 

@@ -3,62 +3,62 @@
 //
 
 #include <cmath>
+#include <glm/glm.hpp>
 #include "../Ray.h"
 #include "Triangle.h"
-#include "../Utilities.h"
 
 bool Triangle::intersect(Ray &r, float_t &t, glm::vec4 &p_hit, glm::vec4 &hit_norm) {
-    // solve the ray-triangle intersection using the Cramer's rule (Raytracing from the Ground Up)
-    float_t a = v0.x - v1.x;
-    float_t b = v0.x - v2.x;
-    float_t c = r.dir.x;
-    float_t d = v0.x - r.orig.x;
 
-    float_t e = v0.y - v1.y;
-    float_t f = v0.y - v2.y;
-    float_t g = r.dir.y;
-    float_t h = v0.y - r.orig.y;
+    // check if ray is parallel to triangle
+    float_t t_denominator = glm::dot(normal, r.dir);
+    if (fabs(t_denominator) < kEpsilon) return false;
 
-    float_t i = v0.z - v1.z;
-    float_t j = v0.z - v2.z;
-    float_t k = r.dir.z;
-    float_t l = v0.z - r.orig.z;
+    // compute nominator for t
+    float_t t_nominator = glm::dot(v0 - r.orig, normal);
 
-    float_t m = f*k - g*j;
-    float_t n = h*k - g*l;
-    float_t p = f*l - h*j;
-    float_t q = g*i - e*k;
-    float_t s = e*j - f*i;
+    // compute t
+    float_t t_tmp = t_nominator / t_denominator;
+    if (t_tmp < kEpsilon) return false;
 
-    float_t inv_denom   = (float_t) (1.0 / (a*m + b*q + c*s));
-    float_t e1          = d*m - b*n - c*p;
-    float_t beta        = e1 * inv_denom;
+    // compute the intersection point
+    glm::vec4 ip = r.orig + t_tmp*r.dir;
 
-    if (beta < 0)
-        return false;
+    // check if intersection point is within the defined triangle
+    glm::vec4 perp_vec;
+    float_t d_prod;
 
-    float_t _r          = e*l - h*i;
-    float_t e2          = a*n - d*q + c*_r;
-    float_t gamma       = e2 * inv_denom;
+    // edge 0
+    glm::vec4 edge0(v1 - v0);
+    glm::vec4 vp0(ip - v0);
+    perp_vec = glm::vec4(glm::cross(glm::vec3(edge0), glm::vec3(vp0)), 0);
+    d_prod = glm::dot(normal, perp_vec);
+    if (d_prod < 0) return false;
 
-    if (gamma < 0)
-        return false;
+    // edge 1
+    glm::vec4 edge1(v2 - v1);
+    glm::vec4 vp1(ip - v1);
+    perp_vec = glm::vec4(glm::cross(glm::vec3(edge1), glm::vec3(vp1)), 0);
+    d_prod = glm::dot(normal, perp_vec);
+    if (d_prod < 0) return false;
 
-    if (beta + gamma > 1.0)
-        return false;
+    // edge 2
+    glm::vec4 edge2(v0 - v2);
+    glm::vec4 vp2(ip - v2);
+    perp_vec = glm::vec4(glm::cross(glm::vec3(edge2), glm::vec3(vp2)), 0);
+    d_prod = glm::dot(normal, perp_vec);
+    if (d_prod < 0) return false;
 
-    float_t e3          = a*p + b*_r + d*s;
-    float_t t_tri       = e3*inv_denom;
-
-    if (t_tri < kEpsilon && t < t_tri)
-        return false;
-
-    t = t_tri;
-
-    // hit point
-    p_hit = r.orig + t*r.dir;
-
-    // normal
+    // test passed; assign variable
+    t = t_tmp;
+    p_hit = ip;
     hit_norm = normal;
+
     return true;
+}
+
+void Triangle::apply_transformation(glm::mat4 &t) {
+    v0 = t*v0;
+    v1 = t*v1;
+    v2 = t*v2;
+    normal = glm::normalize(t*normal);
 }

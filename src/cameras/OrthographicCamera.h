@@ -10,10 +10,12 @@
 
 class OrthographicCamera : public Camera {
 public:
+    float_t zf;   // zoom factor or the size of a pixel will be used only in the orthographic
+                        // camera for using it to zoom in and out of an object
 
     // default constructor
-    OrthographicCamera() : Camera() {}
-    OrthographicCamera(const glm::vec4 &p, const glm::vec4 &d) : Camera(p, d) {}
+    OrthographicCamera() : Camera(), zf(1.f) {}
+    OrthographicCamera(const float_t &z) : Camera(), zf(z) {}
 
     void render_scene(std::vector<Object*> &objects, std::vector<Light*> lights, ImagePlane &ip);
 };

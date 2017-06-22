@@ -3,7 +3,6 @@
 //
 
 #include "Sphere.h"
-#include "../Utilities.h"
 
 bool Sphere::intersect(Ray &r, float_t &t, glm::vec4 &p_hit, glm::vec4 &hit_norm) {
     glm::vec4 temp = r.orig - center;
@@ -27,8 +26,7 @@ bool Sphere::intersect(Ray &r, float_t &t, glm::vec4 &p_hit, glm::vec4 &hit_norm
         p_hit = r.orig + t*r.dir;
 
         // normal of a sphere is the normalized distance between the hit point and the sphere center
-        hit_norm = p_hit - center;
-        glm::normalize(hit_norm);
+        hit_norm = ((float_t) (1.0/radius)) * glm::vec4(p_hit - center);
 
         return true;
     }
@@ -48,4 +46,8 @@ bool Sphere::intersect(Ray &r, float_t &t, glm::vec4 &p_hit, glm::vec4 &hit_norm
     }
 
     return false;
+}
+
+void Sphere::apply_transformation(glm::mat4 &t) {
+    center = t * center;
 }

@@ -14,9 +14,6 @@ class ImagePlane {
 public:
     uint32_t        hres;      // horizontal image resolution
     uint32_t        vres;      // vertical image resolution
-    const float_t   s = 1.0;   // pixel size; this project will have a fixed pixel size
-                               // for getting effects as zooming camera properties / object transformations
-                               // should be applied
     glm::vec3*      fb;        // frame buffer
     glm::vec3       bc;        // background color
 

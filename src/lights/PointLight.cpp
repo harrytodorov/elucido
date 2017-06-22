@@ -18,10 +18,9 @@ void PointLight::illuminate(const glm::vec4 &hit_point, glm::vec4 &light_dir, gl
     light_dir.x /= distance,
     light_dir.y /= distance,
     light_dir.z /= distance;
-    light_intensity = glm::normalize((float_t) (intensity / (4.0 * M_PI * r2)) * color);
+    light_intensity = (float_t) (intensity / (4.0 * M_PI * r2)) * color;
 }
 
 void PointLight::apply_transformation(glm::mat4 &t) {
-    glm::vec4 res = t * pos;
-    pos = res;
+    pos = t * pos;
 }
