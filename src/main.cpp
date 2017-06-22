@@ -2,7 +2,7 @@
 #include <fstream>
 #include "objects/Object.h"
 #include "cameras/OrthographicCamera.h"
-#include "objects/Sphere.h"
+#include "objects/Triangle.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 void save_to_ppm(uint32_t width, uint32_t height, glm::vec3 *(&fb), const char fn[50]) {
@@ -139,27 +139,37 @@ int main(int argc,char **argv) {
     {
         /// scene 01
 
-        // sphere 01
-        glm::vec4 s1_p(-0.5f, 0, -1.5f, 1);
-        float_t   s1_r(0.5f);
-        Object *s1 = new Sphere(s1_p, s1_r);
-        s1->om.c = green;
-        objects.push_back(s1);
+//        // sphere 01
+//        glm::vec4 s1_p(-0.5f, 0, -1.5f, 1);
+//        float_t   s1_r(0.5f);
+//        Object *s1 = new Sphere(s1_p, s1_r);
+//        s1->om.c = green;
+//        objects.push_back(s1);
+//
+//        // sphere 02
+//        glm::vec4 s2_p(0, 0, -2.8f, 1);
+//        float_t   s2_r(0.6f);
+//        Object *s2 = new Sphere(s2_p, s2_r);
+//        s2->om.c = blue;
+//        objects.push_back(s2);
 
-        // sphere 02
-        glm::vec4 s2_p(0, 0, -2.8f, 1);
-        float_t   s2_r(0.6f);
-        Object *s2 = new Sphere(s2_p, s2_r);
-        s2->om.c = blue;
-        objects.push_back(s2);
+        // triangle 01
+        Object *t1 = new Triangle();
+        objects.push_back(t1);
 
         /// transformations
-
+        // translate t1 along negative-z so it's visible for the camera
+        t1->translate(-2.f, Z);
+        // scale it, so it does not take so much space
+        t1->scale(0.5f, XYZ);
+        // now rotate it, because we can :D
+        t1->rotate(30.f, Z);
+        t1->rotate(15.f, X);
 
         /// rendering
 
         camera->render_scene(objects, lights, ip);
-        save_to_ppm(ip, "scene01_2.ppm");
+        save_to_ppm(ip, "scene01.ppm");
     }
 
     return 0;

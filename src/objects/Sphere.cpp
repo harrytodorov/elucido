@@ -56,32 +56,32 @@ void Sphere::apply_transformation(glm::mat4 &t) {
 
 void Sphere::translate(const float_t &translation, const uint32_t &axes_of_translation) {
     // create 3d vector to determine the axes of translation
-    glm::vec3 tmv(0);
+    glm::vec3 tv(0);
 
     switch (axes_of_translation) {
         case X :
-            tmv.x = translation;
+            tv.x = translation;
             break;
         case Y :
-            tmv.y = translation;
+            tv.y = translation;
             break;
         case Z :
-            tmv.z = translation;
+            tv.z = translation;
             break;
         case XY :
-            tmv.x = translation;
-            tmv.y = translation;
+            tv.x = translation;
+            tv.y = translation;
             break;
         case XZ :
-            tmv.x = translation;
-            tmv.z = translation;
+            tv.x = translation;
+            tv.z = translation;
             break;
         case YZ :
-            tmv.y = translation;
-            tmv.z = translation;
+            tv.y = translation;
+            tv.z = translation;
             break;
         case XYZ :
-            tmv = glm::vec3(translation);
+            tv = glm::vec3(translation);
             break;
         default:
             printf("You're using an undefined axis of translation.");
@@ -89,13 +89,13 @@ void Sphere::translate(const float_t &translation, const uint32_t &axes_of_trans
     }
 
     // get the translation matrix
-    glm::mat4 tmp_m = glm::translate(glm::mat4(1), tmv);
+    glm::mat4 tm = glm::translate(glm::mat4(1), tv);
 
     // assign the translation matrix to the object's model transform matrix
-    mt = tmp_m * mt;
+    mt = tm * mt;
 
     // apply the translation to the sphere's center
-    center = tmp_m * center;
+    center = tm * center;
 
 }
 
@@ -104,32 +104,32 @@ void Sphere::rotate(const float_t &angle_of_rotation, const uint32_t &axes_of_ro
     // not much sense in rotating a perfect sphere...EXCEPT, when there is a texture applied to the sphere
 
     // create 3d vector to determine the axis of rotation
-    glm::vec3 tmv(0);
+    glm::vec3 rv(0);
 
     switch (axes_of_rotation) {
         case X :
-            tmv.x = 1;
+            rv.x = 1;
             break;
         case Y :
-            tmv.y = 1;
+            rv.y = 1;
             break;
         case Z :
-            tmv.z = 1;
+            rv.z = 1;
             break;
         case XY :
-            tmv.x = 1;
-            tmv.y = 1;
+            rv.x = 1;
+            rv.y = 1;
             break;
         case XZ :
-            tmv.x = 1;
-            tmv.z = 1;
+            rv.x = 1;
+            rv.z = 1;
             break;
         case YZ :
-            tmv.y = 1;
-            tmv.z = 1;
+            rv.y = 1;
+            rv.z = 1;
             break;
         case XYZ :
-            tmv = glm::vec3(1);
+            rv = glm::vec3(1);
             break;
         default:
             printf("You're using an undefined axis of rotation.");
@@ -137,55 +137,55 @@ void Sphere::rotate(const float_t &angle_of_rotation, const uint32_t &axes_of_ro
     }
 
     // get the rotation matrix
-    glm::mat4 tmp_r = glm::rotate(glm::mat4(1), angle_of_rotation, tmv);
+    glm::mat4 rm = glm::rotate(glm::mat4(1), glm::radians(angle_of_rotation), rv);
 
     // assign the rotation matrix to the object's model transform matrix
-    mt = tmp_r * mt;
+    mt = rm * mt;
 
     // apply the rotation to the sphere's center
-    center = tmp_r * center;
+    center = rm * center;
 }
 
 void Sphere::scale(const float_t &scaling_factor, const uint32_t &axes_of_scale) {
     // create 3d vector to determine the axes of scale
-    glm::vec3 tmv(0);
+    glm::vec3 sv(0);
 
     switch (axes_of_scale) {
         case X :
-            tmv.x = scaling_factor;
+            sv.x = scaling_factor;
             break;
         case Y :
-            tmv.y = scaling_factor;
+            sv.y = scaling_factor;
             break;
         case Z :
-            tmv.z = scaling_factor;
+            sv.z = scaling_factor;
             break;
         case XY :
-            tmv.x = scaling_factor;
-            tmv.y = scaling_factor;
+            sv.x = scaling_factor;
+            sv.y = scaling_factor;
             break;
         case XZ :
-            tmv.x = scaling_factor;
-            tmv.z = scaling_factor;
+            sv.x = scaling_factor;
+            sv.z = scaling_factor;
             break;
         case YZ :
-            tmv.y = scaling_factor;
-            tmv.z = scaling_factor;
+            sv.y = scaling_factor;
+            sv.z = scaling_factor;
             break;
         case XYZ :
-            tmv = glm::vec3(scaling_factor);
+            sv = glm::vec3(scaling_factor);
             break;
         default:
             printf("You're using an undefined axis of scale.");
             break;
     }
 
-    // get the scaling matrix
-    glm::mat4 tmp_sm = glm::scale(glm::mat4(1), tmv);
+    // get the scale matrix
+    glm::mat4 sm = glm::scale(glm::mat4(1), sv);
 
     // assign the scale matrix to the object's model transform
-    mt = tmp_sm * mt;
+    mt = sm * mt;
 
     // multiply the radius by the scaling factor
-    radius *= scaling_factor; 
+    radius *= scaling_factor;
 }

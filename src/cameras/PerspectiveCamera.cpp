@@ -44,7 +44,7 @@ void PerspectiveCamera::render_scene(std::vector<Object*> &objects, std::vector<
     // calculate the scaling factor for the image plane
     // using the field of view; fov is in range(0, 180)
     // TODO: test if the hell function works
-    sf = tanf(fov < 0 ? 0.1f : fov > 180.f ? 179.9f : fov);
+    sf = tanf(glm::radians(fov < 0 ? 0.1f : fov > 180.f ? 179.9f : fov));
 
     for (int r = 0; r < ip.vres; r++) {
         for (int c = 0; c < ip.hres; c++) {

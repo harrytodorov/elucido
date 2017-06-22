@@ -8,32 +8,32 @@
 
 void Camera::rotate(float_t rot_angle, uint32_t axes_of_rotation) {
     // create 3d vector to determine the axis of rotation
-    glm::vec3 tmv(0);
+    glm::vec3 rv(0);
 
     switch (axes_of_rotation) {
         case X :
-            tmv.x = 1;
+            rv.x = 1;
             break;
         case Y :
-            tmv.y = 1;
+            rv.y = 1;
             break;
         case Z :
-            tmv.z = 1;
+            rv.z = 1;
             break;
         case XY :
-            tmv.x = 1;
-            tmv.y = 1;
+            rv.x = 1;
+            rv.y = 1;
             break;
         case XZ :
-            tmv.x = 1;
-            tmv.z = 1;
+            rv.x = 1;
+            rv.z = 1;
             break;
         case YZ :
-            tmv.y = 1;
-            tmv.z = 1;
+            rv.y = 1;
+            rv.z = 1;
             break;
         case XYZ :
-            tmv = glm::vec3(1);
+            rv = glm::vec3(1);
             break;
         default:
             printf("You're using an undefined axis of rotation.");
@@ -41,64 +41,64 @@ void Camera::rotate(float_t rot_angle, uint32_t axes_of_rotation) {
     }
 
     // get the rotation matrix
-    glm::mat4 tmp_r = glm::rotate(glm::mat4(1), rot_angle, tmv);
+    glm::mat4 rm = glm::rotate(glm::mat4(1), glm::radians(rot_angle), rv);
 
     // apply the rotation matrix to the camera's transformation matrix
-    ctm = tmp_r * ctm;
+    ctm = rm * ctm;
 
     // apply the rotation to the camera's parameters; actually those can be leaved unchanged, because
     // before rendering one would use the inverse of the camera transform to bring the camera back to its original
     // position; but for consistency, they'll be transformed as well
-    eye = tmp_r * eye;
-    lookat = tmp_r * lookat;
-    up = glm::normalize(tmp_r * up);
+    eye = rm * eye;
+    lookat = rm * lookat;
+    up = glm::normalize(rm * up);
 }
 
 void Camera::translate(const float_t &translation, const uint32_t &axes_of_translation) {
     // create 3d vector to determine the axes of translation
-    glm::vec3 tmv(0);
+    glm::vec3 tv(0);
 
     switch (axes_of_translation) {
         case X :
-            tmv.x = translation;
+            tv.x = translation;
             break;
         case Y :
-            tmv.y = translation;
+            tv.y = translation;
             break;
         case Z :
-            tmv.z = translation;
+            tv.z = translation;
             break;
         case XY :
-            tmv.x = translation;
-            tmv.y = translation;
+            tv.x = translation;
+            tv.y = translation;
             break;
         case XZ :
-            tmv.x = translation;
-            tmv.z = translation;
+            tv.x = translation;
+            tv.z = translation;
             break;
         case YZ :
-            tmv.y = translation;
-            tmv.z = translation;
+            tv.y = translation;
+            tv.z = translation;
             break;
         case XYZ :
-            tmv = glm::vec3(translation);
+            tv = glm::vec3(translation);
             break;
         default:
             printf("You're using an undefined axis of translation.");
             break;
     }
     // get the translation matrix
-    glm::mat4 tmp_t = glm::translate(glm::mat4(1), tmv);
+    glm::mat4 tm = glm::translate(glm::mat4(1), tv);
 
     // assign the translation matrix to the camera's transformation matrix
-    ctm = tmp_t * ctm;
+    ctm = tm * ctm;
 
     // apply the translation to the camera's parameters; actually those can be leaved unchanged, because
     // before rendering one would use the inverse of the camera transform to bring the camera back to its original
     // position; but for consistency, they'll be transformed as well
-    eye = tmp_t * eye;
-    lookat = tmp_t * lookat;
-    up = glm::normalize(tmp_t * up);
+    eye = tm * eye;
+    lookat = tm * lookat;
+    up = glm::normalize(tm * up);
 }
 
 glm::mat4 Camera::inverse_ctm() {
