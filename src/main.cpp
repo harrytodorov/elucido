@@ -3,7 +3,6 @@
 #include "objects/Object.h"
 #include "cameras/OrthographicCamera.h"
 #include "objects/Sphere.h"
-#include "cameras/PerspectiveCamera.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 void save_to_ppm(uint32_t width, uint32_t height, glm::vec3 *(&fb), const char fn[50]) {
@@ -26,7 +25,7 @@ void save_to_ppm(ImagePlane &ip, const char fn[50]) {
 int main(int argc,char **argv) {
     std::vector<Object*> objects;
     std::vector<Light*> lights;
-    Camera* camera = new PerspectiveCamera();
+    Camera* camera = new OrthographicCamera();
     ImagePlane ip = ImagePlane(640, 480);
 
 //    // cube set-up
@@ -156,13 +155,11 @@ int main(int argc,char **argv) {
 
         /// transformations
 
-        // translate camera
-//        camera->translate(-2.1f, Z);
 
         /// rendering
 
         camera->render_scene(objects, lights, ip);
-        save_to_ppm(ip, "scene01.ppm");
+        save_to_ppm(ip, "scene01_2.ppm");
     }
 
     return 0;

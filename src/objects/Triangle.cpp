@@ -62,3 +62,15 @@ void Triangle::apply_transformation(glm::mat4 &t) {
     v2 = t*v2;
     normal = glm::normalize(t*normal);
 }
+
+void Triangle::translate(const float_t &translation, const uint32_t &axes_of_translation) {
+
+}
+
+void Triangle::rotate(const float_t &angle_of_rotation, const uint32_t &axes_of_rotation) {
+
+}
+
+void Triangle::scale(const float_t &scaling_factor, const uint32_t &axes_of_scale) {
+
+}

@@ -36,11 +36,22 @@ void Camera::rotate(float_t rot_angle, uint32_t axes_of_rotation) {
             tmv = glm::vec3(1);
             break;
         default:
-            printf("You're using an undefined axis of translation.");
+            printf("You're using an undefined axis of rotation.");
             break;
     }
-    // TODO: finish the rotation of a matrix
 
+    // get the rotation matrix
+    glm::mat4 tmp_r = glm::rotate(glm::mat4(1), rot_angle, tmv);
+
+    // apply the rotation matrix to the camera's transformation matrix
+    ctm = tmp_r * ctm;
+
+    // apply the rotation to the camera's parameters; actually those can be leaved unchanged, because
+    // before rendering one would use the inverse of the camera transform to bring the camera back to its original
+    // position; but for consistency, they'll be transformed as well
+    eye = tmp_r * eye;
+    lookat = tmp_r * lookat;
+    up = glm::normalize(tmp_r * up);
 }
 
 void Camera::translate(const float_t &translation, const uint32_t &axes_of_translation) {
@@ -76,16 +87,18 @@ void Camera::translate(const float_t &translation, const uint32_t &axes_of_trans
             printf("You're using an undefined axis of translation.");
             break;
     }
+    // get the translation matrix
+    glm::mat4 tmp_t = glm::translate(glm::mat4(1), tmv);
 
-    // assign the newly created translation matrix to the camera's transformation matrix
-    ctm = glm::translate(ctm, tmv);
+    // assign the translation matrix to the camera's transformation matrix
+    ctm = tmp_t * ctm;
 
     // apply the translation to the camera's parameters; actually those can be leaved unchanged, because
     // before rendering one would use the inverse of the camera transform to bring the camera back to its original
     // position; but for consistency, they'll be transformed as well
-    eye = ctm * eye;
-    lookat = ctm * lookat;
-    up = glm::normalize(ctm * up);
+    eye = tmp_t * eye;
+    lookat = tmp_t * lookat;
+    up = glm::normalize(tmp_t * up);
 }
 
 glm::mat4 Camera::inverse_ctm() {
