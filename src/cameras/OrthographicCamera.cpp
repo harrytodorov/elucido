@@ -25,10 +25,10 @@ void OrthographicCamera::render_scene(std::vector<Object*> &objects, std::vector
     // apply the inverse camera's transformation matrix to all objects
     // and light sources in the scene
     for (auto& object : objects) {
-        object->apply_transformation(icm);
+        object->apply_camera_inverse(icm);
     }
     for (auto& light : lights) {
-        light->apply_transformation(icm);
+        light->apply_camera_inverse(icm);
     }
 
     // Set the ray direction same as the direction of the camera

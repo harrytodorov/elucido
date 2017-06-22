@@ -128,7 +128,7 @@ int main(int argc,char **argv) {
 //
 //        // apply translation
 //        for (auto& object : objects) {
-//            object->apply_transformation(translate_obj);
+//            object->apply_camera_inverse(translate_obj);
 //        }
 //
 //        camera->render_scene(objects, lights, ip);

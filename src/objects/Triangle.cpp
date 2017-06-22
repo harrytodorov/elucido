@@ -58,7 +58,7 @@ bool Triangle::intersect(Ray &r, float_t &t, glm::vec4 &p_hit, glm::vec4 &hit_no
     return true;
 }
 
-void Triangle::apply_transformation(glm::mat4 &t) {
+void Triangle::apply_camera_inverse(glm::mat4 &t) {
     v0 = t*v0;
     v1 = t*v1;
     v2 = t*v2;

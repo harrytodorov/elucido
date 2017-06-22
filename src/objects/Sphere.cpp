@@ -50,7 +50,7 @@ bool Sphere::intersect(Ray &r, float_t &t, glm::vec4 &p_hit, glm::vec4 &hit_norm
     return false;
 }
 
-void Sphere::apply_transformation(glm::mat4 &t) {
+void Sphere::apply_camera_inverse(glm::mat4 &t) {
     center = t * center;
 }
 
