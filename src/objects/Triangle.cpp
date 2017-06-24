@@ -9,21 +9,21 @@
 #include "../Ray.h"
 #include "Triangle.h"
 
-bool Triangle::intersect(Ray &r, float_t &t, glm::vec4 &p_hit, glm::vec4 &hit_norm) {
+bool Triangle::intersect(const Ray &r, float_t &t, glm::vec4 &p_hit, glm::vec4 &hit_norm) {
 
     // check if ray is parallel to triangle
-    float_t t_denominator = glm::dot(normal, r.dir);
+    float_t t_denominator = glm::dot(normal, r.d);
     if (fabs(t_denominator) < kEpsilon) return false;
 
     // compute nominator for t
-    float_t t_nominator = glm::dot(v0 - r.orig, normal);
+    float_t t_nominator = glm::dot(v0 - r.o, normal);
 
     // compute t
     float_t t_tmp = t_nominator / t_denominator;
     if (t_tmp < kEpsilon) return false;
 
     // compute the intersection point
-    glm::vec4 ip = r.orig + t_tmp*r.dir;
+    glm::vec4 ip = r.o + t_tmp*r.d;
 
     // check if intersection point is within the defined triangle
     glm::vec4 perp_vec;
@@ -58,7 +58,7 @@ bool Triangle::intersect(Ray &r, float_t &t, glm::vec4 &p_hit, glm::vec4 &hit_no
     return true;
 }
 
-void Triangle::apply_camera_inverse(glm::mat4 &t) {
+void Triangle::apply_camera_transformation(glm::mat4 &t) {
     v0 = t*v0;
     v1 = t*v1;
     v2 = t*v2;

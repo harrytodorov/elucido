@@ -15,16 +15,14 @@ float_t norm(glm::vec4 &v) {
 
 void PointLight::illuminate(const glm::vec4 &hit_point, glm::vec4 &light_dir, glm::vec3 &light_intensity,
                             float_t distance) {
-    light_dir = hit_point - pos;
+    light_dir = glm::normalize(hit_point - pos);
     float_t r2 = norm(light_dir);
     distance = (float_t) sqrt(r2);
-    light_dir.x /= distance,
-    light_dir.y /= distance,
-    light_dir.z /= distance;
+    light_dir = glm::normalize(hit_point - pos);
     light_intensity = (float_t) (intensity / (4.0 * M_PI * r2)) * color;
 }
 
-void PointLight::apply_camera_inverse(glm::mat4 &t) {
+void PointLight::apply_camera_transformation(glm::mat4 &t) {
     pos = t * pos;
 }
 

@@ -25,15 +25,15 @@ void OrthographicCamera::render_scene(std::vector<Object*> &objects, std::vector
     // apply the inverse camera's transformation matrix to all objects
     // and light sources in the scene
     for (auto& object : objects) {
-        object->apply_camera_inverse(icm);
+        object->apply_camera_transformation(icm);
     }
     for (auto& light : lights) {
-        light->apply_camera_inverse(icm);
+        light->apply_camera_transformation(icm);
     }
 
     // Set the ray direction same as the direction of the camera
     // and normalize it, shouldn't be necessary, but just in case
-    ray.dir = glm::normalize(lookat - eye);
+    ray.d = glm::normalize(lookat - eye);
 
     // get pointer to the frame buffer
     glm::vec3 *pixels = ip.fb;
@@ -54,9 +54,9 @@ void OrthographicCamera::render_scene(std::vector<Object*> &objects, std::vector
 
             // set the ray origin for each separate pixel
             // z position is fixed
-            ray.orig.x = curr_x;
-            ray.orig.y = curr_y;
-            ray.orig.z = 0.f;
+            ray.o.x = curr_x;
+            ray.o.y = curr_y;
+            ray.o.z = 0.f;
 
             // set the nearest point initially at infinity
             t_near = infinity;
@@ -96,16 +96,16 @@ void OrthographicCamera::render_scene(std::vector<Object*> &objects, std::vector
                     glm::vec3 light_intensity(0);
                     light->illuminate(hit_point, light_direction, light_intensity, t_near);
 
-//                    // dot product based on Lambert's cosine law for Lambertian reflectance
-//                    const float_t dot_pr = glm::dot(hit_normal, -light_direction);
-//
-//                    // calculate the diffuse component
-//                    diffuse += hit_object->color * light_intensity * std::max(0.f, dot_pr);
+                    // dot product based on Lambert's cosine law for Lambertian reflectance
+                    const float_t dot_pr = glm::dot(hit_normal, -light_direction);
 
-//                    // calculate the specular component
-//                    glm::vec4 l_reflection = glm::normalize((2.f * dot_pr * hit_normal) + light_direction);
-//                    glm::vec4 view_dir = glm::normalize(hit_point - eye);
-//                    specular += light_intensity * std::max(0.f, std::pow(glm::dot(l_reflection, view_dir), n));
+                    // calculate the diffuse component
+                    diffuse += hit_object->om.c * light_intensity * std::max(0.f, dot_pr);
+
+                    // calculate the specular component
+                    glm::vec4 l_reflection = glm::normalize((2.f * dot_pr * hit_normal) + light_direction);
+                    glm::vec4 view_dir = glm::normalize(hit_point - eye);
+                    specular += light_intensity * std::max(0.f, std::pow(glm::dot(l_reflection, view_dir), n));
                 }
                 // add diffuse the the hit color
                 hit_color += kd * diffuse + ks * specular;
@@ -114,5 +114,16 @@ void OrthographicCamera::render_scene(std::vector<Object*> &objects, std::vector
             // assign the color to the frame buffer
             *(pixels++) = glm::clamp(hit_color, 0.f, 255.f);
         }
+    }
+
+    // after rendering reverse all objects and light sources to
+    // their original positions;
+    // use the camera transformation matrix to
+    // bring them to their original positions
+    for (auto& object : objects) {
+        object->apply_camera_transformation(ctm);
+    }
+    for (auto& light : lights) {
+        light->apply_camera_transformation(ctm);
     }
 }

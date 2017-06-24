@@ -2,7 +2,9 @@
 #include <fstream>
 #include "objects/Object.h"
 #include "cameras/OrthographicCamera.h"
-#include "objects/Triangle.h"
+#include "objects/Sphere.h"
+#include "cameras/PerspectiveCamera.h"
+#include "lights/PointLight.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 void save_to_ppm(uint32_t width, uint32_t height, glm::vec3 *(&fb), const char fn[50]) {
@@ -25,8 +27,10 @@ void save_to_ppm(ImagePlane &ip, const char fn[50]) {
 int main(int argc,char **argv) {
     std::vector<Object*> objects;
     std::vector<Light*> lights;
-    Camera* camera = new OrthographicCamera();
+    Camera* camera = new PerspectiveCamera();
     ImagePlane ip = ImagePlane(640, 480);
+    ip.bc = 0.7f * white;
+    char fn[100];
 
 //    // cube set-up
 //    {
@@ -128,7 +132,7 @@ int main(int argc,char **argv) {
 //
 //        // apply translation
 //        for (auto& object : objects) {
-//            object->apply_camera_inverse(translate_obj);
+//            object->apply_camera_transformation(translate_obj);
 //        }
 //
 //        camera->render_scene(objects, lights, ip);
@@ -136,40 +140,118 @@ int main(int argc,char **argv) {
 //
 //    }
 //
-    {
-        /// scene 01
 
+//    {
+//        /// scene 01
+//
+////        // triangle 01
+////        glm::vec4 t1_p();
+////        Object *t1 = new Triangle();
+//
 //        // sphere 01
-//        glm::vec4 s1_p(-0.5f, 0, -1.5f, 1);
+//        glm::vec4 s1_p(0.f, 0, -1.5f, 1);
 //        float_t   s1_r(0.5f);
 //        Object *s1 = new Sphere(s1_p, s1_r);
 //        s1->om.c = green;
 //        objects.push_back(s1);
 //
-//        // sphere 02
-//        glm::vec4 s2_p(0, 0, -2.8f, 1);
-//        float_t   s2_r(0.6f);
-//        Object *s2 = new Sphere(s2_p, s2_r);
-//        s2->om.c = blue;
-//        objects.push_back(s2);
+////        // sphere 02
+////        glm::vec4 s2_p(-0.2f, 0, -1.2f, 1);
+////        float_t   s2_r(0.5f);
+////        Object *s2 = new Sphere(s2_p, s2_r);
+////        s2->om.c = red;
+////        objects.push_back(s2);
+////
+////        // sphere 03
+////        glm::vec4 s3_p(-0.6f, 0, -1.8f, 1);
+////        float_t   s3_r(0.5f);
+////        Object *s3 = new Sphere(s3_p, s3_r);
+////        s3->om.c = white;
+////        objects.push_back(s3);
+//
+////        // sphere 04
+////        glm::vec4 s4_p(0.7f, 0, -0.7f, 1);
+////        float_t   s4_r(0.2f);
+////        Object *s4 = new Sphere(s4_p, s4_r);
+////        s4->om.c = blue;
+////        objects.push_back(s4);
+//
+////        // sphere 05
+////        glm::vec4 s5_p(0.7f, 0, -1.7f, 1);
+////        float_t s5_r(0.3f);
+////        Object *s5 = new Sphere(s5_p, s5_r);
+////        s5->om.c = white;
+////        objects.push_back(s5);
+////
+////        // sphere 06
+////        glm::vec4 s6_p(0.7f, 0, -2.7f, 1);
+////        float_t s6_r(0.5f);
+////        Object *s6 = new Sphere(s6_p, s6_r);
+////        s6->om.c = green;
+////        objects.push_back(s6);
+////
+////        // sphere 07
+////        glm::vec4 s7_p(0.7f, 0, -4.3f, 1);
+////        float_t s7_r(0.8f);
+////        Object *s7 = new Sphere(s7_p, s7_r);
+////        s7->om.c = sienna;
+////        objects.push_back(s7);
+//
+//
+//        // light 01
+//        glm::vec4 l1_p(-1.f, 0, 0, 1);
+//        float_t l1_i(1);
+//        Light *l01 = new PointLight(l1_p, white, l1_i);
+//        lights.push_back(l01);
+////
+////        // light 02
+////        glm::vec4 l2_p(0, 0, -0.5f, 1);
+////        float_t l2_i(10);
+////        Light *l02 = new PointLight(l2_p, white, l2_i);
+////        lights.push_back(l02);
+//
+////        // light 03
+////        glm::vec4 l3_p(0, 0, -4.f, 1);
+////        float_t l3_i(10);
+////        Light *l03 = new PointLight(l3_p, white, l3_i);
+////        lights.push_back(l03);
+//
+//
+//
+////        /// transformations
+////        camera->rotate(-45.f, Y);
+////
+//        /// rendering
+//
+//        camera->render_scene(objects, lights, ip);
+//        save_to_ppm(ip, "sphere.ppm");
+//    }
 
-        // triangle 01
-        Object *t1 = new Triangle();
-        objects.push_back(t1);
+    {
+        /// scene 02
 
-        /// transformations
-        // translate t1 along negative-z so it's visible for the camera
-        t1->translate(-2.f, Z);
-        // scale it, so it does not take so much space
-        t1->scale(0.5f, XYZ);
-        // now rotate it, because we can :D
-        t1->rotate(30.f, Z);
-        t1->rotate(15.f, X);
+        glm::vec4 s1_p(0, 0, -4, 1);
+        float_t s1_r(1.0f);
 
-        /// rendering
+        Object *s1 = new Sphere(s1_p, s1_r);
+        s1->om.c = red;
+        s1->om.dc = 0.6f;
+        s1->om.sc = 0.f;
+        objects.push_back(s1);
+
+        glm::vec4 l1_p(0, 0, -1, 1);
+        Light *l1 = new PointLight(l1_p, white, 10);
+
+//        // rotate camera along X axis
+//        for (int i = 0; i < 41; i++) {
+//            camera->rotate(-1.f, X);
+//            camera->render_scene(objects, lights, ip);
+//            sprintf(fn, "rotate_camera_along_x_%03d.ppm", i);
+//            save_to_ppm(ip, fn);
+//        }
 
         camera->render_scene(objects, lights, ip);
-        save_to_ppm(ip, "scene01.ppm");
+        save_to_ppm(ip, "sphere.ppm");
     }
 
     return 0;

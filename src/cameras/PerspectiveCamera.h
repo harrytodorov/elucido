@@ -16,7 +16,7 @@ public:
 
     PerspectiveCamera() :
             Camera(),
-            fov(45.f)
+            fov(90.f)
     {}
     PerspectiveCamera(const float_t &f) :
             Camera(),

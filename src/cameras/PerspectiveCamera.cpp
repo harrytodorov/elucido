@@ -25,14 +25,14 @@ void PerspectiveCamera::render_scene(std::vector<Object*> &objects, std::vector<
     // apply the inverse camera's transformation matrix to all objects
     // and light sources in the scene
     for (auto& object : objects) {
-        object->apply_camera_inverse(icm);
+        object->apply_camera_transformation(icm);
     }
     for (auto& light : lights) {
-        light->apply_camera_inverse(icm);
+        light->apply_camera_transformation(icm);
     }
 
     // set the origin of the rays
-    ray.orig = eye;
+    ray.o = eye;
 
     // get pointer to the frame buffer
     glm::vec3 *pixels = ip.fb;
@@ -43,8 +43,7 @@ void PerspectiveCamera::render_scene(std::vector<Object*> &objects, std::vector<
 
     // calculate the scaling factor for the image plane
     // using the field of view; fov is in range(0, 180)
-    // TODO: test if the hell function works
-    sf = tanf(glm::radians(fov < 0 ? 0.1f : fov > 180.f ? 179.9f : fov));
+    sf = tanf(glm::radians(fov * 0.5f));
 
     for (int r = 0; r < ip.vres; r++) {
         for (int c = 0; c < ip.hres; c++) {
@@ -56,12 +55,12 @@ void PerspectiveCamera::render_scene(std::vector<Object*> &objects, std::vector<
             curr_y = (1.f - 2.f * ((r + 0.5f) / ip.vres)) * sf;
 
 
-            // current position in the center of the image plane's cell
+            // current position in the c of the image plane's cell
             tmp_cp = glm::vec4(curr_x, curr_y, -1.f, 1.f);
 
             // compute the direction of the ray; vector from the eye to the current image
-            // plane cell's center; of course direction should be normalized as well
-            ray.dir = glm::normalize(tmp_cp - eye);
+            // plane cell's c; of course direction should be normalized as well
+            ray.d = glm::normalize(tmp_cp - eye);
 
             // set the nearest point initially at infinity
             t_near = infinity;
@@ -98,16 +97,16 @@ void PerspectiveCamera::render_scene(std::vector<Object*> &objects, std::vector<
                     glm::vec3 light_intensity(0);
                     light->illuminate(hit_point, light_direction, light_intensity, t_near);
 
-//                    // dot product based on Lambert's cosine law for Lambertian reflectance
-//                    const float_t dot_pr = glm::dot(hit_normal, -light_direction);
-//
-//                    // calculate the diffuse component
-//                    diffuse += light_intensity * std::max(0.f, dot_pr);
-//
-//                    // calculate the specular component
-//                    glm::vec4 l_reflection = glm::normalize((2.f * dot_pr * hit_normal) + light_direction);
-//                    glm::vec4 view_dir = glm::normalize(hit_point - eye);
-//                    specular += light_intensity * std::max(0.f, std::pow(glm::dot(l_reflection, view_dir), n));
+                    // dot product based on Lambert's cosine law for Lambertian reflectance
+                    const float_t dot_pr = glm::dot(hit_normal, light_direction);
+
+                    // calculate the diffuse component
+                    diffuse += (hit_object->om.c * light_intensity * std::max(0.f, dot_pr)) / glm::vec3(30);
+
+                    // calculate the specular component
+                    glm::vec4 l_reflection = glm::normalize((2.f * dot_pr * hit_normal) + light_direction);
+                    glm::vec4 view_dir = glm::normalize(hit_point - eye);
+                    specular += light_intensity * std::max(0.f, std::pow(glm::dot(l_reflection, view_dir), n));
                 }
                 // add diffuse the the hit color
                 hit_color += kd * diffuse + ks * specular;
@@ -117,4 +116,17 @@ void PerspectiveCamera::render_scene(std::vector<Object*> &objects, std::vector<
             *(pixels++) = glm::clamp(hit_color, 0.f, 255.f);
         }
     }
+
+    // after rendering reverse all objects and light sources to
+    // their original positions;
+    // use the camera transformation matrix to
+    // bring them to their original positions
+    for (auto& object : objects) {
+        object->apply_camera_transformation(ctm);
+    }
+    for (auto& light : lights) {
+        light->apply_camera_transformation(ctm);
+    }
+
+
 }

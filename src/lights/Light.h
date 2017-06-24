@@ -25,7 +25,7 @@ public:
 
     virtual void illuminate(const glm::vec4 &hit_point, glm::vec4 &light_dir, glm::vec3 &light_intensity,
                             float_t distance) = 0;
-    virtual void apply_camera_inverse(glm::mat4 &t) = 0;
+    virtual void apply_camera_transformation(glm::mat4 &t) = 0;
     virtual void translate(const float_t &translation, const uint32_t &axes_of_translation) = 0;
     virtual void rotate(const float_t &angle_of_rotation, const uint32_t &axes_of_rotation) = 0;
 };

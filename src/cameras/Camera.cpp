@@ -45,13 +45,6 @@ void Camera::rotate(float_t rot_angle, uint32_t axes_of_rotation) {
 
     // apply the rotation matrix to the camera's transformation matrix
     ctm = rm * ctm;
-
-    // apply the rotation to the camera's parameters; actually those can be leaved unchanged, because
-    // before rendering one would use the inverse of the camera transform to bring the camera back to its original
-    // position; but for consistency, they'll be transformed as well
-    eye = rm * eye;
-    lookat = rm * lookat;
-    up = glm::normalize(rm * up);
 }
 
 void Camera::translate(const float_t &translation, const uint32_t &axes_of_translation) {
@@ -92,23 +85,11 @@ void Camera::translate(const float_t &translation, const uint32_t &axes_of_trans
 
     // assign the translation matrix to the camera's transformation matrix
     ctm = tm * ctm;
-
-    // apply the translation to the camera's parameters; actually those can be leaved unchanged, because
-    // before rendering one would use the inverse of the camera transform to bring the camera back to its original
-    // position; but for consistency, they'll be transformed as well
-    eye = tm * eye;
-    lookat = tm * lookat;
-    up = glm::normalize(tm * up);
 }
 
 glm::mat4 Camera::inverse_ctm() {
-    // first calculate the inverse of the camera's transformation matrix
+    // calculate the inverse of the camera's transformation matrix
     glm::mat4 inverse = glm::inverse(ctm);
-
-    // apply the inverse of the camera's transformation matrix to all affected camera parameters
-    eye = inverse * eye;
-    lookat = inverse * lookat;
-    up = glm::normalize(ctm * up);
 
     // return the inverse of the camera's transformation matrix
     // needed to apply it to objects and light sources
