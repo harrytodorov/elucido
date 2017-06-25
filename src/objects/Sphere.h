@@ -11,8 +11,7 @@
 class Sphere : public Object {
     float_t     r;  // sphere's radius
     float_t     r2; // the squared sphere's radius; needed to compute the ray-sphere intersecion
-    // computed once, by constructing the sphere
-    // TODO: think of the case when the sphere is scaled and take care of it's squared radius
+                    // computed once, by constructing the sphere
     glm::vec4   c;  // sphere's center
 public:
     Sphere() : Object(), r(1.0), c(0, 0, 0, 1) { r2 = 1.f; }

@@ -6,8 +6,7 @@
 #include <cstdio>
 #include "DirectionalLight.h"
 
-void DirectionalLight::illuminate(const glm::vec4 &hit_point, glm::vec4 &light_dir, glm::vec3 &light_intensity,
-                                  float_t distance) {
+void DirectionalLight::illuminate(const glm::vec4 &hit_point, glm::vec4 &light_dir, glm::vec3 &light_intensity) {
 
 }
 
@@ -100,4 +99,7 @@ void DirectionalLight::rotate(const float_t &angle_of_rotation, const uint32_t &
 void DirectionalLight::apply_transformations() {
     // apply the transformations stored in the light's model transform matrix to its direction
     d = mt * d;
+
+    // after applying the transformations to a directional light; its model transform matrix is set back to the identity matrix
+    mt = glm::mat4(1);
 }

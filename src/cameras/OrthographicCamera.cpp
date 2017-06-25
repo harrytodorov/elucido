@@ -101,7 +101,7 @@ void OrthographicCamera::render_scene(std::vector<Object*> &objects, std::vector
 
                     glm::vec4 light_direction(0);
                     glm::vec3 light_intensity(0);
-                    light->illuminate(hit_point, light_direction, light_intensity, t_near);
+                    light->illuminate(hit_point, light_direction, light_intensity);
 
                     // dot product based on Lambert's cosine law for Lambertian reflectance
                     const float_t dot_pr = glm::dot(hit_normal, light_direction);
@@ -110,7 +110,7 @@ void OrthographicCamera::render_scene(std::vector<Object*> &objects, std::vector
                     diffuse += hit_object->om.c * light_intensity * std::max(0.f, dot_pr);
 
                     // calculate the specular component
-                    glm::vec4 l_reflection = glm::normalize((2.f * dot_pr * hit_normal) - light_direction);
+                    glm::vec4 l_reflection = glm::normalize(2.f * dot_pr * hit_normal - light_direction);
                     specular += light_intensity * std::max(0.f, std::powf(glm::dot(l_reflection, view_direction), hit_object->om.se));
                 }
                 // add diffuse the the hit color

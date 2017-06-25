@@ -12,11 +12,9 @@ float_t norm(glm::vec4 &v) {
     return (float_t) ((v.x*v.x) + (v.y*v.y) + (v.z*v.z));
 }
 
-void PointLight::illuminate(const glm::vec4 &hit_point, glm::vec4 &light_dir, glm::vec3 &light_intensity,
-                            float_t distance) {
+void PointLight::illuminate(const glm::vec4 &hit_point, glm::vec4 &light_dir, glm::vec3 &light_intensity) {
     light_dir = glm::normalize(p - hit_point);
     float_t r2 = norm(light_dir);
-    distance = (float_t) sqrt(r2);
     light_intensity = (float_t) (intensity / (4.0 * M_PI * r2)) * color;
 }
 
@@ -109,4 +107,7 @@ void PointLight::rotate(const float_t &angle_of_rotation, const uint32_t &axes_o
 void PointLight::apply_transformations() {
     // apply the transformations stored in the light's model transorm matrix to its position
     p = mt * p;
+
+    // after applying the transformations to a point light; its model transform matrix is set back to the identity matrix
+    mt = glm::mat4(1);
 }

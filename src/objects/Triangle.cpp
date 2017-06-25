@@ -210,4 +210,7 @@ void Triangle::apply_transformations() {
     // https://www.scratchapixel.com/lessons/mathematics-physics-for-computer-graphics/geometry/transforming-normals
     glm::mat4 nm = glm::transpose(glm::inverse(mt));
     normal = glm::normalize(nm * normal);
+
+    // after applying the transformations to a triangle; its model transform matrix is set back to the identity matrix
+    mt = glm::mat4(1);
 }

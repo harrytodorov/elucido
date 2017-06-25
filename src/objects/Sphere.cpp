@@ -212,4 +212,7 @@ void Sphere::set_center_p(const glm::vec4 &p) {
 void Sphere::apply_transformations() {
     // apply the transformations stored in the sphere's model transform matrix to its position
     c = mt * c;
+
+    // after applying the transformations to a sphere; its model transform matrix is set back to the identity matrix
+    mt = glm::mat4(1);
 }
