@@ -71,7 +71,7 @@ void OrthographicCamera::render_scene(std::vector<Object*> &objects, std::vector
             for (auto& object : objects) {
 
                 // check objects for intersection with tha ray
-                if (object->intersect(ray, t_near, hit_point, hit_normal)) {
+                if (object->intersect(ray, t_near, hit_point)) {
                     hit_object = object;
                 }
             }
@@ -79,15 +79,22 @@ void OrthographicCamera::render_scene(std::vector<Object*> &objects, std::vector
             // get the color from the closest intersected object, if any
             // calculate the illumination per pixel using Phong illumination model
             if (hit_object != nullptr) {
-                // set the hit color to 0 before adding the ambient, defuse and specular components
+
+                // the view direction in case of ray-tracing is the opposite of the ray's direction
+                glm::vec4 view_direction = -ray.d;
+
+                // get the hit normal of the intersection point
+                hit_object->get_surface_properties(hit_point, view_direction, hit_normal);
+
+                // set the hit color to black before adding the ambient, defuse and specular components
                 // in case the default background color is not black
-                hit_color.x = hit_color.y = hit_color.z = 0;
+                hit_color = black;
 
                 // holders for diffuse & specular values;
                 glm::vec3 diffuse(0), specular(0);
 
                 // calculate the ambient
-                hit_color += ka * hit_object->om.c;
+                hit_color += hit_object->om.ac * hit_object->om.c;
 
                 // iterate through all light sources and calculate specular and defuse components
                 for (auto& light : lights) {
@@ -97,18 +104,17 @@ void OrthographicCamera::render_scene(std::vector<Object*> &objects, std::vector
                     light->illuminate(hit_point, light_direction, light_intensity, t_near);
 
                     // dot product based on Lambert's cosine law for Lambertian reflectance
-                    const float_t dot_pr = glm::dot(hit_normal, -light_direction);
+                    const float_t dot_pr = glm::dot(hit_normal, light_direction);
 
                     // calculate the diffuse component
                     diffuse += hit_object->om.c * light_intensity * std::max(0.f, dot_pr);
 
                     // calculate the specular component
-                    glm::vec4 l_reflection = glm::normalize((2.f * dot_pr * hit_normal) + light_direction);
-                    glm::vec4 view_dir = glm::normalize(hit_point - eye);
-                    specular += light_intensity * std::max(0.f, std::pow(glm::dot(l_reflection, view_dir), n));
+                    glm::vec4 l_reflection = glm::normalize((2.f * dot_pr * hit_normal) - light_direction);
+                    specular += light_intensity * std::max(0.f, std::powf(glm::dot(l_reflection, view_direction), hit_object->om.se));
                 }
                 // add diffuse the the hit color
-                hit_color += kd * diffuse + ks * specular;
+                hit_color += hit_object->om.dc * diffuse + hit_object->om.sc * specular;
             }
 
             // assign the color to the frame buffer

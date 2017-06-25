@@ -7,14 +7,17 @@
 #include "lights/PointLight.h"
 #include <glm/gtc/matrix_transform.hpp>
 
+inline float clamp(const float &lo, const float &hi, const float &v)
+{ return std::max(lo, std::min(hi, v)); }
+
 void save_to_ppm(uint32_t width, uint32_t height, glm::vec3 *(&fb), const char fn[50]) {
     // Save result to a PPM image (keep these flags if you compile under Windows)
     std::ofstream ofs(fn, std::ios::out | std::ios::binary);
     ofs << "P6\n" << width << " " << height << "\n255\n";
     for (uint32_t i = 0; i < height * width; ++i) {
-        char r = (char) fb[i].x;
-        char g = (char) fb[i].y;
-        char b = (char) fb[i].z;
+        char r = (char)(255 * clamp(0, 1, fb[i].x));
+        char g = (char)(255 * clamp(0, 1, fb[i].y));
+        char b = (char)(255 * clamp(0, 1, fb[i].z));
         ofs << r << g << b;
     }
     ofs.close();
@@ -233,14 +236,20 @@ int main(int argc,char **argv) {
         glm::vec4 s1_p(0, 0, -4, 1);
         float_t s1_r(1.0f);
 
-        Object *s1 = new Sphere(s1_p, s1_r);
-        s1->om.c = red;
-        s1->om.dc = 0.6f;
-        s1->om.sc = 0.f;
-        objects.push_back(s1);
+        Sphere s2;
+        s2.set_center_p(s1_p);
+        s2.set_radius(s1_r);
+        s2.om.c = red;
+        s2.om.dc = 0.6f;
+        s2.om.sc = 0.f;
+        s2.om.se = 10.f;
+        s2.om.ac = 0.f;
 
-        glm::vec4 l1_p(0, 0, -1, 1);
+        objects.push_back(&s2);
+
+        glm::vec4 l1_p(0, 0, 10, 1);
         Light *l1 = new PointLight(l1_p, white, 10);
+        lights.push_back(l1);
 
 //        // rotate camera along X axis
 //        for (int i = 0; i < 41; i++) {

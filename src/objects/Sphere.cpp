@@ -6,7 +6,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "Sphere.h"
 
-bool Sphere::intersect(const Ray &r, float_t &t, glm::vec4 &p_hit, glm::vec4 &hit_norm) {
+bool Sphere::intersect(const Ray &r, float_t &t, glm::vec4 &p_hit) {
     // compute the vector l, between the sphere's center c and the ray's origin o
     glm::vec4 l = c - r.o;
 
@@ -42,10 +42,6 @@ bool Sphere::intersect(const Ray &r, float_t &t, glm::vec4 &p_hit, glm::vec4 &hi
         // the hit point is then equals to: p = r.o + t*r.d
         p_hit = r.o + t * r.d;
 
-        // the sphere's normal is the normalized vector between the hit point and
-        // the sphere's center
-        hit_norm = glm::normalize(p_hit - c);
-
         return true;
     }
 
@@ -56,13 +52,17 @@ bool Sphere::intersect(const Ray &r, float_t &t, glm::vec4 &p_hit, glm::vec4 &hi
     // the hit point is then equals to: p = r.o + t*r.d
     p_hit = r.o + t * r.d;
 
-    // the sphere's normal is the normalized vector between the hit point and
-    // the sphere's center
-    hit_norm = glm::normalize(p_hit - c);
-
     return true;
 
 }
+
+void
+Sphere::get_surface_properties(const glm::vec4 &hit_point, const glm::vec4 &view_direction, glm::vec4 &hit_normal) {
+    // the sphere's normal is the normalized vector between the hit point and
+    // the sphere's center
+    hit_normal = glm::normalize(hit_point - c);
+}
+
 
 void Sphere::apply_camera_transformation(glm::mat4 &t) {
     c = t * c;
@@ -107,9 +107,6 @@ void Sphere::translate(const float_t &translation, const uint32_t &axes_of_trans
 
     // assign the translation matrix to the object's model transform matrix
     mt = tm * mt;
-
-    // apply the translation to the sphere's c
-    c = tm * c;
 }
 
 void Sphere::rotate(const float_t &angle_of_rotation, const uint32_t &axes_of_rotation) {
@@ -154,9 +151,6 @@ void Sphere::rotate(const float_t &angle_of_rotation, const uint32_t &axes_of_ro
 
     // assign the rotation matrix to the object's model transform matrix
     mt = rm * mt;
-
-    // apply the rotation to the sphere's c
-    c = rm * c;
 }
 
 void Sphere::scale(const float_t &scaling_factor, const uint32_t &axes_of_scale) {
@@ -201,6 +195,9 @@ void Sphere::scale(const float_t &scaling_factor, const uint32_t &axes_of_scale)
 
     // multiply the r by the scaling factor
     r *= scaling_factor;
+
+    // update the squared radius of the sphere
+    r2 = powf(r, 2.f);
 }
 
 void Sphere::set_radius(const float_t &r) {
@@ -212,6 +209,7 @@ void Sphere::set_center_p(const glm::vec4 &p) {
     this->c = p;
 }
 
-Sphere::~Sphere() {
-
+void Sphere::apply_transformations() {
+    // apply the transformations stored in the sphere's model transform matrix to its position
+    c = mt * c;
 }

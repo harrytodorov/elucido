@@ -9,7 +9,8 @@
 #include "../Ray.h"
 #include "Triangle.h"
 
-bool Triangle::intersect(const Ray &r, float_t &t, glm::vec4 &p_hit, glm::vec4 &hit_norm) {
+bool Triangle::intersect(const Ray &r, float_t &t, glm::vec4 &p_hit) {
+    // TODO: check once more the code for computing ray-triangle intersection
 
     // check if ray is parallel to triangle
     float_t t_denominator = glm::dot(normal, r.d);
@@ -53,9 +54,13 @@ bool Triangle::intersect(const Ray &r, float_t &t, glm::vec4 &p_hit, glm::vec4 &
     // test passed; assign variable
     t = t_tmp;
     p_hit = ip;
-    hit_norm = normal;
 
     return true;
+}
+
+void
+Triangle::get_surface_properties(const glm::vec4 &hit_point, const glm::vec4 &view_direction, glm::vec4 &hit_normal) {
+    hit_normal = normal;
 }
 
 void Triangle::apply_camera_transformation(glm::mat4 &t) {
@@ -110,17 +115,6 @@ void Triangle::translate(const float_t &translation, const uint32_t &axes_of_tra
 
     // assign the translation matrix to the object's model transform
     mt = tm * mt;
-
-    // apply the translation to the triangle's vertices
-    v0 = tm * v0;
-    v1 = tm * v1;
-    v2 = tm * v2;
-
-    // for transforming normals we don't use the matrix with which we transform vertices and vectors
-    // but use the transpose of the inverse of the matrix we have proof why:
-    // https://www.scratchapixel.com/lessons/mathematics-physics-for-computer-graphics/geometry/transforming-normals
-    glm::mat4 nm = glm::transpose(glm::inverse(tm));
-    normal = glm::normalize(nm*normal);
 }
 
 void Triangle::rotate(const float_t &angle_of_rotation, const uint32_t &axes_of_rotation) {
@@ -162,17 +156,6 @@ void Triangle::rotate(const float_t &angle_of_rotation, const uint32_t &axes_of_
 
     // assign the rotation matrix to object's model transform
     mt = rm * mt;
-
-    // apply the rotation matrix to the triangle's vertices
-    v0 = rm * v0;
-    v1 = rm * v1;
-    v2 = rm * v2;
-
-    // for transforming normals we don't use the matrix with which we transform vertices and vectors
-    // but use the transpose of the inverse of the matrix we have proof why:
-    // https://www.scratchapixel.com/lessons/mathematics-physics-for-computer-graphics/geometry/transforming-normals
-    glm::mat4 nm = glm::transpose(glm::inverse(rm));
-    normal = glm::normalize(nm*normal);
 }
 
 void Triangle::scale(const float_t &scaling_factor, const uint32_t &axes_of_scale) {
@@ -214,15 +197,17 @@ void Triangle::scale(const float_t &scaling_factor, const uint32_t &axes_of_scal
 
     // assign the scale matrix to the object's model transform
     mt = sm * mt;
+}
 
-    // apply the scale matrix to the triangle's vertices
-    v0 = sm * v0;
-    v1 = sm * v1;
-    v2 = sm * v2;
+void Triangle::apply_transformations() {
+    // apply transformations stored in the triangle's model transform matrix to the triangle's vertices
+    v0 = mt * v0;
+    v1 = mt * v1;
+    v2 = mt * v2;
 
     // for transforming normals we don't use the matrix with which we transform vertices and vectors
     // but use the transpose of the inverse of the matrix we have proof why:
     // https://www.scratchapixel.com/lessons/mathematics-physics-for-computer-graphics/geometry/transforming-normals
-    glm::mat4 nm = glm::transpose(glm::inverse(sm));
-    normal = glm::normalize(nm*normal);
+    glm::mat4 nm = glm::transpose(glm::inverse(mt));
+    normal = glm::normalize(nm * normal);
 }

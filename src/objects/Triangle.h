@@ -42,9 +42,12 @@ public:
         v2 = vec2;
         normal = glm::normalize(glm::vec4(glm::cross(glm::vec3(v1)-glm::vec3(v0), glm::vec3(v2)-glm::vec3(v0)), 0));
     }
+    virtual ~Triangle() {}
 
-    bool intersect(const Ray &r, float_t &t, glm::vec4 &p_hit, glm::vec4 &hit_norm);
+    bool intersect(const Ray &r, float_t &t, glm::vec4 &p_hit);
+    void get_surface_properties(const glm::vec4 &hit_point, const glm::vec4 &view_direction, glm::vec4 &hit_normal);
     void apply_camera_transformation(glm::mat4 &t);
+    void apply_transformations();
     void translate(const float_t &translation, const uint32_t &axes_of_translation);
     void rotate(const float_t &angle_of_rotation, const uint32_t &axes_of_rotation);
     void scale(const float_t &scaling_factor, const uint32_t &axes_of_scale);

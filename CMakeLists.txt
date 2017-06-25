@@ -3,7 +3,7 @@ project(elucido)
 set(CMAKE_CXX_STANDARD 11)
 
 # Add source files to project
-set(SOURCE_FILES src/main.cpp src/Ray.cpp src/Ray.h src/cameras/Camera.cpp src/cameras/Camera.h src/objects/Object.cpp src/objects/Object.h src/objects/Sphere.cpp src/objects/Sphere.h src/cameras/OrthographicCamera.cpp src/cameras/OrthographicCamera.h src/Utilities.h src/objects/Triangle.cpp src/objects/Triangle.h src/cameras/PerspectiveCamera.cpp src/cameras/PerspectiveCamera.h src/ImagePlane.cpp src/ImagePlane.h src/lights/Light.cpp src/lights/Light.h src/lights/PointLight.cpp src/lights/PointLight.h src/Material.cpp src/Material.h)
+set(SOURCE_FILES src/main.cpp src/Ray.cpp src/Ray.h src/cameras/Camera.cpp src/cameras/Camera.h src/objects/Object.cpp src/objects/Object.h src/objects/Sphere.cpp src/objects/Sphere.h src/cameras/OrthographicCamera.cpp src/cameras/OrthographicCamera.h src/Utilities.h src/objects/Triangle.cpp src/objects/Triangle.h src/cameras/PerspectiveCamera.cpp src/cameras/PerspectiveCamera.h src/ImagePlane.cpp src/ImagePlane.h src/lights/Light.cpp src/lights/Light.h src/lights/PointLight.cpp src/lights/PointLight.h src/Material.cpp src/Material.h src/lights/DirectionalLight.cpp src/lights/DirectionalLight.h)
 
 # Create executable
 add_executable(elucido ${SOURCE_FILES})

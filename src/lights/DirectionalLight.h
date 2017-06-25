@@ -1,20 +1,20 @@
 //
-// Created by Haralambi Todorov on 26/05/2017.
+// Created by Haralambi Todorov on 25/06/2017.
 //
 
-#ifndef ELUCIDO_POINTLIGHT_H
-#define ELUCIDO_POINTLIGHT_H
+#ifndef ELUCIDO_DIRECTIONALLIGHT_H
+#define ELUCIDO_DIRECTIONALLIGHT_H
 
 
 #include "Light.h"
 
-class PointLight : public Light {
+class DirectionalLight : public Light {
 public:
-    glm::vec4 p;
+    glm::vec4 d;
 
-    PointLight() : Light(), p(glm::vec4(0, 0, 0, 1)) {}
-    PointLight(const glm::vec4 &p, const glm::vec3 &c, const float_t &i) : Light(c, i), p(p) {}
-    ~PointLight() {}
+    DirectionalLight() : Light(), d(glm::vec4(0, 0, -1, 0)) {}
+    DirectionalLight(const glm::vec4 &d, const glm::vec3 &c, const float_t &i) : Light(c, i), d(d) {}
+    ~DirectionalLight() {}
 
     void illuminate(const glm::vec4 &hit_point, glm::vec4 &light_dir, glm::vec3 &light_intensity, float_t distance);
     void apply_camera_transformation(glm::mat4 &t);
@@ -23,4 +23,5 @@ public:
     void rotate(const float_t &angle_of_rotation, const uint32_t &axes_of_rotation);
 };
 
-#endif //ELUCIDO_POINTLIGHT_H
+
+#endif //ELUCIDO_DIRECTIONALLIGHT_H

@@ -19,10 +19,12 @@ public:
 
     Object() : mt(glm::mat4(1)) {}
     Object(const Material &m) : om(m), mt(glm::mat4(1)) {}
-    ~Object() {}
+    virtual ~Object() {}
 
-    virtual bool intersect(const Ray &r, float_t &t, glm::vec4 &p_hit, glm::vec4 &hit_norm) = 0;
+    virtual bool intersect(const Ray &r, float_t &t, glm::vec4 &p_hit) = 0;
+    virtual void get_surface_properties(const glm::vec4 &hit_point, const glm::vec4 &view_direction, glm::vec4 &hit_normal) = 0;
     virtual void apply_camera_transformation(glm::mat4 &t) = 0;
+    virtual void apply_transformations() = 0;
     virtual void translate(const float_t &translation, const uint32_t &axes_of_translation) = 0;
     virtual void rotate(const float_t &angle_of_rotation, const uint32_t &axes_of_rotation) = 0;
     virtual void scale(const float_t &scaling_factor, const uint32_t &axes_of_scale) = 0;

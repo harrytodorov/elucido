@@ -15,7 +15,7 @@ void PerspectiveCamera::render_scene(std::vector<Object*> &objects, std::vector<
     glm::vec3           hit_color;
     glm::vec4           hit_point;
     glm::vec4           hit_normal;
-    glm::vec4           tmp_cp;
+    glm::vec4           cp;
     glm::mat4           icm;                    // inverse camera's transformation matrix
 
     // first position the camera at the origin
@@ -54,13 +54,12 @@ void PerspectiveCamera::render_scene(std::vector<Object*> &objects, std::vector<
             curr_x = (2.f * ((c + 0.5f) / ip.hres) - 1) * ar * sf;
             curr_y = (1.f - 2.f * ((r + 0.5f) / ip.vres)) * sf;
 
-
-            // current position in the c of the image plane's cell
-            tmp_cp = glm::vec4(curr_x, curr_y, -1.f, 1.f);
+            // current position in the center of the image plane's cell
+            cp = glm::vec4(curr_x, curr_y, -1.f, 1.f);
 
             // compute the direction of the ray; vector from the eye to the current image
             // plane cell's c; of course direction should be normalized as well
-            ray.d = glm::normalize(tmp_cp - eye);
+            ray.d = glm::normalize(cp - eye);
 
             // set the nearest point initially at infinity
             t_near = infinity;
@@ -73,7 +72,7 @@ void PerspectiveCamera::render_scene(std::vector<Object*> &objects, std::vector<
 
             // iterate through all objects and find the closest intersection
             for (auto &object : objects) {
-                if (object->intersect(ray, t_near, hit_point, hit_normal)) {
+                if (object->intersect(ray, t_near, hit_point)) {
                     hit_object = object;
                 }
             }
@@ -81,15 +80,22 @@ void PerspectiveCamera::render_scene(std::vector<Object*> &objects, std::vector<
             // get the color from the closest intersected object, if any
             // calculate the illumination per pixel using Phong illumination model
             if (hit_object != nullptr) {
+
+                // the view direction in case of ray-tracing is the opposite of the ray's direction
+                glm::vec4 view_direction = -ray.d;
+
+                // get the hit normal of the intersection point
+                hit_object->get_surface_properties(hit_point, view_direction, hit_normal);
+
                 // set the hit color to 0 before adding the ambient, defuse and specular components
                 // in case the default background color is not black
-                hit_color.x = hit_color.y = hit_color.z = 0;
+                hit_color = glm::vec3(0);
 
                 // holders for diffuse & specular values;
                 glm::vec3 diffuse(0), specular(0);
 
                 // calculate the ambient
-                hit_color += ka * hit_object->om.c;
+                hit_color += hit_object->om.ac * hit_object->om.c;
 
                 // iterate through all light sources and calculate specular and defuse components
                 for (auto& light : lights) {
@@ -101,15 +107,14 @@ void PerspectiveCamera::render_scene(std::vector<Object*> &objects, std::vector<
                     const float_t dot_pr = glm::dot(hit_normal, light_direction);
 
                     // calculate the diffuse component
-                    diffuse += (hit_object->om.c * light_intensity * std::max(0.f, dot_pr)) / glm::vec3(30);
+                    diffuse += hit_object->om.c * light_intensity * std::max(0.f, dot_pr);
 
                     // calculate the specular component
-                    glm::vec4 l_reflection = glm::normalize((2.f * dot_pr * hit_normal) + light_direction);
-                    glm::vec4 view_dir = glm::normalize(hit_point - eye);
-                    specular += light_intensity * std::max(0.f, std::pow(glm::dot(l_reflection, view_dir), n));
+                    glm::vec4 l_reflection = glm::normalize((2.f * dot_pr * hit_normal) - light_direction);
+                    specular += light_intensity * std::max(0.f, std::powf(glm::dot(l_reflection, view_direction), hit_object->om.se));
                 }
                 // add diffuse the the hit color
-                hit_color += kd * diffuse + ks * specular;
+                hit_color += hit_object->om.dc * diffuse + hit_object->om.dc * specular;
             }
 
             // assign the color to the frame buffer
