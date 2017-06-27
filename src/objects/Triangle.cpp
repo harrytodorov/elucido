@@ -12,15 +12,21 @@
 bool Triangle::intersect(const Ray &r, float_t &t, glm::vec4 &p_hit) {
     // TODO: check once more the code for computing ray-triangle intersection
 
-    // check if ray is parallel to triangle
-    float_t t_denominator = glm::dot(normal, r.d);
-    if (fabs(t_denominator) < kEpsilon) return false;
+    // check if ray is parallel to triangle; compute the dot product
+    // of the triangle's normal and the ray direction
+    // if ray and triangle's normal are close to 0, they don't intersect
+    float_t nomal_ray_d_prod = glm::dot(normal, r.d);
+    if (fabs(nomal_ray_d_prod) < kEpsilon) return false;
 
-    // compute nominator for t
+    // compute the dot product of the vector between one of the triangle's vertices and
+    // the ray's origin and the triangle's normal
     float_t t_nominator = glm::dot(v0 - r.o, normal);
 
-    // compute t
-    float_t t_tmp = t_nominator / t_denominator;
+    // compute the distance between the ray's origin and the hit point
+    // with the triangle
+    float_t t_tmp = t_nominator / nomal_ray_d_prod;
+
+    // if the computed distance is negative, the triangle is behind the ray's origin
     if (t_tmp < kEpsilon) return false;
 
     // compute the intersection point
@@ -110,11 +116,8 @@ void Triangle::translate(const float_t &translation, const uint32_t &axes_of_tra
             break;
     }
 
-    // get the translation matrix
-    glm::mat4 tm = glm::translate(glm::mat4(1), tv);
-
     // assign the translation matrix to the object's model transform
-    mt = tm * mt;
+    mt = glm::translate(mt, tv);
 }
 
 void Triangle::rotate(const float_t &angle_of_rotation, const uint32_t &axes_of_rotation) {
@@ -152,10 +155,7 @@ void Triangle::rotate(const float_t &angle_of_rotation, const uint32_t &axes_of_
     }
 
     // get the rotation matrix
-    glm::mat4 rm = glm::rotate(glm::mat4(1), glm::radians(angle_of_rotation), rv);
-
-    // assign the rotation matrix to object's model transform
-    mt = rm * mt;
+    mt = glm::rotate(mt, glm::radians(angle_of_rotation), rv);
 }
 
 void Triangle::scale(const float_t &scaling_factor, const uint32_t &axes_of_scale) {
@@ -192,11 +192,8 @@ void Triangle::scale(const float_t &scaling_factor, const uint32_t &axes_of_scal
             break;
     }
 
-    // get the scale matrix
-    glm::mat4 sm = glm::scale(glm::mat4(1), sv);
-
     // assign the scale matrix to the object's model transform
-    mt = sm * mt;
+    mt = glm::scale(mt, sv);
 }
 
 void Triangle::apply_transformations() {

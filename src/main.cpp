@@ -233,7 +233,8 @@ int main(int argc,char **argv) {
     {
         /// scene 02
 
-        glm::vec4 s2_p(0, 0, -4, 1);
+        /// object set-up
+        glm::vec4 s2_p(0, 0, -3, 1);
         float_t s2_r(1.0f);
 
         Sphere s2;
@@ -241,29 +242,39 @@ int main(int argc,char **argv) {
         s2.set_radius(s2_r);
         s2.om.c = red;
         s2.om.dc = 0.8f;
-        s2.om.sc = 0.4f;
-        s2.om.se = 16.f;
-        s2.om.ac = 0.2f;
+        s2.om.sc = 0.7f;
+        s2.om.se = 10.f;
+        s2.om.ac = 0.f;
         objects.push_back(&s2);
 
 
-        glm::vec4 l1_p(-2.f, 0, -3.5f, 1);
-        glm::vec4 l2_p(1.f, 1.3f, -2.2f, 1);
+        /// light set-up
+        glm::vec4 l1_p(0.f, 0.f, -1.f, 1);
 
-        Light *l1 = new PointLight(l1_p, white, 2);
-        Light *l2 = new PointLight(l2_p, white, 8);
+        Light *l1 = new PointLight(l1_p, white, 10);
         lights.push_back(l1);
-        lights.push_back(l2);
 
+        /// transformations
 
+        // light is positioned initially on the left side of the sphere
 
-//        // translate sphere along X axis
-//        for (int i = 0; i < 61; i++) {
+        // translate the light so its relative to the object position
+        l1->translate(1.f, Z);
+
+        // rotate it 90 deg
+        l1->rotate(10, Y);
+
+        // translate it back rotated
+        l1->translate(-1.f, Z);
+
+        l1->apply_transformations();
+
+//        // light rotates around a sphere with constant diffuse
+//        for (int i = 0; i < 37; i++) {
+//            sprintf(fn, "light_rotation_ar_sphere_diffuse_0_7_%03d.ppm", i);
 //            camera->render_scene(objects, lights, ip);
-//            sprintf(fn, "translate_sphere_along_x_%03d.ppm", i);
 //            save_to_ppm(ip, fn);
-//            s2.translate(0.1f, X);
-//            s2.apply_transformations();
+//            l1->rotate(5.f, Y);
 //        }
 
         camera->render_scene(objects, lights, ip);

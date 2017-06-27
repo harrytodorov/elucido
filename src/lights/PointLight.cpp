@@ -56,11 +56,8 @@ void PointLight::translate(const float_t &translation, const uint32_t &axes_of_t
             break;
     }
 
-    // get the translation matrix
-    glm::mat4 tm = glm::translate(glm::mat4(1), tv);
-
-    // assign the translation matrix to the light's model transform
-    mt = tm * mt;
+    // assign the translation matrix to object's model transform
+    mt = glm::translate(mt, tv);
 }
 
 void PointLight::rotate(const float_t &angle_of_rotation, const uint32_t &axes_of_rotation) {
@@ -97,11 +94,8 @@ void PointLight::rotate(const float_t &angle_of_rotation, const uint32_t &axes_o
             break;
     }
 
-    // get the rotation matrix
-    glm::mat4 rm = glm::rotate(glm::mat4(1), glm::radians(angle_of_rotation), rv);
-
     // assign the rotation matrix to object's model transform
-    mt = rm * mt;
+    mt = glm::rotate(mt, glm::radians(angle_of_rotation), rv);
 }
 
 void PointLight::apply_transformations() {

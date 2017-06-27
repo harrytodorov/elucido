@@ -102,11 +102,8 @@ void Sphere::translate(const float_t &translation, const uint32_t &axes_of_trans
             break;
     }
 
-    // get the translation matrix
-    glm::mat4 tm = glm::translate(glm::mat4(1), tv);
-
     // assign the translation matrix to the object's model transform matrix
-    mt = tm * mt;
+    mt = glm::translate(mt, tv);
 }
 
 void Sphere::rotate(const float_t &angle_of_rotation, const uint32_t &axes_of_rotation) {
@@ -146,11 +143,8 @@ void Sphere::rotate(const float_t &angle_of_rotation, const uint32_t &axes_of_ro
             break;
     }
 
-    // get the rotation matrix
-    glm::mat4 rm = glm::rotate(glm::mat4(1), glm::radians(angle_of_rotation), rv);
-
     // assign the rotation matrix to the object's model transform matrix
-    mt = rm * mt;
+    mt = glm::rotate(mt, glm::radians(angle_of_rotation), rv);
 }
 
 void Sphere::scale(const float_t &scaling_factor, const uint32_t &axes_of_scale) {
@@ -187,11 +181,8 @@ void Sphere::scale(const float_t &scaling_factor, const uint32_t &axes_of_scale)
             break;
     }
 
-    // get the scale matrix
-    glm::mat4 sm = glm::scale(glm::mat4(1), sv);
-
     // assign the scale matrix to the object's model transform
-    mt = sm * mt;
+    glm::mat4 mt = glm::scale(mt, sv);
 
     // multiply the r by the scaling factor
     r *= scaling_factor;
