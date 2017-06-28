@@ -14,7 +14,7 @@ class ImagePlane {
 public:
     uint32_t        hres;      // horizontal image resolution
     uint32_t        vres;      // vertical image resolution
-    glm::vec3*      fb;        // frame buffer
+    glm::vec3       *fb;       // frame buffer
     glm::vec3       bc;        // background color
 
     // constructors & destructors
@@ -28,7 +28,6 @@ public:
     }
     ImagePlane() : ImagePlane(640, 480) {}
     ~ImagePlane() {}
-
 };
 
 

@@ -9,16 +9,17 @@
 #include <glm/vec3.hpp>
 #include <glm/mat4x4.hpp>
 #include "../Ray.h"
-#include "../Material.h"
+#include "../materials/Material.h"
+#include "../materials/PhongMaterial.h"
 
 class Object {
 public:
-    Material  om;   // object's material
+    Material  *om;   // object's material
     glm::mat4 mt;   // model transform matrix for an object;
                     // places and transforms the object in world coordinate space
 
-    Object() : mt(glm::mat4(1)) {}
-    Object(const Material &m) : om(m), mt(glm::mat4(1)) {}
+    Object() : om(new PhongMaterial()), mt(glm::mat4(1)) {}
+    Object(Material *m) : om(m), mt(glm::mat4(1)) {}
     virtual ~Object() {}
 
     virtual bool intersect(const Ray &r, float_t &t, glm::vec4 &p_hit) = 0;

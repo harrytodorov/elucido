@@ -4,7 +4,8 @@
 
 #include "PerspectiveCamera.h"
 
-void PerspectiveCamera::render_scene(std::vector<Object*> &objects, std::vector<Light*> lights, ImagePlane &ip) {
+void PerspectiveCamera::render_scene(const std::vector<Object *, std::allocator<Object *>> &objects,
+                                     const std::vector<Light *, std::allocator<Light *>> &lights, ImagePlane &ip) {
     float_t             curr_x = 0;
     float_t             curr_y = 0;
     float_t             t_near;
@@ -87,34 +88,8 @@ void PerspectiveCamera::render_scene(std::vector<Object*> &objects, std::vector<
                 // get the hit normal of the intersection point
                 hit_object->get_surface_properties(hit_point, view_direction, hit_normal);
 
-                // set the hit color to 0 before adding the ambient, defuse and specular components
-                // in case the default background color is not black
-                hit_color = glm::vec3(0);
-
-                // holders for diffuse & specular values;
-                glm::vec3 diffuse(0), specular(0);
-
-                // calculate the ambient
-                hit_color += hit_object->om.ac * hit_object->om.c;
-
-                // iterate through all light sources and calculate specular and defuse components
-                for (auto& light : lights) {
-                    glm::vec4 light_direction(0);
-                    glm::vec3 light_intensity(0);
-                    light->illuminate(hit_point, light_direction, light_intensity);
-
-                    // dot product based on Lambert's cosine law for Lambertian reflectance
-                    const float_t dot_pr = glm::dot(hit_normal, light_direction);
-
-                    // calculate the diffuse component
-                    diffuse += hit_object->om.c * light_intensity * std::max(0.f, dot_pr);
-
-                    // calculate the specular component
-                    glm::vec4 l_reflection = glm::normalize(2.f * dot_pr * hit_normal - light_direction);
-                    specular += light_intensity * std::max(0.f, std::powf(glm::dot(l_reflection, view_direction), hit_object->om.se));
-                }
-                // add diffuse the the hit color
-                hit_color += hit_object->om.dc * diffuse + hit_object->om.sc * specular;
+                // get the color at the hit surface
+                hit_object->om->compute_color_at_surface(lights, hit_point, hit_normal, view_direction, hit_color);
             }
 
             // assign the color to the frame buffer

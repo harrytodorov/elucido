@@ -10,7 +10,7 @@
 inline float clamp(const float &lo, const float &hi, const float &v)
 { return std::max(lo, std::min(hi, v)); }
 
-void save_to_ppm(uint32_t width, uint32_t height, glm::vec3 *(&fb), const char fn[50]) {
+void save_to_ppm(uint32_t width, uint32_t height, glm::vec3 fb[], const char fn[50]) {
     // Save result to a PPM image (keep these flags if you compile under Windows)
     std::ofstream ofs(fn, std::ios::out | std::ios::binary);
     ofs << "P6\n" << width << " " << height << "\n255\n";
@@ -27,7 +27,7 @@ void save_to_ppm(ImagePlane &ip, const char fn[50]) {
     save_to_ppm(ip.hres, ip.vres, ip.fb, fn);
 }
 
-int main(int argc,char **argv) {
+int main(int argc, char **argv) {
     std::vector<Object*> objects;
     std::vector<Light*> lights;
     Camera* camera = new PerspectiveCamera();
@@ -236,17 +236,15 @@ int main(int argc,char **argv) {
         /// object set-up
         glm::vec4 s2_p(0, 0, -3, 1);
         float_t s2_r(1.0f);
+        float_t ac = 0.f;
+        float_t dc = 1.f;
+        float_t sc = 0.7f;
+        float_t se = 16.f;
 
-        Sphere s2;
-        s2.set_center_p(s2_p);
-        s2.set_radius(s2_r);
-        s2.om.c = red;
-        s2.om.dc = 0.8f;
-        s2.om.sc = 0.7f;
-        s2.om.se = 10.f;
-        s2.om.ac = 0.f;
+        PhongMaterial s2_m(ac, dc, sc, se, blue);
+
+        Sphere s2(s2_p, s2_r, &s2_m);
         objects.push_back(&s2);
-
 
         /// light set-up
         glm::vec4 l1_p(0.f, 0.f, -1.f, 1);
@@ -258,23 +256,31 @@ int main(int argc,char **argv) {
 
         // light is positioned initially on the left side of the sphere
 
-        // translate the light so its relative to the object position
-        l1->translate(1.f, Z);
+//        // translate the light so its relative to the object position
+//        l1->translate(1.f, Z);
+//
+//        // rotate it 90 deg
+//        l1->rotate(90, Y);
+//
+//        // translate it back rotated
+//        l1->translate(-1.f, Z);
+//
+//        l1->apply_transformations();
 
-        // rotate it 90 deg
-        l1->rotate(10, Y);
-
-        // translate it back rotated
-        l1->translate(-1.f, Z);
-
-        l1->apply_transformations();
-
-//        // light rotates around a sphere with constant diffuse
+//        // light rotates around a sphere with constant diffuse every 5 degrees
 //        for (int i = 0; i < 37; i++) {
-//            sprintf(fn, "light_rotation_ar_sphere_diffuse_0_7_%03d.ppm", i);
+//            sprintf(fn, "light_rotation_ar_sphere_diffuse_0_8_%03d.ppm", i);
 //            camera->render_scene(objects, lights, ip);
 //            save_to_ppm(ip, fn);
-//            l1->rotate(5.f, Y);
+//
+//            // translate the light so its relative to the object position
+//            l1->translate(1.f, Z);
+//            // rotate it 5 deg
+//            l1->rotate(5, Y);
+//            // translate it back rotated
+//            l1->translate(-1.f, Z);
+//            l1->apply_transformations();
+//
 //        }
 
         camera->render_scene(objects, lights, ip);

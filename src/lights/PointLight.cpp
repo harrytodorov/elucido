@@ -15,7 +15,7 @@ float_t norm(glm::vec4 &v) {
 void PointLight::illuminate(const glm::vec4 &hit_point, glm::vec4 &light_dir, glm::vec3 &light_intensity) {
     light_dir = glm::normalize(p - hit_point);
     float_t r2 = norm(light_dir);
-    light_intensity = (float_t) (intensity / (4.0 * M_PI * r2)) * color;
+    light_intensity = (float_t) (intensity / (4.f * M_PI * r2)) * color;
 }
 
 void PointLight::apply_camera_transformation(glm::mat4 &t) {

@@ -39,7 +39,9 @@ public:
     {}
     ~Camera() {}
 
-    virtual void render_scene(std::vector<Object*> &objects, std::vector<Light*> lights, ImagePlane &ip) = 0;
+    virtual void render_scene(const std::vector<Object *, std::allocator<Object *>> &objects,
+                              const std::vector<Light *, std::allocator<Light *>> &lights,
+                              ImagePlane &ip) = 0;
     void translate(const float_t &translation, const uint32_t &axes_of_translation);
     void rotate(float_t rot_angle, uint32_t axes_of_rotation);
 
