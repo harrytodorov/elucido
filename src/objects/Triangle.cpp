@@ -10,7 +10,6 @@
 #include "Triangle.h"
 
 bool Triangle::intersect(const Ray &r, float_t &t, glm::vec4 &p_hit) {
-    // TODO: check once more the code for computing ray-triangle intersection
 
     // check if ray is parallel to triangle; compute the dot product
     // of the triangle's normal and the ray direction
@@ -57,6 +56,12 @@ bool Triangle::intersect(const Ray &r, float_t &t, glm::vec4 &p_hit) {
     d_prod = glm::dot(normal, perp_vec);
     if (d_prod < 0) return false;
 
+
+    // check if the intersection point we got is bigger than the nearest intersection point we already have computed
+    // we're not interested in that intersection
+    if (t_tmp > t)
+        return false;
+
     // test passed; assign variable
     t = t_tmp;
     p_hit = ip;
@@ -74,12 +79,13 @@ void Triangle::apply_camera_transformation(glm::mat4 &t) {
     v1 = t*v1;
     v2 = t*v2;
 
-    // for normals we don't use the matrix with which we transform vertices and vectors
-    // but use the transpose of the inverse of the matrix we have
-    // (proof why:
-    // https://www.scratchapixel.com/lessons/mathematics-physics-for-computer-graphics/geometry/transforming-normals)
-    glm::mat4 nm = glm::transpose(glm::inverse(t));
-    normal = glm::normalize(nm*normal);
+//    // for normals we don't use the matrix with which we transform vertices and vectors
+//    // but use the transpose of the inverse of the matrix we have
+//    // (proof why:
+//    // https://www.scratchapixel.com/lessons/mathematics-physics-for-computer-graphics/geometry/transforming-normals)
+//    glm::mat4 nm = glm::transpose(glm::inverse(t));
+//    normal = glm::normalize(nm * normal);
+    normal = glm::normalize(glm::vec4(glm::cross(glm::vec3(v1)-glm::vec3(v0), glm::vec3(v2)-glm::vec3(v0)), 0));
 }
 
 void Triangle::translate(const float_t &translation, const uint32_t &axes_of_translation) {
@@ -117,7 +123,8 @@ void Triangle::translate(const float_t &translation, const uint32_t &axes_of_tra
     }
 
     // assign the translation matrix to the object's model transform
-    mt = glm::translate(mt, tv);
+    glm::mat4 tm = glm::translate(glm::mat4(1), tv);
+    mt = tm * mt;
 }
 
 void Triangle::rotate(const float_t &angle_of_rotation, const uint32_t &axes_of_rotation) {
@@ -155,7 +162,8 @@ void Triangle::rotate(const float_t &angle_of_rotation, const uint32_t &axes_of_
     }
 
     // get the rotation matrix
-    mt = glm::rotate(mt, glm::radians(angle_of_rotation), rv);
+    glm::mat4 rm = glm::rotate(glm::mat4(1), glm::radians(angle_of_rotation), rv);
+    mt = rm * mt;
 }
 
 void Triangle::scale(const float_t &scaling_factor, const uint32_t &axes_of_scale) {
@@ -193,7 +201,8 @@ void Triangle::scale(const float_t &scaling_factor, const uint32_t &axes_of_scal
     }
 
     // assign the scale matrix to the object's model transform
-    mt = glm::scale(mt, sv);
+    glm::mat4 sm = glm::scale(glm::mat4(1), sv);
+    mt = sm * mt;
 }
 
 void Triangle::apply_transformations() {
@@ -202,11 +211,12 @@ void Triangle::apply_transformations() {
     v1 = mt * v1;
     v2 = mt * v2;
 
-    // for transforming normals we don't use the matrix with which we transform vertices and vectors
-    // but use the transpose of the inverse of the matrix we have proof why:
-    // https://www.scratchapixel.com/lessons/mathematics-physics-for-computer-graphics/geometry/transforming-normals
-    glm::mat4 nm = glm::transpose(glm::inverse(mt));
-    normal = glm::normalize(nm * normal);
+//    // for transforming normals we don't use the matrix with which we transform vertices and vectors
+//    // but use the transpose of the inverse of the matrix we have proof why:
+//    // https://www.scratchapixel.com/lessons/mathematics-physics-for-computer-graphics/geometry/transforming-normals
+//    glm::mat4 nm = glm::transpose(glm::inverse(mt));
+//    normal = glm::normalize(nm * normal);
+    normal = glm::normalize(glm::vec4(glm::cross(glm::vec3(v1)-glm::vec3(v0), glm::vec3(v2)-glm::vec3(v0)), 0));
 
     // after applying the transformations to a triangle; its model transform matrix is set back to the identity matrix
     mt = glm::mat4(1);

@@ -42,6 +42,9 @@ public:
     virtual void render_scene(const std::vector<Object *, std::allocator<Object *>> &objects,
                               const std::vector<Light *, std::allocator<Light *>> &lights,
                               ImagePlane &ip) = 0;
+    void compute_color_at_surface(const std::vector<Light *> &lights, const std::vector<Object *> &objects,
+                                      const Material *object_material, const glm::vec4 &hit_point,
+                                      const glm::vec4 &hit_normal, const glm::vec4 view_direction, glm::vec3 &color);
     void translate(const float_t &translation, const uint32_t &axes_of_translation);
     void rotate(float_t rot_angle, uint32_t axes_of_rotation);
 

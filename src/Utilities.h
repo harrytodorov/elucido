@@ -25,11 +25,16 @@ const glm::vec3 white(1);                       // white color
 const glm::vec3 black(0);                       // black color
 const glm::vec3 sienna(0.627f, 0.321f, 0.176f); // sienna color
 
+const float_t shadow_bias = 0.0001;             // shadow bias is used for avoiding self-shadows
+
 enum RayType: uint8_t {
     primary,
-
+    shadow
 };
 
+enum MaterialType: uint8_t {
+    phong,
+};
 
 
 #endif //ELUCIDO_UTILITIES_H

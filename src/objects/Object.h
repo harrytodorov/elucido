@@ -15,7 +15,7 @@
 class Object {
 public:
     Material  *om;   // object's material
-    glm::mat4 mt;   // model transform matrix for an object;
+    glm::mat4 mt;   // model transform matrix for an object
                     // places and transforms the object in world coordinate space
 
     Object() : om(new PhongMaterial()), mt(glm::mat4(1)) {}

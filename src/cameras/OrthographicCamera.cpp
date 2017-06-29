@@ -88,7 +88,8 @@ void OrthographicCamera::render_scene(const std::vector<Object *, std::allocator
                 hit_object->get_surface_properties(hit_point, view_direction, hit_normal);
 
                 // get the color at the hit surface
-                hit_object->om->compute_color_at_surface(lights, hit_point, hit_normal, view_direction, hit_color);
+                compute_color_at_surface(lights, objects, hit_object->om, hit_point, hit_normal, view_direction,
+                                         hit_color);
             }
 
             // assign the color to the frame buffer

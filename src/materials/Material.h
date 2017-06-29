@@ -6,24 +6,22 @@
 #define ELUCIDO_MATERIAL_H
 
 
+#include "../Utilities.h"
+#include "../lights/Light.h"
 #include <glm/vec3.hpp>
 #include <cmath>
 #include <vector>
-#include "../Utilities.h"
-#include "../lights/Light.h"
 
 class Material {
 public:
-    glm::vec3 c;        // color
+    glm::vec3       c;        // color
+    MaterialType    mt;
 
     // default constructor
     // - default material color is white
-    Material() : c(white) {}
-    Material(const glm::vec3 &col) : c(col) {}
+    Material(const MaterialType &mt) : c(white), mt(mt) {}
+    Material(const glm::vec3 &col, const MaterialType &mt) : c(col), mt(mt) {}
     virtual ~Material() {}
-
-    virtual void compute_color_at_surface(const std::vector<Light *> &lights, const glm::vec4 &hit_point, const glm::vec4 &hit_normal,
-                                              const glm::vec4 view_direction, glm::vec3 &color) = 0;
 };
 
 

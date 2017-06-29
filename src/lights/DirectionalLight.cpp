@@ -6,8 +6,10 @@
 #include <cstdio>
 #include "DirectionalLight.h"
 
-void DirectionalLight::illuminate(const glm::vec4 &hit_point, glm::vec4 &light_dir, glm::vec3 &light_intensity) {
-
+void DirectionalLight::illuminate(const glm::vec4 &hit_point, glm::vec4 &light_dir, glm::vec3 &light_intensity, float_t &distance) {
+    light_dir = glm::normalize(d);
+    light_intensity = intensity * color;
+    distance = infinity;
 }
 
 void DirectionalLight::apply_camera_transformation(glm::mat4 &t) {
@@ -49,7 +51,8 @@ void DirectionalLight::translate(const float_t &translation, const uint32_t &axe
     }
 
     // assign the translation matrix to the light's model transform
-    mt = glm::translate(mt, tv);
+    glm::mat4 tm = glm::translate(glm::mat4(1), tv);
+    mt = tm * mt;
 }
 
 void DirectionalLight::rotate(const float_t &angle_of_rotation, const uint32_t &axes_of_rotation) {
@@ -87,12 +90,14 @@ void DirectionalLight::rotate(const float_t &angle_of_rotation, const uint32_t &
     }
 
     // assign the rotation matrix to object's model transform
-    mt = glm::rotate(mt, glm::radians(angle_of_rotation), rv);
+    glm::mat4 rm = glm::rotate(glm::mat4(1), glm::radians(angle_of_rotation), rv);
+    mt = rm * mt;
 }
 
 void DirectionalLight::apply_transformations() {
-    // apply the transformations stored in the light's model transform matrix to its direction
-    d = mt * d;
+    // apply the transformations stored in the light's model transform matrix to its direction and
+    // normalize the direction vector
+    d = glm::normalize(mt * d);
 
     // after applying the transformations to a directional light; its model transform matrix is set back to the identity matrix
     mt = glm::mat4(1);

@@ -8,14 +8,21 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "PointLight.h"
 
-float_t norm(glm::vec4 &v) {
-    return (float_t) ((v.x*v.x) + (v.y*v.y) + (v.z*v.z));
-}
+void PointLight::illuminate(const glm::vec4 &hit_point, glm::vec4 &light_dir, glm::vec3 &light_intensity, float_t &distance) {
+    float_t sq_dist;
 
-void PointLight::illuminate(const glm::vec4 &hit_point, glm::vec4 &light_dir, glm::vec3 &light_intensity) {
-    light_dir = glm::normalize(p - hit_point);
-    float_t r2 = norm(light_dir);
-    light_intensity = (float_t) (intensity / (4.f * M_PI * r2)) * color;
+    // compute the light direction
+    light_dir = hit_point - p;
+
+    // compute the distance between the light source and the hit point
+    sq_dist = glm::dot(light_dir, light_dir);
+    distance = sqrtf(sq_dist);
+
+    // now we can safely normalize the light direction vector
+    light_dir = glm::normalize(light_dir);
+
+    // for computing the light intensity use the inverse square law
+    light_intensity = intensity * color / (float_t) (4.f * M_PI * sq_dist);
 }
 
 void PointLight::apply_camera_transformation(glm::mat4 &t) {
@@ -57,7 +64,8 @@ void PointLight::translate(const float_t &translation, const uint32_t &axes_of_t
     }
 
     // assign the translation matrix to object's model transform
-    mt = glm::translate(mt, tv);
+    glm::mat4 tm = glm::translate(glm::mat4(1), tv);
+    mt = tm * mt;
 }
 
 void PointLight::rotate(const float_t &angle_of_rotation, const uint32_t &axes_of_rotation) {
@@ -95,7 +103,8 @@ void PointLight::rotate(const float_t &angle_of_rotation, const uint32_t &axes_o
     }
 
     // assign the rotation matrix to object's model transform
-    mt = glm::rotate(mt, glm::radians(angle_of_rotation), rv);
+    glm::mat4 rm = glm::rotate(glm::mat4(1), glm::radians(angle_of_rotation), rv);
+    mt = rm * mt;
 }
 
 void PointLight::apply_transformations() {

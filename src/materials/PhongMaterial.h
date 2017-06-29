@@ -21,16 +21,17 @@ public:
     // - default diffuse constant is 0.6
     // - default specular constant is 0.2
     // - default specular exponent is 10
-    PhongMaterial() : Material(), ac(0.2f), dc(0.6f), sc(0.2f), se(10.f) {}
+    PhongMaterial() : Material(phong), ac(0.2f), dc(0.6f), sc(0.2f), se(10.f) {}
+    PhongMaterial(const glm::vec3 &c) : Material(c, phong), ac(0.2f), dc(0.6f), sc(0.2f), se(10.f) {}
     PhongMaterial(const float_t &a, const float_t &d, const float_t &sc, const float_t &se) :
-            Material(),
+            Material(phong),
             ac(a),
             dc(d),
             sc(sc),
             se(se)
     {}
     PhongMaterial(const float_t &a, const float_t &d, const float_t &sc, const float_t &se, const glm::vec3 &c) :
-            Material(c),
+            Material(c, phong),
             ac(a),
             dc(d),
             sc(sc),
@@ -38,11 +39,13 @@ public:
     {}
     ~PhongMaterial() {}
 
-    void compute_color_at_surface(const std::vector<Light *> &lights, const glm::vec4 &hit_point, const glm::vec4 &hit_normal,
-                                  const glm::vec4 view_direction, glm::vec3 &color);
     inline void set_ambient(const float_t &a) {ac = a;}
     inline void set_diffuse(const float_t &d) {dc = d;}
     inline void set_specular(const float_t &sc, const float_t &se) {this->sc = sc; this->se = se;}
+    inline float_t get_ambient() { return ac;}
+    inline float_t get_diffuse() { return dc;}
+    inline float_t get_specular() { return sc;}
+    inline float_t get_specular_exp() { return se;}
 };
 
 

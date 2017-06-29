@@ -7,6 +7,9 @@
 #include "Sphere.h"
 
 bool Sphere::intersect(const Ray &r, float_t &t, glm::vec4 &p_hit) {
+    // variable to hold distance between ray's origin and intersection point(s)
+    float_t t0, t1;
+
     // compute the vector l, between the sphere's center c and the ray's origin o
     glm::vec4 l = c - r.o;
 
@@ -16,11 +19,11 @@ bool Sphere::intersect(const Ray &r, float_t &t, glm::vec4 &p_hit) {
     // compute the squared length of the vector l, l2
     float_t l2 = glm::dot(l, l);
 
-    // if the l2 > r2 (origin of the ray is outside the sphere's center) and
-    // s < 0, the projection of l on d is less than 0 (the ray's origin is behind
-    // the sphere), we can reject that there is an interesection between the ray and
-    // the sphere
-    if (s < 0 && l2 > r2) return false;
+//    // if the l2 > r2 (origin of the ray is outside the sphere's center) and
+//    // s < 0, the projection of l on d is less than 0 (the ray's origin is behind
+//    // the sphere), we can reject that there is an interesection between the ray and
+//    // the sphere
+//    if (s < 0 && l2 > r2) return false;
 
     // compute the side m2, of a right triangle formed by s, l and m
     // using the Pythagorean theorem: m2 = l2 - s2
@@ -33,27 +36,35 @@ bool Sphere::intersect(const Ray &r, float_t &t, glm::vec4 &p_hit) {
     // m and q: q2 = r2 - m2; we want q, so q = sqrt(r2 - m2)
     float_t q = sqrtf(r2 - m2);
 
-    // if l2 > r2, there are 2 intersection points with the ray and the one we need is
-    // the closer one: p = r.o + (s-q) * r.d
-    if (l2 > r2) {
-        // t = s-q, the closest distance between the ray's origin and an ray-sphere intersection
-        t = s - q;
+    // find out the distances to the 2 intersection points
+    t0 = s - q;
+    t1 = s + q;
 
-        // the hit point is then equals to: p = r.o + t*r.d
-        p_hit = r.o + t * r.d;
+    if (t0 > t1)
+        std::swap(t0, t1);
 
-        return true;
+    // it t0 is less than 0, take t1 instead
+    if (t0 < 0) {
+        // let's use t1
+        t0 = t1;
+
+        // if both of them are less than 0, terminate
+        if (t0 < 0)
+            return false;
     }
+
+    // if t0 is greater than the current nearest distance to an object, terminate
+    if (t0 > t)
+        return false;
 
     // the ray's origin is within the sphere, there is only one intersection point:
     // p = r.o + (s+q) * r.d
-    t = s + q;
+    t = t0;
 
     // the hit point is then equals to: p = r.o + t*r.d
     p_hit = r.o + t * r.d;
 
     return true;
-
 }
 
 void
@@ -62,7 +73,6 @@ Sphere::get_surface_properties(const glm::vec4 &hit_point, const glm::vec4 &view
     // the sphere's center
     hit_normal = glm::normalize(hit_point - c);
 }
-
 
 void Sphere::apply_camera_transformation(glm::mat4 &t) {
     c = t * c;
@@ -103,7 +113,8 @@ void Sphere::translate(const float_t &translation, const uint32_t &axes_of_trans
     }
 
     // assign the translation matrix to the object's model transform matrix
-    mt = glm::translate(mt, tv);
+    glm::mat4 tm = glm::translate(glm::mat4(1), tv);
+    mt = tm * mt;
 }
 
 void Sphere::rotate(const float_t &angle_of_rotation, const uint32_t &axes_of_rotation) {
@@ -144,7 +155,8 @@ void Sphere::rotate(const float_t &angle_of_rotation, const uint32_t &axes_of_ro
     }
 
     // assign the rotation matrix to the object's model transform matrix
-    mt = glm::rotate(mt, glm::radians(angle_of_rotation), rv);
+    glm::mat4 rm = glm::rotate(glm::mat4(1), glm::radians(angle_of_rotation), rv);
+    mt = rm * mt;
 }
 
 void Sphere::scale(const float_t &scaling_factor, const uint32_t &axes_of_scale) {
@@ -182,7 +194,8 @@ void Sphere::scale(const float_t &scaling_factor, const uint32_t &axes_of_scale)
     }
 
     // assign the scale matrix to the object's model transform
-    glm::mat4 mt = glm::scale(mt, sv);
+    glm::mat4 sm = glm::scale(glm::mat4(1), sv);
+    mt = sm * mt;
 
     // multiply the r by the scaling factor
     r *= scaling_factor;
