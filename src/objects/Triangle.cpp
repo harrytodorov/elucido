@@ -9,7 +9,7 @@
 #include "../Ray.h"
 #include "Triangle.h"
 
-bool Triangle::intersect(const Ray &r, float_t &t, glm::vec4 &p_hit) {
+bool Triangle::intersect(const Ray &r, float_t &t, glm::vec4 &p_hit, uint32_t &ti) {
 
     // check if ray is parallel to triangle; compute the dot product
     // of the triangle's normal and the ray direction
@@ -65,12 +65,14 @@ bool Triangle::intersect(const Ray &r, float_t &t, glm::vec4 &p_hit) {
     // test passed; assign variable
     t = t_tmp;
     p_hit = ip;
+    ti = -1;
 
     return true;
 }
 
 void
-Triangle::get_surface_properties(const glm::vec4 &hit_point, const glm::vec4 &view_direction, glm::vec4 &hit_normal) {
+Triangle::get_surface_properties(const glm::vec4 &hit_point, const glm::vec4 &view_direction, const uint32_t &triangle_index,
+                                 glm::vec4 &hit_normal) {
     hit_normal = normal;
 }
 

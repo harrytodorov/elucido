@@ -17,9 +17,9 @@ public:
     OrthographicCamera() : Camera(), zf(1.f) {}
     OrthographicCamera(const float_t &z) : Camera(), zf(z) {}
 
-    void render_scene(const std::vector<Object *, std::allocator<Object *>> &objects,
-                      const std::vector<Light *, std::allocator<Light *>> &lights,
-                      ImagePlane &ip);
+    render_info render_scene(const std::vector<Object *, std::allocator<Object *>> &objects,
+                             const std::vector<Light *, std::allocator<Light *>> &lights,
+                             ImagePlane &ip);
 };
 
 #endif //ELUCIDO_ORTHOGRAPHICCAMERA_H

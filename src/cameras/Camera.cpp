@@ -97,15 +97,16 @@ glm::mat4 Camera::inverse_ctm() {
 }
 
 void Camera::compute_color_at_surface(const std::vector<Light *> &lights, const std::vector<Object *> &objects,
-                                      const Material *object_material, const glm::vec4 &hit_point,
-                                      const glm::vec4 &hit_normal, const glm::vec4 view_direction, glm::vec3 &color) {
+                                      const Material *object_material, const glm::vec4 &hit_point, const glm::vec4 &hit_normal,
+                                      const glm::vec4 view_direction, glm::vec3 &color) {
 
     switch (object_material->mt) {
         case phong: {
             Ray shadow_ray;
             PhongMaterial *material = (PhongMaterial *) object_material;
             glm::vec4 dummy_point(0);
-            float_t visibility = 1.f;
+            float_t visibility(1.f);
+            uint32_t dummy_index(-1);
 
             // set the hit color to black before adding the ambient, defuse and specular components
             // in case the default background color is not black
@@ -137,7 +138,7 @@ void Camera::compute_color_at_surface(const std::vector<Light *> &lights, const 
                 // iterate through all objects to find if there is an object who
                 // cast a shadow on this surface point
                 for (auto &object : objects) {
-                    if (object->intersect(shadow_ray, tmp_dist, dummy_point) && tmp_dist < distance) {
+                    if (object->intersect(shadow_ray, tmp_dist, dummy_point, dummy_index) && tmp_dist < distance) {
                         visibility = 0.f;
                     }
                 }
@@ -146,18 +147,17 @@ void Camera::compute_color_at_surface(const std::vector<Light *> &lights, const 
                 lambertian_refl = glm::dot(hit_normal, -light_direction);
 
                 // calculate diffuse component
-                diffuse += material->c * light_intensity * std::max(0.f, lambertian_refl);
+                diffuse += visibility * (material->c * light_intensity * std::max(0.f, lambertian_refl));
 
                 // calculate specular component
                 glm::vec4 light_reflection = glm::normalize(2.f * lambertian_refl * hit_normal + light_direction);
                 float_t max_lf_vd = std::max(0.f, glm::dot(light_reflection, view_direction));
                 float_t pow_max_se = std::powf(max_lf_vd, material->get_specular_exp());
 
-                specular += light_intensity * pow_max_se;
+                specular += visibility * (light_intensity * pow_max_se);
             }
             // add ambient, diffuse and specular to the the hit color
-            color += visibility * (material->get_ambient() * material->c + material->get_diffuse() * diffuse +
-                                   material->get_specular() * specular);
+            color += material->get_ambient() * material->c + material->get_diffuse() * diffuse + material->get_specular() * specular;
             break;
         }
 

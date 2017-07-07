@@ -6,7 +6,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "Sphere.h"
 
-bool Sphere::intersect(const Ray &r, float_t &t, glm::vec4 &p_hit) {
+bool Sphere::intersect(const Ray &r, float_t &t, glm::vec4 &p_hit, uint32_t &ti) {
     // variable to hold distance between ray's origin and intersection point(s)
     float_t t0, t1;
 
@@ -64,11 +64,15 @@ bool Sphere::intersect(const Ray &r, float_t &t, glm::vec4 &p_hit) {
     // the hit point is then equals to: p = r.o + t*r.d
     p_hit = r.o + t * r.d;
 
+    // because we don't have a triangulated mesh, we give the triangle index value of -1
+    ti = -1;
+
     return true;
 }
 
 void
-Sphere::get_surface_properties(const glm::vec4 &hit_point, const glm::vec4 &view_direction, glm::vec4 &hit_normal) {
+Sphere::get_surface_properties(const glm::vec4 &hit_point, const glm::vec4 &view_direction, const uint32_t &triangle_index,
+                               glm::vec4 &hit_normal) {
     // the sphere's normal is the normalized vector between the hit point and
     // the sphere's center
     hit_normal = glm::normalize(hit_point - c);

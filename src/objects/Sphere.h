@@ -21,8 +21,9 @@ public:
 
     void set_radius(const float_t &r);
     void set_center_p(const glm::vec4 &p);
-    bool intersect(const Ray &r, float_t &t, glm::vec4 &p_hit);
-    void get_surface_properties(const glm::vec4 &hit_point, const glm::vec4 &view_direction, glm::vec4 &hit_normal);
+    bool intersect(const Ray &r, float_t &t, glm::vec4 &p_hit, uint32_t &ti);
+    void get_surface_properties(const glm::vec4 &hit_point, const glm::vec4 &view_direction, const uint32_t &triangle_index,
+                                    glm::vec4 &hit_normal);
     void apply_camera_transformation(glm::mat4 &t);
     void apply_transformations();
     void translate(const float_t &translation, const uint32_t &axes_of_translation);

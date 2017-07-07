@@ -22,8 +22,9 @@ public:
     Object(Material *m) : om(m), mt(glm::mat4(1)) {}
     virtual ~Object() {}
 
-    virtual bool intersect(const Ray &r, float_t &t, glm::vec4 &p_hit) = 0;
-    virtual void get_surface_properties(const glm::vec4 &hit_point, const glm::vec4 &view_direction, glm::vec4 &hit_normal) = 0;
+    virtual bool intersect(const Ray &r, float_t &t, glm::vec4 &p_hit, uint32_t &ti) = 0;
+    virtual void get_surface_properties(const glm::vec4 &hit_point, const glm::vec4 &view_direction, const uint32_t &triangle_index,
+                                            glm::vec4 &hit_normal) = 0;
     virtual void apply_camera_transformation(glm::mat4 &t) = 0;
     virtual void apply_transformations() = 0;
     virtual void translate(const float_t &translation, const uint32_t &axes_of_translation) = 0;

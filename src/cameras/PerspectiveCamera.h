@@ -23,9 +23,9 @@ public:
             fov(f)
     {}
 
-    void render_scene(const std::vector<Object *, std::allocator<Object *>> &objects,
-                      const std::vector<Light *, std::allocator<Light *>> &lights,
-                      ImagePlane &ip);
+    render_info render_scene(const std::vector<Object *, std::allocator<Object *>> &objects,
+                             const std::vector<Light *, std::allocator<Light *>> &lights,
+                             ImagePlane &ip);
 };
 
 

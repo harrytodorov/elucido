@@ -4,13 +4,14 @@
 
 #include "PerspectiveCamera.h"
 
-void PerspectiveCamera::render_scene(const std::vector<Object *, std::allocator<Object *>> &objects,
-                                     const std::vector<Light *, std::allocator<Light *>> &lights, ImagePlane &ip) {
+render_info PerspectiveCamera::render_scene(const std::vector<Object *, std::allocator<Object *>> &objects,
+                                            const std::vector<Light *, std::allocator<Light *>> &lights, ImagePlane &ip) {
     float_t             curr_x = 0;
     float_t             curr_y = 0;
     float_t             t_near;
     float_t             ar;                     // image plane's aspect ratio
     float_t             sf;                     // scaling factor obtained by the tan(fov/2)
+    uint32_t            ti;                     // triangle index
     Object              *hit_object = nullptr;
     Ray                 ray;
     glm::vec3           hit_color;
@@ -18,6 +19,7 @@ void PerspectiveCamera::render_scene(const std::vector<Object *, std::allocator<
     glm::vec4           hit_normal;
     glm::vec4           cp;
     glm::mat4           icm;                    // inverse camera's transformation matrix
+    render_info         ri;                     // rendering information
 
     // first position the camera at the origin
     // and get the inverse camera's transformation matrix
@@ -73,7 +75,7 @@ void PerspectiveCamera::render_scene(const std::vector<Object *, std::allocator<
 
             // iterate through all objects and find the closest intersection
             for (auto &object : objects) {
-                if (object->intersect(ray, t_near, hit_point)) {
+                if (object->intersect(ray, t_near, hit_point, ti)) {
                     hit_object = object;
                 }
             }
@@ -86,11 +88,15 @@ void PerspectiveCamera::render_scene(const std::vector<Object *, std::allocator<
                 glm::vec4 view_direction = -ray.d;
 
                 // get the hit normal of the intersection point
-                hit_object->get_surface_properties(hit_point, view_direction, hit_normal);
+                hit_object->get_surface_properties(hit_point, view_direction, ti, hit_normal);
 
                 // get the color at the hit surface
                 compute_color_at_surface(lights, objects, hit_object->om, hit_point, hit_normal, view_direction,
                                          hit_color);
+
+                // accumulate number of shadow rays; for each hit object we definitely have a shadow ray
+                ri.shadow_rays += 1;
+
             }
 
             // assign the color to the frame buffer
@@ -108,4 +114,10 @@ void PerspectiveCamera::render_scene(const std::vector<Object *, std::allocator<
     for (auto& light : lights) {
         light->apply_camera_transformation(ctm);
     }
+    // get rendering information
+    ri.num_of_light_sources = (uint32_t) lights.size();
+    ri.num_of_objects = (uint32_t) objects.size();
+    ri.primary_rays = ip.vres * ip.hres;
+
+    return ri;
 }
