@@ -98,7 +98,8 @@ glm::mat4 Camera::inverse_ctm() {
 
 void Camera::compute_color_at_surface(const std::vector<Light *> &lights, const std::vector<Object *> &objects,
                                       const Material *object_material, const glm::vec4 &hit_point, const glm::vec4 &hit_normal,
-                                      const glm::vec4 view_direction, glm::vec3 &color) {
+                                      const glm::vec4 view_direction, glm::vec3 &color, uint32_t &num_of_ray_object_tests,
+                                      uint32_t &num_of_ray_object_intersections) {
 
     switch (object_material->mt) {
         case phong: {
@@ -138,8 +139,14 @@ void Camera::compute_color_at_surface(const std::vector<Light *> &lights, const 
                 // iterate through all objects to find if there is an object who
                 // cast a shadow on this surface point
                 for (auto &object : objects) {
+                    // increment the number of ray-object tests
+                    __sync_fetch_and_add(&num_of_ray_object_tests, 1);
+
                     if (object->intersect(shadow_ray, tmp_dist, dummy_point, dummy_index) && tmp_dist < distance) {
                         visibility = 0.f;
+
+                        // increment the number of ray-object intersections
+                        __sync_fetch_and_add(&num_of_ray_object_intersections, 1);
                     }
                 }
 

@@ -30,6 +30,7 @@ const glm::vec3 deadgold(0.647f, 0.604f, 0.486f);
 const glm::vec3 violet(0.573f, 0.384f, 0.757f);
 const glm::vec3 orangish(0.929f, 0.615f, 0.306f);
 const glm::vec3 whitish(0.780f, 0.812f, 0.867f);
+const glm::vec3 lightslategray(0.467f, 0.533f, 0.6f);
 
 const float_t shadow_bias = 0.0001;             // shadow bias is used for avoiding self-shadows
 
@@ -49,6 +50,8 @@ struct render_info {
     uint32_t shadow_rays{0};
     uint32_t num_of_objects{0};
     uint32_t num_of_light_sources{0};
+    uint32_t num_of_ray_object_tests{0};
+    uint32_t num_of_ray_object_intersections{0};
 };
 
 enum RayType: uint8_t {

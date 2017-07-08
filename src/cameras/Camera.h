@@ -44,7 +44,8 @@ public:
                                      ImagePlane &ip) = 0;
     void compute_color_at_surface(const std::vector<Light *> &lights, const std::vector<Object *> &objects,
                                       const Material *object_material, const glm::vec4 &hit_point, const glm::vec4 &hit_normal,
-                                      const glm::vec4 view_direction, glm::vec3 &color);
+                                      const glm::vec4 view_direction, glm::vec3 &color, uint32_t &num_of_ray_object_tests,
+                                      uint32_t &num_of_ray_object_intersections);
     void translate(const float_t &translation, const uint32_t &axes_of_translation);
     void rotate(float_t rot_angle, uint32_t axes_of_rotation);
 

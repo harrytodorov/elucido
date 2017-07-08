@@ -75,8 +75,18 @@ render_info PerspectiveCamera::render_scene(const std::vector<Object *, std::all
 
             // iterate through all objects and find the closest intersection
             for (auto &object : objects) {
+                // increment the number of ray-object tests
+                __sync_fetch_and_add(&ri.num_of_ray_object_tests, 1);
+
+                // check objects for intersection with tha ray
                 if (object->intersect(ray, t_near, hit_point, ti)) {
                     hit_object = object;
+
+                    // increment the number of ray-object intersections
+                    __sync_fetch_and_add(&ri.num_of_ray_object_intersections, 1);
+
+                    // increment number of shadow rays; for each hit object we definitely have a shadow ray
+                    __sync_fetch_and_add(&ri.shadow_rays, 1);
                 }
             }
 
@@ -92,7 +102,7 @@ render_info PerspectiveCamera::render_scene(const std::vector<Object *, std::all
 
                 // get the color at the hit surface
                 compute_color_at_surface(lights, objects, hit_object->om, hit_point, hit_normal, view_direction,
-                                         hit_color);
+                                         hit_color, ri.num_of_ray_object_tests, ri.num_of_ray_object_intersections);
 
                 // accumulate number of shadow rays; for each hit object we definitely have a shadow ray
                 ri.shadow_rays += 1;

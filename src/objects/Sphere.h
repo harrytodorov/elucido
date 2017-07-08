@@ -15,6 +15,7 @@ class Sphere : public Object {
     glm::vec4   c;  // sphere's center
 public:
     Sphere() : Object(), r(1.0), c(0, 0, 0, 1) { r2 = 1.f; }
+    Sphere(Material *mat) : Object(mat),  r(1.0), c(0, 0, 0, 1) { r2 = 1.f; }
     Sphere(const glm::dvec4 &c, const float_t &r) : Object(), r(r), c(c) { r2 = powf(r, 2.f); }
     Sphere(const glm::dvec4 &c, const float_t &r, Material *m) : Object(m), r(r), c(c) { r2 = powf(r, 2.f); }
     ~Sphere() {}
