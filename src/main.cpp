@@ -6,18 +6,16 @@
 #include "objects/TriangleMesh.h"
 #include "lights/PointLight.h"
 #include <glm/gtc/matrix_transform.hpp>
-
-inline float clamp(const float &lo, const float &hi, const float &v)
-{ return std::max(lo, std::min(hi, v)); }
+#include <chrono>
 
 void save_to_ppm(uint32_t width, uint32_t height, glm::vec3 fb[], const char fn[50]) {
     // Save result to a PPM image (keep these flags if you compile under Windows)
     std::ofstream ofs(fn, std::ios::out | std::ios::binary);
     ofs << "P6\n" << width << " " << height << "\n255\n";
     for (uint32_t i = 0; i < height * width; ++i) {
-        char r = (char)(255 * clamp(0, 1, fb[i].x));
-        char g = (char)(255 * clamp(0, 1, fb[i].y));
-        char b = (char)(255 * clamp(0, 1, fb[i].z));
+        char r = (char)(255 * glm::clamp(fb[i].r, 0.f, 1.f));
+        char g = (char)(255 * glm::clamp(fb[i].g, 0.f, 1.f));
+        char b = (char)(255 * glm::clamp(fb[i].b, 0.f, 1.f));
         ofs << r << g << b;
     }
     ofs.close();
@@ -110,10 +108,10 @@ int main(int argc, char **argv) {
 
     /// material set-up
 
-    float_t ac = 0.3f;
+    float_t ac = 0.2f;
     float_t dc = 0.8f;
     float_t sc = 0.3f;
-    float_t se = 10.f;
+    float_t se = 16.f;
     PhongMaterial mat1(ac, dc, sc, se, whitish);
     PhongMaterial mat2(ac, dc, sc, se, deadgold);
 
@@ -121,13 +119,13 @@ int main(int argc, char **argv) {
 
     glm::vec4 l1_p(0.f, 0.f, 0.0f, 1);
 
-    PointLight l1(l1_p, white, 85);
+    PointLight l1(l1_p, white, 30);
     l1.translate(2, Y);
     l1.translate(1.5f, X);
     l1.apply_transformations();
     lights.push_back(&l1);
 
-    PointLight l2(l1_p, violet, 80);
+    PointLight l2(l1_p, violet, 35);
     l2.translate(-2, X);
     l2.translate(2, Y);
     l2.translate(-2.4f, Z);
@@ -160,7 +158,7 @@ int main(int argc, char **argv) {
     t2.translate(-2.5f, Z);
     t2.apply_transformations();
 
-    sprintf(fn, "./monkey.obj");
+    sprintf(fn, "./cube.obj");
     TriangleMesh tm1(&mat1);
 
     // measure loading the triangulated mesh
@@ -177,8 +175,9 @@ int main(int argc, char **argv) {
     std::cout << "# of faces in the mesh: " << li.num_of_faces << std::endl;
     std::cout << std::endl;
 
-    tm1.rotate(-15, X);
-    tm1.translate(-3.5f, Z);
+//    tm1.rotate(-45, XY);
+    tm1.translate(-4.5f, Z);
+    tm1.translate(0.5f, Y);
     tm1.apply_transformations();
     objects.push_back(&tm1);
 
@@ -186,31 +185,31 @@ int main(int argc, char **argv) {
     camera->rotate(-15, X);
     camera->translate(1.5, Y);
 
-//    for (int t = 0; t < 19; ++t) {
-//        tm1.translate(4.5f, Z);
-//        tm1.translate(-0.5f, Y);
-//        tm1.rotate(20, XY);
-//        tm1.translate(-4.5f, Z);
-//        tm1.translate(0.5f, Y);
-//        tm1.apply_transformations();
-//        sprintf(fn, "cube_rotating_around_xy_axis_%03d.ppm", t);
-//        camera->render_scene(objects, lights, ip);
-//        save_to_ppm(ip, fn);
-//    }
+    for (int t = 0; t < 19; ++t) {
+        tm1.translate(4.5f, Z);
+        tm1.translate(-0.5f, Y);
+        tm1.rotate(20, XY);
+        tm1.translate(-4.5f, Z);
+        tm1.translate(0.5f, Y);
+        tm1.apply_transformations();
+        sprintf(fn, "cube_rotating/cube_rotating_around_xy_axis_%03d.ppm", t);
+        camera->render_scene(objects, lights, ip);
+        save_to_ppm(ip, fn);
+    }
 
-    // measure rendering time
-    std::cout << "Start rendering scene..." << std::endl;
-    render_info ri;
-    auto start_rendering = std::chrono::high_resolution_clock::now();
-    ri = camera->render_scene(objects, lights, ip);
-    auto finish_rendering = std::chrono::high_resolution_clock::now();
-    std::cout << "Done rendering the scene: " << std::endl;
-    std::cout << "Elapsed time for rendering the scene: " << std::chrono::duration_cast<std::chrono::milliseconds>(finish_rendering - start_rendering).count() << " milliseconds" << std::endl;
-    std::cout << "# of primary rays: " << ri.primary_rays << std::endl;
-    std::cout << "# of shadow rays: " << ri.shadow_rays << std::endl;
-    std::cout << "# of objects in the scene: " << ri.num_of_objects << std::endl;
-    std::cout << "# of light sources in the scene: " << ri.num_of_light_sources<< std::endl;
-    save_to_ppm(ip, "monkey.ppm");
+//    // measure rendering time
+//    std::cout << "Start rendering scene..." << std::endl;
+//    render_info ri;
+//    auto start_rendering = std::chrono::high_resolution_clock::now();
+//    ri = camera->render_scene(objects, lights, ip);
+//    auto finish_rendering = std::chrono::high_resolution_clock::now();
+//    std::cout << "Done rendering the scene: " << std::endl;
+//    std::cout << "Elapsed time for rendering the scene: " << std::chrono::duration_cast<std::chrono::milliseconds>(finish_rendering - start_rendering).count() << " milliseconds" << std::endl;
+//    std::cout << "# of primary rays: " << ri.primary_rays << std::endl;
+//    std::cout << "# of shadow rays: " << ri.shadow_rays << std::endl;
+//    std::cout << "# of objects in the scene: " << ri.num_of_objects << std::endl;
+//    std::cout << "# of light sources in the scene: " << ri.num_of_light_sources<< std::endl;
+//    save_to_ppm(ip, "cube.ppm");
 
     return 0;
 }

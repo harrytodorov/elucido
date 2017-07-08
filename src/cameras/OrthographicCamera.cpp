@@ -99,7 +99,7 @@ render_info OrthographicCamera::render_scene(const std::vector<Object *, std::al
             }
 
             // assign the color to the frame buffer
-            *(pixels++) = glm::clamp(hit_color, 0.f, 255.f);
+            *(pixels++) = glm::clamp(hit_color, 0.f, 1.f);
         }
     }
 

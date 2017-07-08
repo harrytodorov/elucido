@@ -16,7 +16,7 @@ void PointLight::illuminate(const glm::vec4 &hit_point, glm::vec4 &light_dir, gl
 
     // compute the distance between the light source and the hit point
     sq_dist = glm::dot(light_dir, light_dir);
-    distance = sqrtf(sq_dist);
+    distance = glm::sqrt(sq_dist);
 
     // now we can safely normalize the light direction vector
     light_dir = glm::normalize(light_dir);

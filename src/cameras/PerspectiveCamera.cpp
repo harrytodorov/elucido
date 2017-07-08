@@ -100,7 +100,7 @@ render_info PerspectiveCamera::render_scene(const std::vector<Object *, std::all
             }
 
             // assign the color to the frame buffer
-            *(pixels++) = glm::clamp(hit_color, 0.f, 255.f);
+            *(pixels++) = glm::clamp(hit_color, 0.f, 1.f);
         }
     }
 

@@ -147,12 +147,12 @@ void Camera::compute_color_at_surface(const std::vector<Light *> &lights, const 
                 lambertian_refl = glm::dot(hit_normal, -light_direction);
 
                 // calculate diffuse component
-                diffuse += visibility * (material->c * light_intensity * std::max(0.f, lambertian_refl));
+                diffuse += visibility * (material->c * light_intensity * glm::max(0.f, lambertian_refl));
 
                 // calculate specular component
                 glm::vec4 light_reflection = glm::normalize(2.f * lambertian_refl * hit_normal + light_direction);
-                float_t max_lf_vd = std::max(0.f, glm::dot(light_reflection, view_direction));
-                float_t pow_max_se = std::powf(max_lf_vd, material->get_specular_exp());
+                float_t max_lf_vd = glm::max(0.f, glm::dot(light_reflection, view_direction));
+                float_t pow_max_se = glm::pow(max_lf_vd, material->get_specular_exp());
 
                 specular += visibility * (light_intensity * pow_max_se);
             }
