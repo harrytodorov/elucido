@@ -25,7 +25,7 @@ loading_info TriangleMesh::load_mesh(const char *f) {
     std::ifstream fs(f);
 
     // if we fail to load file from memory, exit the function
-    if (fs.fail())
+    if (!fs.good())
         return ret;
 
     // read the file line by line
