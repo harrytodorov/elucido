@@ -13,11 +13,28 @@ class Sphere : public Object {
     float_t     r2; // the squared sphere's radius; needed to compute the ray-sphere intersecion
                     // computed once, by constructing the sphere
     glm::vec4   c;  // sphere's center
+
 public:
-    Sphere() : Object(), r(1.0), c(0, 0, 0, 1) { r2 = 1.f; }
-    Sphere(Material *mat) : Object(mat),  r(1.0), c(0, 0, 0, 1) { r2 = 1.f; }
-    Sphere(const glm::dvec4 &c, const float_t &r) : Object(), r(r), c(c) { r2 = powf(r, 2.f); }
-    Sphere(const glm::dvec4 &c, const float_t &r, Material *m) : Object(m), r(r), c(c) { r2 = powf(r, 2.f); }
+    Sphere() : Object(), r(1.0), c(0, 0, 0, 1) {
+        r2 = 1.f;
+        bb.extend_by(glm::vec4(c.x-r, c.y-r, c.z-r, 1));
+        bb.extend_by(glm::vec4(c.x+r, c.y+r, c.z+r, 1));
+    }
+    Sphere(Material *mat) : Object(mat),  r(1.0), c(0, 0, 0, 1) {
+        r2 = 1.f;
+        bb.extend_by(glm::vec4(c.x-r, c.y-r, c.z-r, 1));
+        bb.extend_by(glm::vec4(c.x+r, c.y+r, c.z+r, 1));
+    }
+    Sphere(const glm::vec4 &_c, const float_t &_r) : Object(), r(_r), c(_c) {
+        r2 = powf(_r, 2.f);
+        bb.extend_by(glm::vec4(c.x-r, c.y-r, c.z-r, 1));
+        bb.extend_by(glm::vec4(c.x+r, c.y+r, c.z+r, 1));
+    }
+    Sphere(const glm::vec4 &c, const float_t &r, Material *m) : Object(m), r(r), c(c) {
+        r2 = powf(r, 2.f);
+        bb.extend_by(glm::vec4(c.x-r, c.y-r, c.z-r, 1));
+        bb.extend_by(glm::vec4(c.x+r, c.y+r, c.z+r, 1));
+    }
     ~Sphere() {}
 
     void set_radius(const float_t &r);

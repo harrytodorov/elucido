@@ -118,18 +118,18 @@ int main(int argc, char **argv) {
 
     glm::vec4 l1_p(0.f, 0.f, 0.0f, 1);
 
-    PointLight l1(l1_p, white, 30);
-    l1.translate(2, Y);
+    PointLight l1(l1_p, white, 60);
+    l1.translate(-1.f, Y);
     l1.translate(1.5f, X);
     l1.apply_transformations();
     lights.push_back(&l1);
-
-    PointLight l2(l1_p, violet, 35);
-    l2.translate(-2, X);
-    l2.translate(2, Y);
-    l2.translate(-2.4f, Z);
-    l2.apply_transformations();
-    lights.push_back(&l2);
+//
+//    PointLight l2(l1_p, violet, 35);
+//    l2.translate(-2, X);
+//    l2.translate(2, Y);
+//    l2.translate(-2.4f, Z);
+//    l2.apply_transformations();
+//    lights.push_back(&l2);
 
 //    PointLight l3(l1_p, orangish, 40);
 //    l3.translate(2, X);
@@ -138,31 +138,29 @@ int main(int argc, char **argv) {
 //    l3.apply_transformations();
 //    lights.push_back(&l3);
 
-    /// object set-up
+//    /// object set-up
+//
+//    glm::vec4 v0(-7, 0, 7, 1);
+//    glm::vec4 v1(7, 0, 7, 1);
+//    glm::vec4 v2(-7, 0, -7, 1);
+//    glm::vec4 v3(7, 0, -7, 1);
 
-    glm::vec4 v0(-7, 0, 7, 1);
-    glm::vec4 v1(7, 0, 7, 1);
-    glm::vec4 v2(-7, 0, -7, 1);
-    glm::vec4 v3(7, 0, -7, 1);
+//    Triangle t1(v0, v1, v2, &mat2);
+//    objects.push_back(&t1);
+//    t1.translate(-1.f, Y);
+//    t1.translate(-2.5f, Z);
+//    t1.apply_transformations();
+//
+//    Triangle t2(v1, v3, v2, &mat2);
+//    objects.push_back(&t2);
+//    t2.translate(-1.f, Y);
+//    t2.translate(-2.5f, Z);
+//    t2.apply_transformations();
 
-    Triangle t1(v0, v1, v2, &mat2);
-    objects.push_back(&t1);
-    t1.translate(-1.f, Y);
-    t1.translate(-2.5f, Z);
-    t1.apply_transformations();
-
-    Triangle t2(v1, v3, v2, &mat2);
-    objects.push_back(&t2);
-    t2.translate(-1.f, Y);
-    t2.translate(-2.5f, Z);
-    t2.apply_transformations();
-
-//    Sphere s1(&mat1);
+//    Sphere s1(glm::vec4(0, 0, -5, 1), 0.7f, &mat1);
 //    objects.push_back(&s1);
-//    s1.translate(-3.f, Z);
-//    s1.apply_transformations();
 
-    sprintf(fn, "./monkey.obj");
+    sprintf(fn, "./cube.obj");
     TriangleMesh tm1(&mat1);
 
     // measure loading the triangulated mesh
@@ -180,23 +178,24 @@ int main(int argc, char **argv) {
     std::cout << "# of faces in the mesh                : " << li.num_of_faces << std::endl;
     std::cout << std::endl;
 
-    tm1.rotate(-15, X);
-    tm1.translate(-3.f, Z);
-    tm1.apply_transformations();
+//    tm1.rotate(-15, X);
+//    tm1.translate(-3.f, Z);
+//    tm1.apply_transformations();
     objects.push_back(&tm1);
 
     /// camera transformations
-    camera->rotate(-15, X);
-    camera->translate(1.5, Y);
+//    camera->rotate(-15, X);
+//    camera->translate(2, Y);
 
-//    for (int t = 0; t < 19; ++t) {
-//        tm1.translate(4.5f, Z);
-//        tm1.translate(-0.5f, Y);
-//        tm1.rotate(20, XY);
-//        tm1.translate(-4.5f, Z);
-//        tm1.translate(0.5f, Y);
-//        tm1.apply_transformations();
-//        sprintf(fn, "cube_rotating/cube_rotating_around_xy_axis_%03d.ppm", t);
+//    for (int t = 1; t < 20; ++t) {
+////        tm1.translate(4.5f, Z);
+////        tm1.translate(-0.5f, Y);
+////        tm1.rotate(20, XY);
+////        tm1.translate(-4.5f, Z);
+////        tm1.translate(0.5f, Y);
+////        tm1.apply_transformations();
+//        s1.set_radius(0.15f * t);
+//        sprintf(fn, "sphere_shrinking_bb_%03d.ppm", t);
 //        camera->render_scene(objects, lights, ip);
 //        save_to_ppm(ip, fn);
 //    }
@@ -215,7 +214,7 @@ int main(int argc, char **argv) {
     std::cout << "# of light sources in the scene       : " << ri.num_of_light_sources << std::endl;
     std::cout << "# of ray-object intersection tests    : " << ri.num_of_ray_object_tests << std::endl;
     std::cout << "# of ray-object intersections         : " << ri.num_of_ray_object_intersections << std::endl;
-    save_to_ppm(ip, "monkey.ppm");
+    save_to_ppm(ip, "cube.ppm");
 
     return 0;
 }

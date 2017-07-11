@@ -11,10 +11,10 @@ bool Sphere::intersect(const Ray &r, float_t &t, glm::vec4 &p_hit, uint32_t &ti)
     float_t t0, t1;
 
     // compute the vector l, between the sphere's center c and the ray's origin o
-    glm::vec4 l = c - r.o;
+    glm::vec4 l = c - r.get_origin();
 
     // compute the projection of l, s, on the ray's direction (d)
-    float_t s = glm::dot(l, r.d);
+    float_t s = glm::dot(l, r.get_direction());
 
     // compute the squared length of the vector l, l2
     float_t l2 = glm::dot(l, l);
@@ -62,7 +62,7 @@ bool Sphere::intersect(const Ray &r, float_t &t, glm::vec4 &p_hit, uint32_t &ti)
     t = t0;
 
     // the hit point is then equals to: p = r.o + t*r.d
-    p_hit = r.o + t * r.d;
+    p_hit = r.get_origin() + t * r.get_direction();
 
     // because we don't have a triangulated mesh, we give the triangle index value of -1
     ti = -1;
@@ -80,6 +80,9 @@ Sphere::get_surface_properties(const glm::vec4 &hit_point, const glm::vec4 &view
 
 void Sphere::apply_camera_transformation(glm::mat4 &t) {
     c = t * c;
+    bb.reset();
+    bb.extend_by(glm::vec4(c.x-r, c.y-r, c.z-r, 1));
+    bb.extend_by(glm::vec4(c.x+r, c.y+r, c.z+r, 1));
 }
 
 void Sphere::translate(const float_t &translation, const uint32_t &axes_of_translation) {
@@ -211,15 +214,24 @@ void Sphere::scale(const float_t &scaling_factor, const uint32_t &axes_of_scale)
 void Sphere::set_radius(const float_t &r) {
     this->r = r;
     this->r2 = powf(r, 2.f);
+    bb.reset();
+    bb.extend_by(glm::vec4(c.x-r, c.y-r, c.z-r, 1));
+    bb.extend_by(glm::vec4(c.x+r, c.y+r, c.z+r, 1));
 }
 
 void Sphere::set_center_p(const glm::vec4 &p) {
     this->c = p;
+    bb.reset();
+    bb.extend_by(glm::vec4(c.x-r, c.y-r, c.z-r, 1));
+    bb.extend_by(glm::vec4(c.x+r, c.y+r, c.z+r, 1));
 }
 
 void Sphere::apply_transformations() {
     // apply the transformations stored in the sphere's model transform matrix to its position
     c = mt * c;
+    bb.reset();
+    bb.extend_by(glm::vec4(c.x-r, c.y-r, c.z-r, 1));
+    bb.extend_by(glm::vec4(c.x+r, c.y+r, c.z+r, 1));
 
     // after applying the transformations to a sphere; its model transform matrix is set back to the identity matrix
     mt = glm::mat4(1);

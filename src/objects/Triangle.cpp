@@ -14,12 +14,12 @@ bool Triangle::intersect(const Ray &r, float_t &t, glm::vec4 &p_hit, uint32_t &t
     // check if ray is parallel to triangle; compute the dot product
     // of the triangle's normal and the ray direction
     // if ray and triangle's normal are close to 0, they don't intersect
-    float_t nomal_ray_d_prod = glm::dot(normal, r.d);
+    float_t nomal_ray_d_prod = glm::dot(normal, r.get_direction());
     if (fabs(nomal_ray_d_prod) < kEpsilon) return false;
 
     // compute the dot product of the vector between one of the triangle's vertices and
     // the ray's origin and the triangle's normal
-    float_t t_nominator = glm::dot(v0 - r.o, normal);
+    float_t t_nominator = glm::dot(v0 - r.get_origin(), normal);
 
     // compute the distance between the ray's origin and the hit point
     // with the triangle
@@ -29,7 +29,7 @@ bool Triangle::intersect(const Ray &r, float_t &t, glm::vec4 &p_hit, uint32_t &t
     if (t_tmp < kEpsilon) return false;
 
     // compute the intersection point
-    glm::vec4 ip = r.o + t_tmp*r.d;
+    glm::vec4 ip = r.get_origin() + t_tmp * r.get_direction();
 
     // check if intersection point is within the defined triangle
     glm::vec4 perp_vec;
@@ -80,6 +80,17 @@ void Triangle::apply_camera_transformation(glm::mat4 &t) {
     v0 = t*v0;
     v1 = t*v1;
     v2 = t*v2;
+
+    bb.reset();
+
+    // min point of bb
+    bb.extend_by(glm::vec4(glm::min(v0.x, glm::min(v1.x, v2.x)),
+                           glm::min(v0.y, glm::min(v1.y, v2.y)),
+                           glm::min(v0.z, glm::min(v1.z, v2.z)), 1));
+    // max point of bb
+    bb.extend_by(glm::vec4(glm::max(v0.x, glm::max(v1.x, v2.x)),
+                           glm::max(v0.y, glm::max(v1.y, v2.y)),
+                           glm::max(v0.z, glm::max(v1.z, v2.z)), 1));
 
 //    // for normals we don't use the matrix with which we transform vertices and vectors
 //    // but use the transpose of the inverse of the matrix we have
@@ -212,6 +223,17 @@ void Triangle::apply_transformations() {
     v0 = mt * v0;
     v1 = mt * v1;
     v2 = mt * v2;
+
+    bb.reset();
+
+    // min point of bb
+    bb.extend_by(glm::vec4(glm::min(v0.x, glm::min(v1.x, v2.x)),
+                           glm::min(v0.y, glm::min(v1.y, v2.y)),
+                           glm::min(v0.z, glm::min(v1.z, v2.z)), 1));
+    // max point of bb
+    bb.extend_by(glm::vec4(glm::max(v0.x, glm::max(v1.x, v2.x)),
+                           glm::max(v0.y, glm::max(v1.y, v2.y)),
+                           glm::max(v0.z, glm::max(v1.z, v2.z)), 1));
 
 //    // for transforming normals we don't use the matrix with which we transform vertices and vectors
 //    // but use the transpose of the inverse of the matrix we have proof why:

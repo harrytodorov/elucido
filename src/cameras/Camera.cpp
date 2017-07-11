@@ -131,10 +131,10 @@ void Camera::compute_color_at_surface(const std::vector<Light *> &lights, const 
 
                 // hit_normal * shadow_bias is used to translate the origin point by a slightly bit
                 // so one could avoid self-shadows, because of float number precision
-                shadow_ray.o = hit_point + hit_normal * shadow_bias;
+                shadow_ray.set_origin(hit_point + hit_normal * shadow_bias);
 
                 // for the direction of the shadow ray we take the opposite of the light direction
-                shadow_ray.d = -light_direction;
+                shadow_ray.set_direction(-light_direction);
 
                 // iterate through all objects to find if there is an object who
                 // cast a shadow on this surface point

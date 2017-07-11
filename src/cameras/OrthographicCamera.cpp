@@ -9,8 +9,8 @@
 render_info OrthographicCamera::render_scene(const std::vector<Object *, std::allocator<Object *>> &objects,
                                              const std::vector<Light *, std::allocator<Light *>> &lights,
                                              ImagePlane &ip) {
-    float_t             curr_x = 0.f;
-    float_t             curr_y = 0.f;
+    float_t             curr_x;
+    float_t             curr_y;
     float_t             t_near;
     float_t             ar;                     // image plane's aspect ratio
     uint32_t            ti;                     // triangle index
@@ -37,7 +37,7 @@ render_info OrthographicCamera::render_scene(const std::vector<Object *, std::al
 
     // Set the ray direction same as the direction of the camera
     // and normalize it, shouldn't be necessary, but just in case
-    ray.d = glm::normalize(lookat - eye);
+    ray.set_direction(glm::normalize(lookat - eye));
 
     // get pointer to the frame buffer
     glm::vec3 *pixels = ip.fb;
@@ -58,9 +58,7 @@ render_info OrthographicCamera::render_scene(const std::vector<Object *, std::al
 
             // set the ray origin for each separate pixel
             // z position is fixed
-            ray.o.x = curr_x;
-            ray.o.y = curr_y;
-            ray.o.z = 0.f;
+            ray.set_origin(glm::vec4(curr_x, curr_y, eye.z, 1));
 
             // set the nearest point initially at infinity
             t_near = infinity;
@@ -76,15 +74,24 @@ render_info OrthographicCamera::render_scene(const std::vector<Object *, std::al
                 // increment the number of ray-object tests
                 __sync_fetch_and_add(&ri.num_of_ray_object_tests, 1);
 
-                // check objects for intersection with tha ray
-                if (object->intersect(ray, t_near, hit_point, ti)) {
-                    hit_object = object;
+                // first iterate through object's bounding boxes and check if there is an intersection
+                if (object->bb.intersect(ray)) {
 
-                    // increment the number of ray-object intersections
-                    __sync_fetch_and_add(&ri.num_of_ray_object_intersections, 1);
+                    hit_color = red;
+                    // if there is an intersection with the bounding box,
+                    // check if there is an intersection with the object itself
+                    if (object->intersect(ray, t_near, hit_point, ti)) {
+                        hit_object = object;
 
-                    // increment number of shadow rays; for each hit object we definitely have a shadow ray
-                    __sync_fetch_and_add(&ri.shadow_rays, 1);
+                        // increment the number of ray-object tests
+                        __sync_fetch_and_add(&ri.num_of_ray_object_tests, 1);
+
+                        // increment the number of ray-object intersections
+                        __sync_fetch_and_add(&ri.num_of_ray_object_intersections, 1);
+
+                        // increment number of shadow rays; for each hit object we definitely have a shadow ray
+                        __sync_fetch_and_add(&ri.shadow_rays, 1);
+                    }
                 }
             }
 
@@ -93,7 +100,7 @@ render_info OrthographicCamera::render_scene(const std::vector<Object *, std::al
             if (hit_object != nullptr) {
 
                 // the view direction in case of ray-tracing is the opposite of the ray's direction
-                glm::vec4 view_direction = -ray.d;
+                glm::vec4 view_direction = -ray.get_direction();
 
                 // get the hit normal of the intersection point
                 hit_object->get_surface_properties(hit_point, view_direction, ti, hit_normal);

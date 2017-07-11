@@ -6,8 +6,8 @@
 
 render_info PerspectiveCamera::render_scene(const std::vector<Object *, std::allocator<Object *>> &objects,
                                             const std::vector<Light *, std::allocator<Light *>> &lights, ImagePlane &ip) {
-    float_t             curr_x = 0;
-    float_t             curr_y = 0;
+    float_t             curr_x;
+    float_t             curr_y;
     float_t             t_near;
     float_t             ar;                     // image plane's aspect ratio
     float_t             sf;                     // scaling factor obtained by the tan(fov/2)
@@ -35,7 +35,7 @@ render_info PerspectiveCamera::render_scene(const std::vector<Object *, std::all
     }
 
     // set the origin of the rays
-    ray.o = eye;
+    ray.set_origin(eye);
 
     // get pointer to the frame buffer
     glm::vec3 *pixels = ip.fb;
@@ -62,7 +62,7 @@ render_info PerspectiveCamera::render_scene(const std::vector<Object *, std::all
 
             // compute the direction of the ray; vector from the eye to the current image
             // plane cell's c; of course direction should be normalized as well
-            ray.d = glm::normalize(cp - eye);
+            ray.set_direction(glm::normalize(cp - eye));
 
             // set the nearest point initially at infinity
             t_near = infinity;
@@ -75,18 +75,28 @@ render_info PerspectiveCamera::render_scene(const std::vector<Object *, std::all
 
             // iterate through all objects and find the closest intersection
             for (auto &object : objects) {
+
                 // increment the number of ray-object tests
                 __sync_fetch_and_add(&ri.num_of_ray_object_tests, 1);
 
-                // check objects for intersection with tha ray
-                if (object->intersect(ray, t_near, hit_point, ti)) {
-                    hit_object = object;
+                // first iterate through object's bounding boxes and check if there is an intersection
+                if (object->bb.intersect(ray)) {
+                    hit_color = red;
 
-                    // increment the number of ray-object intersections
-                    __sync_fetch_and_add(&ri.num_of_ray_object_intersections, 1);
+                    // if there is an intersection with the bounding box,
+                    // check if there is an intersection with the object itself
+                    if (object->intersect(ray, t_near, hit_point, ti)) {
+                        hit_object = object;
 
-                    // increment number of shadow rays; for each hit object we definitely have a shadow ray
-                    __sync_fetch_and_add(&ri.shadow_rays, 1);
+                        // increment the number of ray-object tests
+                        __sync_fetch_and_add(&ri.num_of_ray_object_tests, 1);
+
+                        // increment the number of ray-object intersections
+                        __sync_fetch_and_add(&ri.num_of_ray_object_intersections, 1);
+
+                        // increment number of shadow rays; for each hit object we definitely have a shadow ray
+                        __sync_fetch_and_add(&ri.shadow_rays, 1);
+                    }
                 }
             }
 
@@ -95,7 +105,7 @@ render_info PerspectiveCamera::render_scene(const std::vector<Object *, std::all
             if (hit_object != nullptr) {
 
                 // the view direction in case of ray-tracing is the opposite of the ray's direction
-                glm::vec4 view_direction = -ray.d;
+                glm::vec4 view_direction = -ray.get_direction();
 
                 // get the hit normal of the intersection point
                 hit_object->get_surface_properties(hit_point, view_direction, ti, hit_normal);
