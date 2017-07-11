@@ -46,7 +46,7 @@ render_info PerspectiveCamera::render_scene(const std::vector<Object *, std::all
 
     // calculate the scaling factor for the image plane
     // using the field of view; fov is in range(0, 180)
-    sf = tanf(glm::radians(fov * 0.5f));
+    sf = glm::tan(glm::radians(fov * 0.5f));
 
     for (int r = 0; r < ip.vres; r++) {
         for (int c = 0; c < ip.hres; c++) {
