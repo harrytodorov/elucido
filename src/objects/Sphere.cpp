@@ -80,9 +80,7 @@ Sphere::get_surface_properties(const glm::vec4 &hit_point, const glm::vec4 &view
 
 void Sphere::apply_camera_transformation(glm::mat4 &t) {
     c = t * c;
-    bb.reset();
-    bb.extend_by(glm::vec4(c.x-r, c.y-r, c.z-r, 1));
-    bb.extend_by(glm::vec4(c.x+r, c.y+r, c.z+r, 1));
+    reshape_bb();
 }
 
 void Sphere::translate(const float_t &translation, const uint32_t &axes_of_translation) {
@@ -167,43 +165,6 @@ void Sphere::rotate(const float_t &angle_of_rotation, const uint32_t &axes_of_ro
 }
 
 void Sphere::scale(const float_t &scaling_factor, const uint32_t &axes_of_scale) {
-    // create 3d vector to determine the axes of scale
-    glm::vec3 sv(0);
-
-    switch (axes_of_scale) {
-        case X :
-            sv.x = scaling_factor;
-            break;
-        case Y :
-            sv.y = scaling_factor;
-            break;
-        case Z :
-            sv.z = scaling_factor;
-            break;
-        case XY :
-            sv.x = scaling_factor;
-            sv.y = scaling_factor;
-            break;
-        case XZ :
-            sv.x = scaling_factor;
-            sv.z = scaling_factor;
-            break;
-        case YZ :
-            sv.y = scaling_factor;
-            sv.z = scaling_factor;
-            break;
-        case XYZ :
-            sv = glm::vec3(scaling_factor);
-            break;
-        default:
-            printf("You're using an undefined axis of scale.");
-            break;
-    }
-
-    // assign the scale matrix to the object's model transform
-    glm::mat4 sm = glm::scale(glm::mat4(1), sv);
-    mt = sm * mt;
-
     // multiply the r by the scaling factor
     r *= scaling_factor;
 
@@ -214,24 +175,18 @@ void Sphere::scale(const float_t &scaling_factor, const uint32_t &axes_of_scale)
 void Sphere::set_radius(const float_t &r) {
     this->r = r;
     this->r2 = powf(r, 2.f);
-    bb.reset();
-    bb.extend_by(glm::vec4(c.x-r, c.y-r, c.z-r, 1));
-    bb.extend_by(glm::vec4(c.x+r, c.y+r, c.z+r, 1));
+    reshape_bb();
 }
 
 void Sphere::set_center_p(const glm::vec4 &p) {
     this->c = p;
-    bb.reset();
-    bb.extend_by(glm::vec4(c.x-r, c.y-r, c.z-r, 1));
-    bb.extend_by(glm::vec4(c.x+r, c.y+r, c.z+r, 1));
+    reshape_bb();
 }
 
 void Sphere::apply_transformations() {
     // apply the transformations stored in the sphere's model transform matrix to its position
     c = mt * c;
-    bb.reset();
-    bb.extend_by(glm::vec4(c.x-r, c.y-r, c.z-r, 1));
-    bb.extend_by(glm::vec4(c.x+r, c.y+r, c.z+r, 1));
+    reshape_bb();
 
     // after applying the transformations to a sphere; its model transform matrix is set back to the identity matrix
     mt = glm::mat4(1);

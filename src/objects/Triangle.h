@@ -28,14 +28,7 @@ public:
         vn0 = normal;
         vn1 = normal;
         vn2 = normal;
-        // min point of bb
-        bb.extend_by(glm::vec4(glm::min(v0.x, glm::min(v1.x, v2.x)),
-                               glm::min(v0.y, glm::min(v1.y, v2.y)),
-                               glm::min(v0.z, glm::min(v1.z, v2.z)), 1));
-        // max point of bb
-        bb.extend_by(glm::vec4(glm::max(v0.x, glm::max(v1.x, v2.x)),
-                               glm::max(v0.y, glm::max(v1.y, v2.y)),
-                               glm::max(v0.z, glm::max(v1.z, v2.z)), 1));
+        reshape_bb();
     }
     Triangle(Material *m) :
             Object(m),
@@ -47,14 +40,7 @@ public:
         vn0 = normal;
         vn1 = normal;
         vn2 = normal;
-        // min point of bb
-        bb.extend_by(glm::vec4(glm::min(v0.x, glm::min(v1.x, v2.x)),
-                               glm::min(v0.y, glm::min(v1.y, v2.y)),
-                               glm::min(v0.z, glm::min(v1.z, v2.z)), 1));
-        // max point of bb
-        bb.extend_by(glm::vec4(glm::max(v0.x, glm::max(v1.x, v2.x)),
-                               glm::max(v0.y, glm::max(v1.y, v2.y)),
-                               glm::max(v0.z, glm::max(v1.z, v2.z)), 1));
+        reshape_bb();
     }
     Triangle(glm::vec4 &vec0,
              glm::vec4 &vec1,
@@ -68,14 +54,7 @@ public:
         vn0 = normal;
         vn1 = normal;
         vn2 = normal;
-        // min point of bb
-        bb.extend_by(glm::vec4(glm::min(v0.x, glm::min(v1.x, v2.x)),
-                               glm::min(v0.y, glm::min(v1.y, v2.y)),
-                               glm::min(v0.z, glm::min(v1.z, v2.z)), 1));
-        // max point of bb
-        bb.extend_by(glm::vec4(glm::max(v0.x, glm::max(v1.x, v2.x)),
-                               glm::max(v0.y, glm::max(v1.y, v2.y)),
-                               glm::max(v0.z, glm::max(v1.z, v2.z)), 1));
+        reshape_bb();
     }
     Triangle(glm::vec4 &vec0,
              glm::vec4 &vec1,
@@ -93,14 +72,7 @@ public:
             vn2(vecn2)
     {
         normal = glm::normalize(vn0 + vn1 + vn2);
-        // min point of bb
-        bb.extend_by(glm::vec4(glm::min(v0.x, glm::min(v1.x, v2.x)),
-                               glm::min(v0.y, glm::min(v1.y, v2.y)),
-                               glm::min(v0.z, glm::min(v1.z, v2.z)), 1));
-        // max point of bb
-        bb.extend_by(glm::vec4(glm::max(v0.x, glm::max(v1.x, v2.x)),
-                               glm::max(v0.y, glm::max(v1.y, v2.y)),
-                               glm::max(v0.z, glm::max(v1.z, v2.z)), 1));
+        reshape_bb();
     }
     Triangle(glm::vec4 &vec0,
              glm::vec4 &vec1,
@@ -115,14 +87,7 @@ public:
         vn0 = normal;
         vn1 = normal;
         vn2 = normal;
-        // min point of bb
-        bb.extend_by(glm::vec4(glm::min(v0.x, glm::min(v1.x, v2.x)),
-                               glm::min(v0.y, glm::min(v1.y, v2.y)),
-                               glm::min(v0.z, glm::min(v1.z, v2.z)), 1));
-        // max point of bb
-        bb.extend_by(glm::vec4(glm::max(v0.x, glm::max(v1.x, v2.x)),
-                               glm::max(v0.y, glm::max(v1.y, v2.y)),
-                               glm::max(v0.z, glm::max(v1.z, v2.z)), 1));
+        reshape_bb();
     }
     virtual ~Triangle() {}
 
@@ -134,6 +99,17 @@ public:
     void translate(const float_t &translation, const uint32_t &axes_of_translation);
     void rotate(const float_t &angle_of_rotation, const uint32_t &axes_of_rotation);
     void scale(const float_t &scaling_factor, const uint32_t &axes_of_scale);
+
+private:
+    inline void reshape_bb() {
+        // we don't want the bounding box to maintain its old shape
+        bb.reset();
+
+        // extend bb of triangle
+        bb.extend_by(v0);
+        bb.extend_by(v1);
+        bb.extend_by(v2);
+    }
 };
 
 

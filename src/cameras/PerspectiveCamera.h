@@ -11,9 +11,8 @@
 #include "Camera.h"
 
 class PerspectiveCamera : public Camera {
-public:
     float_t fov;     // angle of view / field of view
-
+public:
     PerspectiveCamera() :
             Camera(),
             fov(90.f)
@@ -26,6 +25,10 @@ public:
     render_info render_scene(const std::vector<Object *, std::allocator<Object *>> &objects,
                              const std::vector<Light *, std::allocator<Light *>> &lights,
                              ImagePlane &ip);
+
+    inline void set_fov(const float_t &f) {
+        this->fov = f;
+    }
 };
 
 

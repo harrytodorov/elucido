@@ -45,6 +45,9 @@ loading_info TriangleMesh::load_mesh(const char *f) {
             float_t vx, vy, vz;
             tokens >> vx >> vy >> vz;
 
+            // extend bb of triangulated mesh
+            bb.extend_by(glm::vec4(vx, vy, vz, 1));
+
             // add vertex to temporary vertex array
             tva.push_back(glm::vec4(vx, vy, vz, 1));
 
