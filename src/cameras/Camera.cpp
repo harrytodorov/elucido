@@ -91,9 +91,8 @@ void Camera::translate(const float_t &translation, const uint32_t &axes_of_trans
 }
 
 void Camera::compute_color_at_surface(const std::vector<Light *> &lights, const std::vector<Object *> &objects,
-                                      const Material *object_material, const glm::vec4 view_direction, glm::vec3 &color,
-                                      uint32_t &num_of_ray_object_tests, uint32_t &num_of_ray_object_intersections,
-                                      const isect_info &ii) {
+                                      const Material *object_material, const glm::vec4 view_direction, const isect_info &ii,
+                                      glm::vec3 &color, render_info &ri) {
 
     switch (object_material->mt) {
         case phong: {
@@ -131,8 +130,11 @@ void Camera::compute_color_at_surface(const std::vector<Light *> &lights, const 
                 // iterate through all objects to find if there is an object who
                 // cast a shadow on this surface point
                 for (auto &object : objects) {
-                    // increment the number of ray-object tests
-                    __sync_fetch_and_add(&num_of_ray_object_tests, 1);
+                    // increment the number of shadow rays
+                    __sync_fetch_and_add(&ri.shadow_rays, 1);
+
+                    // increment the number of ray-object intersection tests
+                    __sync_fetch_and_add(&ri.num_of_ray_object_tests, 1);
 
                     dummy = isect_info();
 
@@ -140,7 +142,7 @@ void Camera::compute_color_at_surface(const std::vector<Light *> &lights, const 
                         visibility = 0.f;
 
                         // increment the number of ray-object intersections
-                        __sync_fetch_and_add(&num_of_ray_object_intersections, 1);
+                        __sync_fetch_and_add(&ri.num_of_ray_object_intersections, 1);
                     }
                 }
 

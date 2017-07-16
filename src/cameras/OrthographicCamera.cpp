@@ -72,25 +72,23 @@ render_info OrthographicCamera::render_scene(const std::vector<Object *, std::al
 
             // iterate through all objects and find the closest intersection
             for (auto& object : objects) {
-                // increment the number of ray-object tests
+
+                // increment the number of ray-object tests; bounding box
                 __sync_fetch_and_add(&ri.num_of_ray_object_tests, 1);
 
                 // first iterate through object's bounding boxes and check if there is an intersection
                 if (object->bb.intersect(ray)) {
+
+                    // increment the number of ray-object tests; object itself
+                    __sync_fetch_and_add(&ri.num_of_ray_object_tests, 1);
 
                     // if there is an intersection with the bounding box,
                     // check if there is an intersection with the object itself
                     if (object->intersect(ray, ii)) {
                         hit_object = object;
 
-                        // increment the number of ray-object tests
-                        __sync_fetch_and_add(&ri.num_of_ray_object_tests, 1);
-
                         // increment the number of ray-object intersections
                         __sync_fetch_and_add(&ri.num_of_ray_object_intersections, 1);
-
-                        // increment number of shadow rays; for each hit object we definitely have a shadow ray
-                        __sync_fetch_and_add(&ri.shadow_rays, 1);
                     }
                 }
             }
@@ -106,9 +104,8 @@ render_info OrthographicCamera::render_scene(const std::vector<Object *, std::al
                 hit_object->get_surface_properties(false, ii);
 
                 // get the color at the hit surface
-                compute_color_at_surface(lights, objects, hit_object->om, view_direction, hit_color,
-                                         ri.num_of_ray_object_tests,
-                                         ri.num_of_ray_object_intersections, ii);
+                compute_color_at_surface(lights, objects, hit_object->om, view_direction, ii, hit_color,
+                                         ri);
             }
 
             // assign the color to the frame buffer

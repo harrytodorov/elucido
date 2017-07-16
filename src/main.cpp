@@ -4,7 +4,7 @@
 #include "cameras/OrthographicCamera.h"
 #include "objects/TriangleMesh.h"
 #include "lights/PointLight.h"
-#include "objects/Sphere.h"
+#include "cameras/PerspectiveCamera.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 void save_to_ppm(uint32_t width, uint32_t height, glm::vec3 fb[], const char fn[50]) {
@@ -27,7 +27,7 @@ void save_to_ppm(ImagePlane &ip, const char fn[50]) {
 int main(int argc, char **argv) {
     std::vector<Object*> objects;
     std::vector<Light*> lights;
-    Camera* camera = new OrthographicCamera();
+    Camera* camera = new PerspectiveCamera();
     ImagePlane ip = ImagePlane(1920, 1080);
     ip.bc = 0.7f * white;
     char fn[100];
@@ -111,33 +111,30 @@ int main(int argc, char **argv) {
     float_t dc = 0.8f;
     float_t sc = 0.3f;
     float_t se = 16.f;
-    PhongMaterial mat1(ac, dc, sc, se, orangish);
-    PhongMaterial mat2(ac, dc, sc, se, lightslategray);
+    PhongMaterial mat1(ac, dc, sc, se, bluish);
+    PhongMaterial mat2(ac, dc, sc, se, whitish);
 
     /// light set-up
 
     glm::vec4 l1_p(0.f, 0.5f, 0.f, 1);
 
-    PointLight l1(l1_p, white, 40);
-//    l1.translate(-3.f, Z);
-    l1.translate(2.f, Y);
-    l1.translate(-1.5f, X);
-    l1.apply_transformations();
-    lights.push_back(&l1);
-//
-//    PointLight l2(l1_p, violet, 35);
-//    l2.translate(-2, X);
-//    l2.translate(2, Y);
-//    l2.translate(-2.4f, Z);
-//    l2.apply_transformations();
-//    lights.push_back(&l2);
+//    PointLight l1(l1_p, white, 40);
+//    l1.translate(2.f, Y);
+//    l1.translate(-1.5f, X);
+//    l1.apply_transformations();
+//    lights.push_back(&l1);
 
-//    PointLight l3(l1_p, orangish, 40);
-//    l3.translate(2, X);
-//    l3.translate(1, Y);
-//    l3.translate(-4.f, Z);
-//    l3.apply_transformations();
-//    lights.push_back(&l3);
+    PointLight l2(l1_p, violet, 40);
+    l2.translate(-2, X);
+    l2.translate(1, Y);
+    l2.apply_transformations();
+    lights.push_back(&l2);
+
+    PointLight l3(l1_p, orangish, 40);
+    l3.translate(2, X);
+    l3.translate(1, Y);
+    l3.apply_transformations();
+    lights.push_back(&l3);
 
     /// object set-up
 
@@ -146,22 +143,13 @@ int main(int argc, char **argv) {
     glm::vec4 v2(-7, 0, -7, 1);
     glm::vec4 v3(7, 0, -7, 1);
 
-//    Triangle t1(v0, v1, v2, &mat2);
-//    objects.push_back(&t1);
-//    t1.translate(-1.f, Y);
-//    t1.translate(-2.5f, Z);
-//    t1.apply_transformations();
-//
-//    Triangle t2(v1, v3, v2, &mat2);
-//    objects.push_back(&t2);
-//    t2.translate(-1.f, Y);
-//    t2.translate(-2.5f, Z);
-//    t2.apply_transformations();
+    Triangle t1(v0, v1, v2, &mat2);
+    objects.push_back(&t1);
 
-    Sphere s1(glm::vec4(0, 0, -3, 1), 1.f, &mat1);
-//    objects.push_back(&s1);
+    Triangle t2(v1, v3, v2, &mat2);
+    objects.push_back(&t2);
 
-    sprintf(fn, "./wt_teapot.obj");
+    sprintf(fn, "./dragon.obj");
     TriangleMesh tm1(&mat1);
 
     // measure loading the triangulated mesh
@@ -179,17 +167,13 @@ int main(int argc, char **argv) {
     std::cout << "# of faces in the mesh                : " << li.num_of_faces << std::endl;
     std::cout << std::endl;
 
-//    tm1.rotate(-15, X);
-    tm1.translate(-3.f, Z);
-//    tm1.scale(1.3, XYZ);
-//    tm1.translate(-2.f, X);
+    tm1.translate(-3.5f, Z);
+    tm1.translate(0.85f, Y);
     tm1.apply_transformations();
     objects.push_back(&tm1);
 
     /// camera transformations
-    camera->translate(0.5f, Y);
-//    camera->rotate(-45, X);
-//    camera->translate(2, Z);
+    camera->translate(1.3f, Y);
 
 //    for (int t = 1; t < 20; ++t) {
 ////        tm1.translate(4.5f, Z);
@@ -218,7 +202,7 @@ int main(int argc, char **argv) {
     std::cout << "# of light sources in the scene       : " << ri.num_of_light_sources << std::endl;
     std::cout << "# of ray-object intersection tests    : " << ri.num_of_ray_object_tests << std::endl;
     std::cout << "# of ray-object intersections         : " << ri.num_of_ray_object_intersections << std::endl;
-    save_to_ppm(ip, "teapot.ppm");
+    save_to_ppm(ip, "dragon.ppm");
 
     return 0;
 }

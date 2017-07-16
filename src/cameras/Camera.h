@@ -42,9 +42,8 @@ public:
                                      const std::vector<Light *, std::allocator<Light *>> &lights,
                                      ImagePlane &ip) = 0;
     void compute_color_at_surface(const std::vector<Light *> &lights, const std::vector<Object *> &objects,
-                                      const Material *object_material, const glm::vec4 view_direction, glm::vec3 &color,
-                                      uint32_t &num_of_ray_object_tests, uint32_t &num_of_ray_object_intersections,
-                                      const isect_info &ii);
+                                      const Material *object_material, const glm::vec4 view_direction, const isect_info &ii,
+                                      glm::vec3 &color, render_info &ri);
     void translate(const float_t &translation, const uint32_t &axes_of_translation);
     void rotate(float_t rot_angle, uint32_t axes_of_rotation);
 
