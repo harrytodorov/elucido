@@ -25,8 +25,8 @@ void PointLight::illuminate(const glm::vec4 &hit_point, glm::vec4 &light_dir, gl
     light_intensity = intensity * color / (float_t) (4.f * M_PI * sq_dist);
 }
 
-void PointLight::apply_camera_transformation(glm::mat4 &t) {
-    p = t * p;
+void PointLight::apply_camera_transformation(const glm::mat4 &ictm, const glm::mat4 &itctm) {
+    p = ictm * p;
 }
 
 void PointLight::translate(const float_t &translation, const uint32_t &axes_of_translation) {

@@ -9,17 +9,17 @@
 #include "../Ray.h"
 #include "Triangle.h"
 
-bool Triangle::intersect(const Ray &r, float_t &t, glm::vec4 &p_hit, uint32_t &ti) {
+bool Triangle::intersect(const Ray &r, isect_info &i) {
 
     // check if ray is parallel to triangle; compute the dot product
     // of the triangle's normal and the ray direction
     // if ray and triangle's normal are close to 0, they don't intersect
-    float_t nomal_ray_d_prod = glm::dot(normal, r.get_direction());
+    float_t nomal_ray_d_prod = glm::dot(normal, r.dir());
     if (fabs(nomal_ray_d_prod) < kEpsilon) return false;
 
     // compute the dot product of the vector between one of the triangle's vertices and
     // the ray's origin and the triangle's normal
-    float_t t_nominator = glm::dot(v0 - r.get_origin(), normal);
+    float_t t_nominator = glm::dot(v0 - r.orig(), normal);
 
     // compute the distance between the ray's origin and the hit point
     // with the triangle
@@ -29,7 +29,7 @@ bool Triangle::intersect(const Ray &r, float_t &t, glm::vec4 &p_hit, uint32_t &t
     if (t_tmp < kEpsilon) return false;
 
     // compute the intersection point
-    glm::vec4 ip = r.get_origin() + t_tmp * r.get_direction();
+    glm::vec4 ip = r.orig() + t_tmp * r.dir();
 
     // check if intersection point is within the defined triangle
     glm::vec4 perp_vec;
@@ -59,27 +59,25 @@ bool Triangle::intersect(const Ray &r, float_t &t, glm::vec4 &p_hit, uint32_t &t
 
     // check if the intersection point we got is bigger than the nearest intersection point we already have computed
     // we're not interested in that intersection
-    if (t_tmp > t)
+    if (t_tmp > i.t)
         return false;
 
     // test passed; assign variable
-    t = t_tmp;
-    p_hit = ip;
-    ti = -1;
+    i.t = t_tmp;
+    i.ip = ip;
+    i.ti = (uint32_t) -1;
 
     return true;
 }
 
-void
-Triangle::get_surface_properties(const glm::vec4 &hit_point, const glm::vec4 &view_direction, const uint32_t &triangle_index,
-                                 glm::vec4 &hit_normal) {
-    hit_normal = normal;
+void Triangle::get_surface_properties(const bool &interpolate, isect_info &i) {
+    i.ipn = normal;
 }
 
-void Triangle::apply_camera_transformation(glm::mat4 &t) {
-    v0 = t*v0;
-    v1 = t*v1;
-    v2 = t*v2;
+void Triangle::apply_camera_transformation(const glm::mat4 &ictm, const glm::mat4 &itictm) {
+    v0 = ictm*v0;
+    v1 = ictm*v1;
+    v2 = ictm*v2;
     reshape_bb();
 
 //    // for normals we don't use the matrix with which we transform vertices and vectors

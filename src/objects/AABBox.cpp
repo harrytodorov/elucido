@@ -21,11 +21,11 @@ AABBox &AABBox::extend_by(const glm::vec4 &p) {
 bool AABBox::intersect(const Ray &r) {
     float_t tmin, tmax, tymin, tymax, tzmin, tzmax;
 
-    tmin = (bounds[r.get_sign()[0]].x - r.get_origin().x) * r.get_inv_direction().x;
-    tmax = (bounds[1-r.get_sign()[0]].x - r.get_origin().x) * r.get_inv_direction().x;
+    tmin = (bounds[r.get_sign()[0]].x - r.orig().x) * r.get_inv_dir().x;
+    tmax = (bounds[1-r.get_sign()[0]].x - r.orig().x) * r.get_inv_dir().x;
 
-    tymin = (bounds[r.get_sign()[1]].y - r.get_origin().y) * r.get_inv_direction().y;
-    tymax = (bounds[1-r.get_sign()[1]].y - r.get_origin().y) * r.get_inv_direction().y;
+    tymin = (bounds[r.get_sign()[1]].y - r.orig().y) * r.get_inv_dir().y;
+    tymax = (bounds[1-r.get_sign()[1]].y - r.orig().y) * r.get_inv_dir().y;
 
     if ((tmin > tymax) || (tymin > tmax))
         return false;
@@ -36,17 +36,15 @@ bool AABBox::intersect(const Ray &r) {
     if (tymax < tmax)
         tmax = tymax;
 
-    tzmin = (bounds[r.get_sign()[2]].z - r.get_origin().z) * r.get_inv_direction().z;
-    tzmax = (bounds[1-r.get_sign()[2]].z - r.get_origin().z) * r.get_inv_direction().z;
+    tzmin = (bounds[r.get_sign()[2]].z - r.orig().z) * r.get_inv_dir().z;
+    tzmax = (bounds[1-r.get_sign()[2]].z - r.orig().z) * r.get_inv_dir().z;
 
-    if ((tmin > tzmax) || (tzmin > tmax))
-        return false;
+    return !((tmin > tzmax) || (tzmin > tmax));
 
-    if (tzmin > tmin)
-        tmin = tzmin;
+//    if (tzmin > tmin)
+//        tmin = tzmin;
+//
+//    if (tzmax < tmax)
+//        tmax = tzmax;
 
-    if (tzmax < tmax)
-        tmax = tzmax;
-
-    return true;
 }

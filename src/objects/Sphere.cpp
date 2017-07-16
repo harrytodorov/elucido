@@ -6,15 +6,15 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "Sphere.h"
 
-bool Sphere::intersect(const Ray &r, float_t &t, glm::vec4 &p_hit, uint32_t &ti) {
+bool Sphere::intersect(const Ray &r, isect_info &i) {
     // variable to hold distance between ray's origin and intersection point(s)
     float_t t0, t1;
 
     // compute the vector l, between the sphere's center c and the ray's origin o
-    glm::vec4 l = c - r.get_origin();
+    glm::vec4 l = c - r.orig();
 
     // compute the projection of l, s, on the ray's direction (d)
-    float_t s = glm::dot(l, r.get_direction());
+    float_t s = glm::dot(l, r.dir());
 
     // compute the squared length of the vector l, l2
     float_t l2 = glm::dot(l, l);
@@ -33,7 +33,7 @@ bool Sphere::intersect(const Ray &r, float_t &t, glm::vec4 &p_hit, uint32_t &ti)
     if (m2 > r2) return false;
 
     // find the side, q, of the right triangle formed by r (sphere's radius),
-    // m and q: q2 = r2 - m2; we want q, so q = sqrt(r2 - m2)
+    // m and q: q2 = r2 - m2; we want q, set_orig q = sqrt(r2 - m2)
     float_t q = sqrtf(r2 - m2);
 
     // find out the distances to the 2 intersection points
@@ -54,32 +54,24 @@ bool Sphere::intersect(const Ray &r, float_t &t, glm::vec4 &p_hit, uint32_t &ti)
     }
 
     // if t0 is greater than the current nearest distance to an object, terminate
-    if (t0 > t)
+    if (t0 > i.t)
         return false;
 
     // the ray's origin is within the sphere, there is only one intersection point:
     // p = r.o + (s+q) * r.d
-    t = t0;
+    i.t = t0;
 
     // the hit point is then equals to: p = r.o + t*r.d
-    p_hit = r.get_origin() + t * r.get_direction();
+    i.ip = r.orig() + i.t * r.dir();
 
     // because we don't have a triangulated mesh, we give the triangle index value of -1
-    ti = -1;
+    i.ti = (uint32_t) -1;
 
     return true;
 }
 
-void
-Sphere::get_surface_properties(const glm::vec4 &hit_point, const glm::vec4 &view_direction, const uint32_t &triangle_index,
-                               glm::vec4 &hit_normal) {
-    // the sphere's normal is the normalized vector between the hit point and
-    // the sphere's center
-    hit_normal = glm::normalize(hit_point - c);
-}
-
-void Sphere::apply_camera_transformation(glm::mat4 &t) {
-    c = t * c;
+void Sphere::apply_camera_transformation(const glm::mat4 &ictm, const glm::mat4 &itictm) {
+    c = ictm * c;
     reshape_bb();
 }
 
@@ -123,7 +115,7 @@ void Sphere::translate(const float_t &translation, const uint32_t &axes_of_trans
 }
 
 void Sphere::rotate(const float_t &angle_of_rotation, const uint32_t &axes_of_rotation) {
-    // well...sphere is defined using parametric equation, so it has just a c and a r
+    // well...sphere is defined using parametric equation, set_orig it has just a c and a r
     // not much sense in rotating a perfect sphere...EXCEPT, when there is a texture applied to the sphere
 
     // create 3d vector to determine the axis of rotation
@@ -190,4 +182,10 @@ void Sphere::apply_transformations() {
 
     // after applying the transformations to a sphere; its model transform matrix is set back to the identity matrix
     mt = glm::mat4(1);
+}
+
+void Sphere::get_surface_properties(const bool &interpolate, isect_info &i) {
+    // the sphere's normal is the normalized vector between the hit point and
+    // the sphere's center
+    i.ipn = glm::normalize(i.ip - c);
 }

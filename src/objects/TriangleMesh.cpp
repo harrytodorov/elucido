@@ -8,6 +8,7 @@
 #include <sstream>
 #include <cmath>
 #include <vector>
+#include <glm/gtc/matrix_transform.hpp>
 #include "TriangleMesh.h"
 
 loading_info TriangleMesh::load_mesh(const char *f) {
@@ -17,8 +18,6 @@ loading_info TriangleMesh::load_mesh(const char *f) {
     std::vector<glm::vec4> tvna;    // temporary array to store vertex normals
     std::vector<uint32_t> vi;       // vertex index array
     std::vector<uint32_t > ni;      // normal index array
-    uint32_t nf(0);                 // number of faces
-    uint32_t nt(0);                 // number of triangles
     loading_info ret;               // holder for the loading information
 
     // load file in memory
@@ -49,7 +48,7 @@ loading_info TriangleMesh::load_mesh(const char *f) {
             bb.extend_by(glm::vec4(vx, vy, vz, 1));
 
             // add vertex to temporary vertex array
-            tva.push_back(glm::vec4(vx, vy, vz, 1));
+            va.push_back(glm::vec4(vx, vy, vz, 1));
 
         // in case we have a vertex normal
         } else if (type == vertex_normal) {
@@ -57,7 +56,7 @@ loading_info TriangleMesh::load_mesh(const char *f) {
             tokens >> vnx >> vny >> vnz;
 
             // add vertex normal to temporary vertex normal array
-            tvna.push_back(glm::vec4(vnx, vny, vnz, 0));
+            vna.push_back(glm::vec4(vnx, vny, vnz, 0));
 
         // in case we have a face
         } else if (type == face) {
@@ -95,20 +94,20 @@ loading_info TriangleMesh::load_mesh(const char *f) {
                 // vertex indices for the triangle
                 uint32_t v0, v1, v2;
                 v0 = vertex_index.at(0);
-                v1 = vertex_index.at(t + 1);
-                v2 = vertex_index.at(t + 2);
-                vi.push_back(v0);
-                vi.push_back(v1);
-                vi.push_back(v2);
+                v1 = vertex_index.at((uint32_t) t + 1);
+                v2 = vertex_index.at((uint32_t) t + 2);
+                via.push_back(v0);
+                via.push_back(v1);
+                via.push_back(v2);
 
                 // vertex normal indices for the triangle
                 uint32_t vn0, vn1, vn2;
                 vn0 = vertexnormal_index.at(0);
-                vn1 = vertexnormal_index.at(t + 2);
-                vn2 = vertexnormal_index.at(t + 1);
-                ni.push_back(vn0);
-                ni.push_back(vn1);
-                ni.push_back(vn2);
+                vn1 = vertexnormal_index.at((uint32_t) t + 2);
+                vn2 = vertexnormal_index.at((uint32_t) t + 1);
+                vnia.push_back(vn0);
+                vnia.push_back(vn1);
+                vnia.push_back(vn2);
 
                 nt++;
             }
@@ -117,75 +116,309 @@ loading_info TriangleMesh::load_mesh(const char *f) {
         }
     }
 
-    ret.num_vertices = (uint32_t) tva.size();
-    ret.num_of_vn = (uint32_t) tvna.size();
+    ret.num_vertices = (uint32_t) va.size();
+    ret.num_of_vn = (uint32_t) vna.size();
     ret.num_of_faces = nf;
     ret.num_of_triangles = nt;
 
-    // initialize a triangle for each face
-    for (int ti = 0; ti < nt; ti++) {
-        // get vertices
-        glm::vec4 v0(tva[vi[3 * ti] - 1]);
-        glm::vec4 v1(tva[vi[3 * ti + 1] - 1]);
-        glm::vec4 v2(tva[vi[3 * ti + 2] - 1]);
-
-        // get vertex normals
-        glm::vec4 vn0(tvna[ni[3 * ti] - 1]);
-        glm::vec4 vn1(tvna[ni[3 * ti + 1] - 1]);
-        glm::vec4 vn2(tvna[ni[3 * ti + 2] - 1]);
-
-        ts.push_back(Triangle(v0, v1, v2, vn0, vn1, vn2, om));
-    }
+//    // initialize a triangle for each face
+//    for (int ti = 0; ti < nt; ti++) {
+//        // get vertices
+//        glm::vec4 v0(va[via[3 * ti] - 1]);
+//        glm::vec4 v1(va[via[3 * ti + 1] - 1]);
+//        glm::vec4 v2(va[via[3 * ti + 2] - 1]);
+//
+//        // get vertex normals
+//        glm::vec4 vn0(vna[vnia[3 * ti] - 1]);
+//        glm::vec4 vn1(vna[vnia[3 * ti + 1] - 1]);
+//        glm::vec4 vn2(vna[vnia[3 * ti + 2] - 1]);
+//
+//        ts.push_back(Triangle(v0, v1, v2, vn0, vn1, vn2, om));
+//    }
 
     return ret;
 }
 
-bool TriangleMesh::intersect(const Ray &r, float_t &t, glm::vec4 &p_hit, uint32_t &ti) {
-    bool intersected = false;
+bool TriangleMesh::intersect(const Ray &r, isect_info &i) {
+    glm::vec4 v0, v1, v2;
+    bool intersected{false};
 
-    // intersect with all triangles in the triangulated mesh
-    for (std::vector<Triangle>::iterator it = ts.begin(); it != ts.end(); ++it) {
-        if (it->intersect(r, t, p_hit, ti)) {
+    // iterate through triangles in the mesh
+    for (uint32_t _ti = 0; _ti < nt; _ti++) {
+        // get the vertex information for the triangle
+        v0 = va[via[3*_ti]     - 1];
+        v1 = va[via[3*_ti + 1] - 1];
+        v2 = va[via[3*_ti + 2] - 1];
+
+        float_t tt{infinity}, u{0}, v{0};
+
+        // intersection test
+        if (triangle_intersect(r, v0, v1, v2, tt, u, v) && tt < i.t) {
             intersected = true;
-            ti = (uint32_t) (it - ts.begin());
+            i.t = tt;
+            i.u = u;
+            i.v = v;
+            i.ip = r.orig() + tt*r.dir();
+            i.ti = _ti;
         }
     }
 
     return intersected;
 }
 
-void TriangleMesh::get_surface_properties(const glm::vec4 &hit_point, const glm::vec4 &view_direction, const uint32_t &triangle_index,
-                                          glm::vec4 &hit_normal) {
-    ts.at(triangle_index).get_surface_properties(hit_point, view_direction, triangle_index, hit_normal);
+void TriangleMesh::get_surface_properties(const bool &interpolate, isect_info &i) {
+
+    if (interpolate) {
+        glm::vec4 vn0, vn1, vn2;
+        float_t w, u, v;
+
+        // get the vertex normals for the current triangle
+        vn0 = vna[vnia[3*i.ti]     - 1];
+        vn1 = vna[vnia[3*i.ti + 1] - 1];
+        vn2 = vna[vnia[3*i.ti + 2] - 1];
+
+        // assign the barycentric coordinates for the current triangle intersection point
+        u = i.u;
+        v = i.v;
+        w = 1.f - u - v;
+
+        i.ipn = w*vn0 + u*vn1 + v*vn2;
+    } else {
+        glm::vec4 v0, v1, v2;
+
+        // get the vertices for the current triangle
+        v0 = va[via[3*i.ti]     - 1];
+        v1 = va[via[3*i.ti + 1] - 1];
+        v2 = va[via[3*i.ti + 2] - 1];
+
+        i.ipn = glm::normalize(glm::vec4(glm::cross(glm::vec3(v1)-glm::vec3(v0), glm::vec3(v2)-glm::vec3(v0)), 0));
+    }
 }
 
-void TriangleMesh::apply_camera_transformation(glm::mat4 &t) {
-    for (std::vector<Triangle>::iterator it = ts.begin(); it != ts.end(); ++it) {
-        it->apply_camera_transformation(t);
+void TriangleMesh::apply_camera_transformation(const glm::mat4 &ctm, const glm::mat4 &tictm) {
+    glm::vec4 v, vn;
+
+    // reset the bounding box size
+    bb.reset();
+
+    // iterate through vertices in the mesh and apply transformation
+    for (uint32_t _ti = 0; _ti < va.size(); _ti++) {
+        // get the vertex
+        v = va[_ti];
+
+        // apply the matrix transformation on the vertices
+        v = ctm * v;
+
+        bb.extend_by(v);
+
+        // assign the transformed vertices
+        va[_ti] = v;
     }
 
+    // iterate through vertex normals and apply transformations
+    for (uint32_t _ti = 0; _ti < vna.size(); _ti++) {
+        // get the vertex normal
+        vn = vna[_ti];
+
+        // apply the normal transformation matrix
+        vn = glm::normalize(tictm * vn);
+
+        // assign the transformed vertex normal
+        vna[_ti] = vn;
+    }
 }
 
 void TriangleMesh::apply_transformations() {
-    for (std::vector<Triangle>::iterator it = ts.begin(); it != ts.end(); ++it) {
-        it->apply_transformations();
+    glm::vec4 v, vn;
+
+    // reset the bounding box size
+    bb.reset();
+
+    // iterate through vertices in the mesh and apply transformation
+    for (uint32_t _ti = 0; _ti < va.size(); _ti++) {
+        // get the vertex
+        v = va[_ti];
+
+        // apply the matrix transformation on the vertices
+        v = mt * v;
+
+        bb.extend_by(v);
+
+        // assign the transformed vertices
+        va[_ti] = v;
+    }
+
+    // iterate through vertex normals and apply transformations
+    for (uint32_t _ti = 0; _ti < vna.size(); _ti++) {
+        // get the vertex normal
+        vn = vna[_ti];
+
+        // apply the normal transformation matrix
+        vn = glm::normalize(nmt * vn);
+
+        // assign the transformed vertex normal
+        vna[_ti] = vn;
     }
 }
 
 void TriangleMesh::translate(const float_t &translation, const uint32_t &axes_of_translation) {
-    for (std::vector<Triangle>::iterator it = ts.begin(); it != ts.end(); ++it) {
-        it->translate(translation, axes_of_translation);
+    // create 3d vector to determine the axes of translation
+    glm::vec3 tv(0);
+
+    switch (axes_of_translation) {
+        case X :
+            tv.x = translation;
+            break;
+        case Y :
+            tv.y = translation;
+            break;
+        case Z :
+            tv.z = translation;
+            break;
+        case XY :
+            tv.x = translation;
+            tv.y = translation;
+            break;
+        case XZ :
+            tv.x = translation;
+            tv.z = translation;
+            break;
+        case YZ :
+            tv.y = translation;
+            tv.z = translation;
+            break;
+        case XYZ :
+            tv = glm::vec3(translation);
+            break;
+        default:
+            printf("You're using an undefined axis of translation.");
+            break;
     }
+
+    // assign the translation matrix to the object's model transform
+    glm::mat4 tm = glm::translate(glm::mat4(1), tv);
+    mt = tm * mt;
 }
 
 void TriangleMesh::rotate(const float_t &angle_of_rotation, const uint32_t &axes_of_rotation) {
-    for (std::vector<Triangle>::iterator it = ts.begin(); it != ts.end(); ++it) {
-        it->rotate(angle_of_rotation, axes_of_rotation);
+    // create 3d vector to determine the axis of rotation
+    glm::vec3 rv(0);
+
+    switch (axes_of_rotation) {
+        case X :
+            rv.x = 1;
+            break;
+        case Y :
+            rv.y = 1;
+            break;
+        case Z :
+            rv.z = 1;
+            break;
+        case XY :
+            rv.x = 1;
+            rv.y = 1;
+            break;
+        case XZ :
+            rv.x = 1;
+            rv.z = 1;
+            break;
+        case YZ :
+            rv.y = 1;
+            rv.z = 1;
+            break;
+        case XYZ :
+            rv = glm::vec3(1);
+            break;
+        default:
+            printf("You're using an undefined axis of rotation.");
+            break;
     }
+
+    // get the rotation matrix
+    glm::mat4 rm = glm::rotate(glm::mat4(1), glm::radians(angle_of_rotation), rv);
+    mt = rm * mt;
+    nmt = glm::transpose(glm::inverse(rm)) * nmt;
 }
 
 void TriangleMesh::scale(const float_t &scaling_factor, const uint32_t &axes_of_scale) {
-    for (std::vector<Triangle>::iterator it = ts.begin(); it != ts.end(); ++it) {
-        it->scale(scaling_factor, axes_of_scale);
+    // create 3d vector to determine the axes of scale
+    glm::vec3 sv(0);
+
+    switch (axes_of_scale) {
+        case X :
+            sv.x = scaling_factor;
+            break;
+        case Y :
+            sv.y = scaling_factor;
+            break;
+        case Z :
+            sv.z = scaling_factor;
+            break;
+        case XY :
+            sv.x = scaling_factor;
+            sv.y = scaling_factor;
+            break;
+        case XZ :
+            sv.x = scaling_factor;
+            sv.z = scaling_factor;
+            break;
+        case YZ :
+            sv.y = scaling_factor;
+            sv.z = scaling_factor;
+            break;
+        case XYZ :
+            sv = glm::vec3(scaling_factor);
+            break;
+        default:
+            printf("You're using an undefined axis of scale.");
+            break;
     }
+
+    // assign the scale matrix to the object's model transform
+    glm::mat4 sm = glm::scale(glm::mat4(1), sv);
+    mt = sm * mt;
+    nmt = glm::transpose(glm::inverse(sm)) * nmt;
+}
+
+bool
+TriangleMesh::triangle_intersect(const Ray &r, const glm::vec4 &v0, const glm::vec4 &v1, const glm::vec4 &v2,
+                                 float_t &t, float_t &u, float_t &v) {
+
+    // TODO: write doc on how this intersection test works
+
+    // define the two edges of the triangle AB and AC
+    glm::vec4 e0(v1 - v0), e1(v2 - v0), cv(r.orig() - v0);
+    glm::vec4 pv, qv;
+    float_t det, inv_det;
+
+    // calculate the p vector from MT, used for calculating the determinant and u parameter
+    pv = glm::vec4(glm::cross(glm::vec3(r.dir()), glm::vec3(e1)), 0);
+
+    // calculate the determinant of the 1x3 matrix M
+    det = glm::dot(pv, e0);
+
+    // if determinant is near 0, ray is parallel to the triangle
+    if (det < kEpsilon)
+        return false;
+
+    // calculate the inverse determinant
+    inv_det = 1.f / det;
+
+    // calculate u parameter and test for its bounds
+    u = glm::dot(pv, cv) * inv_det;
+    if (u < 0.f || u > 1.f)
+        return false;
+
+    // calculate q vector from MT, used for calculating v parameter
+    qv = glm::vec4(glm::cross(glm::vec3(cv), glm::vec3(e0)), 0);
+
+    // calculate v parameter and test for its bounds
+    v = glm::dot(qv, r.dir()) * inv_det;
+    if (v < 0.f || (v + u > 1.f))
+        return false;
+
+    // calculate t
+    t = glm::dot(qv, e1) * inv_det;
+
+    return t>0;
 }

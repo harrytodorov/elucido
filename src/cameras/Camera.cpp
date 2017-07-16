@@ -45,6 +45,9 @@ void Camera::rotate(float_t rot_angle, uint32_t axes_of_rotation) {
 
     // apply the rotation matrix to the camera's transformation matrix
     ctm = rm * ctm;
+
+    // update the transpose of the inverse of the camera's transformation matrix
+    tictm = glm::transpose(glm::inverse(rm)) * tictm;
 }
 
 void Camera::translate(const float_t &translation, const uint32_t &axes_of_translation) {
@@ -87,27 +90,17 @@ void Camera::translate(const float_t &translation, const uint32_t &axes_of_trans
     ctm = tm * ctm;
 }
 
-glm::mat4 Camera::inverse_ctm() {
-    // calculate the inverse of the camera's transformation matrix
-    glm::mat4 inverse = glm::inverse(ctm);
-
-    // return the inverse of the camera's transformation matrix
-    // needed to apply it to objects and light sources
-    return inverse;
-}
-
 void Camera::compute_color_at_surface(const std::vector<Light *> &lights, const std::vector<Object *> &objects,
-                                      const Material *object_material, const glm::vec4 &hit_point, const glm::vec4 &hit_normal,
-                                      const glm::vec4 view_direction, glm::vec3 &color, uint32_t &num_of_ray_object_tests,
-                                      uint32_t &num_of_ray_object_intersections) {
+                                      const Material *object_material, const glm::vec4 view_direction, glm::vec3 &color,
+                                      uint32_t &num_of_ray_object_tests, uint32_t &num_of_ray_object_intersections,
+                                      const isect_info &ii) {
 
     switch (object_material->mt) {
         case phong: {
             Ray shadow_ray;
             PhongMaterial *material = (PhongMaterial *) object_material;
-            glm::vec4 dummy_point(0);
+            isect_info dummy;
             float_t visibility(1.f);
-            uint32_t dummy_index(-1);
 
             // set the hit color to black before adding the ambient, defuse and specular components
             // in case the default background color is not black
@@ -121,20 +114,19 @@ void Camera::compute_color_at_surface(const std::vector<Light *> &lights, const 
             for (auto &light : lights) {
                 glm::vec4 light_direction(0);
                 glm::vec3 light_intensity(0);
-                float_t distance;
-                float_t tmp_dist = infinity;
+                float_t light_dist = infinity;
 
-                light->illuminate(hit_point, light_direction, light_intensity, distance);
+                light->illuminate(ii.ip, light_direction, light_intensity, light_dist);
 
                 // compute if the surface point is in shadow
                 shadow_ray.rt = shadow;
 
                 // hit_normal * shadow_bias is used to translate the origin point by a slightly bit
-                // so one could avoid self-shadows, because of float number precision
-                shadow_ray.set_origin(hit_point + hit_normal * shadow_bias);
+                // set_orig one could avoid self-shadows, because of float number precision
+                shadow_ray.set_orig(ii.ip + ii.ipn*shadow_bias);
 
                 // for the direction of the shadow ray we take the opposite of the light direction
-                shadow_ray.set_direction(-light_direction);
+                shadow_ray.set_dir(-light_direction);
 
                 // iterate through all objects to find if there is an object who
                 // cast a shadow on this surface point
@@ -142,7 +134,9 @@ void Camera::compute_color_at_surface(const std::vector<Light *> &lights, const 
                     // increment the number of ray-object tests
                     __sync_fetch_and_add(&num_of_ray_object_tests, 1);
 
-                    if (object->intersect(shadow_ray, tmp_dist, dummy_point, dummy_index) && tmp_dist < distance) {
+                    dummy = isect_info();
+
+                    if (object->intersect(shadow_ray, dummy)) {
                         visibility = 0.f;
 
                         // increment the number of ray-object intersections
@@ -151,13 +145,13 @@ void Camera::compute_color_at_surface(const std::vector<Light *> &lights, const 
                 }
 
                 // dot product based on Lambert's cosine law for Lambertian reflectance;
-                lambertian_refl = glm::dot(hit_normal, -light_direction);
+                lambertian_refl = glm::dot(ii.ipn, -light_direction);
 
                 // calculate diffuse component
                 diffuse += visibility * (material->c * light_intensity * glm::max(0.f, lambertian_refl));
 
                 // calculate specular component
-                glm::vec4 light_reflection = glm::normalize(2.f * lambertian_refl * hit_normal + light_direction);
+                glm::vec4 light_reflection = glm::normalize(2.f * lambertian_refl * ii.ipn + light_direction);
                 float_t max_lf_vd = glm::max(0.f, glm::dot(light_reflection, view_direction));
                 float_t pow_max_se = glm::pow(max_lf_vd, material->get_specular_exp());
 

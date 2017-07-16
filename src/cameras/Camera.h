@@ -18,24 +18,23 @@ class Camera {
 public:
     glm::vec4                   eye;        // eye / camera position
     glm::vec4                   lookat;     // the point at which the camera looks
-    glm::vec4                   up;         // up vector
     glm::mat4                   ctm;        // camera's transformation matrix
+    glm::mat4                   tictm;      // the transpose of the inverse of the camera's transformation matrix
 
     // constructors & destructors
     // - default camera position is at (0, 0, 0) in world space
     // - default camera direction is the negative z-axis (0, 0, -1)
-    // - we compute the orthonormal base vectors when constructing the camera
     Camera() :
         eye(0, 0, 0, 1),
         lookat(0, 0, -1, 1),
-        up(0, 1, 0, 0),
-        ctm(1)
+        ctm(1),
+        tictm(1)
     {}
     Camera(const glm::vec4 &p, const glm::vec4 &d) :
         eye(p),
         lookat(d),
-        up(0, 1, 0, 0),
-        ctm(1)
+        ctm(1),
+        tictm(1)
     {}
     ~Camera() {}
 
@@ -43,14 +42,21 @@ public:
                                      const std::vector<Light *, std::allocator<Light *>> &lights,
                                      ImagePlane &ip) = 0;
     void compute_color_at_surface(const std::vector<Light *> &lights, const std::vector<Object *> &objects,
-                                      const Material *object_material, const glm::vec4 &hit_point, const glm::vec4 &hit_normal,
-                                      const glm::vec4 view_direction, glm::vec3 &color, uint32_t &num_of_ray_object_tests,
-                                      uint32_t &num_of_ray_object_intersections);
+                                      const Material *object_material, const glm::vec4 view_direction, glm::vec3 &color,
+                                      uint32_t &num_of_ray_object_tests, uint32_t &num_of_ray_object_intersections,
+                                      const isect_info &ii);
     void translate(const float_t &translation, const uint32_t &axes_of_translation);
     void rotate(float_t rot_angle, uint32_t axes_of_rotation);
 
-// functions need to be accessed in derived classes
-protected:
-    glm::mat4 inverse_ctm();
+    inline glm::mat4 inverse_ctm() {
+        // return the inverse of the camera's transformation matrix
+        // needed to apply it to objects and light sources
+        return glm::inverse(ctm);
+    };
+
+    inline glm::mat4 inverse_tictm() {
+        // return the inverse of the transpose of the inverse of the camera's transformation matrix
+        return glm::inverse(glm::transpose(tictm));
+    };
 };
 #endif //ELUCIDO_CAMERA_H

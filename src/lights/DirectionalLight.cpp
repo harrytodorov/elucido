@@ -6,14 +6,15 @@
 #include <cstdio>
 #include "DirectionalLight.h"
 
-void DirectionalLight::illuminate(const glm::vec4 &hit_point, glm::vec4 &light_dir, glm::vec3 &light_intensity, float_t &distance) {
+void DirectionalLight::illuminate(const glm::vec4 &hit_point, glm::vec4 &light_dir, glm::vec3 &light_intensity,
+                                  float_t &distance) {
     light_dir = glm::normalize(d);
     light_intensity = intensity * color;
     distance = infinity;
 }
 
-void DirectionalLight::apply_camera_transformation(glm::mat4 &t) {
-    d = t * d;
+void DirectionalLight::apply_camera_transformation(const glm::mat4 &ictm, const glm::mat4 &itctm) {
+    d = ictm * d;
 }
 
 void DirectionalLight::translate(const float_t &translation, const uint32_t &axes_of_translation) {

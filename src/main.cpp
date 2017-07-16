@@ -2,9 +2,9 @@
 #include <fstream>
 #include "objects/Object.h"
 #include "cameras/OrthographicCamera.h"
-#include "cameras/PerspectiveCamera.h"
 #include "objects/TriangleMesh.h"
 #include "lights/PointLight.h"
+#include "objects/Sphere.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 void save_to_ppm(uint32_t width, uint32_t height, glm::vec3 fb[], const char fn[50]) {
@@ -27,7 +27,7 @@ void save_to_ppm(ImagePlane &ip, const char fn[50]) {
 int main(int argc, char **argv) {
     std::vector<Object*> objects;
     std::vector<Light*> lights;
-    Camera* camera = new PerspectiveCamera();
+    Camera* camera = new OrthographicCamera();
     ImagePlane ip = ImagePlane(1920, 1080);
     ip.bc = 0.7f * white;
     char fn[100];
@@ -107,20 +107,21 @@ int main(int argc, char **argv) {
 
     /// material set-up
 
-    float_t ac = 0.2f;
+    float_t ac = 0.3f;
     float_t dc = 0.8f;
     float_t sc = 0.3f;
     float_t se = 16.f;
-    PhongMaterial mat1(ac, dc, sc, se, whitish);
+    PhongMaterial mat1(ac, dc, sc, se, orangish);
     PhongMaterial mat2(ac, dc, sc, se, lightslategray);
 
     /// light set-up
 
-    glm::vec4 l1_p(0.f, 0.f, 0.0f, 1);
+    glm::vec4 l1_p(0.f, 0.5f, 0.f, 1);
 
-    PointLight l1(l1_p, white, 60);
-    l1.translate(-1.f, Y);
-    l1.translate(1.5f, X);
+    PointLight l1(l1_p, white, 40);
+//    l1.translate(-3.f, Z);
+    l1.translate(2.f, Y);
+    l1.translate(-1.5f, X);
     l1.apply_transformations();
     lights.push_back(&l1);
 //
@@ -138,12 +139,12 @@ int main(int argc, char **argv) {
 //    l3.apply_transformations();
 //    lights.push_back(&l3);
 
-//    /// object set-up
-//
-//    glm::vec4 v0(-7, 0, 7, 1);
-//    glm::vec4 v1(7, 0, 7, 1);
-//    glm::vec4 v2(-7, 0, -7, 1);
-//    glm::vec4 v3(7, 0, -7, 1);
+    /// object set-up
+
+    glm::vec4 v0(-7, 0, 7, 1);
+    glm::vec4 v1(7, 0, 7, 1);
+    glm::vec4 v2(-7, 0, -7, 1);
+    glm::vec4 v3(7, 0, -7, 1);
 
 //    Triangle t1(v0, v1, v2, &mat2);
 //    objects.push_back(&t1);
@@ -157,10 +158,10 @@ int main(int argc, char **argv) {
 //    t2.translate(-2.5f, Z);
 //    t2.apply_transformations();
 
-//    Sphere s1(glm::vec4(0, 0, -5, 1), 0.7f, &mat1);
+    Sphere s1(glm::vec4(0, 0, -3, 1), 1.f, &mat1);
 //    objects.push_back(&s1);
 
-    sprintf(fn, "./cube.obj");
+    sprintf(fn, "./wt_teapot.obj");
     TriangleMesh tm1(&mat1);
 
     // measure loading the triangulated mesh
@@ -179,13 +180,16 @@ int main(int argc, char **argv) {
     std::cout << std::endl;
 
 //    tm1.rotate(-15, X);
-//    tm1.translate(-3.f, Z);
-//    tm1.apply_transformations();
+    tm1.translate(-3.f, Z);
+//    tm1.scale(1.3, XYZ);
+//    tm1.translate(-2.f, X);
+    tm1.apply_transformations();
     objects.push_back(&tm1);
 
     /// camera transformations
-//    camera->rotate(-15, X);
-//    camera->translate(2, Y);
+    camera->translate(0.5f, Y);
+//    camera->rotate(-45, X);
+//    camera->translate(2, Z);
 
 //    for (int t = 1; t < 20; ++t) {
 ////        tm1.translate(4.5f, Z);
@@ -214,7 +218,7 @@ int main(int argc, char **argv) {
     std::cout << "# of light sources in the scene       : " << ri.num_of_light_sources << std::endl;
     std::cout << "# of ray-object intersection tests    : " << ri.num_of_ray_object_tests << std::endl;
     std::cout << "# of ray-object intersections         : " << ri.num_of_ray_object_intersections << std::endl;
-    save_to_ppm(ip, "cube.ppm");
+    save_to_ppm(ip, "teapot.ppm");
 
     return 0;
 }

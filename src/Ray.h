@@ -31,19 +31,22 @@ public:
     }
     ~Ray() {}
 
-    inline glm::vec4 get_origin() const {
+    // get origin
+    inline glm::vec4 orig() const {
         return this->o;
     }
 
-    inline void set_origin(const glm::vec4 &_o) {
+    // set origin
+    inline void set_orig(const glm::vec4 &_o) {
         this->o = _o;
     }
 
-    inline glm::vec4 get_direction() const {
+    // get direction
+    inline glm::vec4 dir() const {
         return this->d;
     }
 
-    inline void set_direction(const glm::vec4 &_d) {
+    inline void set_dir(const glm::vec4 &_d) {
         this->d = _d;
         id = 1.f / d;
         s[0] = (uint32_t) (id.x < 0);
@@ -55,7 +58,7 @@ public:
         return this->s;
     }
 
-    inline glm::vec4 get_inv_direction() const {
+    inline glm::vec4 get_inv_dir() const {
         return this->id;
     }
 };

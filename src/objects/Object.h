@@ -17,16 +17,16 @@ public:
     Material  *om;  // object's material
     glm::mat4 mt;   // model transform matrix for an object
                     // places and transforms the object in world coordinate space
+    glm::mat4 nmt;  // transformation matrix for object's normals
     AABBox bb;      // bounding box of the object
 
-    Object() : om(new PhongMaterial()), mt(glm::mat4(1)), bb(AABBox()) {}
-    Object(Material *m) : om(m), mt(glm::mat4(1)), bb(AABBox()) {}
+    Object() : om(new PhongMaterial()), mt(glm::mat4(1)), nmt(glm::mat4(1)), bb(AABBox()) {}
+    Object(Material *m) : om(m), mt(glm::mat4(1)), nmt(glm::mat4(1)), bb(AABBox()) {}
     virtual ~Object() {}
 
-    virtual bool intersect(const Ray &r, float_t &t, glm::vec4 &p_hit, uint32_t &ti) = 0;
-    virtual void get_surface_properties(const glm::vec4 &hit_point, const glm::vec4 &view_direction, const uint32_t &triangle_index,
-                                            glm::vec4 &hit_normal) = 0;
-    virtual void apply_camera_transformation(glm::mat4 &t) = 0;
+    virtual bool intersect(const Ray &r, isect_info &i) = 0;
+    virtual void get_surface_properties(const bool &interpolate, isect_info &i) = 0;
+    virtual void apply_camera_transformation(const glm::mat4 &ctm, const glm::mat4 &tictm) = 0;
     virtual void apply_transformations() = 0;
     virtual void translate(const float_t &translation, const uint32_t &axes_of_translation) = 0;
     virtual void rotate(const float_t &angle_of_rotation, const uint32_t &axes_of_rotation) = 0;

@@ -54,6 +54,16 @@ struct render_info {
     uint32_t num_of_ray_object_intersections{0};
 };
 
+// intersection information
+struct isect_info {
+    glm::vec4   ip{glm::vec4(infinity)};    // intersection point
+    glm::vec4   ipn{glm::vec4(0)};          // normal at the intersection point
+    float_t     t{infinity};                // distance from the ray's origin to the intersection point
+    float_t     u{infinity};                // barycentric coordinate u: Area_ACP / Area_ABC
+    float_t     v{infinity};                // barycentric coordinate v: Area_ABP / Area_ABC
+    uint32_t    ti{(uint32_t) -1};          // index of the triangle in a triangulated mesh
+};
+
 enum RayType: uint8_t {
     primary,
     shadow
