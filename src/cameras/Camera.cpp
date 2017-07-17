@@ -1,10 +1,7 @@
 //
 // Created by Haralambi Todorov on 18/05/2017.
 //
-
-#include <glm/gtc/matrix_transform.hpp>
 #include "Camera.h"
-
 
 void Camera::rotate(float_t rot_angle, uint32_t axes_of_rotation) {
     // create 3d vector to determine the axis of rotation
@@ -91,13 +88,12 @@ void Camera::translate(const float_t &translation, const uint32_t &axes_of_trans
 }
 
 void Camera::compute_color_at_surface(const std::vector<Light *> &lights, const std::vector<Object *> &objects,
-                                      const Material *object_material, const glm::vec4 view_direction, const isect_info &ii,
-                                      glm::vec3 &color, render_info &ri) {
+                                      const glm::vec4 view_direction, const isect_info &ii, glm::vec3 &color, render_info &ri) {
 
-    switch (object_material->mt) {
-        case phong: {
+    switch (ii.ho->om->mt) {
+        case Material::phong: {
             Ray shadow_ray;
-            PhongMaterial *material = (PhongMaterial *) object_material;
+            PhongMaterial *material = (PhongMaterial *) ii.ho->om;
             isect_info dummy;
             float_t visibility(1.f);
 
@@ -117,6 +113,8 @@ void Camera::compute_color_at_surface(const std::vector<Light *> &lights, const 
 
                 light->illuminate(ii.ip, light_direction, light_intensity, light_dist);
 
+                // TODO: check where is the bug in the calculation of shadows
+
                 // compute if the surface point is in shadow
                 shadow_ray.rt = shadow;
 
@@ -127,24 +125,39 @@ void Camera::compute_color_at_surface(const std::vector<Light *> &lights, const 
                 // for the direction of the shadow ray we take the opposite of the light direction
                 shadow_ray.set_dir(-light_direction);
 
-                // iterate through all objects to find if there is an object who
-                // cast a shadow on this surface point
-                for (auto &object : objects) {
-                    // increment the number of shadow rays
-                    __sync_fetch_and_add(&ri.shadow_rays, 1);
+                dummy.tn = light_dist;
 
-                    // increment the number of ray-object intersection tests
-                    __sync_fetch_and_add(&ri.num_of_ray_object_tests, 1);
-
-                    dummy = isect_info();
-
-                    if (object->intersect(shadow_ray, dummy)) {
-                        visibility = 0.f;
-
-                        // increment the number of ray-object intersections
-                        __sync_fetch_and_add(&ri.num_of_ray_object_intersections, 1);
-                    }
+                if (shadow_ray.trace(objects, dummy)) {
+                    visibility = 0.f;
                 }
+
+//                // iterate through all objects to find if there is an object who
+//                // cast a shadow on this surface point
+//                for (auto &object : objects) {
+//                    // increment the number of shadow rays
+//                    __sync_fetch_and_add(&ri.shadow_rays, 1);
+//
+//                    // increment the number of ray-object intersection tests; bounding box
+//                    __sync_fetch_and_add(&ri.num_of_ray_object_tests, 1);
+//
+//                    // first iterate through object's bounding boxes and check if there is an intersection
+//                    if (object->bb.intersect(shadow_ray)) {
+//
+//                        // increment the number of ray-object tests; object itself
+//                        __sync_fetch_and_add(&ri.num_of_ray_object_tests, 1);
+//
+//                        // if there is an intersection with the bounding box,
+//                        // check if there is an intersection with the object itself
+//                        if (object->intersect(shadow_ray, dummy)) {
+//                            visibility = 0.f;
+//
+//                            // increment the number of ray-object intersections
+//                            __sync_fetch_and_add(&ri.num_of_ray_object_intersections, 1);
+//
+//                            break;
+//                        }
+//                    }
+//                }
 
                 // dot product based on Lambert's cosine law for Lambertian reflectance;
                 lambertian_refl = glm::dot(ii.ipn, -light_direction);
@@ -159,6 +172,7 @@ void Camera::compute_color_at_surface(const std::vector<Light *> &lights, const 
 
                 specular += visibility * (light_intensity * pow_max_se);
             }
+
             // add ambient, diffuse and specular to the the hit color
             color += material->get_ambient() * material->c + material->get_diffuse() * diffuse + material->get_specular() * specular;
             break;

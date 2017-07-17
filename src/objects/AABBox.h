@@ -5,10 +5,11 @@
 #ifndef ELUCIDO_BBOX_H
 #define ELUCIDO_BBOX_H
 
-
 #include <glm/vec4.hpp>
 #include "../Utilities.h"
-#include "../Ray.h"
+
+// using forward declaration, cause the compiler somehow does not want to include the Ray.h...
+class Ray;
 
 class AABBox {
 public:

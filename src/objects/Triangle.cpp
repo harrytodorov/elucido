@@ -2,11 +2,6 @@
 // Created by Haralambi Todorov on 25/05/2017.
 //
 
-#include <cmath>
-#include <glm/glm.hpp>
-#include <cstdio>
-#include <glm/gtc/matrix_transform.hpp>
-#include "../Ray.h"
 #include "Triangle.h"
 
 bool Triangle::intersect(const Ray &r, isect_info &i) {
@@ -56,21 +51,16 @@ bool Triangle::intersect(const Ray &r, isect_info &i) {
     d_prod = glm::dot(normal, perp_vec);
     if (d_prod < 0) return false;
 
-
-    // check if the intersection point we got is bigger than the nearest intersection point we already have computed
-    // we're not interested in that intersection
-    if (t_tmp > i.t)
-        return false;
-
     // test passed; assign variable
-    i.t = t_tmp;
+    i.tn = t_tmp;
     i.ip = ip;
     i.ti = (uint32_t) -1;
+    i.ipn = normal;
 
     return true;
 }
 
-void Triangle::get_surface_properties(isect_info &i) {
+void Triangle::get_surface_properties(isect_info &i) const {
     i.ipn = normal;
 }
 

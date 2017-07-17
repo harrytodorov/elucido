@@ -2,13 +2,6 @@
 // Created by Haralambi Todorov on 05/07/2017.
 //
 
-#include <string>
-#include <fstream>
-#include <iostream>
-#include <sstream>
-#include <cmath>
-#include <vector>
-#include <glm/gtc/matrix_transform.hpp>
 #include "TriangleMesh.h"
 
 loading_info TriangleMesh::load_mesh(const char *f) {
@@ -153,9 +146,9 @@ bool TriangleMesh::intersect(const Ray &r, isect_info &i) {
         float_t tt{infinity}, u{0}, v{0};
 
         // intersection test
-        if (triangle_intersect(r, v0, v1, v2, tt, u, v) && tt < i.t) {
+        if (triangle_intersect(r, v0, v1, v2, tt, u, v) && tt < i.tn) {
             intersected = true;
-            i.t = tt;
+            i.tn = tt;
             i.u = u;
             i.v = v;
             i.ip = r.orig() + tt*r.dir();
@@ -166,7 +159,7 @@ bool TriangleMesh::intersect(const Ray &r, isect_info &i) {
     return intersected;
 }
 
-void TriangleMesh::get_surface_properties(isect_info &i) {
+void TriangleMesh::get_surface_properties(isect_info &i) const {
 
     if (in) {
         glm::vec4 vn0, vn1, vn2;

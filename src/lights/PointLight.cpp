@@ -2,10 +2,6 @@
 // Created by Haralambi Todorov on 26/05/2017.
 //
 
-#include <glm/geometric.hpp>
-#include <glm/mat4x4.hpp>
-#include <cstdio>
-#include <glm/gtc/matrix_transform.hpp>
 #include "PointLight.h"
 
 void PointLight::illuminate(const glm::vec4 &hit_point, glm::vec4 &light_dir, glm::vec3 &light_intensity, float_t &distance) {

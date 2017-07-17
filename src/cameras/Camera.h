@@ -6,12 +6,15 @@
 #define ELUCIDO_CAMERA_H
 
 #include <glm/vec3.hpp>
-#include <math.h>
 #include <glm/mat4x4.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <math.h>
+#include <vector>
+#include <iostream>
 #include "../objects/Object.h"
 #include "../ImagePlane.h"
 #include "../lights/Light.h"
-#include <vector>
+#include "../materials/PhongMaterial.h"
 
 
 class Camera {
@@ -42,8 +45,7 @@ public:
                                      const std::vector<Light *, std::allocator<Light *>> &lights,
                                      ImagePlane &ip) = 0;
     void compute_color_at_surface(const std::vector<Light *> &lights, const std::vector<Object *> &objects,
-                                      const Material *object_material, const glm::vec4 view_direction, const isect_info &ii,
-                                      glm::vec3 &color, render_info &ri);
+                                      const glm::vec4 view_direction, const isect_info &ii, glm::vec3 &color, render_info &ri);
     void translate(const float_t &translation, const uint32_t &axes_of_translation);
     void rotate(float_t rot_angle, uint32_t axes_of_rotation);
 

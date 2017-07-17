@@ -3,6 +3,7 @@
 //
 
 #include "AABBox.h"
+#include "../Ray.h"
 
 AABBox &AABBox::extend_by(const glm::vec4 &p) {
     // check min bound

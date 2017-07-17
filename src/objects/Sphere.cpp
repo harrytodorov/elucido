@@ -2,8 +2,6 @@
 // Created by Haralambi Todorov on 19/05/2017.
 //
 
-#include <cstdio>
-#include <glm/gtc/matrix_transform.hpp>
 #include "Sphere.h"
 
 bool Sphere::intersect(const Ray &r, isect_info &i) {
@@ -53,21 +51,23 @@ bool Sphere::intersect(const Ray &r, isect_info &i) {
             return false;
     }
 
-    // if t0 is greater than the current nearest distance to an object, terminate
-    if (t0 > i.t)
-        return false;
-
     // the ray's origin is within the sphere, there is only one intersection point:
     // p = r.o + (s+q) * r.d
-    i.t = t0;
+    i.tn = t0;
 
     // the hit point is then equals to: p = r.o + t*r.d
-    i.ip = r.orig() + i.t * r.dir();
+    i.ip = r.orig() + i.tn * r.dir();
 
     // because we don't have a triangulated mesh, we give the triangle index value of -1
     i.ti = (uint32_t) -1;
 
     return true;
+}
+
+void Sphere::get_surface_properties(isect_info &i) const {
+    // the sphere's normal is the normalized vector between the hit point and
+    // the sphere's center
+    i.ipn = glm::normalize(i.ip - c);
 }
 
 void Sphere::apply_camera_transformation(const glm::mat4 &ictm, const glm::mat4 &itictm) {
@@ -182,10 +182,4 @@ void Sphere::apply_transformations() {
 
     // after applying the transformations to a sphere; its model transform matrix is set back to the identity matrix
     mt = glm::mat4(1);
-}
-
-void Sphere::get_surface_properties(isect_info &i) {
-    // the sphere's normal is the normalized vector between the hit point and
-    // the sphere's center
-    i.ipn = glm::normalize(i.ip - c);
 }

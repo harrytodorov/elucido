@@ -5,9 +5,7 @@
 #ifndef ELUCIDO_TRIANGLEMESH_H
 #define ELUCIDO_TRIANGLEMESH_H
 
-#include <cstdint>
-#include <glm/vec4.hpp>
-#include "Triangle.h"
+#include "Object.h"
 
 class TriangleMesh : public Object {
 
@@ -27,7 +25,7 @@ public:
     virtual ~TriangleMesh() {}
 
     bool intersect(const Ray &r, isect_info &i);
-    void get_surface_properties(isect_info &i);
+    void get_surface_properties(isect_info &i) const;
     void apply_camera_transformation(const glm::mat4 &ctm, const glm::mat4 &tictm);
     void apply_transformations();
     void translate(const float_t &translation, const uint32_t &axes_of_translation);

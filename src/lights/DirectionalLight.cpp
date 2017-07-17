@@ -2,8 +2,6 @@
 // Created by Haralambi Todorov on 25/06/2017.
 //
 
-#include <glm/gtc/matrix_transform.hpp>
-#include <cstdio>
 #include "DirectionalLight.h"
 
 void DirectionalLight::illuminate(const glm::vec4 &hit_point, glm::vec4 &light_dir, glm::vec3 &light_intensity,

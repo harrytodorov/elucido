@@ -5,6 +5,8 @@
 #include "objects/TriangleMesh.h"
 #include "lights/PointLight.h"
 #include "cameras/PerspectiveCamera.h"
+#include "objects/Sphere.h"
+#include "objects/Triangle.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 void save_to_ppm(uint32_t width, uint32_t height, glm::vec3 fb[], const char fn[50]) {
@@ -28,129 +30,85 @@ int main(int argc, char **argv) {
     std::vector<Object*> objects;
     std::vector<Light*> lights;
     Camera* camera = new PerspectiveCamera();
-    ImagePlane ip = ImagePlane(1920, 1080);
+    ImagePlane ip = ImagePlane(1280, 720);
     ip.bc = 0.7f * white;
     char fn[100];
 
-//    {
-//        /// scene 01
-//
-//        /// material set-up
-//        float_t ac = 0.f;
-//        float_t dc = 0.6f;
-//        float_t sc = 0.3f;
-//        float_t se = 10.f;
-//        PhongMaterial mat1(ac, dc, sc, se, red);
-//        PhongMaterial mat2(ac, dc, sc, se, blue);
-//        PhongMaterial mat3(ac, dc, sc, se, green);
-//        PhongMaterial mat4(ac, dc, sc, se, red);
-//
-//        /// object set-up
-//        glm::vec4 v0(-7, 0, 0, 1);
-//        glm::vec4 v1(7, 0, 0, 1);
-//        glm::vec4 v2(-7, 0, -14, 1);
-//        glm::vec4 v3(7, 0, -14, 1);
-//
-//        Triangle t1(v0, v1, v2, &mat1);
-//        objects.push_back(&t1);
-//        t1.translate(-2.f, Y);
-//        t1.translate(-2.5f, Z);
-//        t1.apply_transformations();
-//
-//        Triangle t2(v1, v3, v2, &mat1);
-//        objects.push_back(&t2);
-//        t2.translate(-2.f, Y);
-//        t2.translate(-2.5f, Z);
-//        t2.apply_transformations();
-//
-//
-//        glm::vec4 s1_p(0.f, -1.f, -4.f, 1);
-//        float_t s1_r(1.f);
-//        Sphere s1(s1_p, s1_r, &mat2);
-//        objects.push_back(&s1);
-//
-////        glm::vec4 s2_p(2.5f, -1.f, -7.f, 1);
-////        float_t s2_r(1.f);
-////        Sphere s2(s2_p, s2_r, &mat3);
-////        objects.push_back(&s2);
-////
-////        glm::vec4 s3_p(-2.5f, -1.f, -7.f, 1);
-////        float_t s3_r(1.f);
-////        Sphere s3(s3_p, s3_r, &mat4);
-////        objects.push_back(&s3);
-//
-//        /// light set-up
-//
-//        glm::vec4 l1_p(0.f, 0.f, 0.0f, 1);
-//        Light *l1 = new PointLight(l1_p, white, 120);
-//        l1->translate(1.7, Y);
-//        l1->translate(-6.f, Z);
-//        l1->apply_transformations();
-//        lights.push_back(l1);
-//
-//        /// transformations
-//
-//        // rotate sphere around light with diffuse
-//        for(int i = 0; i < 73; i++) {
-//            s1.translate(6, Z);
-//            s1.rotate(5, Y);
-//            s1.translate(-6, Z);
-//            s1.apply_transformations();
-//            sprintf(fn, "sphere_rotating_around_light_y_axis_%03d.ppm", i);
-//            camera->render_scene(objects, lights, ip);
-//            save_to_ppm(ip, fn);
-//        }
-//
-//        camera->render_scene(objects, lights, ip);
-//        save_to_ppm(ip, "sphere.ppm");
-//    }
-
     /// material set-up
+    float_t box_ac = 0.2f;
+    float_t box_dc = 0.7f;
+    float_t box_sc = 0.1f;
+    float_t box_se = 10.f;
 
-    float_t ac = 0.3f;
-    float_t dc = 0.8f;
-    float_t sc = 0.3f;
-    float_t se = 16.f;
-    PhongMaterial mat1(ac, dc, sc, se, bluish);
-    PhongMaterial mat2(ac, dc, sc, se, whitish);
+    PhongMaterial box_white(box_ac, box_dc, box_sc, box_se, white);
+    PhongMaterial box_red(box_ac, box_dc, box_sc, box_se, red);
+    PhongMaterial box_green(box_ac, box_dc, box_sc, box_se, green);
 
     /// light set-up
 
-    glm::vec4 l1_p(0.f, 0.5f, 0.f, 1);
+    glm::vec4 l1_p(0.f, 0.f, 0.f, 1);
 
-//    PointLight l1(l1_p, white, 40);
-//    l1.translate(2.f, Y);
-//    l1.translate(-1.5f, X);
-//    l1.apply_transformations();
-//    lights.push_back(&l1);
-
-    PointLight l2(l1_p, violet, 40);
-    l2.translate(-2, X);
-    l2.translate(1, Y);
+    PointLight l2(l1_p, white, 70);
+    l2.translate(-8.f, Z);
+    l2.translate(7.f, Y);
     l2.apply_transformations();
     lights.push_back(&l2);
-
-    PointLight l3(l1_p, orangish, 40);
-    l3.translate(2, X);
-    l3.translate(1, Y);
-    l3.apply_transformations();
-    lights.push_back(&l3);
+//
+//    PointLight l3(l1_p, orangish, 40);
+//    l3.translate(2, X);
+//    l3.translate(1, Y);
+//    l3.apply_transformations();
+//    lights.push_back(&l3);
 
     /// object set-up
 
-    glm::vec4 v0(-7, 0, 7, 1);
-    glm::vec4 v1(7, 0, 7, 1);
-    glm::vec4 v2(-7, 0, -7, 1);
-    glm::vec4 v3(7, 0, -7, 1);
+    glm::vec4 v0(-5,  0,  -3, 1);
+    glm::vec4 v1( 5,  0,  -3, 1);
+    glm::vec4 v2(-5, 10,  -3, 1);
+    glm::vec4 v3( 5, 10,  -3, 1);
+    glm::vec4 v4(-5,  0, -13, 1);
+    glm::vec4 v5( 5,  0, -13, 1);
+    glm::vec4 v6(-5, 10, -13, 1);
+    glm::vec4 v7( 5, 10, -13, 1);
 
-    Triangle t1(v0, v1, v2, &mat2);
+    // floor
+    Triangle t1(v0, v1, v4, &box_white);
     objects.push_back(&t1);
-
-    Triangle t2(v1, v3, v2, &mat2);
+    Triangle t2(v1, v5, v4, &box_white);
     objects.push_back(&t2);
 
-    sprintf(fn, "./dragon.obj");
-    TriangleMesh tm1(&mat1);
+    // left wall
+    Triangle t3(v0, v4, v2, &box_red);
+    objects.push_back(&t3);
+    Triangle t4(v4, v6, v2, &box_red);
+    objects.push_back(&t4);
+
+    // right wall
+    Triangle t5(v1, v3, v5, &box_green);
+    objects.push_back(&t5);
+    Triangle t6(v3, v7, v5, &box_green);
+    objects.push_back(&t6);
+
+    // back wall
+    Triangle t7(v4, v5, v6, &box_white);
+    objects.push_back(&t7);
+    Triangle t8(v5, v7, v6, &box_white);
+    objects.push_back(&t8);
+
+    // ceiling
+    Triangle t9(v2, v6, v3, &box_white);
+    objects.push_back(&t9);
+    Triangle t10(v6, v7, v3, &box_white);
+    objects.push_back(&t10);
+
+    Sphere s1(&box_white);
+    s1.translate(-6.5f, Z);
+    s1.translate(3.f, Y);
+    s1.apply_transformations();
+    objects.push_back(&s1);
+
+    sprintf(fn, "./cube.obj");
+    TriangleMesh tm1(&box_red);
 
     // measure loading the triangulated mesh
     auto start_loading = std::chrono::high_resolution_clock::now();
@@ -167,26 +125,16 @@ int main(int argc, char **argv) {
     std::cout << "# of faces in the mesh                : " << li.num_of_faces << std::endl;
     std::cout << std::endl;
 
-    tm1.translate(-3.5f, Z);
-    tm1.translate(0.85f, Y);
+    tm1.translate(1.f, Y);
+    tm1.translate(-6.5f, Z);
     tm1.apply_transformations();
     objects.push_back(&tm1);
 
     /// camera transformations
-    camera->translate(1.3f, Y);
+    camera->translate(4.f, Y);
+    camera->translate(3.f, Z);
 
-//    for (int t = 1; t < 20; ++t) {
-////        tm1.translate(4.5f, Z);
-////        tm1.translate(-0.5f, Y);
-////        tm1.rotate(20, XY);
-////        tm1.translate(-4.5f, Z);
-////        tm1.translate(0.5f, Y);
-////        tm1.apply_transformations();
-//        s1.set_radius(0.15f * t);
-//        sprintf(fn, "sphere_shrinking_bb_%03d.ppm", t);
-//        camera->render_scene(objects, lights, ip);
-//        save_to_ppm(ip, fn);
-//    }
+    /// rendering
 
     // measure rendering time
     std::cout << "Start rendering..." << std::endl;
@@ -202,7 +150,7 @@ int main(int argc, char **argv) {
     std::cout << "# of light sources in the scene       : " << ri.num_of_light_sources << std::endl;
     std::cout << "# of ray-object intersection tests    : " << ri.num_of_ray_object_tests << std::endl;
     std::cout << "# of ray-object intersections         : " << ri.num_of_ray_object_intersections << std::endl;
-    save_to_ppm(ip, "dragon.ppm");
+    save_to_ppm(ip, "cornell_box.ppm");
 
     return 0;
 }

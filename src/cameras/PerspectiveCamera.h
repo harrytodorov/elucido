@@ -5,9 +5,6 @@
 #ifndef ELUCIDO_PERSPECTIVECAMERA_H
 #define ELUCIDO_PERSPECTIVECAMERA_H
 
-
-#include "../ImagePlane.h"
-#include "../objects/Object.h"
 #include "Camera.h"
 
 class PerspectiveCamera : public Camera {

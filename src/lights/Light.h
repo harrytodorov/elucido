@@ -5,9 +5,14 @@
 #ifndef ELUCIDO_LIGHT_H
 #define ELUCIDO_LIGHT_H
 
-
+#include <glm/geometric.hpp>
 #include <glm/vec3.hpp>
+#include <glm/mat4x4.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 #include <cmath>
+#include <cstdio>
+
 #include "../Utilities.h"
 
 class Light {
@@ -22,7 +27,7 @@ public:
     // default light color is white
     // default light intensity is 100
     Light(const glm::vec3 &c, const float_t &i) : color(c), intensity(i) {}
-    Light() : color(white), intensity(10.0) {}
+    Light() : color(glm::vec3(1)), intensity(10.0) {}
     virtual ~Light() {}
 
     virtual void illuminate(const glm::vec4 &hit_point, glm::vec4 &light_dir, glm::vec3 &light_intensity,

@@ -6,6 +6,10 @@
 #define ELUCIDO_RAY_H
 
 #include "glm/vec4.hpp"
+
+#include <vector>
+
+#include "objects/Object.h"
 #include "Utilities.h"
 
 class Ray {
@@ -31,36 +35,29 @@ public:
     }
     ~Ray() {}
 
-    // get origin
+    bool trace(const std::vector<Object*> &objects, isect_info &ii);
     inline glm::vec4 orig() const {
         return this->o;
-    }
-
-    // set origin
+}              // get origin
     inline void set_orig(const glm::vec4 &_o) {
         this->o = _o;
-    }
-
-    // get direction
+    }  // set origin
     inline glm::vec4 dir() const {
         return this->d;
-    }
-
+    }               // get direction
     inline void set_dir(const glm::vec4 &_d) {
         this->d = _d;
         id = 1.f / d;
         s[0] = (uint32_t) (id.x < 0);
         s[1] = (uint32_t) (id.y < 0);
         s[2] = (uint32_t) (id.z < 0);
-    }
-
+    }   // set direction
     inline const uint32_t* get_sign() const {
         return this->s;
-    }
-
+    }    // get signs of the ray direction components
     inline glm::vec4 get_inv_dir() const {
         return this->id;
-    }
+    }       // get the inverse of the direction
 };
 
 

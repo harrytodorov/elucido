@@ -2,7 +2,6 @@
 // Created by Haralambi Todorov on 19/05/2017.
 //
 
-#include <iostream>
 #include "OrthographicCamera.h"
 
 
@@ -64,48 +63,41 @@ render_info OrthographicCamera::render_scene(const std::vector<Object *, std::al
             // default color is image plane's default background color
             hit_color = ip.bc;
 
-            // no object is hit
-            hit_object = nullptr;
-
-            // reset the intersection information
-            ii = isect_info();
-
-            // iterate through all objects and find the closest intersection
-            for (auto& object : objects) {
-
-                // increment the number of ray-object tests; bounding box
-                __sync_fetch_and_add(&ri.num_of_ray_object_tests, 1);
-
-                // first iterate through object's bounding boxes and check if there is an intersection
-                if (object->bb.intersect(ray)) {
-
-                    // increment the number of ray-object tests; object itself
-                    __sync_fetch_and_add(&ri.num_of_ray_object_tests, 1);
-
-                    // if there is an intersection with the bounding box,
-                    // check if there is an intersection with the object itself
-                    if (object->intersect(ray, ii)) {
-                        hit_object = object;
-
-                        // increment the number of ray-object intersections
-                        __sync_fetch_and_add(&ri.num_of_ray_object_intersections, 1);
-                    }
-                }
-            }
+//            // iterate through all objects and find the closest intersection
+//            for (auto& object : objects) {
+//
+//                // increment the number of ray-object tests; bounding box
+//                __sync_fetch_and_add(&ri.num_of_ray_object_tests, 1);
+//
+//                // first iterate through object's bounding boxes and check if there is an intersection
+//                if (object->bb.intersect(ray)) {
+//
+//                    // increment the number of ray-object tests; object itself
+//                    __sync_fetch_and_add(&ri.num_of_ray_object_tests, 1);
+//
+//                    // if there is an intersection with the bounding box,
+//                    // check if there is an intersection with the object itself
+//                    if (object->intersect(ray, ii)) {
+//                        hit_object = object;
+//
+//                        // increment the number of ray-object intersections
+//                        __sync_fetch_and_add(&ri.num_of_ray_object_intersections, 1);
+//                    }
+//                }
+//            }
 
             // get the color from the closest intersected object, if any
             // calculate the illumination per pixel using Phong illumination model
-            if (hit_object != nullptr) {
+            if (ray.trace(objects, ii)) {
 
                 // the view direction in case of ray-tracing is the opposite of the ray's direction
                 glm::vec4 view_direction = -ray.dir();
 
                 // get the hit normal of the intersection point
-                hit_object->get_surface_properties(ii);
+                ii.ho->get_surface_properties(ii);
 
                 // get the color at the hit surface
-                compute_color_at_surface(lights, objects, hit_object->om, view_direction, ii, hit_color,
-                                         ri);
+                compute_color_at_surface(lights, objects, view_direction, ii, hit_color, ri);
             }
 
             // assign the color to the frame buffer

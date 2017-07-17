@@ -8,6 +8,8 @@
 #include <string>
 #include "glm/gtc/epsilon.hpp"
 
+class Object;
+
 const float_t kEpsilon = glm::epsilon<float_t>();               // epsilon value; used to deal with some edge cases
 const float_t infinity = std::numeric_limits<float_t>::max();   // infinity value
 
@@ -56,22 +58,18 @@ struct render_info {
 
 // intersection information
 struct isect_info {
-    glm::vec4   ip{glm::vec4(infinity)};    // intersection point
-    glm::vec4   ipn{glm::vec4(0)};          // normal at the intersection point
-    float_t     t{infinity};                // distance from the ray's origin to the intersection point
-    float_t     u{infinity};                // barycentric coordinate u: Area_ACP / Area_ABC
-    float_t     v{infinity};                // barycentric coordinate v: Area_ABP / Area_ABC
-    uint32_t    ti{(uint32_t) -1};          // index of the triangle in a triangulated mesh
+    glm::vec4       ip{glm::vec4(infinity)};    // intersection point
+    glm::vec4       ipn{glm::vec4(0)};          // normal at the intersection point
+    float_t         tn{infinity};               // nearest distance from the ray's origin to the intersection point
+    float_t         u{infinity};                // barycentric coordinate u: Area_ACP / Area_ABC
+    float_t         v{infinity};                // barycentric coordinate v: Area_ABP / Area_ABC
+    uint32_t        ti{(uint32_t) -1};          // index of the triangle in a triangulated mesh
+    const Object    *ho = nullptr;              // pointer to the object hit by the ray
 };
 
 enum RayType: uint8_t {
     primary,
     shadow
 };
-
-enum MaterialType: uint8_t {
-    phong,
-};
-
 
 #endif //ELUCIDO_UTILITIES_H
