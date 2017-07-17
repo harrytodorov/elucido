@@ -184,7 +184,7 @@ void Sphere::apply_transformations() {
     mt = glm::mat4(1);
 }
 
-void Sphere::get_surface_properties(const bool &interpolate, isect_info &i) {
+void Sphere::get_surface_properties(isect_info &i) {
     // the sphere's normal is the normalized vector between the hit point and
     // the sphere's center
     i.ipn = glm::normalize(i.ip - c);

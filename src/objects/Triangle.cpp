@@ -70,7 +70,7 @@ bool Triangle::intersect(const Ray &r, isect_info &i) {
     return true;
 }
 
-void Triangle::get_surface_properties(const bool &interpolate, isect_info &i) {
+void Triangle::get_surface_properties(isect_info &i) {
     i.ipn = normal;
 }
 

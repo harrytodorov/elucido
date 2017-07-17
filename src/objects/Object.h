@@ -14,18 +14,20 @@
 
 class Object {
 public:
-    Material  *om;  // object's material
-    glm::mat4 mt;   // model transform matrix for an object
-                    // places and transforms the object in world coordinate space
-    glm::mat4 nmt;  // transformation matrix for object's normals
-    AABBox bb;      // bounding box of the object
+    Material    *om;    // object's material
+    glm::mat4   mt;     // model transform matrix for an object
+                        // places and transforms the object in world coordinate space
+    glm::mat4   nmt;    // transformation matrix for object's normals
+    AABBox      bb;     // bounding box of the object
+    bool        in;     // interpolate normals
 
-    Object() : om(new PhongMaterial()), mt(glm::mat4(1)), nmt(glm::mat4(1)), bb(AABBox()) {}
-    Object(Material *m) : om(m), mt(glm::mat4(1)), nmt(glm::mat4(1)), bb(AABBox()) {}
+    Object() : om(new PhongMaterial()), mt(glm::mat4(1)), nmt(glm::mat4(1)), bb(AABBox()), in(false) {}
+    Object(Material *m) : om(m), mt(glm::mat4(1)), nmt(glm::mat4(1)), bb(AABBox()), in(false) {}
+    Object(Material *m, const bool &_in) : om(m), mt(glm::mat4(1)), nmt(glm::mat4(1)), bb(AABBox()), in(_in) {}
     virtual ~Object() {}
 
     virtual bool intersect(const Ray &r, isect_info &i) = 0;
-    virtual void get_surface_properties(const bool &interpolate, isect_info &i) = 0;
+    virtual void get_surface_properties(isect_info &i) = 0;
     virtual void apply_camera_transformation(const glm::mat4 &ctm, const glm::mat4 &tictm) = 0;
     virtual void apply_transformations() = 0;
     virtual void translate(const float_t &translation, const uint32_t &axes_of_translation) = 0;

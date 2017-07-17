@@ -166,9 +166,9 @@ bool TriangleMesh::intersect(const Ray &r, isect_info &i) {
     return intersected;
 }
 
-void TriangleMesh::get_surface_properties(const bool &interpolate, isect_info &i) {
+void TriangleMesh::get_surface_properties(isect_info &i) {
 
-    if (interpolate) {
+    if (in) {
         glm::vec4 vn0, vn1, vn2;
         float_t w, u, v;
 

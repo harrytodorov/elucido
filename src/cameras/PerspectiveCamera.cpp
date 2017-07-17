@@ -104,7 +104,7 @@ render_info PerspectiveCamera::render_scene(const std::vector<Object *, std::all
                 glm::vec4 view_direction = -ray.dir();
 
                 // get the hit normal of the intersection point
-                hit_object->get_surface_properties(false, ii);
+                hit_object->get_surface_properties(ii);
 
                 // get the color at the hit surface
                 compute_color_at_surface(lights, objects, hit_object->om, view_direction, ii, hit_color,
