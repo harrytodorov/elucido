@@ -96,8 +96,8 @@ loading_info TriangleMesh::load_mesh(const char *f) {
                 // vertex normal indices for the triangle
                 uint32_t vn0, vn1, vn2;
                 vn0 = vertexnormal_index.at(0);
-                vn1 = vertexnormal_index.at((uint32_t) t + 2);
-                vn2 = vertexnormal_index.at((uint32_t) t + 1);
+                vn1 = vertexnormal_index.at((uint32_t) t + 1);
+                vn2 = vertexnormal_index.at((uint32_t) t + 2);
                 vnia.push_back(vn0);
                 vnia.push_back(vn1);
                 vnia.push_back(vn2);
@@ -109,10 +109,10 @@ loading_info TriangleMesh::load_mesh(const char *f) {
         }
     }
 
-    ret.num_vertices = (uint32_t) va.size();
-    ret.num_of_vn = (uint32_t) vna.size();
-    ret.num_of_faces = nf;
-    ret.num_of_triangles = nt;
+    ret.nv = (uint32_t) va.size();
+    ret.nvn = (uint32_t) vna.size();
+    ret.nf = nf;
+    ret.nt = nt;
 
 //    // initialize a triangle for each face
 //    for (int ti = 0; ti < nt; ti++) {

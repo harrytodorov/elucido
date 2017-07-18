@@ -75,9 +75,9 @@ render_info OrthographicCamera::render_scene(const std::vector<Object *, std::al
     }
 
     // get rendering information
-    ri.num_of_light_sources = (uint32_t) lights.size();
-    ri.num_of_objects = (uint32_t) objects.size();
-    ri.primary_rays = ip.vres * ip.hres;
+    ri.nls = (uint32_t) lights.size();
+    ri.no = (uint32_t) objects.size();
+    ri.npr = ip.vres * ip.hres;
 
     return ri;
 }

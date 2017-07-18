@@ -10,15 +10,17 @@
 class TriangleMesh : public Object {
 
 public:
-    std::vector<glm::vec4> va;  // vertex array
-    std::vector<glm::vec4> vna; // vertex normal array
-    std::vector<uint32_t> via;  // vertex index array
-    std::vector<uint32_t> vnia; // vertex normal index array
-    uint32_t nt{0};             // number of triangles in the mesh
-    uint32_t nf{0};             // number of faces in the mesh
+    std::vector<glm::vec4>  va;         // vertex array
+    std::vector<glm::vec4>  vna;        // vertex normal array
+    std::vector<uint32_t>   via;        // vertex index array
+    std::vector<uint32_t>   vnia;       // vertex normal index array
+    uint32_t                nt{0};      // number of triangles in the mesh
+    uint32_t                nf{0};      // number of faces in the mesh
+    bool                    in{false};  // interpolate normals
 
     TriangleMesh() : Object() {}
-    TriangleMesh(Material *m) : Object(m) {}
+    TriangleMesh(const material &m) : Object(m) {}
+    TriangleMesh(const material &m, const bool &_in) : Object(m), in(_in) {}
     TriangleMesh(const char *f) : Object() {
         load_mesh(f);
     }

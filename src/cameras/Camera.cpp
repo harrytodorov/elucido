@@ -96,7 +96,7 @@ glm::vec3 Camera::cast_ray(const Ray &ray, const std::vector<Light *> &lights, c
     if (depth > max_depth) return bgc;
 
     // hit color
-    glm::vec3 hc(0);
+    glm::vec3 hc(bgc);
 
     // intersection information
     isect_info ii;
@@ -104,13 +104,16 @@ glm::vec3 Camera::cast_ray(const Ray &ray, const std::vector<Light *> &lights, c
     // trace a ray through the scene
     if (ray.trace(objects, ii, ri)) {
 
+        // if we have an intersection we set the background color to 0 for all components; black
+        hc = black;
+
         // get the surface properties of the intersection
         ii.ho->get_surface_properties(ii);
 
-        switch (ii.ho->om->mt) {
-            case phong_mat : {
+        switch (ii.ho->om.mt) {
+            case pm : {
                 Ray shadow_ray;
-                PhongMaterial *material = (PhongMaterial *) ii.ho->om;
+                material mat = ii.ho->om;
                 isect_info dummy;
                 float_t visibility(1.f);
 
@@ -144,22 +147,22 @@ glm::vec3 Camera::cast_ray(const Ray &ray, const std::vector<Light *> &lights, c
                     lamb_refl = glm::dot(ii.ipn, -light_direction);
 
                     // calculate diffuse component
-                    diffuse += visibility * (material->c * light_intensity * glm::max(0.f, lamb_refl));
+                    diffuse += visibility * (mat.c * light_intensity * glm::max(0.f, lamb_refl));
 
                     // calculate specular component
                     glm::vec4 light_reflection = glm::normalize(2.f * lamb_refl * ii.ipn + light_direction);
                     float_t max_lf_vd = glm::max(0.f, glm::dot(light_reflection, -ray.dir()));
-                    float_t pow_max_se = glm::pow(max_lf_vd, material->get_specular_exp());
+                    float_t pow_max_se = glm::pow(max_lf_vd, mat.se);
 
                     specular += visibility * (light_intensity * pow_max_se);
                 }
 
                 // add ambient, diffuse and specular to the the hit color
-                hc += material->get_ambient() * material->c + material->get_diffuse() * diffuse + material->get_specular() * specular;
+                hc += mat.ac * mat.c + mat.dc * diffuse + mat.sc * specular;
                 break;
             }
 
-            case reflection_mat : {
+            case rm : {
                 glm::vec4 rv = reflect(ray.dir(), ii.ipn);
 
                 // create a reflection ray

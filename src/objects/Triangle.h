@@ -24,7 +24,7 @@ public:
         normal = glm::normalize(glm::vec4(glm::cross(glm::vec3(v1)-glm::vec3(v0), glm::vec3(v2)-glm::vec3(v0)), 0));
         reshape_bb();
     }
-    Triangle(Material *m) :
+    Triangle(const material &m) :
             Object(m),
             v0(-1, -1, 0, 1),
             v1( 1, -1, 0, 1),
@@ -33,9 +33,9 @@ public:
         normal = glm::normalize(glm::vec4(glm::cross(glm::vec3(v1)-glm::vec3(v0), glm::vec3(v2)-glm::vec3(v0)), 0));
         reshape_bb();
     }
-    Triangle(glm::vec4 &vec0,
-             glm::vec4 &vec1,
-             glm::vec4 &vec2) :
+    Triangle(const glm::vec4 &vec0,
+             const glm::vec4 &vec1,
+             const glm::vec4 &vec2) :
             Object(),
             v0(vec0),
             v1(vec1),
@@ -43,10 +43,10 @@ public:
     {
         reshape_bb();
     }
-    Triangle(glm::vec4 &vec0,
-             glm::vec4 &vec1,
-             glm::vec4 &vec2,
-             Material *m) :
+    Triangle(const glm::vec4 &vec0,
+             const glm::vec4 &vec1,
+             const glm::vec4 &vec2,
+             const material &m) :
             Object(m),
             v0(vec0),
             v1(vec1),

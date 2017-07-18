@@ -22,23 +22,19 @@
 #include <vector>
 #include <cstdint>
 
-#include "../materials/Material.h"
 #include "../Ray.h"
-#include "../materials/PhongMaterial.h"
 #include "AABBox.h"
 
 class Object {
 public:
-    Material    *om;    // object's material
+    material    om;    // object's material
     glm::mat4   mt;     // model transform matrix for an object
                         // places and transforms the object in world coordinate space
     glm::mat4   nmt;    // transformation matrix for object's normals
     AABBox      bb;     // bounding box of the object
-    bool        in;     // interpolate normals
 
-    Object() : om(new PhongMaterial()), mt(glm::mat4(1)), bb(AABBox()) {}
-    Object(Material *m) : om(m), mt(glm::mat4(1)), nmt(glm::mat4(1)), bb(AABBox()), in(false) {}
-    Object(Material *m, const bool &_in) : om(m), mt(glm::mat4(1)), nmt(glm::mat4(1)), bb(AABBox()), in(_in) {}
+    Object() : om(material()), mt(glm::mat4(1)), bb(AABBox()) {}
+    Object(const material &m) : om(m), mt(glm::mat4(1)), nmt(glm::mat4(1)), bb(AABBox()) {}
     virtual ~Object() {}
 
     virtual bool intersect(const Ray &r, isect_info &i) = 0;
@@ -49,6 +45,5 @@ public:
     virtual void rotate(const float_t &angle_of_rotation, const uint32_t &axes_of_rotation) = 0;
     virtual void scale(const float_t &scaling_factor, const uint32_t &axes_of_scale) = 0;
 };
-
 
 #endif //ELUCIDO_OBJECT_H

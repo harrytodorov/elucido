@@ -14,7 +14,6 @@
 #include "../objects/Object.h"
 #include "../ImagePlane.h"
 #include "../lights/Light.h"
-#include "../materials/PhongMaterial.h"
 #include "../Utilities.h"
 
 class Camera {

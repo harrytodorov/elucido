@@ -33,32 +33,45 @@ const glm::vec3 violet(0.573f, 0.384f, 0.757f);
 const glm::vec3 orangish(0.929f, 0.615f, 0.306f);
 const glm::vec3 whitish(0.780f, 0.812f, 0.867f);
 const glm::vec3 lightslategray(0.467f, 0.533f, 0.6f);
+const glm::vec3 greyish(0.8f);
 
-const float_t bias = 0.0001;             // shadow bias is used for avoiding self-shadows
-const uint32_t max_depth = 3;                   // maximum depth of recursion
-const glm::vec3 bgc(black);                     // background color
+const float_t bias = 0.0001;            // shadow bias is used for avoiding self-shadows
+const uint32_t max_depth = 3;           // maximum depth of recursion
+const glm::vec3 bgc(greyish);           // background color
 
 const std::string vertex("v");
 const std::string vertex_normal("vn");
 const std::string face("f");
 
+
+enum RayType: uint8_t {
+    primary,
+    shadow,
+    reflection
+};
+
+enum MaterialType: uint8_t {
+    pm, // Phong material
+    rm, // Reflection matrial
+};
+
 struct loading_info {
-    uint32_t num_vertices{0};
-    uint32_t num_of_vn{0};
-    uint32_t num_of_faces{0};
-    uint32_t num_of_triangles{0};
+    uint32_t nv{0};     // number of vertices
+    uint32_t nvn{0};    // number of vertex normals
+    uint32_t nf{0};     // number of faces
+    uint32_t nt{0};     // number of triangles
 };
 
 struct render_info {
-    uint32_t primary_rays{0};
-    uint32_t shadow_rays{0};
-    uint32_t num_of_objects{0};
-    uint32_t num_of_light_sources{0};
-    uint32_t num_of_ray_object_tests{0};
-    uint32_t num_of_ray_object_intersections{0};
+    uint32_t npr{0};    // number of primary rays
+    uint32_t nsr{0};    // number of secondary rays
+    uint32_t no{0};     // number of objects in the scene
+    uint32_t nls{0};    // number of light sources in the scene
+    uint32_t nrot{0};   // number of ray-object intersection tests
+    uint32_t nroi{0};   // number of ray-object intersections; ray-bounding box intersection does not count
+                        // as a valid ray-object intersection; so just ray-object intersections are counted
 };
 
-// intersection information
 struct isect_info {
     glm::vec4       ip{glm::vec4(infinity)};    // intersection point
     glm::vec4       ipn{glm::vec4(0)};          // normal at the intersection point
@@ -69,16 +82,13 @@ struct isect_info {
     const Object    *ho = nullptr;              // pointer to the object hit by the ray
 };
 
-enum RayType: uint8_t {
-    primary,
-    shadow,
-    reflection
+struct material {
+    glm::vec3       c{white};   // material's color
+    MaterialType    mt{pm};     // material's type (see MaterialType enum)
+    float_t         ac{0.2f};   // ambient constant
+    float_t         dc{0.8f};   // diffuse constant
+    float_t         sc{0.2f};   // specular constant
+    float_t         se{10.f};   // specular exponent
 };
-
-enum MaterialType: uint8_t {
-    phong_mat,
-    reflection_mat,
-};
-
 
 #endif //ELUCIDO_UTILITIES_H
