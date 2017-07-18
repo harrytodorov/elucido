@@ -4,7 +4,7 @@
 
 #include "Ray.h"
 
-bool Ray::trace(const std::vector<Object *> &objects, isect_info &ii, render_info &ri) {
+bool Ray::trace(const std::vector<Object *> &objects, isect_info &ii, render_info &ri) const {
     // reset the information stored in the intersection structure
     ii = isect_info();
 

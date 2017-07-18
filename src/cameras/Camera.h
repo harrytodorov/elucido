@@ -15,7 +15,7 @@
 #include "../ImagePlane.h"
 #include "../lights/Light.h"
 #include "../materials/PhongMaterial.h"
-
+#include "../Utilities.h"
 
 class Camera {
 public:
@@ -44,8 +44,7 @@ public:
     virtual render_info render_scene(const std::vector<Object *, std::allocator<Object *>> &objects,
                                      const std::vector<Light *, std::allocator<Light *>> &lights,
                                      ImagePlane &ip) = 0;
-    void compute_color_at_surface(const std::vector<Light *> &lights, const std::vector<Object *> &objects,
-                                      const glm::vec4 view_direction, const isect_info &ii, glm::vec3 &color, render_info &ri);
+    glm::vec3 cast_ray(const Ray &ray, const std::vector<Light *> &lights, const std::vector<Object *> &objects, const uint32_t &depth, render_info &ri);
     void translate(const float_t &translation, const uint32_t &axes_of_translation);
     void rotate(float_t rot_angle, uint32_t axes_of_rotation);
 
@@ -54,10 +53,10 @@ public:
         // needed to apply it to objects and light sources
         return glm::inverse(ctm);
     };
-
     inline glm::mat4 inverse_tictm() {
         // return the inverse of the transpose of the inverse of the camera's transformation matrix
         return glm::inverse(glm::transpose(tictm));
     };
+    inline glm::vec4 reflect(const glm::vec4 &view, const glm::vec4 &surface_normal);
 };
 #endif //ELUCIDO_CAMERA_H

@@ -13,9 +13,6 @@
 
 class Material {
 public:
-    enum MaterialType: uint8_t {
-        phong,
-    };
     glm::vec3       c;        // color
     MaterialType    mt;
 
@@ -24,8 +21,6 @@ public:
     Material(const MaterialType &mt) : c(glm::vec3(1)), mt(mt) {}
     Material(const glm::vec3 &col, const MaterialType &mt) : c(col), mt(mt) {}
     virtual ~Material() {}
-
-
 };
 
 

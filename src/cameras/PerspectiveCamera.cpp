@@ -10,7 +10,6 @@ render_info PerspectiveCamera::render_scene(const std::vector<Object *, std::all
     float_t             curr_y;
     float_t             ar;                     // image plane's aspect ratio
     float_t             sf;                     // scaling factor obtained by the tan(fov/2)
-    Object              *hit_object = nullptr;
     Ray                 ray;
     glm::vec3           hit_color;
     glm::vec4           cp;
@@ -64,24 +63,8 @@ render_info PerspectiveCamera::render_scene(const std::vector<Object *, std::all
             // plane cell's c; of course direction should be normalized as well
             ray.set_dir(glm::normalize(cp - eye));
 
-            // default color is image plane's default background color
-            hit_color = ip.bc;
-
-            // get the color from the closest intersected object, if any
-            // calculate the illumination per pixel using Phong illumination model
-            if (ray.trace(objects, ii, ri)) {
-
-                // the view direction in case of ray-tracing is the opposite of the ray's direction
-                glm::vec4 view_direction = -ray.dir();
-
-                // get the hit normal of the intersection point
-                ii.ho->get_surface_properties(ii);
-
-                // get the color at the hit surface
-                compute_color_at_surface(lights, objects, view_direction, ii, hit_color, ri);
-            }
-
-            // assign the color to the frame buffer
+            // cast a ray into the scene and get the color value for it
+            hit_color = cast_ray(ray, lights, objects, 0, ri);
             *(pixels++) = glm::clamp(hit_color, 0.f, 1.f);
         }
     }
@@ -96,6 +79,7 @@ render_info PerspectiveCamera::render_scene(const std::vector<Object *, std::all
     for (auto& light : lights) {
         light->apply_camera_transformation(ctm, itictm);
     }
+
     // get rendering information
     ri.num_of_light_sources = (uint32_t) lights.size();
     ri.num_of_objects = (uint32_t) objects.size();

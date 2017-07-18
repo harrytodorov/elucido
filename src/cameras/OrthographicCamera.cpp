@@ -11,11 +11,8 @@ render_info OrthographicCamera::render_scene(const std::vector<Object *, std::al
     float_t             curr_x;
     float_t             curr_y;
     float_t             ar;                     // image plane's aspect ratio
-    Object              *hit_object = nullptr;
     Ray                 ray;
     glm::vec3           hit_color;
-    glm::vec4           hit_point;
-    glm::vec4           hit_normal;
     glm::mat4           ictm;                   // inverse camera's transformation matrix
     glm::mat4           itictm;                 // inverse of the the transpose of the inverse of
                                                 // the camera's transformation matrix
@@ -60,24 +57,8 @@ render_info OrthographicCamera::render_scene(const std::vector<Object *, std::al
             // z position is fixed
             ray.set_orig(glm::vec4(curr_x, curr_y, eye.z, 1));
 
-            // default color is image plane's default background color
-            hit_color = ip.bc;
-
-            // get the color from the closest intersected object, if any
-            // calculate the illumination per pixel using Phong illumination model
-            if (ray.trace(objects, ii, ri)) {
-
-                // the view direction in case of ray-tracing is the opposite of the ray's direction
-                glm::vec4 view_direction = -ray.dir();
-
-                // get the hit normal of the intersection point
-                ii.ho->get_surface_properties(ii);
-
-                // get the color at the hit surface
-                compute_color_at_surface(lights, objects, view_direction, ii, hit_color, ri);
-            }
-
-            // assign the color to the frame buffer
+            // cast a ray into the scene and get the color value for it
+            hit_color = cast_ray(ray, lights, objects, 0, ri);
             *(pixels++) = glm::clamp(hit_color, 0.f, 1.f);
         }
     }

@@ -21,17 +21,17 @@ public:
     // - default diffuse constant is 0.6
     // - default specular constant is 0.2
     // - default specular exponent is 10
-    PhongMaterial() : Material(phong), ac(0.2f), dc(0.6f), sc(0.2f), se(10.f) {}
-    PhongMaterial(const glm::vec3 &c) : Material(c, phong), ac(0.2f), dc(0.6f), sc(0.2f), se(10.f) {}
+    PhongMaterial() : Material(phong_mat), ac(0.2f), dc(0.6f), sc(0.2f), se(10.f) {}
+    PhongMaterial(const glm::vec3 &c) : Material(c, phong_mat), ac(0.2f), dc(0.6f), sc(0.2f), se(10.f) {}
     PhongMaterial(const float_t &a, const float_t &d, const float_t &sc, const float_t &se) :
-            Material(phong),
+            Material(phong_mat),
             ac(a),
             dc(d),
             sc(sc),
             se(se)
     {}
     PhongMaterial(const float_t &a, const float_t &d, const float_t &sc, const float_t &se, const glm::vec3 &c) :
-            Material(c, phong),
+            Material(c, phong_mat),
             ac(a),
             dc(d),
             sc(sc),

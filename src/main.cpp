@@ -1,13 +1,12 @@
 #include <iostream>
 #include <fstream>
 #include "objects/Object.h"
-#include "cameras/OrthographicCamera.h"
 #include "objects/TriangleMesh.h"
 #include "lights/PointLight.h"
 #include "cameras/PerspectiveCamera.h"
 #include "objects/Sphere.h"
 #include "objects/Triangle.h"
-#include <glm/gtc/matrix_transform.hpp>
+#include "Utilities.h"
 
 void save_to_ppm(uint32_t width, uint32_t height, glm::vec3 fb[], const char fn[50]) {
     // Save result to a PPM image (keep these flags if you compile under Windows)
@@ -31,7 +30,6 @@ int main(int argc, char **argv) {
     std::vector<Light*> lights;
     Camera* camera = new PerspectiveCamera();
     ImagePlane ip = ImagePlane(1280, 720);
-    ip.bc = 0.7f * white;
     char fn[100];
 
     /// material set-up

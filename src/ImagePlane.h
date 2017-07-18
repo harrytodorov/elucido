@@ -15,7 +15,6 @@ public:
     uint32_t        hres;      // horizontal image resolution
     uint32_t        vres;      // vertical image resolution
     glm::vec3       *fb;       // frame buffer
-    glm::vec3       bc;        // background color
 
     // constructors & destructors
     // - default resolution of the image plane if not specified is 640x480
@@ -23,7 +22,6 @@ public:
     ImagePlane(const uint32_t &ip_x, const uint32_t &ip_y) {
         hres = ip_x;
         vres = ip_y;
-        bc   = glm::vec3(0);
         fb   = new glm::vec3[ip_x * ip_y];
     }
     ImagePlane() : ImagePlane(640, 480) {}

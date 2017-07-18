@@ -87,66 +87,93 @@ void Camera::translate(const float_t &translation, const uint32_t &axes_of_trans
     ctm = tm * ctm;
 }
 
-void Camera::compute_color_at_surface(const std::vector<Light *> &lights, const std::vector<Object *> &objects,
-                                      const glm::vec4 view_direction, const isect_info &ii, glm::vec3 &color, render_info &ri) {
+glm::vec4 Camera::reflect(const glm::vec4 &view, const glm::vec4 &surface_normal) {
+    return view - 2.f * glm::dot(view, surface_normal) * surface_normal;
+}
 
-    switch (ii.ho->om->mt) {
+glm::vec3 Camera::cast_ray(const Ray &ray, const std::vector<Light *> &lights, const std::vector<Object *> &objects, const uint32_t &depth, render_info &ri) {
+    // if we've reached the bottom of the recursion tree, we return the background color
+    if (depth > max_depth) return bgc;
 
-        case Material::phong: {
-            Ray shadow_ray;
-            PhongMaterial *material = (PhongMaterial *) ii.ho->om;
-            isect_info dummy;
-            float_t visibility(1.f);
+    // hit color
+    glm::vec3 hc(0);
 
-            // set the hit color to black before adding the ambient, defuse and specular components
-            // in case the default background color is not black
-            color = black;
+    // intersection information
+    isect_info ii;
 
-            // holders for diffuse & specular values;
-            glm::vec3 diffuse(0), specular(0);
-            float_t lambertian_refl(0);
+    // trace a ray through the scene
+    if (ray.trace(objects, ii, ri)) {
 
-            // iterate through all light sources and calculate specular and defuse components
-            for (auto &light : lights) {
-                glm::vec4 light_direction(0);
-                glm::vec3 light_intensity(0);
-                float_t light_dist = infinity;
+        // get the surface properties of the intersection
+        ii.ho->get_surface_properties(ii);
 
-                light->illuminate(ii.ip, light_direction, light_intensity, light_dist);
+        switch (ii.ho->om->mt) {
+            case phong_mat : {
+                Ray shadow_ray;
+                PhongMaterial *material = (PhongMaterial *) ii.ho->om;
+                isect_info dummy;
+                float_t visibility(1.f);
 
-                // compute if the surface point is in shadow
-                shadow_ray.rt = shadow;
+                // holders for diffuse & specular values;
+                glm::vec3 diffuse(0), specular(0);
+                float_t lamb_refl(0);
 
-                // hit_normal * shadow_bias is used to translate the origin point by a slightly bit
-                // set_orig one could avoid self-shadows, because of float number precision
-                shadow_ray.set_orig(ii.ip + ii.ipn*shadow_bias);
+                // iterate through all light sources and calculate specular and defuse components
+                for (auto &light : lights) {
+                    glm::vec4 light_direction(0);
+                    glm::vec3 light_intensity(0);
+                    float_t light_dist = infinity;
 
-                // for the direction of the shadow ray we take the opposite of the light direction
-                shadow_ray.set_dir(-light_direction);
+                    light->illuminate(ii.ip, light_direction, light_intensity, light_dist);
 
-                if (shadow_ray.trace(objects, dummy, ri) && dummy.tn < light_dist) {
-                    visibility = 0.f;
+                    // compute if the surface point is in shadow
+                    shadow_ray.rt = shadow;
+
+                    // hit_normal * bias is used to translate the origin point by a slightly bit
+                    // set_orig one could avoid self-shadows, because of float number precision
+                    shadow_ray.set_orig(ii.ip + ii.ipn*bias);
+
+                    // for the direction of the shadow ray we take the opposite of the light direction
+                    shadow_ray.set_dir(-light_direction);
+
+                    if (shadow_ray.trace(objects, dummy, ri) && dummy.tn < light_dist) {
+                        visibility = 0.f;
+                    }
+
+                    // dot product based on Lambert's cosine law for Lambertian reflectance;
+                    lamb_refl = glm::dot(ii.ipn, -light_direction);
+
+                    // calculate diffuse component
+                    diffuse += visibility * (material->c * light_intensity * glm::max(0.f, lamb_refl));
+
+                    // calculate specular component
+                    glm::vec4 light_reflection = glm::normalize(2.f * lamb_refl * ii.ipn + light_direction);
+                    float_t max_lf_vd = glm::max(0.f, glm::dot(light_reflection, -ray.dir()));
+                    float_t pow_max_se = glm::pow(max_lf_vd, material->get_specular_exp());
+
+                    specular += visibility * (light_intensity * pow_max_se);
                 }
 
-                // dot product based on Lambert's cosine law for Lambertian reflectance;
-                lambertian_refl = glm::dot(ii.ipn, -light_direction);
-
-                // calculate diffuse component
-                diffuse += visibility * (material->c * light_intensity * glm::max(0.f, lambertian_refl));
-
-                // calculate specular component
-                glm::vec4 light_reflection = glm::normalize(2.f * lambertian_refl * ii.ipn + light_direction);
-                float_t max_lf_vd = glm::max(0.f, glm::dot(light_reflection, view_direction));
-                float_t pow_max_se = glm::pow(max_lf_vd, material->get_specular_exp());
-
-                specular += visibility * (light_intensity * pow_max_se);
+                // add ambient, diffuse and specular to the the hit color
+                hc += material->get_ambient() * material->c + material->get_diffuse() * diffuse + material->get_specular() * specular;
+                break;
             }
 
-            // add ambient, diffuse and specular to the the hit color
-            color += material->get_ambient() * material->c + material->get_diffuse() * diffuse + material->get_specular() * specular;
-            break;
-        }
+            case reflection_mat : {
+                glm::vec4 rv = reflect(ray.dir(), ii.ipn);
 
+                // create a reflection ray
+                Ray rr;
+                rr.rt = reflection;
+                rr.set_dir(rv);
+                rr.set_orig(ii.ip + ii.ipn*bias);
+
+                hc += 0.8f * cast_ray(rr, lights, objects, depth+1, ri);
+                break;
+            }
+        }
     }
 
+    return hc;
 }
+

@@ -34,7 +34,9 @@ const glm::vec3 orangish(0.929f, 0.615f, 0.306f);
 const glm::vec3 whitish(0.780f, 0.812f, 0.867f);
 const glm::vec3 lightslategray(0.467f, 0.533f, 0.6f);
 
-const float_t shadow_bias = 0.0001;             // shadow bias is used for avoiding self-shadows
+const float_t bias = 0.0001;             // shadow bias is used for avoiding self-shadows
+const uint32_t max_depth = 3;                   // maximum depth of recursion
+const glm::vec3 bgc(black);                     // background color
 
 const std::string vertex("v");
 const std::string vertex_normal("vn");
@@ -69,7 +71,14 @@ struct isect_info {
 
 enum RayType: uint8_t {
     primary,
-    shadow
+    shadow,
+    reflection
 };
+
+enum MaterialType: uint8_t {
+    phong_mat,
+    reflection_mat,
+};
+
 
 #endif //ELUCIDO_UTILITIES_H
