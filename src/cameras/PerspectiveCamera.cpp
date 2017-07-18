@@ -69,7 +69,7 @@ render_info PerspectiveCamera::render_scene(const std::vector<Object *, std::all
 
             // get the color from the closest intersected object, if any
             // calculate the illumination per pixel using Phong illumination model
-            if (ray.trace(objects, ii, <#initializer#>)) {
+            if (ray.trace(objects, ii, ri)) {
 
                 // the view direction in case of ray-tracing is the opposite of the ray's direction
                 glm::vec4 view_direction = -ray.dir();

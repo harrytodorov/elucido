@@ -91,6 +91,7 @@ void Camera::compute_color_at_surface(const std::vector<Light *> &lights, const 
                                       const glm::vec4 view_direction, const isect_info &ii, glm::vec3 &color, render_info &ri) {
 
     switch (ii.ho->om->mt) {
+
         case Material::phong: {
             Ray shadow_ray;
             PhongMaterial *material = (PhongMaterial *) ii.ho->om;
@@ -113,8 +114,6 @@ void Camera::compute_color_at_surface(const std::vector<Light *> &lights, const 
 
                 light->illuminate(ii.ip, light_direction, light_intensity, light_dist);
 
-                // TODO: check where is the bug in the calculation of shadows
-
                 // compute if the surface point is in shadow
                 shadow_ray.rt = shadow;
 
@@ -125,7 +124,7 @@ void Camera::compute_color_at_surface(const std::vector<Light *> &lights, const 
                 // for the direction of the shadow ray we take the opposite of the light direction
                 shadow_ray.set_dir(-light_direction);
 
-                if (shadow_ray.trace(objects, dummy, <#initializer#>) && dummy.tn < light_dist) {
+                if (shadow_ray.trace(objects, dummy, ri) && dummy.tn < light_dist) {
                     visibility = 0.f;
                 }
 
