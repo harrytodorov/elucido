@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include "png++/png.hpp"
 #include "objects/Object.h"
 #include "objects/TriangleMesh.h"
 #include "lights/PointLight.h"
@@ -25,11 +26,34 @@ void save_to_ppm(ImagePlane &ip, const char fn[50]) {
     save_to_ppm(ip.hres, ip.vres, ip.fb, fn);
 }
 
+void save_to_png(ImagePlane &ip, const char fn[50]) {
+    png::image<png::rgb_pixel> ri(ip.hres, ip.vres);
+
+    for (size_t y = 0; y < ip.vres; ++y) {
+        for (size_t x = 0; x < ip.hres; ++x) {
+
+            // color at current pixel in the framebuffer
+            glm::vec3 cacp = ip.fb[y*ip.hres + x];
+
+            // convert float value of pixel in a png::byte [0, 255]
+            png::byte r = (unsigned char) (255 * glm::clamp(cacp.r, 0.f, 1.f));
+            png::byte g = (unsigned char) (255 * glm::clamp(cacp.g, 0.f, 1.f));
+            png::byte b = (unsigned char) (255 * glm::clamp(cacp.b, 0.f, 1.f));
+
+            // assign color values to image
+            ri[y][x] = png::rgb_pixel(r, g, b);
+        }
+    }
+
+    // save image to disk
+    ri.write(fn);
+}
+
 int main(int argc, char **argv) {
     std::vector<Object*> objects;
     std::vector<Light*> lights;
     Camera* camera = new PerspectiveCamera();
-    ImagePlane ip = ImagePlane(1280, 720);
+    ImagePlane ip = ImagePlane(1920, 1080);
     char fn[100];
 
     /// material set-up
@@ -110,11 +134,11 @@ int main(int argc, char **argv) {
     objects.push_back(&t12);
 
 
-    Sphere s1(refl);
-    s1.translate(-6.5f, Z);
-    s1.translate(3.f, Y);
-    s1.apply_transformations();
-    objects.push_back(&s1);
+//    Sphere s1(refl);
+//    s1.translate(-6.5f, Z);
+//    s1.translate(3.f, Y);
+//    s1.apply_transformations();
+//    objects.push_back(&s1);
 
     // load cube
     sprintf(fn, "./cube.obj");
@@ -138,32 +162,33 @@ int main(int argc, char **argv) {
     tm1.translate(1.f, Y);
     tm1.translate(-6.5f, Z);
     tm1.apply_transformations();
-    objects.push_back(&tm1);
+//    objects.push_back(&tm1);
 
-//    // load teapot
-//    sprintf(fn, "./wt_teapot.obj");
-//    TriangleMesh tm2(box_white, true);
-//
-//    // measure loading the triangulated mesh
-//    start_loading = std::chrono::high_resolution_clock::now();
-//    li = loading_info();
-//    std::cout << std::endl;
-//    std::cout << "Start loading..." << std::endl;
-//    li = tm2.load_mesh(fn);
-//    finish_loading = std::chrono::high_resolution_clock::now();
-//    std::cout << "Done loading '" <<  fn << "'." << std::endl;
-//    std::cout << "Loading time                          : " << std::chrono::duration_cast<std::chrono::milliseconds>(finish_loading - start_loading).count() << " milliseconds" << std::endl;
-//    std::cout << "# of vertices in the mesh             : " << li.nv << std::endl;
-//    std::cout << "# of vertex normals in the mesh       : " << li.nvn << std::endl;
-//    std::cout << "# of triangles in the mesh            : " << li.nt << std::endl;
-//    std::cout << "# of faces in the mesh                : " << li.nf << std::endl;
-//    std::cout << std::endl;
-//
-//    tm2.translate(-4.f, Z);
-//    tm2.scale(1.7f, XYZ);
-//    tm2.translate(2.f, Y);
-//    tm2.apply_transformations();
-//    objects.push_back(&tm2);
+    // load monkey
+    sprintf(fn, "./monkey.obj");
+    TriangleMesh tm2(box_white, true);
+
+    // measure loading the triangulated mesh
+    start_loading = std::chrono::high_resolution_clock::now();
+    li = loading_info();
+    std::cout << std::endl;
+    std::cout << "Start loading..." << std::endl;
+    li = tm2.load_mesh(fn);
+    finish_loading = std::chrono::high_resolution_clock::now();
+    std::cout << "Done loading '" <<  fn << "'." << std::endl;
+    std::cout << "Loading time                          : " << std::chrono::duration_cast<std::chrono::milliseconds>(finish_loading - start_loading).count() << " milliseconds" << std::endl;
+    std::cout << "# of vertices in the mesh             : " << li.nv << std::endl;
+    std::cout << "# of vertex normals in the mesh       : " << li.nvn << std::endl;
+    std::cout << "# of triangles in the mesh            : " << li.nt << std::endl;
+    std::cout << "# of faces in the mesh                : " << li.nf << std::endl;
+    std::cout << std::endl;
+
+    tm2.rotate(-15.f, X);
+    tm2.translate(-4.f, Z);
+    tm2.scale(1.7f, XYZ);
+    tm2.translate(2.f, Y);
+    tm2.apply_transformations();
+    objects.push_back(&tm2);
 
     /// camera transformations
     camera->rotate(-15.f, X);
@@ -187,7 +212,7 @@ int main(int argc, char **argv) {
     std::cout << "# of light sources in the scene       : " << ri.nls << std::endl;
     std::cout << "# of ray-object intersection tests    : " << ri.nrot << std::endl;
     std::cout << "# of ray-object intersections         : " << ri.nroi << std::endl;
-    save_to_ppm(ip, "cornell_box1.ppm");
+    save_to_png(ip, "cornell_box2.png");
 
     return 0;
 }

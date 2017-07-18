@@ -8,17 +8,13 @@ set(SOURCE_FILES src/main.cpp src/Ray.cpp src/Ray.h src/cameras/Camera.cpp src/c
 # Create executable
 add_executable(elucido ${SOURCE_FILES})
 
-# Set up an output directory
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "builds")
-
 # Set up glm library
 include_directories(include)
 link_directories(include)
 
-# for now the project will save to ppm, without using external image libs
-## Set up ImageMagick library
-#add_definitions( -DMAGICKCORE_QUANTUM_DEPTH=16 )
-#add_definitions( -DMAGICKCORE_HDRI_ENABLE=0 )
-#find_package(ImageMagick COMPONENTS Magick++)
-#include_directories(${ImageMagick_INCLUDE_DIRS})
-#target_link_libraries(elucido ${ImageMagick_LIBRARIES})
+# Set up png++
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+find_package(PNG REQUIRED)
+include_directories(${PNG_INCLUDE_DIR})
+target_link_libraries(elucido ${PNG_LIBRARY})

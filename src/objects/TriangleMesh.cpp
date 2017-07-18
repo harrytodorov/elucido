@@ -114,21 +114,6 @@ loading_info TriangleMesh::load_mesh(const char *f) {
     ret.nf = nf;
     ret.nt = nt;
 
-//    // initialize a triangle for each face
-//    for (int ti = 0; ti < nt; ti++) {
-//        // get vertices
-//        glm::vec4 v0(va[via[3 * ti] - 1]);
-//        glm::vec4 v1(va[via[3 * ti + 1] - 1]);
-//        glm::vec4 v2(va[via[3 * ti + 2] - 1]);
-//
-//        // get vertex normals
-//        glm::vec4 vn0(vna[vnia[3 * ti] - 1]);
-//        glm::vec4 vn1(vna[vnia[3 * ti + 1] - 1]);
-//        glm::vec4 vn2(vna[vnia[3 * ti + 2] - 1]);
-//
-//        ts.push_back(Triangle(v0, v1, v2, vn0, vn1, vn2, om));
-//    }
-
     return ret;
 }
 
