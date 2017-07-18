@@ -33,10 +33,10 @@ const glm::vec3 violet(0.573f, 0.384f, 0.757f);
 const glm::vec3 orangish(0.929f, 0.615f, 0.306f);
 const glm::vec3 whitish(0.780f, 0.812f, 0.867f);
 const glm::vec3 lightslategray(0.467f, 0.533f, 0.6f);
-const glm::vec3 greyish(0.8f);
+const glm::vec3 greyish(0.65f);
 
 const float_t bias = 0.0001;            // shadow bias is used for avoiding self-shadows
-const uint32_t max_depth = 3;           // maximum depth of recursion
+const uint32_t max_depth = 5;           // maximum depth of recursion
 const glm::vec3 bgc(greyish);           // background color
 
 const std::string vertex("v");
@@ -89,6 +89,7 @@ struct material {
     float_t         dc{0.8f};   // diffuse constant
     float_t         sc{0.2f};   // specular constant
     float_t         se{10.f};   // specular exponent
+    float_t         ri{0.8f};   // reflection index
 };
 
 #endif //ELUCIDO_UTILITIES_H

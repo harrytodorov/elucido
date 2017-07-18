@@ -6,6 +6,7 @@
 #include "cameras/PerspectiveCamera.h"
 #include "objects/Triangle.h"
 #include "Utilities.h"
+#include "objects/Sphere.h"
 
 void save_to_ppm(uint32_t width, uint32_t height, glm::vec3 fb[], const char fn[50]) {
     // Save result to a PPM image (keep these flags if you compile under Windows)
@@ -32,13 +33,11 @@ int main(int argc, char **argv) {
     char fn[100];
 
     /// material set-up
-    float_t box_ac = 0.2f;
-    float_t box_dc = 0.7f;
-    float_t box_sc = 0.1f;
-    float_t box_se = 10.f;
-
     material box_white;
     box_white.c = white;
+
+    material refl = box_white;
+    refl.mt = rm;
 
     material box_red;
     box_red.c = red;
@@ -50,17 +49,18 @@ int main(int argc, char **argv) {
 
     glm::vec4 l1_p(0.f, 0.f, 0.f, 1);
 
-    PointLight l2(l1_p, white, 70);
-    l2.translate(-3.f, Z);
+    PointLight l2(l1_p, white, 35);
+    l2.translate(-4.5f, Z);
     l2.translate(7.f, Y);
     l2.apply_transformations();
     lights.push_back(&l2);
-//
-//    PointLight l3(l1_p, orangish, 40);
-//    l3.translate(2, X);
-//    l3.translate(1, Y);
-//    l3.apply_transformations();
-//    lights.push_back(&l3);
+
+    PointLight l3(l1_p, orangish, 40);
+    l3.translate(2, X);
+    l3.translate(-4.5f, Z);
+    l3.translate(4, Y);
+    l3.apply_transformations();
+    lights.push_back(&l3);
 
     /// object set-up
 
@@ -73,10 +73,10 @@ int main(int argc, char **argv) {
     glm::vec4 v6(-5, 10, -13, 1);
     glm::vec4 v7( 5, 10, -13, 1);
 
-    // floor
-    Triangle t1(v0, v1, v4, box_white);
+    // refl
+    Triangle t1(v0, v1, v4, refl);
     objects.push_back(&t1);
-    Triangle t2(v1, v5, v4, box_white);
+    Triangle t2(v1, v5, v4, refl);
     objects.push_back(&t2);
 
     // left wall
@@ -103,11 +103,18 @@ int main(int argc, char **argv) {
     Triangle t10(v6, v7, v3, box_white);
     objects.push_back(&t10);
 
-//    Sphere s1(box_white);
-//    s1.translate(-6.5f, Z);
-//    s1.translate(3.f, Y);
-//    s1.apply_transformations();
-//    objects.push_back(&s1);
+    // front wall
+    Triangle t11(v0, v2, v1, box_white);
+    objects.push_back(&t11);
+    Triangle t12(v1, v2, v3, box_white);
+    objects.push_back(&t12);
+
+
+    Sphere s1(refl);
+    s1.translate(-6.5f, Z);
+    s1.translate(3.f, Y);
+    s1.apply_transformations();
+    objects.push_back(&s1);
 
     // load cube
     sprintf(fn, "./cube.obj");
@@ -133,34 +140,36 @@ int main(int argc, char **argv) {
     tm1.apply_transformations();
     objects.push_back(&tm1);
 
-    // load teapot
-    sprintf(fn, "./wt_teapot.obj");
-    TriangleMesh tm2(box_white, true);
-
-    // measure loading the triangulated mesh
-    start_loading = std::chrono::high_resolution_clock::now();
-    li = loading_info();
-    std::cout << std::endl;
-    std::cout << "Start loading..." << std::endl;
-    li = tm2.load_mesh(fn);
-    finish_loading = std::chrono::high_resolution_clock::now();
-    std::cout << "Done loading '" <<  fn << "'." << std::endl;
-    std::cout << "Loading time                          : " << std::chrono::duration_cast<std::chrono::milliseconds>(finish_loading - start_loading).count() << " milliseconds" << std::endl;
-    std::cout << "# of vertices in the mesh             : " << li.nv << std::endl;
-    std::cout << "# of vertex normals in the mesh       : " << li.nvn << std::endl;
-    std::cout << "# of triangles in the mesh            : " << li.nt << std::endl;
-    std::cout << "# of faces in the mesh                : " << li.nf << std::endl;
-    std::cout << std::endl;
-
-    tm2.translate(-4.f, Z);
-    tm2.scale(1.7f, XYZ);
-    tm2.translate(2.f, Y);
-    tm2.apply_transformations();
-    objects.push_back(&tm2);
+//    // load teapot
+//    sprintf(fn, "./wt_teapot.obj");
+//    TriangleMesh tm2(box_white, true);
+//
+//    // measure loading the triangulated mesh
+//    start_loading = std::chrono::high_resolution_clock::now();
+//    li = loading_info();
+//    std::cout << std::endl;
+//    std::cout << "Start loading..." << std::endl;
+//    li = tm2.load_mesh(fn);
+//    finish_loading = std::chrono::high_resolution_clock::now();
+//    std::cout << "Done loading '" <<  fn << "'." << std::endl;
+//    std::cout << "Loading time                          : " << std::chrono::duration_cast<std::chrono::milliseconds>(finish_loading - start_loading).count() << " milliseconds" << std::endl;
+//    std::cout << "# of vertices in the mesh             : " << li.nv << std::endl;
+//    std::cout << "# of vertex normals in the mesh       : " << li.nvn << std::endl;
+//    std::cout << "# of triangles in the mesh            : " << li.nt << std::endl;
+//    std::cout << "# of faces in the mesh                : " << li.nf << std::endl;
+//    std::cout << std::endl;
+//
+//    tm2.translate(-4.f, Z);
+//    tm2.scale(1.7f, XYZ);
+//    tm2.translate(2.f, Y);
+//    tm2.apply_transformations();
+//    objects.push_back(&tm2);
 
     /// camera transformations
+    camera->rotate(-15.f, X);
     camera->translate(4.f, Y);
-    camera->translate(1.f, Z);
+    camera->translate(-3.2f, Z);
+    dynamic_cast<PerspectiveCamera *>(camera)->set_fov(102.44f);
 
     /// rendering
 
@@ -178,7 +187,7 @@ int main(int argc, char **argv) {
     std::cout << "# of light sources in the scene       : " << ri.nls << std::endl;
     std::cout << "# of ray-object intersection tests    : " << ri.nrot << std::endl;
     std::cout << "# of ray-object intersections         : " << ri.nroi << std::endl;
-    save_to_ppm(ip, "cornell_box.ppm");
+    save_to_ppm(ip, "cornell_box1.ppm");
 
     return 0;
 }

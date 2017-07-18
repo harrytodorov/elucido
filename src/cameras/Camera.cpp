@@ -110,10 +110,12 @@ glm::vec3 Camera::cast_ray(const Ray &ray, const std::vector<Light *> &lights, c
         // get the surface properties of the intersection
         ii.ho->get_surface_properties(ii);
 
-        switch (ii.ho->om.mt) {
+        // material of the intersected objec
+        material mat = ii.ho->om;
+
+        switch (mat.mt) {
             case pm : {
                 Ray shadow_ray;
-                material mat = ii.ho->om;
                 isect_info dummy;
                 float_t visibility(1.f);
 
@@ -171,7 +173,7 @@ glm::vec3 Camera::cast_ray(const Ray &ray, const std::vector<Light *> &lights, c
                 rr.set_dir(rv);
                 rr.set_orig(ii.ip + ii.ipn*bias);
 
-                hc += 0.8f * cast_ray(rr, lights, objects, depth+1, ri);
+                hc += mat.ri * cast_ray(rr, lights, objects, depth+1, ri);
                 break;
             }
         }
