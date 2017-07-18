@@ -35,7 +35,7 @@ public:
     }
     ~Ray() {}
 
-    bool trace(const std::vector<Object*> &objects, isect_info &ii);
+    bool trace(const std::vector<Object *> &objects, isect_info &ii, render_info &ri);
     inline glm::vec4 orig() const {
         return this->o;
 }              // get origin

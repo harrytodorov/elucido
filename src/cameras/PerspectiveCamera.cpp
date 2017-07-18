@@ -67,32 +67,9 @@ render_info PerspectiveCamera::render_scene(const std::vector<Object *, std::all
             // default color is image plane's default background color
             hit_color = ip.bc;
 
-//            // iterate through all objects and find the closest intersection
-//            for (auto &object : objects) {
-//
-//                // increment the number of ray-object tests; bounding box
-//                __sync_fetch_and_add(&ri.num_of_ray_object_tests, 1);
-//
-//                // first iterate through object's bounding boxes and check if there is an intersection
-//                if (object->bb.intersect(ray)) {
-//
-//                    // increment the number of ray-object tests; object itself
-//                    __sync_fetch_and_add(&ri.num_of_ray_object_tests, 1);
-//
-//                    // if there is an intersection with the bounding box,
-//                    // check if there is an intersection with the object itself
-//                    if (object->intersect(ray, ii)) {
-//                        hit_object = object;
-//
-//                        // increment the number of ray-object intersections
-//                        __sync_fetch_and_add(&ri.num_of_ray_object_intersections, 1);
-//                    }
-//                }
-//            }
-
             // get the color from the closest intersected object, if any
             // calculate the illumination per pixel using Phong illumination model
-            if (ray.trace(objects, ii)) {
+            if (ray.trace(objects, ii, <#initializer#>)) {
 
                 // the view direction in case of ray-tracing is the opposite of the ray's direction
                 glm::vec4 view_direction = -ray.dir();

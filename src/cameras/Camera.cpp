@@ -125,39 +125,9 @@ void Camera::compute_color_at_surface(const std::vector<Light *> &lights, const 
                 // for the direction of the shadow ray we take the opposite of the light direction
                 shadow_ray.set_dir(-light_direction);
 
-                dummy.tn = light_dist;
-
-                if (shadow_ray.trace(objects, dummy)) {
+                if (shadow_ray.trace(objects, dummy, <#initializer#>) && dummy.tn < light_dist) {
                     visibility = 0.f;
                 }
-
-//                // iterate through all objects to find if there is an object who
-//                // cast a shadow on this surface point
-//                for (auto &object : objects) {
-//                    // increment the number of shadow rays
-//                    __sync_fetch_and_add(&ri.shadow_rays, 1);
-//
-//                    // increment the number of ray-object intersection tests; bounding box
-//                    __sync_fetch_and_add(&ri.num_of_ray_object_tests, 1);
-//
-//                    // first iterate through object's bounding boxes and check if there is an intersection
-//                    if (object->bb.intersect(shadow_ray)) {
-//
-//                        // increment the number of ray-object tests; object itself
-//                        __sync_fetch_and_add(&ri.num_of_ray_object_tests, 1);
-//
-//                        // if there is an intersection with the bounding box,
-//                        // check if there is an intersection with the object itself
-//                        if (object->intersect(shadow_ray, dummy)) {
-//                            visibility = 0.f;
-//
-//                            // increment the number of ray-object intersections
-//                            __sync_fetch_and_add(&ri.num_of_ray_object_intersections, 1);
-//
-//                            break;
-//                        }
-//                    }
-//                }
 
                 // dot product based on Lambert's cosine law for Lambertian reflectance;
                 lambertian_refl = glm::dot(ii.ipn, -light_direction);
