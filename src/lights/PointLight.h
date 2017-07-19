@@ -13,6 +13,7 @@ public:
     glm::vec4 p;
 
     PointLight() : Light(), p(glm::vec4(0, 0, 0, 1)) {}
+    PointLight(const glm::vec4 &p, const float_t &i) : Light(i), p(p) {}
     PointLight(const glm::vec4 &p, const glm::vec3 &c, const float_t &i) : Light(c, i), p(p) {}
     ~PointLight() {}
 

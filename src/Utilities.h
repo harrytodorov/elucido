@@ -34,10 +34,11 @@ const glm::vec3 orangish(0.929f, 0.615f, 0.306f);
 const glm::vec3 whitish(0.780f, 0.812f, 0.867f);
 const glm::vec3 lightslategray(0.467f, 0.533f, 0.6f);
 const glm::vec3 greyish(0.65f);
+const glm::vec3 skyblue(0.258f, 0.674f, 0.831f);
 
 const float_t bias = 0.0001;            // shadow bias is used for avoiding self-shadows
-const uint32_t max_depth = 1;           // maximum depth of recursion
-const glm::vec3 bgc(greyish);           // background color
+const uint32_t max_depth = 5;           // maximum depth of recursion
+const glm::vec3 bgc(skyblue);           // background color
 
 const std::string vertex("v");
 const std::string vertex_normal("vn");
@@ -51,8 +52,9 @@ enum RayType: uint8_t {
 };
 
 enum MaterialType: uint8_t {
-    pm, // Phong material
-    rm, // Reflection matrial
+    pm,     // Phong material
+    rm,     // Reflection matrial
+    prm     // Reflective Phong material
 };
 
 struct loading_info {

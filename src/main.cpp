@@ -49,7 +49,7 @@ void save_to_png(ImagePlane &ip, const char fn[50]) {
     ri.write(fn);
 }
 
-int main(int argc, char **argv) {
+void render_cornell_scene() {
     std::vector<Object*> objects;
     std::vector<Light*> lights;
     Camera* camera = new PerspectiveCamera();
@@ -223,6 +223,99 @@ int main(int argc, char **argv) {
     std::cout << "# of ray-object intersections         : " << ri.nroi << std::endl;
     std::cout << "ratio (isect tests / isect)           : " << (1.f * ri.nrot) / ri.nroi << std::endl;
     save_to_png(ip, "cornell_box2.png");
+}
 
+void render_simple_refl_scene() {
+    std::vector<Object*> objects;
+    std::vector<Light*> lights;
+    Camera* camera = new PerspectiveCamera();
+    ImagePlane ip = ImagePlane(1920, 1080);
+    char fn[100];
+    loading_info li;
+    render_info ri;
+
+    /// materials set-up
+    material floor;
+    floor.ac = 0.f;
+    floor.mt = prm;
+    floor.c = orangish;
+
+    material ball1;
+    ball1.ac = 0.f;
+    ball1.dc = 0.6f;
+    ball1.sc = 0.2f;
+    ball1.se = 12.f;
+    ball1.c = bluish;
+    ball1.mt = rm;
+
+    material ball2 = ball1;
+    ball2.c = violet;
+
+    /// objects set-up
+
+    glm::vec4 v0(-3.f, -0.5f, 0.5f, 1);
+    glm::vec4 v1(3.f, -0.5f, 0.5f, 1);
+    glm::vec4 v2(-3.f, -0.5f, -5.5f, 1);
+    glm::vec4 v3(3, -0.5f, -5.5f, 1);
+    glm::vec4 sp1(-1.5f, 0.5f, -2.5f, 1);
+    glm::vec4 sp2(1.5f, 0.5f, -2.5f, 1);
+
+    // create reflective plane
+    Triangle t1(v0, v1, v2, floor);
+    objects.push_back(&t1);
+
+    Triangle t2(v1, v3, v2, floor);
+    objects.push_back(&t2);
+
+    // spheres
+    Sphere s1(sp1, 1.f, ball1);
+    objects.push_back(&s1);
+
+    Sphere s2(sp2, 1.f, ball2);
+    objects.push_back(&s2);
+
+    /// illuminate scene
+
+    glm::vec4 lp(-0.5f, 3.f, 1.f, 1);
+
+    PointLight pl(lp, 200.f);
+    lights.push_back(&pl);
+
+    /// adjust camera settings
+
+    dynamic_cast<PerspectiveCamera *>(camera)->set_fov(90.f);
+
+    /// render scene
+    // measure rendering time
+    std::cout << "Start rendering..." << std::endl;
+    auto start_rendering = std::chrono::high_resolution_clock::now();
+    ri = camera->render_scene(objects, lights, ip);
+    auto finish_rendering = std::chrono::high_resolution_clock::now();
+    std::cout << "Done rendering." << std::endl;
+    std::cout << "Rendering time                        : " << std::chrono::duration_cast<std::chrono::seconds>(finish_rendering - start_rendering).count() << " seconds" << std::endl;
+    std::cout << "# of primary rays                     : " << ri.npr << std::endl;
+    std::cout << "# of shadow rays                      : " << ri.nsr << std::endl;
+    std::cout << "# of reflection rays                  : " << ri.nrr << std::endl;
+    std::cout << "# of objects in the scene             : " << ri.no << std::endl;
+    std::cout << "# of light sources in the scene       : " << ri.nls << std::endl;
+    std::cout << "# of ray-object intersection tests    : " << ri.nrot << std::endl;
+    std::cout << "# of ray-object intersections         : " << ri.nroi << std::endl;
+    std::cout << "ratio (isect tests / isect)           : " << (1.f * ri.nrot) / ri.nroi << std::endl;
+    save_to_png(ip, "simple_reflective_ball_scene.png");
+}
+
+void render_monkey_mirror_scene() {
+    std::vector<Object*> objects;
+    std::vector<Light*> lights;
+    Camera* camera = new PerspectiveCamera();
+    ImagePlane ip = ImagePlane(1920, 1080);
+    char fn[100];
+    loading_info li;
+    render_info ri;
+}
+
+int main(int argc, char **argv) {
+
+    render_simple_refl_scene();
     return 0;
 }
