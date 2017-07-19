@@ -55,6 +55,8 @@ int main(int argc, char **argv) {
     Camera* camera = new PerspectiveCamera();
     ImagePlane ip = ImagePlane(1920, 1080);
     char fn[100];
+    loading_info li;
+    render_info ri;
 
     /// material set-up
     material box_white;
@@ -69,17 +71,24 @@ int main(int argc, char **argv) {
     material box_green;
     box_green.c = green;
 
+    material dg;
+    dg.c = deadgold;
+
+    material lg;
+    lg.c = lightslategray;
+
     /// light set-up
 
     glm::vec4 l1_p(0.f, 0.f, 0.f, 1);
 
-    PointLight l2(l1_p, white, 35);
+    PointLight l2(l1_p, violet, 55);
     l2.translate(-4.5f, Z);
     l2.translate(7.f, Y);
+    l2.translate(-1.5f, X);
     l2.apply_transformations();
     lights.push_back(&l2);
 
-    PointLight l3(l1_p, orangish, 40);
+    PointLight l3(l1_p, orangish, 60);
     l3.translate(2, X);
     l3.translate(-4.5f, Z);
     l3.translate(4, Y);
@@ -98,9 +107,9 @@ int main(int argc, char **argv) {
     glm::vec4 v7( 5, 10, -13, 1);
 
     // refl
-    Triangle t1(v0, v1, v4, refl);
+    Triangle t1(v0, v1, v4, box_white);
     objects.push_back(&t1);
-    Triangle t2(v1, v5, v4, refl);
+    Triangle t2(v1, v5, v4, box_white);
     objects.push_back(&t2);
 
     // left wall
@@ -142,14 +151,13 @@ int main(int argc, char **argv) {
 
     // load cube
     sprintf(fn, "./cube.obj");
-    TriangleMesh tm1(box_red);
+    TriangleMesh cube(lg);
 
     // measure loading the triangulated mesh
     auto start_loading = std::chrono::high_resolution_clock::now();
-    loading_info li;
     std::cout << std::endl;
     std::cout << "Start loading..." << std::endl;
-    li = tm1.load_mesh(fn);
+    li = cube.load_mesh(fn);
     auto finish_loading = std::chrono::high_resolution_clock::now();
     std::cout << "Done loading '" <<  fn << "'." << std::endl;
     std::cout << "Loading time                          : " << std::chrono::duration_cast<std::chrono::milliseconds>(finish_loading - start_loading).count() << " milliseconds" << std::endl;
@@ -159,21 +167,21 @@ int main(int argc, char **argv) {
     std::cout << "# of faces in the mesh                : " << li.nf << std::endl;
     std::cout << std::endl;
 
-    tm1.translate(1.f, Y);
-    tm1.translate(-6.5f, Z);
-    tm1.apply_transformations();
-//    objects.push_back(&tm1);
+    cube.translate(1.f, Y);
+    cube.translate(-7.5f, Z);
+    cube.translate(2.f, X);
+    cube.apply_transformations();
+    objects.push_back(&cube);
 
     // load monkey
     sprintf(fn, "./monkey.obj");
-    TriangleMesh tm2(box_white, true);
+    TriangleMesh monkey(dg, true);
 
     // measure loading the triangulated mesh
     start_loading = std::chrono::high_resolution_clock::now();
-    li = loading_info();
     std::cout << std::endl;
     std::cout << "Start loading..." << std::endl;
-    li = tm2.load_mesh(fn);
+    li = monkey.load_mesh(fn);
     finish_loading = std::chrono::high_resolution_clock::now();
     std::cout << "Done loading '" <<  fn << "'." << std::endl;
     std::cout << "Loading time                          : " << std::chrono::duration_cast<std::chrono::milliseconds>(finish_loading - start_loading).count() << " milliseconds" << std::endl;
@@ -183,24 +191,24 @@ int main(int argc, char **argv) {
     std::cout << "# of faces in the mesh                : " << li.nf << std::endl;
     std::cout << std::endl;
 
-    tm2.rotate(-15.f, X);
-    tm2.translate(-4.f, Z);
-    tm2.scale(1.7f, XYZ);
-    tm2.translate(2.f, Y);
-    tm2.apply_transformations();
-    objects.push_back(&tm2);
+    monkey.rotate(-20.f, X);
+    monkey.rotate(15.f, Y);
+    monkey.translate(-5.3f, Z);
+    monkey.translate(-1.f, X);
+    monkey.translate(1.2f, Y);
+    monkey.apply_transformations();
+    objects.push_back(&monkey);
 
     /// camera transformations
     camera->rotate(-15.f, X);
     camera->translate(4.f, Y);
-    camera->translate(-3.2f, Z);
+    camera->translate(-2.7f, Z);
     dynamic_cast<PerspectiveCamera *>(camera)->set_fov(102.44f);
 
     /// rendering
 
     // measure rendering time
     std::cout << "Start rendering..." << std::endl;
-    render_info ri;
     auto start_rendering = std::chrono::high_resolution_clock::now();
     ri = camera->render_scene(objects, lights, ip);
     auto finish_rendering = std::chrono::high_resolution_clock::now();
@@ -208,10 +216,12 @@ int main(int argc, char **argv) {
     std::cout << "Rendering time                        : " << std::chrono::duration_cast<std::chrono::seconds>(finish_rendering - start_rendering).count() << " seconds" << std::endl;
     std::cout << "# of primary rays                     : " << ri.npr << std::endl;
     std::cout << "# of shadow rays                      : " << ri.nsr << std::endl;
+    std::cout << "# of reflection rays                  : " << ri.nrr << std::endl;
     std::cout << "# of objects in the scene             : " << ri.no << std::endl;
     std::cout << "# of light sources in the scene       : " << ri.nls << std::endl;
     std::cout << "# of ray-object intersection tests    : " << ri.nrot << std::endl;
     std::cout << "# of ray-object intersections         : " << ri.nroi << std::endl;
+    std::cout << "ratio (isect tests / isect)           : " << (1.f * ri.nrot) / ri.nroi << std::endl;
     save_to_png(ip, "cornell_box2.png");
 
     return 0;

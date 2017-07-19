@@ -11,6 +11,9 @@ bool Ray::trace(const std::vector<Object *> &objects, isect_info &ii, render_inf
     // increment number of shadow rays
     if (this->rt == shadow) ri.nsr++;
 
+    // increment number of reflection rays
+    if (this->rt == reflection) ri.nrr++;
+
     // iterate through objects and find the closest intersection
     for (auto& object : objects) {
         // information we got from the intersection with the current object

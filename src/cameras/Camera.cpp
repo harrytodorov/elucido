@@ -110,7 +110,7 @@ glm::vec3 Camera::cast_ray(const Ray &ray, const std::vector<Light *> &lights, c
         // get the surface properties of the intersection
         ii.ho->get_surface_properties(ii);
 
-        // material of the intersected objec
+        // material of the intersected object
         material mat = ii.ho->om;
 
         switch (mat.mt) {

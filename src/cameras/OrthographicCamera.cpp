@@ -17,7 +17,6 @@ render_info OrthographicCamera::render_scene(const std::vector<Object *, std::al
     glm::mat4           itictm;                 // inverse of the the transpose of the inverse of
                                                 // the camera's transformation matrix
     render_info         ri;                     // rendering information
-    isect_info          ii;                     // intersection information
 
     // get the inverse matrices
     ictm = inverse_ctm();

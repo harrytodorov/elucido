@@ -36,7 +36,7 @@ const glm::vec3 lightslategray(0.467f, 0.533f, 0.6f);
 const glm::vec3 greyish(0.65f);
 
 const float_t bias = 0.0001;            // shadow bias is used for avoiding self-shadows
-const uint32_t max_depth = 5;           // maximum depth of recursion
+const uint32_t max_depth = 1;           // maximum depth of recursion
 const glm::vec3 bgc(greyish);           // background color
 
 const std::string vertex("v");
@@ -65,6 +65,7 @@ struct loading_info {
 struct render_info {
     uint32_t npr{0};    // number of primary rays
     uint32_t nsr{0};    // number of secondary rays
+    uint32_t nrr{0};    // number of reflection rays
     uint32_t no{0};     // number of objects in the scene
     uint32_t nls{0};    // number of light sources in the scene
     uint32_t nrot{0};   // number of ray-object intersection tests

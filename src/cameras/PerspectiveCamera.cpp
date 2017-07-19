@@ -17,7 +17,6 @@ render_info PerspectiveCamera::render_scene(const std::vector<Object *, std::all
     glm::mat4           itictm;                 // inverse of the the transpose of the inverse of
                                                 // the camera's transformation matrix
     render_info         ri;                     // rendering information
-    isect_info          ii;                     // intersection information
 
     // first position the camera at the origin
     // and get the inverse camera's transformation matrix

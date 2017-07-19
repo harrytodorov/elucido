@@ -160,7 +160,8 @@ void TriangleMesh::get_surface_properties(isect_info &i) const {
         v = i.v;
         w = 1.f - u - v;
 
-        i.ipn = w*vn0 + u*vn1 + v*vn2;
+        // normalize the vertex normal, we shouldn't need this, but just for safety
+        i.ipn = glm::normalize(w*vn0 + u*vn1 + v*vn2);
     } else {
         glm::vec4 v0, v1, v2;
 
