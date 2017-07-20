@@ -237,16 +237,16 @@ void render_simple_refl_scene() {
     /// materials set-up
     material floor;
     floor.ac = 0.f;
-    floor.mt = prm;
+    floor.mt = pm;
     floor.c = orangish;
 
     material ball1;
     ball1.ac = 0.f;
-    ball1.dc = 0.6f;
-    ball1.sc = 0.2f;
-    ball1.se = 12.f;
-    ball1.c = bluish;
-    ball1.mt = rm;
+    ball1.dc = 0.8f;
+    ball1.sc = 0.3f;
+    ball1.se = 16.f;
+    ball1.c = violet;
+    ball1.mt = pm;
 
     material ball2 = ball1;
     ball2.c = violet;
@@ -257,7 +257,7 @@ void render_simple_refl_scene() {
     glm::vec4 v1(3.f, -0.5f, 0.5f, 1);
     glm::vec4 v2(-3.f, -0.5f, -5.5f, 1);
     glm::vec4 v3(3, -0.5f, -5.5f, 1);
-    glm::vec4 sp1(-1.5f, 0.5f, -2.5f, 1);
+    glm::vec4 sp1(0.f, 0.5f, -2.5f, 1);
     glm::vec4 sp2(1.5f, 0.5f, -2.5f, 1);
 
     // create reflective plane
@@ -272,36 +272,86 @@ void render_simple_refl_scene() {
     objects.push_back(&s1);
 
     Sphere s2(sp2, 1.f, ball2);
-    objects.push_back(&s2);
+//    objects.push_back(&s2);
 
     /// illuminate scene
 
-    glm::vec4 lp(-0.5f, 3.f, 1.f, 1);
+    glm::vec4 lp1(-0.5f, 3.f, 1.f, 1);
+    glm::vec4 lp2(1.5f, 2.5f, -3.f, 1);
 
-    PointLight pl(lp, 200.f);
+    PointLight pl(lp1, 170.f);
     lights.push_back(&pl);
+
+    PointLight pl2(lp2, orangish, 100.f);
+    lights.push_back(&pl2);
 
     /// adjust camera settings
 
     dynamic_cast<PerspectiveCamera *>(camera)->set_fov(90.f);
 
-    /// render scene
-    // measure rendering time
-    std::cout << "Start rendering..." << std::endl;
-    auto start_rendering = std::chrono::high_resolution_clock::now();
-    ri = camera->render_scene(objects, lights, ip);
-    auto finish_rendering = std::chrono::high_resolution_clock::now();
-    std::cout << "Done rendering." << std::endl;
-    std::cout << "Rendering time                        : " << std::chrono::duration_cast<std::chrono::seconds>(finish_rendering - start_rendering).count() << " seconds" << std::endl;
-    std::cout << "# of primary rays                     : " << ri.npr << std::endl;
-    std::cout << "# of shadow rays                      : " << ri.nsr << std::endl;
-    std::cout << "# of reflection rays                  : " << ri.nrr << std::endl;
-    std::cout << "# of objects in the scene             : " << ri.no << std::endl;
-    std::cout << "# of light sources in the scene       : " << ri.nls << std::endl;
-    std::cout << "# of ray-object intersection tests    : " << ri.nrot << std::endl;
-    std::cout << "# of ray-object intersections         : " << ri.nroi << std::endl;
-    std::cout << "ratio (isect tests / isect)           : " << (1.f * ri.nrot) / ri.nroi << std::endl;
-    save_to_png(ip, "simple_reflective_ball_scene.png");
+    // place the camera to look at the plane
+    camera->rotate(-20.f, X);
+    camera->translate(1.5f, Y);
+    camera->translate(1.5f, Z);
+
+//    /// render scene
+//    // measure rendering time
+//    std::cout << "Start rendering..." << std::endl;
+//    auto start_rendering = std::chrono::high_resolution_clock::now();
+//    ri = camera->render_scene(objects, lights, ip);
+//    auto finish_rendering = std::chrono::high_resolution_clock::now();
+//    std::cout << "Done rendering." << std::endl;
+//    std::cout << "Rendering time                        : " << std::chrono::duration_cast<std::chrono::seconds>(finish_rendering - start_rendering).count() << " seconds" << std::endl;
+//    std::cout << "# of primary rays                     : " << ri.npr << std::endl;
+//    std::cout << "# of shadow rays                      : " << ri.nsr << std::endl;
+//    std::cout << "# of reflection rays                  : " << ri.nrr << std::endl;
+//    std::cout << "# of objects in the scene             : " << ri.no << std::endl;
+//    std::cout << "# of light sources in the scene       : " << ri.nls << std::endl;
+//    std::cout << "# of ray-object intersection tests    : " << ri.nrot << std::endl;
+//    std::cout << "# of ray-object intersections         : " << ri.nroi << std::endl;
+//    std::cout << "ratio (isect tests / isect)           : " << (1.f * ri.nrot) / ri.nroi << std::endl;
+//    save_to_png(ip, "simple_reflective_ball_scene.png");
+
+    /// render animation
+
+    // place camera so the plane's center is in the middle of the scene
+    camera->translate(2.5f, Z);
+
+    // rotate it along the y-axis
+    camera->rotate(90.f, Y);
+
+    // place camera back where it was
+    camera->translate(-2.5f, Z);
+
+    // render animation frame
+    camera->render_scene(objects, lights, ip);
+
+    // save frame to disk
+    sprintf(fn, "simple_refl_scene_camera_orbiting_y_%2d.png", 0);
+    save_to_png(ip, fn);
+
+
+//    // make camera orbit around the scene in a circle
+//    for (int i = 0; i < 90; i++) {
+//
+//        // place camera so the plane's center is in the middle of the scene
+//        camera->translate(-4.f, Z);
+//        camera->translate(-1.5f, Y);
+//
+//        // rotate it along the y-axis
+//        camera->rotate(i*2.f, Y);
+//
+//        // place camera back where it was
+//        camera->translate(4.f, Z);
+//        camera->translate(-1.5f, Y);
+//
+//        // render animation frame
+//        camera->render_scene(objects, lights, ip);
+//
+//        // save frame to disk
+//        sprintf(fn, "simple_refl_scene_camera_orbiting_y_%2d.png", i);
+//        save_to_png(ip, fn);
+//    }
 }
 
 void render_monkey_mirror_scene() {

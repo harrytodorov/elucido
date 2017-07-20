@@ -114,10 +114,8 @@ glm::vec3 Camera::cast_ray(const Ray &ray, const std::vector<Light *> &lights, c
         material mat = ii.ho->om;
 
         if (mat.mt == pm || mat.mt == prm) {
-
             Ray shadow_ray;
             isect_info dummy;
-            float_t visibility(1.f);
 
             // holders for diffuse & specular values;
             glm::vec3 diffuse(0), specular(0);
@@ -128,6 +126,7 @@ glm::vec3 Camera::cast_ray(const Ray &ray, const std::vector<Light *> &lights, c
                 glm::vec4 light_direction(0);
                 glm::vec3 light_intensity(0);
                 float_t light_dist = infinity;
+                float_t visibility(1.f);
 
                 light->illuminate(ii.ip, light_direction, light_intensity, light_dist);
 
