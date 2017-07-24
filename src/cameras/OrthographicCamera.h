@@ -9,12 +9,12 @@
 #include "Camera.h"
 
 class OrthographicCamera : public Camera {
-    float_t zf;     // zoom factor or the size of a pixel will be used only in the orthographic
-                    // camera for using it to zoom in and out of an object
+    float_t zf{1.f};    // zoom factor or the size of a pixel will be used only in the orthographic
+                        // camera for using it to zoom in and out of an object
 public:
     // default constructor
-    OrthographicCamera() : Camera(), zf(1.f) {}
-    OrthographicCamera(const float_t &z) : Camera(), zf(z) {}
+    OrthographicCamera() = default;
+    explicit OrthographicCamera(const float_t &z) : zf(z) {}
 
     render_info render_scene(const std::vector<Object *, std::allocator<Object *>> &objects,
                              const std::vector<Light *, std::allocator<Light *>> &lights,

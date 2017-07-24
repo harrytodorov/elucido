@@ -13,24 +13,10 @@ render_info PerspectiveCamera::render_scene(const std::vector<Object *, std::all
     Ray                 ray;
     glm::vec3           hit_color;
     glm::vec4           cp;
-    glm::mat4           ictm;                   // inverse camera's transformation matrix
-    glm::mat4           itictm;                 // inverse of the the transpose of the inverse of
-                                                // the camera's transformation matrix
     render_info         ri;                     // rendering information
 
-    // first position the camera at the origin
-    // and get the inverse camera's transformation matrix
-    ictm = inverse_ctm();
-    itictm = inverse_tictm();
-
-    // apply the inverse camera's transformation matrix to all objects
-    // and light sources in the scene
-    for (auto& object : objects) {
-        object->apply_camera_transformation(ictm, tictm);
-    }
-    for (auto& light : lights) {
-        light->apply_camera_transformation(ictm, tictm);
-    }
+    // position all objects in the scene relative to the camera's position at the origin; inverse view transformation
+    apply_inverse_view_transform(objects, lights);
 
     // set the origin of the rays
     ray.set_orig(eye);
@@ -68,16 +54,8 @@ render_info PerspectiveCamera::render_scene(const std::vector<Object *, std::all
         }
     }
 
-    // after rendering reverse all objects and light sources to
-    // their original positions;
-    // use the camera transformation matrix to
-    // bring them to their original positions
-    for (auto& object : objects) {
-        object->apply_camera_transformation(ctm, itictm);
-    }
-    for (auto& light : lights) {
-        light->apply_camera_transformation(ctm, itictm);
-    }
+    // reverse the inverse view transform; bring objects to their original positions
+    reverse_inverse_view_transform(objects, lights);
 
     // get rendering information
     ri.nls = (uint32_t) lights.size();

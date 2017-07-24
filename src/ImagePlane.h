@@ -25,7 +25,7 @@ public:
         fb   = new glm::vec3[ip_x * ip_y];
     }
     ImagePlane() : ImagePlane(640, 480) {}
-    ~ImagePlane() {}
+    ~ImagePlane() = default;
 };
 
 

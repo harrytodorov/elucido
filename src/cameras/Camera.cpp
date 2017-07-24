@@ -211,31 +211,31 @@ glm::vec3 Camera::cast_ray(const Ray &ray, const std::vector<Light *> &lights, c
     return hc;
 }
 
-glm::vec4 Camera::refract(const glm::vec4 &incident_direction, const glm::vec4 &surface_normal, const float_t &ior1,
-                          const float_t &ior2) {
-    glm::vec4 t;
-    glm::vec4 sn{surface_normal};
+void Camera::apply_inverse_view_transform(const std::vector<Object *> &objects, const std::vector<Light *> &lights) {
+    // get the inverse camera transformation matrix
+    glm::mat4 ictm = inverse_ctm();
 
-    // cos theta_incident; needed to project incident direction vector on the surface normal
-    float_t cosi = glm::dot(incident_direction, surface_normal);
-
-    // ratio of the indices of refraction of the 2 medias
-    float_t iorr{ior1 / ior2};
-
-    if (cosi < 0) { cosi = -cosi; } else { sn = -sn; iorr /= 1.f;}
-
-    // sin^2 theta_transmission
-    const float_t sin2t = iorr*iorr * (1.f - cosi*cosi);
-
-    // if sin^2 theta_transmission > 1, we have total internal reflection
-    if (sin2t > 1.f) return t;
-
-    const float_t cost = glm::sqrt(1.f - sin2t);
-
-    return iorr * incident_direction + sn * (iorr*cosi - cost);
+    // apply the inverse camera's transformation matrix to all objects
+    // and light sources in the scene
+    for (auto& object : objects) {
+        object->apply_camera_transformation(ictm, tictm);
+    }
+    for (auto& light : lights) {
+        light->apply_camera_transformation(ictm, tictm);
+    }
 }
 
-glm::vec4 Camera::reflect(const glm::vec4 &incident_direction, const glm::vec4 &surface_normal) {
-    return incident_direction - 2.f * glm::dot(incident_direction, surface_normal) * surface_normal;
-}
+void Camera::reverse_inverse_view_transform(const std::vector<Object *> &objects, const std::vector<Light *> &lights) {
+    glm::mat4 itictm = inverse_tictm();
 
+    // after rendering reverse all objects and light sources to
+    // their original positions;
+    // use the camera transformation matrix to
+    // bring them to their original positions
+    for (auto& object : objects) {
+        object->apply_camera_transformation(ctm, itictm);
+    }
+    for (auto& light : lights) {
+        light->apply_camera_transformation(ctm, itictm);
+    }
+}

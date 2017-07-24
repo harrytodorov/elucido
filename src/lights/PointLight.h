@@ -10,12 +10,12 @@
 
 class PointLight : public Light {
 public:
-    glm::vec4 p;
+    glm::vec4 p{glm::vec4(0, 0, 0, 1)};
 
-    PointLight() : Light(), p(glm::vec4(0, 0, 0, 1)) {}
+    PointLight() = default;
     PointLight(const glm::vec4 &p, const float_t &i) : Light(i), p(p) {}
     PointLight(const glm::vec4 &p, const glm::vec3 &c, const float_t &i) : Light(c, i), p(p) {}
-    ~PointLight() {}
+    ~PointLight() = default;
 
     void illuminate(const glm::vec4 &hit_point, glm::vec4 &light_dir, glm::vec3 &light_intensity, float_t &distance);
     void apply_camera_transformation(const glm::mat4 &ictm, const glm::mat4 &itctm);
