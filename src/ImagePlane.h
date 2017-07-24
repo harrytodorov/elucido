@@ -8,7 +8,10 @@
 
 #include <cstdint>
 #include <cmath>
+#include <fstream>
 #include <glm/vec3.hpp>
+#include <glm/common.hpp>
+#include "png++/png.hpp"
 
 class ImagePlane {
 public:
@@ -26,6 +29,9 @@ public:
     }
     ImagePlane() : ImagePlane(640, 480) {}
     ~ImagePlane() = default;
+
+    void save_to_ppm(const char fn[50]);
+    void save_to_png(const char fn[50]);
 };
 
 

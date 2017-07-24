@@ -1,6 +1,5 @@
 #include <iostream>
 #include <fstream>
-#include "png++/png.hpp"
 #include "objects/Object.h"
 #include "objects/TriangleMesh.h"
 #include "lights/PointLight.h"
@@ -8,47 +7,6 @@
 #include "objects/Triangle.h"
 #include "Utilities.h"
 #include "objects/Sphere.h"
-#include "cameras/OrthographicCamera.h"
-
-void save_to_ppm(uint32_t width, uint32_t height, glm::vec3 fb[], const char fn[50]) {
-    // Save result to a PPM image (keep these flags if you compile under Windows)
-    std::ofstream ofs(fn, std::ios::out | std::ios::binary);
-    ofs << "P6\n" << width << " " << height << "\n255\n";
-    for (uint32_t i = 0; i < height * width; ++i) {
-        char r = (char)(255 * glm::clamp(fb[i].r, 0.f, 1.f));
-        char g = (char)(255 * glm::clamp(fb[i].g, 0.f, 1.f));
-        char b = (char)(255 * glm::clamp(fb[i].b, 0.f, 1.f));
-        ofs << r << g << b;
-    }
-    ofs.close();
-}
-
-void save_to_ppm(ImagePlane &ip, const char fn[50]) {
-    save_to_ppm(ip.hres, ip.vres, ip.fb, fn);
-}
-
-void save_to_png(ImagePlane &ip, const char fn[50]) {
-    png::image<png::rgb_pixel> ri(ip.hres, ip.vres);
-
-    for (size_t y = 0; y < ip.vres; ++y) {
-        for (size_t x = 0; x < ip.hres; ++x) {
-
-            // color at current pixel in the framebuffer
-            glm::vec3 cacp = ip.fb[y*ip.hres + x];
-
-            // convert float value of pixel in a png::byte [0, 255]
-            png::byte r = (unsigned char) (255 * glm::clamp(cacp.r, 0.f, 1.f));
-            png::byte g = (unsigned char) (255 * glm::clamp(cacp.g, 0.f, 1.f));
-            png::byte b = (unsigned char) (255 * glm::clamp(cacp.b, 0.f, 1.f));
-
-            // assign color values to image
-            ri[y][x] = png::rgb_pixel(r, g, b);
-        }
-    }
-
-    // save image to disk
-    ri.write(fn);
-}
 
 void render_cornell_scene() {
     std::vector<Object*> objects;
@@ -220,7 +178,7 @@ void render_cornell_scene() {
     std::cout << "# of ray-object intersection tests    : " << ri.nrot << std::endl;
     std::cout << "# of ray-object intersections         : " << ri.nroi << std::endl;
     std::cout << "ratio (isect tests / isect)           : " << (1.f * ri.nrot) / ri.nroi << std::endl;
-    save_to_png(ip, "cornell_box3.png");
+    ip.save_to_png("cornell_box3.png");
 }
 
 void render_simple_refl_scene() {
@@ -308,7 +266,7 @@ void render_simple_refl_scene() {
     std::cout << "# of ray-object intersection tests    : " << ri.nrot << std::endl;
     std::cout << "# of ray-object intersections         : " << ri.nroi << std::endl;
     std::cout << "ratio (isect tests / isect)           : " << (1.f * ri.nrot) / ri.nroi << std::endl;
-    save_to_png(ip, "simple_reflective_ball_scene1.png");
+    ip.save_to_png("simple_reflective_ball_scene1.png");
 
 }
 
@@ -388,13 +346,10 @@ void test_refraction_scene() {
     std::cout << "# of ray-object intersection tests    : " << ri.nrot << std::endl;
     std::cout << "# of ray-object intersections         : " << ri.nroi << std::endl;
     std::cout << "ratio (isect tests / isect)           : " << (1.f * ri.nrot) / ri.nroi << std::endl;
-    save_to_png(ip, "test_refraction_scene.png");
-
-
+    ip.save_to_png("test_refraction_scene.png");
 }
 
 int main(int argc, char **argv) {
-
     render_simple_refl_scene();
     return 0;
 }
