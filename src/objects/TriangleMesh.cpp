@@ -181,9 +181,9 @@ void TriangleMesh::apply_camera_transformation(const glm::mat4 &ctm, const glm::
     bb.reset();
 
     // iterate through vertices in the mesh and apply transformation
-    for (uint32_t _ti = 0; _ti < va.size(); _ti++) {
+    for (auto &_ti : va) {
         // get the vertex
-        v = va[_ti];
+        v = _ti;
 
         // apply the matrix transformation on the vertices
         v = ctm * v;
@@ -191,19 +191,19 @@ void TriangleMesh::apply_camera_transformation(const glm::mat4 &ctm, const glm::
         bb.extend_by(v);
 
         // assign the transformed vertices
-        va[_ti] = v;
+        _ti = v;
     }
 
     // iterate through vertex normals and apply transformations
-    for (uint32_t _ti = 0; _ti < vna.size(); _ti++) {
+    for (auto &_ti : vna) {
         // get the vertex normal
-        vn = vna[_ti];
+        vn = _ti;
 
         // apply the normal transformation matrix
         vn = glm::normalize(tictm * vn);
 
         // assign the transformed vertex normal
-        vna[_ti] = vn;
+        _ti = vn;
     }
 }
 
@@ -214,9 +214,9 @@ void TriangleMesh::apply_transformations() {
     bb.reset();
 
     // iterate through vertices in the mesh and apply transformation
-    for (uint32_t _ti = 0; _ti < va.size(); _ti++) {
+    for (auto &_ti : va) {
         // get the vertex
-        v = va[_ti];
+        v = _ti;
 
         // apply the matrix transformation on the vertices
         v = mt * v;
@@ -224,19 +224,19 @@ void TriangleMesh::apply_transformations() {
         bb.extend_by(v);
 
         // assign the transformed vertices
-        va[_ti] = v;
+        _ti = v;
     }
 
     // iterate through vertex normals and apply transformations
-    for (uint32_t _ti = 0; _ti < vna.size(); _ti++) {
+    for (auto &_ti : vna) {
         // get the vertex normal
-        vn = vna[_ti];
+        vn = _ti;
 
         // apply the normal transformation matrix
         vn = glm::normalize(nmt * vn);
 
         // assign the transformed vertex normal
-        vna[_ti] = vn;
+        _ti = vn;
     }
 }
 
@@ -396,5 +396,5 @@ TriangleMesh::triangle_intersect(const Ray &r, const glm::vec4 &v0, const glm::v
     // calculate t
     t = glm::dot(qv, e1) * inv_det;
 
-    return t>0;
+    return t > 0;
 }

@@ -18,13 +18,13 @@ public:
     uint32_t                nf{0};      // number of faces in the mesh
     bool                    in{false};  // interpolate normals
 
-    TriangleMesh() : Object() {}
-    TriangleMesh(const material &m) : Object(m) {}
+    TriangleMesh() {}
     TriangleMesh(const material &m, const bool &_in) : Object(m), in(_in) {}
-    TriangleMesh(const char *f) : Object() {
+    explicit TriangleMesh(const material &m) : Object(m) {}
+    explicit TriangleMesh(const char *f) {
         load_mesh(f);
     }
-    virtual ~TriangleMesh() {}
+    virtual ~TriangleMesh() = default;
 
     bool intersect(const Ray &r, isect_info &i);
     void get_surface_properties(isect_info &i) const;

@@ -185,7 +185,7 @@ void render_simple_refl_scene() {
     std::vector<Object*> objects;
     std::vector<Light*> lights;
     Camera* camera = new PerspectiveCamera();
-    ImagePlane ip = ImagePlane(1920, 1080);
+    ImagePlane ip = ImagePlane(1280, 720);
     char fn[100];
     loading_info li;
     render_info ri;
@@ -196,10 +196,13 @@ void render_simple_refl_scene() {
 
     material ball1;
     ball1.mt = rrm;
-    ball1.ior = 1.3f;
+    ball1.ior = 1.2f;
 
     material ball2;
     ball2.c = violet;
+
+    material tm;
+    tm.c = lightslategray;
 
     /// objects set-up
 
@@ -227,20 +230,46 @@ void render_simple_refl_scene() {
 //    objects.push_back(&s1);
 
     Sphere s2(sp2, 0.5f, ball1);
-    s2.translate(0.7f, Y);
+    s2.translate(0.4f, Y);
+    s2.translate(0.3f, X);
     s2.apply_transformations();
-    objects.push_back(&s2);
+//    objects.push_back(&s2);
+
+    // load monkey
+    sprintf(fn, "./wt_teapot.obj");
+    TriangleMesh teapot(tm, true);
+
+    // measure loading the triangulated mesh
+    auto start_loading = std::chrono::high_resolution_clock::now();
+    std::cout << std::endl;
+    std::cout << "Start loading..." << std::endl;
+    li = teapot.load_mesh(fn);
+    auto finish_loading = std::chrono::high_resolution_clock::now();
+    std::cout << "Done loading '" <<  fn << "'." << std::endl;
+    std::cout << "Loading time                          : " << std::chrono::duration_cast<std::chrono::milliseconds>(finish_loading - start_loading).count() << " milliseconds" << std::endl;
+    std::cout << "# of vertices in the mesh             : " << li.nv << std::endl;
+    std::cout << "# of vertex normals in the mesh       : " << li.nvn << std::endl;
+    std::cout << "# of triangles in the mesh            : " << li.nt << std::endl;
+    std::cout << "# of faces in the mesh                : " << li.nf << std::endl;
+    std::cout << std::endl;
+
+    teapot.rotate(15.f, Y);
+    teapot.translate(-0.3f, Y);
+    teapot.scale(1.3f, XYZ);
+    teapot.translate(-2.f, Z);
+    teapot.apply_transformations();
+    objects.push_back(&teapot);
 
     /// illuminate scene
 
-    glm::vec4 lp2(1.5f, 2.5f, 0.f, 1);
-    glm::vec4 lp3(-1.5f, 2.5f, -1.f, 1);
+    glm::vec4 lp2(1.5f, 2.5f, -1.f, 1);
+    glm::vec4 lp3(-1.5f, 2.5f, -1.5f, 1);
 
     PointLight pl2(lp2, orangish, 70.f);
     lights.push_back(&pl2);
 
-    PointLight pl3(lp3, bluish, 70.f);
-//    lights.push_back(&pl3);
+    PointLight pl3(lp3, green, 40.f);
+    lights.push_back(&pl3);
 
     /// adjust camera settings
 
@@ -262,12 +291,13 @@ void render_simple_refl_scene() {
     std::cout << "# of primary rays                     : " << ri.npr << std::endl;
     std::cout << "# of shadow rays                      : " << ri.nsr << std::endl;
     std::cout << "# of reflection rays                  : " << ri.nrr << std::endl;
+    std::cout << "# of refraction rays                  : " << ri.nrrr << std::endl;
     std::cout << "# of objects in the scene             : " << ri.no << std::endl;
     std::cout << "# of light sources in the scene       : " << ri.nls << std::endl;
     std::cout << "# of ray-object intersection tests    : " << ri.nrot << std::endl;
     std::cout << "# of ray-object intersections         : " << ri.nroi << std::endl;
     std::cout << "ratio (isect tests / isect)           : " << (1.f * ri.nrot) / ri.nroi << std::endl;
-    ip.save_to_png("simple_reflective_ball_scene1.png");
+    ip.save_to_png("simple_reflective_ball_scene2.png");
 
 }
 

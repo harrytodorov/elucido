@@ -16,14 +16,14 @@ glm::vec3 Camera::cast_ray(const Ray &ray, const std::vector<Light *> &lights, c
     // trace a ray through the scene
     if (ray.trace(objects, ii, ri)) {
 
-        // if we have an intersection we set the background color to 0 for all components; black
-        hc = black;
-
         // get the surface properties of the intersection
         ii.ho->get_surface_properties(ii);
 
         // material of the intersected object
         material mat = ii.ho->om;
+
+        // if we have an intersection we set the background color to 0 for all components; black
+        hc = black;
 
         //  for reflective materials
         if (mat.mt == prm || mat.mt == rm) {
@@ -101,8 +101,9 @@ glm::vec3 Camera::cast_ray(const Ray &ray, const std::vector<Light *> &lights, c
                 shadow_ray.set_dir(-light_direction);
 
                 // refractive materials do not cast shadows.. later they'll cast caustic effects
-                if (shadow_ray.trace(objects, dummy, ri) && dummy.tn < light_dist && dummy.ho->om.mt != rrm) {
+                if ((shadow_ray.trace(objects, dummy, ri) && dummy.ho != ii.ho) && dummy.tn < light_dist && dummy.ho->om.mt != rrm) {
                     visibility = 0.f;
+                    continue;
                 }
 
                 // dot product based on Lambert's cosine law for Lambertian reflectance;
