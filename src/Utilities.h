@@ -57,6 +57,7 @@ enum MaterialType: uint8_t {
     rm,     // Reflection matrial
     prm,    // Reflective Phong material
     rrm,    // Refractive material
+    prrm,   // Refractive Phong material
 };
 
 struct loading_info {

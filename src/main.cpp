@@ -196,6 +196,7 @@ void render_simple_refl_scene() {
 
     material ball1;
     ball1.mt = rrm;
+    ball1.ior = 1.3f;
 
     material ball2;
     ball2.c = violet;
@@ -282,8 +283,13 @@ void test_refraction_scene() {
     /// materials set-up
 
     material refr;
-    refr.mt = rrm;
-    refr.ior = 1.3f;
+    refr.mt = prrm;
+    refr.ior = 1.f;
+    refr.ac = 0.f;
+    refr.dc = 0.6f;
+    refr.sc = 0.1f;
+    refr.se = 16.f;
+    refr.c = bluish;
 
     material phong;
     phong.c = orangish;

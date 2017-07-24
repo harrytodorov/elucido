@@ -362,9 +362,6 @@ void TriangleMesh::scale(const float_t &scaling_factor, const uint32_t &axes_of_
 bool
 TriangleMesh::triangle_intersect(const Ray &r, const glm::vec4 &v0, const glm::vec4 &v1, const glm::vec4 &v2,
                                  float_t &t, float_t &u, float_t &v) {
-
-    // TODO: write doc on how this intersection test works
-
     // define the two edges of the triangle AB and AC
     glm::vec4 e0(v1 - v0), e1(v2 - v0), cv(r.orig() - v0);
     glm::vec4 pv, qv;

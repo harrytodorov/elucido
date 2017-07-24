@@ -36,28 +36,30 @@ public:
     ~Ray() = default;
 
     bool trace(const std::vector<Object *> &objects, isect_info &ii, render_info &ri) const;
-    inline glm::vec4 orig() const {
-        return this->o;
-}              // get origin
-    inline void set_orig(const glm::vec4 &_o) {
-        this->o = _o;
-    }  // set origin
-    inline glm::vec4 dir() const {
-        return this->d;
-    }               // get direction
-    inline void set_dir(const glm::vec4 &_d) {
+
+    // get origin
+    inline glm::vec4 orig() const { return this->o; }
+
+    // get direction
+    inline glm::vec4 dir() const { return this->d; }
+
+    // get signs of the ray direction components
+    inline const uint32_t* get_sign() const { return this->s; }
+
+    // get the inverse of the direction
+    inline glm::vec4 get_inv_dir() const { return this->id; }
+
+    // set origin
+    inline void set_orig(const glm::vec4 &_o) { this->o = _o; }
+    
+    // set direction
+    void set_dir(const glm::vec4 &_d) {
         this->d = _d;
         id = 1.f / d;
         s[0] = (uint32_t) (id.x < 0);
         s[1] = (uint32_t) (id.y < 0);
         s[2] = (uint32_t) (id.z < 0);
-    }   // set direction
-    inline const uint32_t* get_sign() const {
-        return this->s;
-    }    // get signs of the ray direction components
-    inline glm::vec4 get_inv_dir() const {
-        return this->id;
-    }       // get the inverse of the direction
+    }
 };
 
 
