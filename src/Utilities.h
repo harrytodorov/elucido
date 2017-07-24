@@ -37,7 +37,7 @@ const glm::vec3 greyish(0.65f);
 const glm::vec3 skyblue(0.258f, 0.674f, 0.831f);
 
 const float_t bias = 0.0001;            // shadow bias is used for avoiding self-shadows
-const uint32_t max_depth = 5;           // maximum depth of recursion
+const uint32_t max_depth = 10;          // maximum depth of recursion
 const glm::vec3 bgc(skyblue);           // background color
 
 const std::string vertex("v");
@@ -48,13 +48,15 @@ const std::string face("f");
 enum RayType: uint8_t {
     primary,
     shadow,
-    reflection
+    reflection,
+    refraction
 };
 
 enum MaterialType: uint8_t {
     pm,     // Phong material
     rm,     // Reflection matrial
-    prm     // Reflective Phong material
+    prm,    // Reflective Phong material
+    rrm,    // Refractive material
 };
 
 struct loading_info {
@@ -93,6 +95,7 @@ struct material {
     float_t         sc{0.2f};   // specular constant
     float_t         se{10.f};   // specular exponent
     float_t         ri{0.8f};   // reflection index
+    float_t         ior{1.3f};  // index of refraction
 };
 
 #endif //ELUCIDO_UTILITIES_H

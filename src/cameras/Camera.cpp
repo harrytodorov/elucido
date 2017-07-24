@@ -87,10 +87,6 @@ void Camera::translate(const float_t &translation, const uint32_t &axes_of_trans
     ctm = tm * ctm;
 }
 
-glm::vec4 Camera::reflect(const glm::vec4 &view, const glm::vec4 &surface_normal) {
-    return view - 2.f * glm::dot(view, surface_normal) * surface_normal;
-}
-
 glm::vec3 Camera::cast_ray(const Ray &ray, const std::vector<Light *> &lights, const std::vector<Object *> &objects, const uint32_t &depth, render_info &ri) {
     // if we've reached the bottom of the recursion tree, we return the background color
     if (depth > max_depth) return bgc;
@@ -113,6 +109,7 @@ glm::vec3 Camera::cast_ray(const Ray &ray, const std::vector<Light *> &lights, c
         // material of the intersected object
         material mat = ii.ho->om;
 
+        // for materials with Phong Illumination model
         if (mat.mt == pm || mat.mt == prm) {
             Ray shadow_ray;
             isect_info dummy;
@@ -140,7 +137,8 @@ glm::vec3 Camera::cast_ray(const Ray &ray, const std::vector<Light *> &lights, c
                 // for the direction of the shadow ray we take the opposite of the light direction
                 shadow_ray.set_dir(-light_direction);
 
-                if (shadow_ray.trace(objects, dummy, ri) && dummy.tn < light_dist) {
+                // refractive materials do not cast shadows.. later they'll cast caustic effects
+                if (shadow_ray.trace(objects, dummy, ri) && dummy.tn < light_dist && dummy.ho->om.mt != rrm) {
                     visibility = 0.f;
                 }
 
@@ -161,21 +159,83 @@ glm::vec3 Camera::cast_ray(const Ray &ray, const std::vector<Light *> &lights, c
             // add ambient, diffuse and specular to the the hit color
             hc += mat.ac * mat.c + mat.dc * diffuse + mat.sc * specular;
         } 
-        
-        if (mat.mt == prm || mat.mt == rm) {
 
-            glm::vec4 rv = reflect(ray.dir(), ii.ipn);
+        //  for reflective materials
+        if (mat.mt == prm || mat.mt == rm) {
+            glm::vec4 reflection_vec = glm::normalize(reflect(ray.dir(), ii.ipn));
 
             // create a reflection ray
             Ray rr;
             rr.rt = reflection;
-            rr.set_dir(rv);
             rr.set_orig(ii.ip + ii.ipn*bias);
+            rr.set_dir(reflection_vec);
 
             hc += mat.ri * cast_ray(rr, lights, objects, depth+1, ri);
+        }
+
+        // for refractive materials
+        if (mat.mt == rrm) {
+            glm::vec4 sn{ii.ipn}, refrcation_vec;
+            bool outside;
+
+            // cos theta_incident; needed to project incident direction vector on the surface normal
+            float_t cosi = glm::clamp(glm::dot(ray.dir(), sn), -1.f, 1.f);
+            float_t ior1{1.f}, ior2{mat.ior};
+
+            outside = cosi < 0.f;
+            if (outside) {cosi = -cosi;} else {std::swap(ior1, ior2); sn = -sn;}
+
+            // ratio of the indices of refraction of the 2 medias
+            float_t iorr{ior1 / ior2};
+
+            // sin^2 theta_incidence
+            float_t sin2t = iorr*iorr * (1.f - cosi*cosi);
+
+            // if sin^2 theta_transmission > 1, we have total internal reflection
+            if (sin2t > 1.f) std::cout << "bad!";
+
+            float_t cost = glm::sqrt(1.f - sin2t);
+
+            refrcation_vec = glm::normalize(iorr * ray.dir() + sn*(iorr*cosi - cost));
+
+            // create a refraction ray
+            Ray rr;
+            rr.rt = refraction;
+            rr.set_orig(outside ? ii.ip - ii.ipn*bias : ii.ip + ii.ipn*bias);
+            rr.set_dir(refrcation_vec);
+
+            hc += cast_ray(rr, lights, objects, depth+1, ri);
         }
     }
 
     return hc;
+}
+
+glm::vec4 Camera::refract(const glm::vec4 &incident_direction, const glm::vec4 &surface_normal, const float_t &ior1,
+                          const float_t &ior2) {
+    glm::vec4 t;
+    glm::vec4 sn{surface_normal};
+
+    // cos theta_incident; needed to project incident direction vector on the surface normal
+    float_t cosi = glm::dot(incident_direction, surface_normal);
+
+    // ratio of the indices of refraction of the 2 medias
+    float_t iorr{ior1 / ior2};
+
+    if (cosi < 0) { cosi = -cosi; } else { sn = -sn; iorr /= 1.f;}
+
+    // sin^2 theta_transmission
+    const float_t sin2t = iorr*iorr * (1.f - cosi*cosi);
+
+    // if sin^2 theta_transmission > 1, we have total internal reflection
+    if (sin2t > 1.f) return t;
+
+    const float_t cost = glm::sqrt(1.f - sin2t);
+
+    return iorr * incident_direction + sn * (iorr*cosi - cost);
+}
+
+glm::vec4 Camera::reflect(const glm::vec4 &incident_direction, const glm::vec4 &surface_normal) {
+    return incident_direction - 2.f * glm::dot(incident_direction, surface_normal) * surface_normal;
 }
 

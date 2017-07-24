@@ -43,7 +43,11 @@ public:
     virtual render_info render_scene(const std::vector<Object *, std::allocator<Object *>> &objects,
                                      const std::vector<Light *, std::allocator<Light *>> &lights,
                                      ImagePlane &ip) = 0;
+
     glm::vec3 cast_ray(const Ray &ray, const std::vector<Light *> &lights, const std::vector<Object *> &objects, const uint32_t &depth, render_info &ri);
+    inline glm::vec4 reflect(const glm::vec4 &incident_direction, const glm::vec4 &surface_normal);
+    glm::vec4 refract(const glm::vec4 &incident_direction, const glm::vec4 &surface_normal, const float_t &ior1, const float_t &ior2);
+
     void translate(const float_t &translation, const uint32_t &axes_of_translation);
     void rotate(float_t rot_angle, uint32_t axes_of_rotation);
 
@@ -56,6 +60,6 @@ public:
         // return the inverse of the transpose of the inverse of the camera's transformation matrix
         return glm::inverse(glm::transpose(tictm));
     };
-    inline glm::vec4 reflect(const glm::vec4 &view, const glm::vec4 &surface_normal);
+
 };
 #endif //ELUCIDO_CAMERA_H
