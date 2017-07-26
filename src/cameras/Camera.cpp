@@ -53,9 +53,8 @@ glm::vec3 Camera::cast_ray(const Ray &ray, const std::vector<Light *> &lights, c
                 // for the direction of the shadow ray we take the opposite of the light direction
                 shadow_ray.set_dir(-light_direction);
 
-                // refractive materials do not cast shadows.. later they'll cast caustic effects
                 // ignore self-shadows; those would be handled correctly later
-                if ((shadow_ray.trace(objects, dummy, ri) && dummy.ho != ii.ho) && dummy.tn < light_dist && dummy.ho->om.mt != rrm) {
+                if ((shadow_ray.trace(objects, dummy, ri) && dummy.ho != ii.ho) && dummy.tn < light_dist) {
                     visibility = 0.f;
                     continue;
                 }
@@ -93,7 +92,7 @@ glm::vec3 Camera::cast_ray(const Ray &ray, const std::vector<Light *> &lights, c
             // compute a specular reflection for reflective materials
             glm::vec3 specular(0);
 
-            // iterate through all light sources and calculate specular and defuse components
+            // iterate through all light sources and calculate specular
             for (auto &light : lights) {
                 glm::vec4 light_direction(0);
                 glm::vec3 light_intensity(0);
@@ -113,6 +112,9 @@ glm::vec3 Camera::cast_ray(const Ray &ray, const std::vector<Light *> &lights, c
             }
 
             hc += mat.sc*specular;
+
+            // add color to the reflective material
+            hc = hc*mat.c;
         }
 
         // for refractive materials
