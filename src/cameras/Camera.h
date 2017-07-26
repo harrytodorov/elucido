@@ -43,6 +43,8 @@ public:
     inline glm::vec4 reflect(const glm::vec4 &incident_direction, const glm::vec4 &surface_normal) {
         return incident_direction - 2.f * glm::dot(incident_direction, surface_normal) * surface_normal;
     };
+    glm::vec4 refract(const glm::vec4 &incident_direction, const glm::vec4 &surface_normal, const float_t &ior);
+    void compute_fresnel(const glm::vec4 &incident_direction, const glm::vec4 &surface_normal, const float_t &ior, float_t &reflectance);
     glm::vec3 cast_ray(const Ray &ray, const std::vector<Light *> &lights, const std::vector<Object *> &objects, const uint32_t &depth, render_info &ri);
     virtual render_info render_scene(const std::vector<Object *, std::allocator<Object *>> &objects,
                                      const std::vector<Light *, std::allocator<Light *>> &lights,

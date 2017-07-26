@@ -55,9 +55,7 @@ enum RayType: uint8_t {
 enum MaterialType: uint8_t {
     pm,     // Phong material
     rm,     // Reflection matrial
-    prm,    // Reflective Phong material
     rrm,    // Refractive material
-    prrm,   // Refractive Phong material
 };
 
 struct loading_info {
@@ -90,14 +88,14 @@ struct isect_info {
 };
 
 struct material {
-    glm::vec3       c{white};   // material's color
-    MaterialType    mt{pm};     // material's type (see MaterialType enum)
-    float_t         ac{0.2f};   // ambient constant
-    float_t         dc{0.8f};   // diffuse constant
-    float_t         sc{0.2f};   // specular constant
-    float_t         se{10.f};   // specular exponent
-    float_t         ri{0.8f};   // reflection index
-    float_t         ior{1.3f};  // index of refraction
+    glm::vec3       c{white};       // material's color
+    MaterialType    mt{pm};         // material's type (see MaterialType enum)
+    float_t         ac{0.2f};       // ambient constant
+    float_t         dc{0.8f};       // diffuse constant
+    float_t         sc{0.2f};       // specular constant
+    float_t         se{10.f};       // specular exponent
+    float_t         ri{0.8f};       // reflection index
+    float_t         ior{1.00029f};  // index of refraction
 };
 
 #endif //ELUCIDO_UTILITIES_H

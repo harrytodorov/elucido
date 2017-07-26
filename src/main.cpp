@@ -36,7 +36,7 @@ void render_cornell_scene() {
 
     material lg;
     lg.c = lightslategray;
-    lg.mt = prm;
+    lg.mt = rm;
 
     /// light set-up
 
@@ -189,20 +189,26 @@ void render_simple_refl_scene() {
     char fn[100];
     loading_info li;
     render_info ri;
+    auto start_loading = std::chrono::high_resolution_clock::now()
+    , finish_loading = std::chrono::high_resolution_clock::now();
 
     /// materials set-up
     material floor;
-    floor.c = orangish;
+    floor.c = greyish;
+    floor.ac = 0.f;
 
     material ball1;
     ball1.mt = rrm;
-    ball1.ior = 1.2f;
+    ball1.ior = 1.458f;
 
     material ball2;
-    ball2.c = violet;
+    ball2.c = white;
 
     material tm;
-    tm.c = lightslategray;
+    tm.mt = rm;
+
+    material mm;
+    mm.mt = pm;
 
     /// objects set-up
 
@@ -210,7 +216,7 @@ void render_simple_refl_scene() {
     glm::vec4 v1(3.f, -0.5f, 0.5f, 1);
     glm::vec4 v2(-3.f, -0.5f, -5.5f, 1);
     glm::vec4 v3(3, -0.5f, -5.5f, 1);
-    glm::vec4 sp1(0.f, 0.5f, -2.f, 1);
+    glm::vec4 sp1(0.f, 0.f, 0.f, 1);
     glm::vec4 sp2(0.f, 0.5f, -0.5f, 1);
 
     // create reflective plane
@@ -222,29 +228,25 @@ void render_simple_refl_scene() {
     objects.push_back(&t2);
 
     // spheres
-    Sphere s1(sp1, 1.f, ball2);
-    s1.translate(0.7f, Y);
-    s1.translate(-0.7f, X);
-    s1.translate(-1.5f, Z);
-    s1.apply_transformations();
-//    objects.push_back(&s1);
+    Sphere s1(sp1, 10.f, ball2);
+    objects.push_back(&s1);
 
     Sphere s2(sp2, 0.5f, ball1);
-    s2.translate(0.4f, Y);
     s2.translate(0.3f, X);
+    s2.translate(-0.5f, Y);
     s2.apply_transformations();
-//    objects.push_back(&s2);
+    objects.push_back(&s2);
 
     // load monkey
-    sprintf(fn, "./wt_teapot.obj");
-    TriangleMesh teapot(tm, true);
+    sprintf(fn, "./monkey.obj");
+    TriangleMesh monkey(mm, true);
 
     // measure loading the triangulated mesh
-    auto start_loading = std::chrono::high_resolution_clock::now();
+    start_loading = std::chrono::high_resolution_clock::now();
     std::cout << std::endl;
     std::cout << "Start loading..." << std::endl;
-    li = teapot.load_mesh(fn);
-    auto finish_loading = std::chrono::high_resolution_clock::now();
+    li = monkey.load_mesh(fn);
+    finish_loading = std::chrono::high_resolution_clock::now();
     std::cout << "Done loading '" <<  fn << "'." << std::endl;
     std::cout << "Loading time                          : " << std::chrono::duration_cast<std::chrono::milliseconds>(finish_loading - start_loading).count() << " milliseconds" << std::endl;
     std::cout << "# of vertices in the mesh             : " << li.nv << std::endl;
@@ -253,22 +255,49 @@ void render_simple_refl_scene() {
     std::cout << "# of faces in the mesh                : " << li.nf << std::endl;
     std::cout << std::endl;
 
-    teapot.rotate(15.f, Y);
-    teapot.translate(-0.3f, Y);
+    monkey.rotate(-30.f, X);
+    monkey.rotate(25.f, Y);
+    monkey.translate(0.1f, Y);
+    monkey.translate(-1.5f, Z);
+    monkey.translate(-1.f, X);
+    monkey.apply_transformations();
+    objects.push_back(&monkey);
+
+    // load teapot
+    sprintf(fn, "./wt_teapot.obj");
+    TriangleMesh teapot(tm, true);
+
+    // measure loading the triangulated mesh
+    start_loading = std::chrono::high_resolution_clock::now();
+    std::cout << std::endl;
+    std::cout << "Start loading..." << std::endl;
+    li = teapot.load_mesh(fn);
+    finish_loading = std::chrono::high_resolution_clock::now();
+    std::cout << "Done loading '" <<  fn << "'." << std::endl;
+    std::cout << "Loading time                          : " << std::chrono::duration_cast<std::chrono::milliseconds>(finish_loading - start_loading).count() << " milliseconds" << std::endl;
+    std::cout << "# of vertices in the mesh             : " << li.nv << std::endl;
+    std::cout << "# of vertex normals in the mesh       : " << li.nvn << std::endl;
+    std::cout << "# of triangles in the mesh            : " << li.nt << std::endl;
+    std::cout << "# of faces in the mesh                : " << li.nf << std::endl;
+    std::cout << std::endl;
+
     teapot.scale(1.3f, XYZ);
-    teapot.translate(-2.f, Z);
+    teapot.rotate(-135.f, Y);
+    teapot.translate(-0.3f, Y);
+    teapot.translate(-2.5f, Z);
+    teapot.translate(1.f, X);
     teapot.apply_transformations();
     objects.push_back(&teapot);
 
     /// illuminate scene
 
-    glm::vec4 lp2(1.5f, 2.5f, -1.f, 1);
-    glm::vec4 lp3(-1.5f, 2.5f, -1.5f, 1);
+    glm::vec4 lp2(-1.5f, 2.5f, 0.f, 1);
+    glm::vec4 lp3(1.5f, 2.5f, 1.f, 1);
 
-    PointLight pl2(lp2, orangish, 70.f);
+    PointLight pl2(lp2, violet, 75.f);
     lights.push_back(&pl2);
 
-    PointLight pl3(lp3, green, 40.f);
+    PointLight pl3(lp3, orangish, 70.f);
     lights.push_back(&pl3);
 
     /// adjust camera settings
@@ -313,7 +342,7 @@ void test_refraction_scene() {
     /// materials set-up
 
     material refr;
-    refr.mt = prrm;
+    refr.mt = rrm;
     refr.ior = 1.f;
     refr.ac = 0.f;
     refr.dc = 0.6f;
