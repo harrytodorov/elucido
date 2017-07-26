@@ -14,8 +14,8 @@ render_info PerspectiveCamera::render_scene(const std::vector<Object *, std::all
     glm::vec3           pc;                                     // pixel color
     glm::vec4           cp;
     render_info         ri;                                     // rendering information
-    std::random_device rd;                                      // obtain a random number from hardware
-    std::mt19937 eng(rd());                                     // seed generator
+    std::random_device  rd;                                     // obtain a random number from hardware
+    std::mt19937        eng(rd());                              // seed generator
     std::uniform_real_distribution<float_t> pr(0.05f, 0.95f);   // define ranges for pixel x/y
 
 
@@ -38,6 +38,9 @@ render_info PerspectiveCamera::render_scene(const std::vector<Object *, std::all
 
     for (int r = 0; r < ip.vres; r++) {
         for (int c = 0; c < ip.hres; c++) {
+
+            // set color for pixel black before collecting color at sample points
+            pc = black;
 
             // use half-jittered sampling to reduce aliasing artifacts
             for (uint32_t ny = 0; ny < ip.ns; ny++) {

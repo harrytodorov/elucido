@@ -186,7 +186,7 @@ void render_simple_refl_scene() {
     std::vector<Light*> lights;
     Camera* camera = new PerspectiveCamera();
     ImagePlane ip = ImagePlane(1280, 720);
-    ip.ns = 1;      // TODO: check why you get a white image, when using just 1 sample per pixel
+    ip.ns = 5;
     char fn[100];
     loading_info li;
     render_info ri;

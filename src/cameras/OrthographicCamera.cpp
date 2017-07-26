@@ -35,6 +35,9 @@ render_info OrthographicCamera::render_scene(const std::vector<Object *, std::al
     for (int r = 0; r < ip.vres; r++) {
         for (int c = 0; c < ip.hres; c++) {
 
+            // set color for pixel black before collecting color at sample points
+            pc = black;
+
             // use half-jittered sampling to reduce aliasing artifacts
             for (uint32_t ny = 0; ny < ip.ns; ny++) {
                 for (uint32_t nx = 0; nx < ip.ns; nx++) {
