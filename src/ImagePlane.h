@@ -32,6 +32,9 @@ public:
 
     void save_to_ppm(const char fn[50]);
     void save_to_png(const char fn[50]);
+
+private:
+    float_t encode_gamma(const float_t &c);
 };
 
 

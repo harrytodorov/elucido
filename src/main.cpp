@@ -194,14 +194,17 @@ void render_simple_refl_scene() {
 
     /// materials set-up
     material floor;
-    floor.c = greyish;
+    floor.c = blue;
     floor.ac = 0.f;
 
     material ball1;
     ball1.mt = rrm;
     ball1.ior = 1.458f;
+    ball1.c = white;
 
     material ball2;
+    ball2.ac = 0.f;
+    ball2.dc = 0.8f;
     ball2.c = white;
 
     material tm;
@@ -216,8 +219,8 @@ void render_simple_refl_scene() {
     glm::vec4 v1(3.f, -0.5f, 0.5f, 1);
     glm::vec4 v2(-3.f, -0.5f, -5.5f, 1);
     glm::vec4 v3(3, -0.5f, -5.5f, 1);
-    glm::vec4 sp1(0.f, 0.f, 0.f, 1);
-    glm::vec4 sp2(0.f, 0.5f, -0.5f, 1);
+    glm::vec4 sp1(1.f, 0.f, 0.f, 1);
+    glm::vec4 sp2(-1.f, 0.f, 0.f, 1);
 
     // create reflective plane
     Triangle t1(v0, v1, v2, floor);
@@ -228,13 +231,10 @@ void render_simple_refl_scene() {
     objects.push_back(&t2);
 
     // spheres
-    Sphere s1(sp1, 10.f, ball2);
+    Sphere s1(sp1, 0.5f, ball2);
     objects.push_back(&s1);
 
     Sphere s2(sp2, 0.5f, ball1);
-    s2.translate(0.3f, X);
-    s2.translate(-0.5f, Y);
-    s2.apply_transformations();
     objects.push_back(&s2);
 
     // load monkey
@@ -261,7 +261,7 @@ void render_simple_refl_scene() {
     monkey.translate(-1.5f, Z);
     monkey.translate(-1.f, X);
     monkey.apply_transformations();
-    objects.push_back(&monkey);
+//    objects.push_back(&monkey);
 
     // load teapot
     sprintf(fn, "./wt_teapot.obj");
@@ -287,14 +287,14 @@ void render_simple_refl_scene() {
     teapot.translate(-2.5f, Z);
     teapot.translate(1.f, X);
     teapot.apply_transformations();
-    objects.push_back(&teapot);
+//    objects.push_back(&teapot);
 
     /// illuminate scene
 
     glm::vec4 lp2(-1.5f, 2.5f, 0.f, 1);
     glm::vec4 lp3(1.5f, 2.5f, 1.f, 1);
 
-    PointLight pl2(lp2, violet, 75.f);
+    PointLight pl2(lp2, white, 75.f);
     lights.push_back(&pl2);
 
     PointLight pl3(lp3, orangish, 70.f);
@@ -305,8 +305,8 @@ void render_simple_refl_scene() {
     dynamic_cast<PerspectiveCamera *>(camera)->set_fov(90.f);
 
     // place the camera to look at the plane
-    camera->rotate(-20.f, X);
-    camera->translate(1.5f, Y);
+    camera->rotate(-10.f, X);
+    camera->translate(0.5f, Y);
     camera->translate(1.5f, Z);
 
     /// render scene

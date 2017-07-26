@@ -27,7 +27,7 @@
 
 class Object {
 public:
-    material    om;    // object's material
+    material    om;     // object's material
     glm::mat4   mt;     // model transform matrix for an object
                         // places and transforms the object in world coordinate space
     glm::mat4   nmt;    // transformation matrix for object's normals

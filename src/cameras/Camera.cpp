@@ -150,8 +150,8 @@ glm::vec3 Camera::cast_ray(const Ray &ray, const std::vector<Light *> &lights, c
 
             reflection_col = cast_ray(rr, lights, objects, depth+1, ri);
 
-            // mix reflection & refraction according to Fresnel
-            hc += reflectance*reflection_col + (1.f-reflectance)*refraction_col;
+            // mix reflection & refraction according to Fresnel + add color of the object
+            hc += (reflectance*reflection_col + (1.f-reflectance)*refraction_col) * mat.c;
         }
     }
 

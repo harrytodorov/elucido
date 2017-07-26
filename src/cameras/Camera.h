@@ -59,7 +59,8 @@ protected:
 
 private:
     glm::mat4                   ctm;        // camera's transformation matrix
-    glm::mat4                   tictm;      // the transpose of the inverse of the camera's transformation matrix
+    glm::mat4                   tictm;      // the transpose of the inverse of the camera's transformation matrix;
+                                            // needed to transform vertex normals
 
     inline glm::mat4 inverse_ctm() {
         // return the inverse of the camera's transformation matrix
