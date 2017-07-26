@@ -8,14 +8,17 @@ bool Ray::trace(const std::vector<Object *> &objects, isect_info &ii, render_inf
     // reset the information stored in the intersection structure
     ii = isect_info();
 
+    // increment number of primary rays
+    if (this->rt == primary) __sync_fetch_and_add(&ri.npr, 1);
+
     // increment number of shadow rays
-    if (this->rt == shadow) ri.nsr++;
+    if (this->rt == shadow) __sync_fetch_and_add(&ri.nsr, 1);
 
     // increment number of reflection rays
-    if (this->rt == reflection) ri.nrr++;
+    if (this->rt == reflection) __sync_fetch_and_add(&ri.nrr, 1);
 
     // increment number of refraction rays
-    if (this->rt == refraction) ri.nrrr++;
+    if (this->rt == refraction) __sync_fetch_and_add(&ri.nrrr, 1);
 
     // iterate through objects and find the closest intersection
     for (auto& object : objects) {

@@ -186,6 +186,7 @@ void render_simple_refl_scene() {
     std::vector<Light*> lights;
     Camera* camera = new PerspectiveCamera();
     ImagePlane ip = ImagePlane(1280, 720);
+    ip.ns = 1;      // TODO: check why you get a white image, when using just 1 sample per pixel
     char fn[100];
     loading_info li;
     render_info ri;
@@ -341,7 +342,8 @@ void test_refraction_scene() {
     std::vector<Object*> objects;
     std::vector<Light*> lights;
     Camera* camera = new PerspectiveCamera();
-    ImagePlane ip = ImagePlane(500, 500);
+    ImagePlane ip = ImagePlane(1, 1);
+    ip.ns = 2;
     char fn[100];
     loading_info li;
     render_info ri;
@@ -422,9 +424,6 @@ void test_refraction_scene() {
 }
 
 int main(int argc, char **argv) {
-//    render_simple_refl_scene();
-
-    glm::vec3 g(0.5f, 1.8f, 100.f);
-    g = glm::clamp(g, 0.f, 1.f);
+    render_simple_refl_scene();
     return 0;
 }

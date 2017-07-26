@@ -10,10 +10,13 @@ render_info OrthographicCamera::render_scene(const std::vector<Object *, std::al
                                              ImagePlane &ip) {
     float_t             curr_x;
     float_t             curr_y;
-    float_t             ar;                     // image plane's aspect ratio
+    float_t             ar;                                     // image plane's aspect ratio
     Ray                 ray;
-    glm::vec3           hit_color;
-    render_info         ri;                     // rendering information
+    glm::vec3           pc;                                     // pixel color
+    render_info         ri;                                     // rendering information
+    std::random_device rd;                                      // obtain a random number from hardware
+    std::mt19937 eng(rd());                                     // seed generator
+    std::uniform_real_distribution<float_t> pr(0.05f, 0.95f);   // define ranges for pixel x/y
 
     // position all objects in the scene relative to the camera's position at the origin; inverse view transformation
     apply_inverse_view_transform(objects, lights);
@@ -32,20 +35,29 @@ render_info OrthographicCamera::render_scene(const std::vector<Object *, std::al
     for (int r = 0; r < ip.vres; r++) {
         for (int c = 0; c < ip.hres; c++) {
 
-            // calculate the x/y coordinates for each pixel;
-            // the image plane is positioned orthogonal to the z-plane and is placed at (0, 0, 0)
-            // we also incorporate a scaling factor for the orthographic camera, which scales the
-            // the pixel cell in world coordinate space; this would be used for zooming with orthographic camera
-            curr_x = (2.f * ((c + 0.5f) / ip.hres) - 1) * ar * zf;
-            curr_y = (1 - 2.f * ((r + 0.5f) / ip.vres)) * zf;
+            // use half-jittered sampling to reduce aliasing artifacts
+            for (uint32_t ny = 0; ny < ip.ns; ny++) {
+                for (uint32_t nx = 0; nx < ip.ns; nx++) {
 
-            // set the ray origin for each separate pixel
-            // z position is fixed
-            ray.set_orig(glm::vec4(curr_x, curr_y, eye.z, 1));
+                    // calculate the x/y coordinates for each sample per pixel;
+                    // the image plane is positioned orthogonal to the z-plane and is placed at (0, 0, -1)
+                    // we also incorporate a scaling factor for the orthographic camera, which scales the
+                    // the pixel cell in world coordinate space; this would be used for zooming with orthographic camera
+                    curr_x = (2.f * ((c*ip.ns + nx + pr(eng)) / (ip.hres*ip.ns)) - 1.f) * ar * zf;
+                    curr_y = (1.f - 2.f * ((r*ip.ns + ny + pr(eng)) / (ip.vres*ip.ns))) * zf;
 
-            // cast a ray into the scene and get the color value for it
-            hit_color = cast_ray(ray, lights, objects, 0, ri);
-            *(pixels++) = glm::clamp(hit_color, 0.f, 1.f);
+                    // set the ray origin for each sample position
+                    ray.set_orig(glm::vec4(curr_x, curr_y, -1.f, 1.f));
+
+                    // cast a ray into the scene and get the color value for it
+                    pc += cast_ray(ray, lights, objects, 0, ri);
+                }
+            }
+
+            // use simple box filter to get the average of the samples per pixel
+            pc /= ip.ns*ip.ns;
+
+            *(pixels++) = glm::clamp(pc, 0.f, 1.f);
         }
     }
 
@@ -55,7 +67,6 @@ render_info OrthographicCamera::render_scene(const std::vector<Object *, std::al
     // get rendering information
     ri.nls = (uint32_t) lights.size();
     ri.no = (uint32_t) objects.size();
-    ri.npr = ip.vres * ip.hres;
 
     return ri;
 }
