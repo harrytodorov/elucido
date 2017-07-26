@@ -32,8 +32,26 @@ render_info PerspectiveCamera::render_scene(const std::vector<Object *, std::all
     // using the field of view; fov is in range(0, 180)
     sf = glm::tan(glm::radians(fov * 0.5f));
 
+
     for (int r = 0; r < ip.vres; r++) {
         for (int c = 0; c < ip.hres; c++) {
+
+            // use half-jittered sampling to reduce aliasing artifacts
+            for (uint32_t ny = 0; ny < ip.ns; ny++) {
+                for (uint32_t nx = 0; nx < ip.ns; nx++) {
+
+
+
+
+                }
+            }
+
+
+
+
+
+
+
 
             // calculate the x/y coordinates for each pixel
             // the image plane is positioned orthogonal to the z-plane and is one unit away in

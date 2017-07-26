@@ -38,7 +38,7 @@ const glm::vec3 skyblue(0.258f, 0.674f, 0.831f);
 
 const float_t bias = 0.0001;            // shadow bias is used for avoiding self-shadows
 const uint32_t max_depth = 10;          // maximum depth of recursion
-const glm::vec3 bgc(skyblue);           // background color
+const glm::vec3 bgc(lightslategray);           // background color
 
 const std::string vertex("v");
 const std::string vertex_normal("vn");

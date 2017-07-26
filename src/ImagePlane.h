@@ -15,9 +15,10 @@
 
 class ImagePlane {
 public:
-    uint32_t        hres;      // horizontal image resolution
-    uint32_t        vres;      // vertical image resolution
-    glm::vec3       *fb;       // frame buffer
+    uint32_t        hres;       // horizontal image resolution
+    uint32_t        vres;       // vertical image resolution
+    uint32_t        ns;         // number of samples per pixel
+    glm::vec3       *fb;        // frame buffer
 
     // constructors & destructors
     // - default resolution of the image plane if not specified is 640x480

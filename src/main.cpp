@@ -194,7 +194,7 @@ void render_simple_refl_scene() {
 
     /// materials set-up
     material floor;
-    floor.c = blue;
+    floor.c = whitish;
     floor.ac = 0.f;
 
     material ball1;
@@ -206,6 +206,9 @@ void render_simple_refl_scene() {
     ball2.ac = 0.f;
     ball2.dc = 0.8f;
     ball2.c = white;
+
+    material ball3;
+    ball3.mt = rm;
 
     material tm;
     tm.mt = rm;
@@ -221,6 +224,7 @@ void render_simple_refl_scene() {
     glm::vec4 v3(3, -0.5f, -5.5f, 1);
     glm::vec4 sp1(1.f, 0.f, 0.f, 1);
     glm::vec4 sp2(-1.f, 0.f, 0.f, 1);
+    glm::vec4 sp3(0.f, 0.f, -1.f, 1);
 
     // create reflective plane
     Triangle t1(v0, v1, v2, floor);
@@ -236,6 +240,9 @@ void render_simple_refl_scene() {
 
     Sphere s2(sp2, 0.5f, ball1);
     objects.push_back(&s2);
+
+    Sphere s3(sp3, 0.5f, ball3);
+    objects.push_back(&s3);
 
     // load monkey
     sprintf(fn, "./monkey.obj");
@@ -415,6 +422,9 @@ void test_refraction_scene() {
 }
 
 int main(int argc, char **argv) {
-    render_simple_refl_scene();
+//    render_simple_refl_scene();
+
+    glm::vec3 g(0.5f, 1.8f, 100.f);
+    g = glm::clamp(g, 0.f, 1.f);
     return 0;
 }
