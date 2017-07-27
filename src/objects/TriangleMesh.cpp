@@ -117,27 +117,79 @@ loading_info TriangleMesh::load_mesh(const char *f) {
     return ret;
 }
 
+bool TriangleMesh::triangle_intersect(const Ray &r, const glm::vec4 &v0, const glm::vec4 &v1, const glm::vec4 &v2,
+                                      float_t &t, float_t &u, float_t &v) const {
+    // define the two edges of the triangle AB and AC
+    glm::vec4 e0(v1 - v0), e1(v2 - v0), cv(r.orig() - v0);
+    glm::vec4 pv, qv;
+    float_t det, inv_det;
+
+    // calculate the p vector from MT, used for calculating the determinant and u parameter
+    pv = glm::vec4(glm::cross(glm::vec3(r.dir()), glm::vec3(e1)), 0);
+
+    // calculate the determinant of the 1x3 matrix M
+    det = glm::dot(pv, e0);
+
+    // if determinant is near 0, ray is parallel to the triangle
+    if (det < kEpsilon)
+        return false;
+
+    // calculate the inverse determinant
+    inv_det = 1.f / det;
+
+    // calculate u parameter and test for its bounds
+    u = glm::dot(pv, cv) * inv_det;
+    if (u < 0.f || u > 1.f)
+        return false;
+
+    // calculate q vector from MT, used for calculating v parameter
+    qv = glm::vec4(glm::cross(glm::vec3(cv), glm::vec3(e0)), 0);
+
+    // calculate v parameter and test for its bounds
+    v = glm::dot(qv, r.dir()) * inv_det;
+    if (v < 0.f || (v + u > 1.f))
+        return false;
+
+    // calculate t
+    t = glm::dot(qv, e1) * inv_det;
+
+    return t > 0;
+}
+
+bool TriangleMesh::intersect(const Ray &r, const uint32_t &ti, isect_info &i) const {
+    glm::vec4 v0, v1, v2;
+    bool intersected{false};
+
+    // get the vertex information for the triangle
+    v0 = va[via[3*ti]     - 1];
+    v1 = va[via[3*ti + 1] - 1];
+    v2 = va[via[3*ti + 2] - 1];
+
+    float_t tt{infinity}, u{0}, v{0};
+
+    // intersection test
+    if (triangle_intersect(r, v0, v1, v2, tt, u, v) && tt < i.tn) {
+        intersected = true;
+        i.tn = tt;
+        i.u = u;
+        i.v = v;
+        i.ip = r.orig() + tt*r.dir();
+        i.ti = ti;
+    }
+
+    return intersected;
+}
+
 bool TriangleMesh::intersect(const Ray &r, isect_info &i) {
     glm::vec4 v0, v1, v2;
     bool intersected{false};
 
     // iterate through triangles in the mesh
     for (uint32_t _ti = 0; _ti < nt; _ti++) {
-        // get the vertex information for the triangle
-        v0 = va[via[3*_ti]     - 1];
-        v1 = va[via[3*_ti + 1] - 1];
-        v2 = va[via[3*_ti + 2] - 1];
-
-        float_t tt{infinity}, u{0}, v{0};
 
         // intersection test
-        if (triangle_intersect(r, v0, v1, v2, tt, u, v) && tt < i.tn) {
+        if (intersect(r, _ti, i)) {
             intersected = true;
-            i.tn = tt;
-            i.u = u;
-            i.v = v;
-            i.ip = r.orig() + tt*r.dir();
-            i.ti = _ti;
         }
     }
 
@@ -357,44 +409,4 @@ void TriangleMesh::scale(const float_t &scaling_factor, const uint32_t &axes_of_
     glm::mat4 sm = glm::scale(glm::mat4(1), sv);
     mt = sm * mt;
     nmt = glm::transpose(glm::inverse(sm)) * nmt;
-}
-
-bool
-TriangleMesh::triangle_intersect(const Ray &r, const glm::vec4 &v0, const glm::vec4 &v1, const glm::vec4 &v2,
-                                 float_t &t, float_t &u, float_t &v) {
-    // define the two edges of the triangle AB and AC
-    glm::vec4 e0(v1 - v0), e1(v2 - v0), cv(r.orig() - v0);
-    glm::vec4 pv, qv;
-    float_t det, inv_det;
-
-    // calculate the p vector from MT, used for calculating the determinant and u parameter
-    pv = glm::vec4(glm::cross(glm::vec3(r.dir()), glm::vec3(e1)), 0);
-
-    // calculate the determinant of the 1x3 matrix M
-    det = glm::dot(pv, e0);
-
-    // if determinant is near 0, ray is parallel to the triangle
-    if (det < kEpsilon)
-        return false;
-
-    // calculate the inverse determinant
-    inv_det = 1.f / det;
-
-    // calculate u parameter and test for its bounds
-    u = glm::dot(pv, cv) * inv_det;
-    if (u < 0.f || u > 1.f)
-        return false;
-
-    // calculate q vector from MT, used for calculating v parameter
-    qv = glm::vec4(glm::cross(glm::vec3(cv), glm::vec3(e0)), 0);
-
-    // calculate v parameter and test for its bounds
-    v = glm::dot(qv, r.dir()) * inv_det;
-    if (v < 0.f || (v + u > 1.f))
-        return false;
-
-    // calculate t
-    t = glm::dot(qv, e1) * inv_det;
-
-    return t > 0;
 }

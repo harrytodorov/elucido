@@ -5,7 +5,6 @@
 #include "lights/PointLight.h"
 #include "cameras/PerspectiveCamera.h"
 #include "objects/Triangle.h"
-#include "Utilities.h"
 #include "objects/Sphere.h"
 
 void render_cornell_scene() {
@@ -224,7 +223,7 @@ void render_simple_refl_scene() {
     glm::vec4 v2(-3.f, -0.5f, -5.5f, 1);
     glm::vec4 v3(3, -0.5f, -5.5f, 1);
     glm::vec4 sp1(1.f, 0.f, 0.f, 1);
-    glm::vec4 sp2(-1.f, 0.f, 0.f, 1);
+    glm::vec4 sp2(1.f, 0.f, 0.f, 1);
     glm::vec4 sp3(0.f, 0.f, -1.f, 1);
 
     // create reflective plane
@@ -237,13 +236,13 @@ void render_simple_refl_scene() {
 
     // spheres
     Sphere s1(sp1, 0.5f, ball2);
-    objects.push_back(&s1);
+//    objects.push_back(&s1);
 
     Sphere s2(sp2, 0.5f, ball1);
     objects.push_back(&s2);
 
     Sphere s3(sp3, 0.5f, ball3);
-    objects.push_back(&s3);
+//    objects.push_back(&s3);
 
     // load monkey
     sprintf(fn, "./monkey.obj");
@@ -266,10 +265,10 @@ void render_simple_refl_scene() {
     monkey.rotate(-30.f, X);
     monkey.rotate(25.f, Y);
     monkey.translate(0.1f, Y);
-    monkey.translate(-1.5f, Z);
+    monkey.translate(-0.7f, Z);
     monkey.translate(-1.f, X);
     monkey.apply_transformations();
-//    objects.push_back(&monkey);
+    objects.push_back(&monkey);
 
     // load teapot
     sprintf(fn, "./wt_teapot.obj");
@@ -292,20 +291,20 @@ void render_simple_refl_scene() {
     teapot.scale(1.3f, XYZ);
     teapot.rotate(-135.f, Y);
     teapot.translate(-0.3f, Y);
-    teapot.translate(-2.5f, Z);
-    teapot.translate(1.f, X);
+    teapot.translate(-1.5f, Z);
+    teapot.translate(1.3f, X);
     teapot.apply_transformations();
-//    objects.push_back(&teapot);
+    objects.push_back(&teapot);
 
     /// illuminate scene
 
     glm::vec4 lp2(-1.5f, 2.5f, 0.f, 1);
     glm::vec4 lp3(1.5f, 2.5f, 1.f, 1);
 
-    PointLight pl2(lp2, white, 75.f);
+    PointLight pl2(lp2, red, 55.f);
     lights.push_back(&pl2);
 
-    PointLight pl3(lp3, orangish, 70.f);
+    PointLight pl3(lp3, violet, 50.f);
     lights.push_back(&pl3);
 
     /// adjust camera settings
@@ -342,7 +341,7 @@ void test_refraction_scene() {
     std::vector<Object*> objects;
     std::vector<Light*> lights;
     Camera* camera = new PerspectiveCamera();
-    ImagePlane ip = ImagePlane(1, 1);
+    ImagePlane ip = ImagePlane(1280, 720);
     ip.ns = 2;
     char fn[100];
     loading_info li;
@@ -352,11 +351,7 @@ void test_refraction_scene() {
 
     material refr;
     refr.mt = rrm;
-    refr.ior = 1.f;
-    refr.ac = 0.f;
-    refr.dc = 0.6f;
-    refr.sc = 0.1f;
-    refr.se = 16.f;
+    refr.ior = 1.2f;
     refr.c = bluish;
 
     material phong;
@@ -364,7 +359,7 @@ void test_refraction_scene() {
 
     /// objects set-up
 
-    glm::vec4 sp1(0, 0, -1.3, 1);
+    glm::vec4 sp1(-0.3f, 0, -1.3, 1);
     glm::vec4 sp2(0, 0, -10, 1);
 
     Sphere s1(sp1, 0.4f, refr);
@@ -424,6 +419,6 @@ void test_refraction_scene() {
 }
 
 int main(int argc, char **argv) {
-    render_simple_refl_scene();
+    test_refraction_scene();
     return 0;
 }

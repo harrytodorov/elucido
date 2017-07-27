@@ -27,6 +27,9 @@ public:
     virtual ~TriangleMesh() = default;
 
     bool intersect(const Ray &r, isect_info &i);
+    bool intersect(const Ray &r, const uint32_t &ti, isect_info &i) const;
+    bool triangle_intersect(const Ray &r, const glm::vec4 &v0, const glm::vec4 &v1, const glm::vec4 &v2,
+                            float_t &t, float_t &u, float_t &v) const;
     void get_surface_properties(isect_info &i) const;
     void apply_camera_transformation(const glm::mat4 &ctm, const glm::mat4 &tictm);
     void apply_transformations();
@@ -34,8 +37,6 @@ public:
     void rotate(const float_t &angle_of_rotation, const uint32_t &axes_of_rotation);
     void scale(const float_t &scaling_factor, const uint32_t &axes_of_scale);
     loading_info load_mesh(const char *f);
-    bool triangle_intersect(const Ray &r, const glm::vec4 &v0, const glm::vec4 &v1, const glm::vec4 &v2,
-                                float_t &t, float_t &u, float_t &v);
 };
 
 #endif //ELUCIDO_TRIANGLEMESH_H
