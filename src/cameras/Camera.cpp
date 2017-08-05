@@ -111,6 +111,7 @@ glm::vec3 Camera::cast_ray(const Ray &ray, const std::vector<Light *> &lights, c
                 specular += light_intensity * pow_max_se;
             }
 
+            // add specular highlight to the material
             hc += mat.sc*specular;
 
             // add color to the reflective material

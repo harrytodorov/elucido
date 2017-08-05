@@ -11,7 +11,8 @@ void render_cornell_scene() {
     std::vector<Object*> objects;
     std::vector<Light*> lights;
     Camera* camera = new PerspectiveCamera();
-    ImagePlane ip = ImagePlane(1920, 1080);
+    ImagePlane ip = ImagePlane(1280, 720);
+    ip.ns = 4;
     char fn[100];
     loading_info li;
     render_info ri;
@@ -19,15 +20,15 @@ void render_cornell_scene() {
     /// material set-up
     material box_white;
     box_white.c = white;
-
-    material refl = box_white;
-    refl.mt = rm;
+    box_white.ac = 0.f;
 
     material box_red;
     box_red.c = red;
+    box_red.ac = 0.f;
 
     material box_green;
     box_green.c = green;
+    box_green.ac = 0.f;
 
     material dg;
     dg.c = deadgold;
@@ -39,20 +40,13 @@ void render_cornell_scene() {
 
     /// light set-up
 
-    glm::vec4 l1_p(0.f, 0.f, 0.f, 1);
+    glm::vec4 lp2(-1.5f, 4.f, -4.5f, 1);
+    glm::vec4 lp3(2.f, 4.f, -4.5f, 1);
 
-    PointLight l2(l1_p, violet, 55);
-    l2.translate(-4.5f, Z);
-    l2.translate(7.f, Y);
-    l2.translate(-1.5f, X);
-    l2.apply_transformations();
+    PointLight l2(lp2, orangish, 50);
     lights.push_back(&l2);
 
-    PointLight l3(l1_p, orangish, 60);
-    l3.translate(2, X);
-    l3.translate(-4.5f, Z);
-    l3.translate(4, Y);
-    l3.apply_transformations();
+    PointLight l3(lp3, violet, 50);
     lights.push_back(&l3);
 
     /// object set-up
@@ -123,10 +117,10 @@ void render_cornell_scene() {
 
     teapot.scale(1.7f, XYZ);
     teapot.translate(1.f, Y);
-    teapot.translate(-7.5f, Z);
+    teapot.translate(-7.f, Z);
     teapot.translate(2.f, X);
     teapot.apply_transformations();
-    objects.push_back(&teapot);
+//    objects.push_back(&teapot);
 
     // load monkey
     sprintf(fn, "./monkey.obj");
@@ -146,13 +140,38 @@ void render_cornell_scene() {
     std::cout << "# of faces in the mesh                : " << li.nf << std::endl;
     std::cout << std::endl;
 
-    monkey.rotate(-20.f, X);
-    monkey.rotate(15.f, Y);
-    monkey.translate(-6.3f, Z);
-    monkey.translate(-1.f, X);
-    monkey.translate(1.2f, Y);
+    monkey.rotate(-30.f, X);
+    monkey.rotate(25.f, Y);
+    monkey.translate(-6.f, Z);
+    monkey.translate(-1.1f, X);
+    monkey.translate(0.6f, Y);
     monkey.apply_transformations();
-    objects.push_back(&monkey);
+//    objects.push_back(&monkey);
+
+    // load bunny
+    sprintf(fn, "./bunny.obj");
+    TriangleMesh bunny(dg, true);
+
+    // measure loading the triangulated mesh
+    start_loading = std::chrono::high_resolution_clock::now();
+    std::cout << std::endl;
+    std::cout << "Start loading..." << std::endl;
+    li = bunny.load_mesh(fn);
+    finish_loading = std::chrono::high_resolution_clock::now();
+    std::cout << "Done loading '" <<  fn << "'." << std::endl;
+    std::cout << "Loading time                          : " << std::chrono::duration_cast<std::chrono::milliseconds>(finish_loading - start_loading).count() << " milliseconds" << std::endl;
+    std::cout << "# of vertices in the mesh             : " << li.nv << std::endl;
+    std::cout << "# of vertex normals in the mesh       : " << li.nvn << std::endl;
+    std::cout << "# of triangles in the mesh            : " << li.nt << std::endl;
+    std::cout << "# of faces in the mesh                : " << li.nf << std::endl;
+    std::cout << std::endl;
+
+    bunny.rotate(45.f, Y);
+    bunny.translate(-6.5f, Z);
+    bunny.translate(0.35f, Y);
+    bunny.apply_transformations();
+    objects.push_back(&bunny);
+
 
     /// camera transformations
     camera->rotate(-15.f, X);
@@ -177,7 +196,7 @@ void render_cornell_scene() {
     std::cout << "# of ray-object intersection tests    : " << ri.nrot << std::endl;
     std::cout << "# of ray-object intersections         : " << ri.nroi << std::endl;
     std::cout << "ratio (isect tests / isect)           : " << (1.f * ri.nrot) / ri.nroi << std::endl;
-    ip.save_to_png("cornell_box3.png");
+    ip.save_to_png("cornell_box.png");
 }
 
 void render_simple_refl_scene() {
@@ -418,7 +437,83 @@ void test_refraction_scene() {
     ip.save_to_png("test_refraction_scene.png");
 }
 
+void balls_scene() {
+    std::vector<Object*> objects;
+    std::vector<Light*> lights;
+    Camera* camera = new PerspectiveCamera();
+    ImagePlane ip = ImagePlane(1280, 720);
+    ip.ns = 2;
+    char fn[100];
+    loading_info li;
+    render_info ri;
+
+    /// materials set-up
+
+    // floor
+    material f;
+    f.c = whitish;
+    f.ac = 0.f;
+
+    // reflective pink ball
+    material rpb;
+    rpb.mt = rm;
+    rpb.ri = 0.8f;
+    rpb.sc = 0.3f;
+    rpb.se = 16.f;
+    rpb.c = pink;
+
+    /// objects set-up
+
+    glm::vec4 v0(-30.f, -0.5f, 50.5f, 1);
+    glm::vec4 v1(30.f, -0.5f, 50.5f, 1);
+    glm::vec4 v2(-30.f, -0.5f, -50.5f, 1);
+    glm::vec4 v3(30, -0.5f, -50.5f, 1);
+    glm::vec4 sp1(0.f, 0.5f, -2.f, 1);
+
+    // reflective plane
+    Triangle t1(v0, v1, v2, f);
+    objects.push_back(&t1);
+
+    Triangle t2(v1, v3, v2, f);
+    objects.push_back(&t2);
+
+    // reflective pink ball
+    Sphere s1(sp1, 1.f, rpb);
+    objects.push_back(&s1);
+
+    /// lights set-up
+    glm::vec4 lp2(-1.5f, 2.5f, 0.f, 1);
+    glm::vec4 lp3(1.5f, 2.5f, 1.f, 1);
+
+    PointLight pl2(lp2, white, 55.f);
+    lights.push_back(&pl2);
+
+    PointLight pl3(lp3, violet, 50.f);
+//    lights.push_back(&pl3);
+
+
+    /// render scene
+    // measure rendering time
+    std::cout << "Start rendering..." << std::endl;
+    auto start_rendering = std::chrono::high_resolution_clock::now();
+    ri = camera->render_scene(objects, lights, ip);
+    auto finish_rendering = std::chrono::high_resolution_clock::now();
+    std::cout << "Done rendering." << std::endl;
+    std::cout << "Rendering time                        : " << std::chrono::duration_cast<std::chrono::seconds>(finish_rendering - start_rendering).count() << " seconds" << std::endl;
+    std::cout << "# of primary rays                     : " << ri.npr << std::endl;
+    std::cout << "# of shadow rays                      : " << ri.nsr << std::endl;
+    std::cout << "# of reflection rays                  : " << ri.nrr << std::endl;
+    std::cout << "# of refraction rays                  : " << ri.nrrr << std::endl;
+    std::cout << "# of objects in the scene             : " << ri.no << std::endl;
+    std::cout << "# of light sources in the scene       : " << ri.nls << std::endl;
+    std::cout << "# of ray-object intersection tests    : " << ri.nrot << std::endl;
+    std::cout << "# of ray-object intersections         : " << ri.nroi << std::endl;
+    std::cout << "ratio (isect tests / isect)           : " << (1.f * ri.nrot) / ri.nroi << std::endl;
+    ip.save_to_png("ball_scene.png");
+
+}
+
 int main(int argc, char **argv) {
-    test_refraction_scene();
+    balls_scene();
     return 0;
 }

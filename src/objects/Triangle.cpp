@@ -18,13 +18,13 @@ bool Triangle::intersect(const Ray &r, isect_info &i) {
 
     // compute the distance between the ray's origin and the hit point
     // with the triangle
-    float_t t_tmp = t_nominator / nomal_ray_d_prod;
+    float_t t = t_nominator / nomal_ray_d_prod;
 
     // if the computed distance is negative, the triangle is behind the ray's origin
-    if (t_tmp < kEpsilon) return false;
+    if (t < kEpsilon) return false;
 
     // compute the intersection point
-    glm::vec4 ip = r.orig() + t_tmp * r.dir();
+    glm::vec4 ip = r.orig() + t * r.dir();
 
     // check if intersection point is within the defined triangle
     glm::vec4 perp_vec;
@@ -51,11 +51,10 @@ bool Triangle::intersect(const Ray &r, isect_info &i) {
     d_prod = glm::dot(normal, perp_vec);
     if (d_prod < 0) return false;
 
-    // test passed; assign variable
-    i.tn = t_tmp;
+    // test passed; assign variables
+    i.tn = t;
     i.ip = ip;
     i.ti = (uint32_t) -1;
-    i.ipn = normal;
 
     return true;
 }

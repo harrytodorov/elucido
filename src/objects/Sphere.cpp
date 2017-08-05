@@ -6,7 +6,7 @@
 
 bool Sphere::intersect(const Ray &r, isect_info &i) {
     // variable to hold distance between ray's origin and intersection point(s)
-    float_t t0, t1;
+    float_t t;
 
     // compute the vector l, between the sphere's center c and the ray's origin o
     glm::vec4 l = c - r.orig();
@@ -17,11 +17,11 @@ bool Sphere::intersect(const Ray &r, isect_info &i) {
     // compute the squared length of the vector l, l2
     float_t l2 = glm::dot(l, l);
 
-//    // if the l2 > r2 (origin of the ray is outside the sphere's center) and
-//    // s < 0, the projection of l on d is less than 0 (the ray's origin is behind
-//    // the sphere), we can reject that there is an interesection between the ray and
-//    // the sphere
-//    if (s < 0 && l2 > r2) return false;
+    // if the l2 > r2 (origin of the ray is outside the sphere's center) and
+    // s < 0, the projection of l on d is less than 0 (the ray's origin is behind
+    // the sphere), we can reject that there is an intersection between the ray and
+    // the sphere
+    if (s < 0 && l2 > r2) return false;
 
     // compute the side m2, of a right triangle formed by s, l and m
     // using the Pythagorean theorem: m2 = l2 - s2
@@ -34,31 +34,13 @@ bool Sphere::intersect(const Ray &r, isect_info &i) {
     // m and q: q2 = r2 - m2; we want q, set_orig q = sqrt(r2 - m2)
     float_t q = sqrtf(r2 - m2);
 
-    // find out the distances to the 2 intersection points
-    t0 = s - q;
-    t1 = s + q;
+    // find the smallest intersection point
+    if (l2 > r2) t = s - q;
+    else t = s + q;
 
-    if (t0 > t1)
-        std::swap(t0, t1);
-
-    // it t0 is less than 0, take t1 instead
-    if (t0 < 0) {
-        // let's use t1
-        t0 = t1;
-
-        // if both of them are less than 0, terminate
-        if (t0 < 0)
-            return false;
-    }
-
-    // the ray's origin is within the sphere, there is only one intersection point:
-    // p = r.o + (s+q) * r.d
-    i.tn = t0;
-
-    // the hit point is then equals to: p = r.o + t*r.d
-    i.ip = r.orig() + i.tn * r.dir();
-
-    // because we don't have a triangulated mesh, we give the triangle index value of -1
+    // test passed; assign variables
+    i.tn = t;
+    i.ip = r.orig() + t*r.dir();
     i.ti = (uint32_t) -1;
 
     return true;

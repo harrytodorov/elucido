@@ -35,6 +35,7 @@ const glm::vec3 whitish(0.780f, 0.812f, 0.867f);
 const glm::vec3 lightslategray(0.467f, 0.533f, 0.6f);
 const glm::vec3 greyish(0.65f);
 const glm::vec3 skyblue(0.258f, 0.674f, 0.831f);
+const glm::vec3 pink(1.f,105.f/255,180.f/255);
 
 const float_t bias = 0.0001;            // shadow bias is used for avoiding self-shadows
 const uint32_t max_depth = 10;          // maximum depth of recursion
