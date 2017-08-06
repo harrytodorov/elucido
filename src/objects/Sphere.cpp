@@ -17,7 +17,7 @@ bool Sphere::intersect(const Ray &r, isect_info &i) {
     // compute the squared length of the vector l, l2
     float_t l2 = glm::dot(l, l);
 
-    // if the l2 > r2 (origin of the ray is outside the sphere's center) and
+    // if the l2 > r2 (origin of the ray is outside the sphere) and
     // s < 0, the projection of l on d is less than 0 (the ray's origin is behind
     // the sphere), we can reject that there is an intersection between the ray and
     // the sphere
