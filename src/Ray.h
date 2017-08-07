@@ -44,10 +44,10 @@ public:
     inline glm::vec4 dir() const { return this->d; }
 
     // get signs of the ray direction components
-    inline const uint32_t* get_sign() const { return this->s; }
+    inline const uint32_t* sign() const { return this->s; }
 
     // get the inverse of the direction
-    inline glm::vec4 get_inv_dir() const { return this->id; }
+    inline glm::vec4 inv_dir() const { return this->id; }
 
     // set origin
     inline void set_orig(const glm::vec4 &_o) { this->o = _o; }

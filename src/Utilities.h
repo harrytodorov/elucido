@@ -67,14 +67,14 @@ struct loading_info {
 };
 
 struct render_info {
-    uint32_t npr{0};    // number of primary rays
-    uint32_t nsr{0};    // number of secondary rays
-    uint32_t nrr{0};    // number of reflection rays
-    uint32_t nrrr{0};   // number of refraction rays
-    uint32_t no{0};     // number of objects in the scene
-    uint32_t nls{0};    // number of light sources in the scene
-    uint32_t nrot{0};   // number of ray-object intersection tests
-    uint32_t nroi{0};   // number of ray-object intersections; ray-bounding box intersection does not count
+    uint64_t npr{0};    // number of primary rays
+    uint64_t nsr{0};    // number of secondary rays
+    uint64_t nrr{0};    // number of reflection rays
+    uint64_t nrrr{0};   // number of refraction rays
+    uint64_t no{0};     // number of objects in the scene
+    uint64_t nls{0};    // number of light sources in the scene
+    uint64_t nrot{0};   // number of ray-object intersection tests
+    uint64_t nroi{0};   // number of ray-object intersections; ray-bounding box intersection does not count
                         // as a valid ray-object intersection; so just ray-object intersections are counted
 };
 

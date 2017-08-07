@@ -14,8 +14,8 @@ render_info OrthographicCamera::render_scene(const std::vector<Object *, std::al
     Ray                 ray;
     glm::vec3           pc;                                     // pixel color
     render_info         ri;                                     // rendering information
-    std::random_device rd;                                      // obtain a random number from hardware
-    std::mt19937 eng(rd());                                     // seed generator
+    std::random_device  rd;                                     // obtain a random number from hardware
+    std::mt19937        eng(rd());                              // seed generator
     std::uniform_real_distribution<float_t> pr(0.05f, 0.95f);   // define ranges for pixel x/y
 
     // position all objects in the scene relative to the camera's position at the origin; inverse view transformation

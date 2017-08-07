@@ -513,7 +513,93 @@ void balls_scene() {
 
 }
 
+void spheres() {
+    std::vector<Object*> objects;
+    std::vector<Light*> lights;
+    Camera* camera = new PerspectiveCamera();
+    ImagePlane ip = ImagePlane(1280, 720);
+    ip.ns = 4;
+    render_info ri;
+    uint32_t nos = 100;  // number of spheres
+    std::random_device  rd;                                     // obtain a random number from hardware
+    std::mt19937        eng(rd());                              // seed generator
+    std::uniform_real_distribution<float_t> srzp(-13.f, -7.f);  // define range for sphere's z-position
+    std::uniform_real_distribution<float_t> srxyp(-13.f, 13.f); // define range for sphere's xy-position
+    std::uniform_real_distribution<float_t> srr(0.1f, 1.f);     // define range for sphere's radius
+    std::uniform_real_distribution<float_t> cr(0.f, 1.f);       // define range for color values
+
+    /// materials set-up
+    material sm;
+    sm.ac = 0.f;
+    sm.dc = 0.7f;
+    sm.sc = 0.2f;
+    sm.se = 14.f;
+
+    /// objects set-up
+    Sphere *s;
+    glm::vec4 sp(1, 1, -3, 1);    // we need w-component of the 4D vector to be 1
+    float_t sr(1);
+    float_t r,g,b;
+
+    // place sphere's randomly in the scene
+    for (uint32_t i = 0; i < nos; i++) {
+        s = new Sphere();
+        // randomly choose and assign sphere's position
+        sp.x = srxyp(eng);
+        sp.y = srxyp(eng);
+        sp.z = srzp(eng);
+        (*s).set_center_p(sp);
+
+        // randomly choose and assign sphere's radius
+        sr = srr(eng);
+        (*s).set_radius(sr);
+
+        // randomly choose and assign color
+        r = cr(eng);
+        g = cr(eng);
+        b = cr(eng);
+
+        sm.c = glm::vec3(r,g,b);
+
+        (*s).om = sm;
+
+        // add sphere in the scene
+        objects.push_back(&(*s));
+    }
+
+    /// illuminate the scene
+    glm::vec4 lp1(-3.f, 0.0f, -4.5f, 1);
+    glm::vec4 lp2(3.f, 0.0f, -4.5f, 1);
+
+    PointLight l1(lp1, 200.f);
+    PointLight l2(lp2, 200.f);
+
+    lights.push_back(&l1);
+    lights.push_back(&l2);
+
+    /// render scene
+
+    // measure rendering time
+    std::cout << "Start rendering..." << std::endl;
+    auto start_rendering = std::chrono::high_resolution_clock::now();
+    ri = camera->render_scene(objects, lights, ip);
+    auto finish_rendering = std::chrono::high_resolution_clock::now();
+
+    // print out statistics
+    std::cout << "Done rendering." << std::endl;
+    std::cout << "Rendering time                        : " << std::chrono::duration_cast<std::chrono::seconds>(finish_rendering - start_rendering).count() << " seconds" << std::endl;
+    std::cout << "# of primary rays                     : " << ri.npr << std::endl;
+    std::cout << "# of shadow rays                      : " << ri.nsr << std::endl;
+    std::cout << "# of reflection rays                  : " << ri.nrr << std::endl;
+    std::cout << "# of objects in the scene             : " << ri.no << std::endl;
+    std::cout << "# of light sources in the scene       : " << ri.nls << std::endl;
+    std::cout << "# of ray-object intersection tests    : " << ri.nrot << std::endl;
+    std::cout << "# of ray-object intersections         : " << ri.nroi << std::endl;
+    std::cout << "ratio (isect tests / isect)           : " << (1.f * ri.nrot) / ri.nroi << std::endl;
+    ip.save_to_png("spheres.png");
+}
+
 int main(int argc, char **argv) {
-    balls_scene();
+    spheres();
     return 0;
 }
