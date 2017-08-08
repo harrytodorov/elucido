@@ -14,22 +14,11 @@ class Sphere : public Object {
     glm::vec4   c;  // sphere's center
 
 public:
-    Sphere() : Object(), r(1.0), c(0, 0, 0, 1) {
-        r2 = 1.f;
-        reshape_bb();
-    }
-    Sphere(const material &m) : Object(m), r(1.0), c(0, 0, 0, 1) {
-        r2 = 1.f;
-        reshape_bb();
-    }
-    Sphere(const glm::vec4 &_c, const float_t &_r) : Object(), r(_r), c(_c) {
-        r2 = powf(_r, 2.f);
-        reshape_bb();
-    }
-    Sphere(const glm::vec4 &c, const float_t &r, const material &m) : Object(m), r(r), c(c) {
-        r2 = powf(r, 2.f);
-        reshape_bb();
-    }
+    Sphere() : Object(), r(1.0), c(0, 0, 0, 1) { r2 = 1.f; reshape_bb(); }
+    Sphere(const material &m) : Object(m), r(1.0), c(0, 0, 0, 1) { r2 = 1.f; reshape_bb(); }
+    Sphere(const glm::vec4 &_c, const float_t &_r) : Object(), r(_r), c(_c) { r2 = powf(_r, 2.f); reshape_bb(); }
+    Sphere(const glm::vec4 &c, const float_t &r, const material &m) : Object(m), r(r), c(c) { r2 = glm::pow(r, 2.f); reshape_bb(); }
+    Sphere(const Sphere &s) :  Object(s) { this->r = s.r; this->c = s.c; this->r2 = glm::pow(r, 2.f); }
     ~Sphere() {}
 
     void set_radius(const float_t &r);

@@ -55,7 +55,8 @@ public:
         normal = glm::normalize(glm::vec4(glm::cross(glm::vec3(v1)-glm::vec3(v0), glm::vec3(v2)-glm::vec3(v0)), 0));
         reshape_bb();
     }
-    virtual ~Triangle() {}
+    Triangle(const Triangle &t) : Object(t) {this->v0 = t.v0; this->v1 = t.v1; this->v2 = t.v2; this->normal = t.normal;}
+    ~Triangle() {}
 
     bool intersect(const Ray &r, isect_info &i);
     void get_surface_properties(isect_info &i) const;

@@ -35,6 +35,7 @@ public:
 
     Object() : om(material()), mt(glm::mat4(1)), bb(AABBox()) {}
     Object(const material &m) : om(m), mt(glm::mat4(1)), nmt(glm::mat4(1)), bb(AABBox()) {}
+    Object(const Object &o);
     virtual ~Object() {}
 
     virtual bool intersect(const Ray &r, isect_info &i) = 0;

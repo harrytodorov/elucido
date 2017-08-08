@@ -410,3 +410,13 @@ void TriangleMesh::scale(const float_t &scaling_factor, const uint32_t &axes_of_
     mt = sm * mt;
     nmt = glm::transpose(glm::inverse(sm)) * nmt;
 }
+
+TriangleMesh::TriangleMesh(const TriangleMesh &tm) : Object(tm) {
+    this->va = tm.va;
+    this->vna = tm.vna;
+    this->via = tm.via;
+    this->vnia = tm.vnia;
+    this->nt = tm.nt;
+    this->nf = tm.nf;
+    this->in = tm.in;
+}

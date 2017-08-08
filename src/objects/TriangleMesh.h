@@ -24,7 +24,8 @@ public:
     explicit TriangleMesh(const char *f) {
         load_mesh(f);
     }
-    virtual ~TriangleMesh() = default;
+    TriangleMesh(const TriangleMesh &tm);
+    ~TriangleMesh() = default;
 
     bool intersect(const Ray &r, isect_info &i);
     bool intersect(const Ray &r, const uint32_t &ti, isect_info &i) const;
