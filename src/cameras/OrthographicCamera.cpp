@@ -64,7 +64,7 @@ render_info OrthographicCamera::render_scene(const std::vector<Object *> &object
 
             *(pixels++) = glm::clamp(pc, 0.f, 1.f);
         }
-        printf("row %d of %d is computed.\n", r+1, ip.vres);
+//        printf("row %d of %d is computed.\n", r+1, ip.vres);
     }
 
     // reverse the inverse view transform; bring objects to their original positions

@@ -59,6 +59,13 @@ enum MaterialType: uint8_t {
     rrm,    // Refractive material
 };
 
+enum ObjectType: uint8_t {
+    def,
+    sphere,
+    triangle,
+    triangle_mesh
+};
+
 struct loading_info {
     uint32_t nv{0};     // number of vertices
     uint32_t nvn{0};    // number of vertex normals

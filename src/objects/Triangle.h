@@ -23,6 +23,7 @@ public:
     {
         normal = glm::normalize(glm::vec4(glm::cross(glm::vec3(v1)-glm::vec3(v0), glm::vec3(v2)-glm::vec3(v0)), 0));
         reshape_bb();
+        ot = triangle;
     }
     Triangle(const material &m) :
             Object(m),
@@ -32,6 +33,7 @@ public:
     {
         normal = glm::normalize(glm::vec4(glm::cross(glm::vec3(v1)-glm::vec3(v0), glm::vec3(v2)-glm::vec3(v0)), 0));
         reshape_bb();
+        ot = triangle;
     }
     Triangle(const glm::vec4 &vec0,
              const glm::vec4 &vec1,
@@ -42,6 +44,7 @@ public:
             v2(vec2)
     {
         reshape_bb();
+        ot = triangle;
     }
     Triangle(const glm::vec4 &vec0,
              const glm::vec4 &vec1,
@@ -54,8 +57,9 @@ public:
     {
         normal = glm::normalize(glm::vec4(glm::cross(glm::vec3(v1)-glm::vec3(v0), glm::vec3(v2)-glm::vec3(v0)), 0));
         reshape_bb();
+        ot = triangle;
     }
-    Triangle(const Triangle &t) : Object(t) {this->v0 = t.v0; this->v1 = t.v1; this->v2 = t.v2; this->normal = t.normal;}
+    Triangle(const Triangle &t) : Object(t) {this->v0 = t.v0; this->v1 = t.v1; this->v2 = t.v2; this->normal = t.normal; }
     ~Triangle() {}
 
     bool intersect(const Ray &r, isect_info &i);

@@ -24,17 +24,16 @@
 
 #include "../Ray.h"
 #include "AABBox.h"
+#include "../Utilities.h"
 
 class Object {
 public:
-    material    om;     // object's material
-    glm::mat4   mt;     // model transform matrix for an object
-                        // places and transforms the object in world coordinate space
-    glm::mat4   nmt;    // transformation matrix for object's normals
-    AABBox      bb;     // bounding box of the object
+    material    om;         // object's material
+    AABBox      bb;         // bounding box of the object
+    ObjectType  ot;         // object's type
 
-    Object() : om(material()), mt(glm::mat4(1)), bb(AABBox()) {}
-    Object(const material &m) : om(m), mt(glm::mat4(1)), nmt(glm::mat4(1)), bb(AABBox()) {}
+    Object() : om(material()), mt(glm::mat4(1)), bb(AABBox()), ot(def) {}
+    Object(const material &m) : om(m), mt(glm::mat4(1)), nmt(glm::mat4(1)), bb(AABBox()), ot(def) {}
     Object(const Object &o);
     virtual ~Object() {}
 
@@ -45,6 +44,11 @@ public:
     virtual void translate(const float_t &translation, const uint32_t &axes_of_translation) = 0;
     virtual void rotate(const float_t &angle_of_rotation, const uint32_t &axes_of_rotation) = 0;
     virtual void scale(const float_t &scaling_factor, const uint32_t &axes_of_scale) = 0;
+
+protected:
+    glm::mat4   mt;     // model transform matrix for an object
+                        // places and transforms the object in world coordinate space
+    glm::mat4   nmt;    // transformation matrix for object's normals
 };
 
 #endif //ELUCIDO_OBJECT_H

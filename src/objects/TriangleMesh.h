@@ -19,10 +19,11 @@ public:
     bool                    in{false};  // interpolate normals
 
     TriangleMesh() {}
-    TriangleMesh(const material &m, const bool &_in) : Object(m), in(_in) {}
-    explicit TriangleMesh(const material &m) : Object(m) {}
-    explicit TriangleMesh(const char *f) {
+    TriangleMesh(const material &m, const bool &in) : Object(m), in(in) { ot = triangle_mesh; }
+    explicit TriangleMesh(const material &m) : Object(m) { ot = triangle_mesh; }
+    explicit TriangleMesh(const char *f) : Object(){
         load_mesh(f);
+        ot = triangle_mesh;
     }
     TriangleMesh(const TriangleMesh &tm);
     ~TriangleMesh() = default;

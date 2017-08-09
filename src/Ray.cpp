@@ -29,7 +29,8 @@ bool Ray::trace(const std::vector<Object *> &objects, isect_info &ii, render_inf
         __sync_fetch_and_add(&ri.nrot, 1);
 
         // first intersect with object's bounding box
-        if (!object->bb.intersect(*this)) continue;
+        // for spheres we don't intersect with the bounding box, because their test is fast
+        if (object->ot != sphere && !object->bb.intersect(*this)) continue;
 
         // increment the number of ray-object tests; object itself
         __sync_fetch_and_add(&ri.nrot, 1);

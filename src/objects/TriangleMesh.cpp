@@ -419,4 +419,5 @@ TriangleMesh::TriangleMesh(const TriangleMesh &tm) : Object(tm) {
     this->nt = tm.nt;
     this->nf = tm.nf;
     this->in = tm.in;
+    this->ot = tm.ot;
 }

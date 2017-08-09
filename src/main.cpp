@@ -527,6 +527,7 @@ void spheres() {
     std::uniform_real_distribution<float_t> srxyp(-13.f, 13.f); // define range for sphere's xy-position
     std::uniform_real_distribution<float_t> srr(0.1f, 1.f);     // define range for sphere's radius
     std::uniform_real_distribution<float_t> cr(0.f, 1.f);       // define range for color values
+    char fn[100];
 
     /// materials set-up
     material sm;
@@ -596,7 +597,9 @@ void spheres() {
     std::cout << "# of ray-object intersection tests    : " << ri.nrot << std::endl;
     std::cout << "# of ray-object intersections         : " << ri.nroi << std::endl;
     std::cout << "ratio (isect tests / isect)           : " << (1.f * ri.nrot) / ri.nroi << std::endl;
-    ip.save_to_png("spheres.png");
+
+    sprintf(fn, "%d_spheres_%d_samples.png", nos, ip.ns);
+    ip.save_to_png(fn);
 }
 
 void boxes() {
@@ -608,7 +611,8 @@ void boxes() {
     render_info             ri;
     loading_info            li;
     char                    fn[100];    // file name
-    uint32_t                noc = 5;  // number of cubes
+    char                    ob[50];     // object
+    uint32_t                noo = 1;    // number of objects
     float_t                 r, g, b;    // values for rand generated rgb
     std::random_device      rd;         // obtain a random number from hardware
     std::mt19937            eng(rd());  // seed generator
@@ -627,7 +631,8 @@ void boxes() {
     /// objects set-up
 
     // load cube
-    sprintf(fn, "./bunny.obj");
+    sprintf(ob, "monkey");
+    sprintf(fn, "./%s.obj", ob);
     TriangleMesh cube(cm, false);
 
     // measure loading of the cube
@@ -645,7 +650,7 @@ void boxes() {
     std::cout << std::endl;
 
     // place cubes randomly in the scene
-    for (int i = 0; i < noc; i++) {
+    for (int i = 0; i < noo; i++) {
         auto *cube_copy = new TriangleMesh(cube);
 
         // randomly choose cube's position
@@ -704,7 +709,8 @@ void boxes() {
     std::cout << "ratio (isect tests / isect)           : " << (1.f * ri.nrot) / ri.nroi << std::endl;
 
     // save image to disc
-    ip.save_to_png("bunny.png");
+    sprintf(fn, "%d_%ss_%d_samples.png", noo, ob, ip.ns);
+    ip.save_to_png(fn);
 }
 
 int main(int argc, char **argv) {
