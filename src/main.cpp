@@ -5,6 +5,7 @@
 #include "cameras/PerspectiveCamera.h"
 #include "objects/Triangle.h"
 #include "objects/Sphere.h"
+#include "lights/DirectionalLight.h"
 
 void render_cornell_scene() {
     std::vector<Object*> objects;
@@ -603,17 +604,17 @@ void boxes() {
     std::vector<Light*>     lights;
     Camera*                 camera = new PerspectiveCamera();
     ImagePlane              ip = ImagePlane(1280, 720);
-    ip.ns = 1;
+    ip.ns                   = 1;
     render_info             ri;
     loading_info            li;
     char                    fn[100];    // file name
-    uint32_t                noc = 10;  // number of cubes
+    uint32_t                noc = 5;  // number of cubes
     float_t                 r, g, b;    // values for rand generated rgb
     std::random_device      rd;         // obtain a random number from hardware
     std::mt19937            eng(rd());  // seed generator
-    std::uniform_real_distribution<float_t> crzp(-15.f, -5.f);  // define range for cubes's z-position
-    std::uniform_real_distribution<float_t> crxyp(-5.f, 5.f);   // define range for cubes's xy-position
-    std::uniform_real_distribution<float_t> crs(0.3f, 2.f);     // define range for cube's scale
+    std::uniform_real_distribution<float_t> crzp(-10.f, -7.f);  // define range for cubes's z-position
+    std::uniform_real_distribution<float_t> crxyp(-4.f, 3.f);   // define range for cubes's xy-position
+    std::uniform_real_distribution<float_t> crs(1.f, 1.5f);     // define range for cube's scale
     std::uniform_real_distribution<float_t> cr(0.f, 1.f);       // define range for color values
 
     /// materials set-up
@@ -626,7 +627,7 @@ void boxes() {
     /// objects set-up
 
     // load cube
-    sprintf(fn, "./cube.obj");
+    sprintf(fn, "./bunny.obj");
     TriangleMesh cube(cm, false);
 
     // measure loading of the cube
@@ -645,38 +646,38 @@ void boxes() {
 
     // place cubes randomly in the scene
     for (int i = 0; i < noc; i++) {
-        TriangleMesh *cubec = new TriangleMesh(cube);
+        auto *cube_copy = new TriangleMesh(cube);
 
         // randomly choose cube's position
-        (*cubec).translate(crxyp(eng), X);
-        (*cubec).translate(crxyp(eng), Y);
-        (*cubec).translate(crzp(eng), Z);
+        (*cube_copy).translate(crxyp(eng), X);
+        (*cube_copy).translate(crxyp(eng), Y);
+        (*cube_copy).translate(crzp(eng), Z);
 
         // randomly choose cube's scale
-        (*cubec).scale(crs(eng), XYZ);
+        (*cube_copy).scale(crs(eng), XYZ);
 
         // apply transformations for the cube
-        (*cubec).apply_transformations();
+        (*cube_copy).apply_transformations();
 
-        // randmly choose color
+        // randomly choose color
         r = cr(eng);
         g = cr(eng);
         b = cr(eng);
 
         cm.c = glm::vec3(r, g, b);
 
-        (*cubec).om = cm;
+        (*cube_copy).om = cm;
 
         // add cube in the scene
-        objects.push_back(&(*cubec));
+        objects.push_back(&(*cube_copy));
     }
 
     /// illuminate the scene
-    glm::vec4 lp1(-3.f, 0.0f, -3.f, 1);
-    glm::vec4 lp2(3.f, 0.0f, -3.f, 1);
+    glm::vec4 ld1(-4, 2, -1, 0);
+    glm::vec4 lp1(0, 0, -2, 1);
 
-    PointLight l1(lp1, 200.f);
-    PointLight l2(lp2, 200.f);
+    DirectionalLight l1(ld1, 0.8f);
+    PointLight l2(lp1, 50.f);
 
     lights.push_back(&l1);
     lights.push_back(&l2);
@@ -703,7 +704,7 @@ void boxes() {
     std::cout << "ratio (isect tests / isect)           : " << (1.f * ri.nrot) / ri.nroi << std::endl;
 
     // save image to disc
-    ip.save_to_png("boxes.png");
+    ip.save_to_png("bunny.png");
 }
 
 int main(int argc, char **argv) {

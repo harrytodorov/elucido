@@ -70,6 +70,7 @@ render_info PerspectiveCamera::render_scene(const std::vector<Object *> &objects
 
             *(pixels++) = glm::clamp(pc, 0.f, 1.f);
         }
+        printf("row %d of %d is computed.\n", r+1, ip.vres);
     }
 
     // reverse the inverse view transform; bring objects to their original positions

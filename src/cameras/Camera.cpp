@@ -17,6 +17,9 @@ glm::vec3 Camera::cast_ray(const Ray &ray, const std::vector<Light *> &lights, c
     // trace it through the scene
     if (scene_bb.intersect(ray) && ray.trace(objects, ii, ri)) {
 
+//    // just tracing without using scene's bb
+//    if (ray.trace(objects, ii, ri)) {
+
         // get the surface properties of the intersection
         ii.ho->get_surface_properties(ii);
 

@@ -29,24 +29,23 @@ bool Ray::trace(const std::vector<Object *> &objects, isect_info &ii, render_inf
         __sync_fetch_and_add(&ri.nrot, 1);
 
         // first intersect with object's bounding box
-        if (object->bb.intersect(*this)) {
+        if (!object->bb.intersect(*this)) continue;
 
         // increment the number of ray-object tests; object itself
         __sync_fetch_and_add(&ri.nrot, 1);
 
-            // if we have an intersection with the object's bounding box, then we try to intersect
-            // with the object itself
-            if (object->intersect(*this, co) && co.tn < ii.tn) {
-                // in case there is an intersection and the nearest distance is closer to the nearest
-                // distance we already have, we update our intersection
-                ii = co;
-                ii.ho = object;
+        // if we have an intersection with the object's bounding box, then we try to intersect
+        // with the object itself
+        if (!object->intersect(*this, co) || co.tn > ii.tn) continue;
 
-                // increment the number of ray-object intersections
-                __sync_fetch_and_add(&ri.nroi, 1);
+        // in case there is an intersection and the nearest distance is closer to the nearest
+        // distance we already have, we update our intersection
+        ii = co;
+        ii.ho = object;
 
-            }
-        }
+        // increment the number of ray-object intersections
+        __sync_fetch_and_add(&ri.nroi, 1);
+
     }
 
     return (ii.ho != nullptr);
