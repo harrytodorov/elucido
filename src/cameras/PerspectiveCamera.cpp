@@ -4,8 +4,8 @@
 
 #include "PerspectiveCamera.h"
 
-render_info PerspectiveCamera::render_scene(const std::vector<Object *, std::allocator<Object *>> &objects,
-                                            const std::vector<Light *, std::allocator<Light *>> &lights, ImagePlane &ip) {
+render_info PerspectiveCamera::render_scene(const std::vector<Object *> &objects, const std::vector<Light *> &lights,
+                                            ImagePlane &ip) {
     float_t             curr_x;
     float_t             curr_y;
     float_t             ar;                                     // image plane's aspect ratio
@@ -18,9 +18,11 @@ render_info PerspectiveCamera::render_scene(const std::vector<Object *, std::all
     std::mt19937        eng(rd());                              // seed generator
     std::uniform_real_distribution<float_t> pr(0.05f, 0.95f);   // define ranges for pixel x/y
 
-
     // position all objects in the scene relative to the camera's position at the origin; inverse view transformation
     apply_inverse_view_transform(objects, lights);
+
+    // reshape scene's bounding box
+    extend_scene_bb(objects);
 
     // set the origin of the rays
     ray.set_orig(eye);

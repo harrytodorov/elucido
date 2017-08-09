@@ -13,8 +13,9 @@ glm::vec3 Camera::cast_ray(const Ray &ray, const std::vector<Light *> &lights, c
     // intersection information
     isect_info ii;
 
-    // trace a ray through the scene
-    if (ray.trace(objects, ii, ri)) {
+    // check if a ray intersects the scene's bounding box and if so
+    // trace it through the scene
+    if (scene_bb.intersect(ray) && ray.trace(objects, ii, ri)) {
 
         // get the surface properties of the intersection
         ii.ho->get_surface_properties(ii);
@@ -333,5 +334,12 @@ void Camera::compute_fresnel(const glm::vec4 &incident_direction, const glm::vec
         float_t fp = (ior2*cosi - ior1*cost) / (ior2*cosi + ior1*cost);
 
         reflectance = (fo*fo + fp*fp) / 2.f;
+    }
+}
+
+void Camera::extend_scene_bb(const std::vector<Object *> &objects) {
+    for (auto &object : objects) {
+        scene_bb.extend_by(object->bb.bounds[0]);
+        scene_bb.extend_by(object->bb.bounds[1]);
     }
 }

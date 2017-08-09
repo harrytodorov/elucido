@@ -1,5 +1,4 @@
 #include <iostream>
-#include <fstream>
 #include "objects/Object.h"
 #include "objects/TriangleMesh.h"
 #include "lights/PointLight.h"
@@ -387,29 +386,29 @@ void test_refraction_scene() {
     objects.push_back(&s1);
     objects.push_back(&s2);
 
-//    // load cube
-//    sprintf(fn, "./cube.obj");
-//    TriangleMesh cube(refr, false);
-//
-//    // measure loading the triangulated mesh
-//    auto start_loading = std::chrono::high_resolution_clock::now();
-//    std::cout << std::endl;
-//    std::cout << "Start loading..." << std::endl;
-//    li = cube.load_mesh(fn);
-//    auto finish_loading = std::chrono::high_resolution_clock::now();
-//    std::cout << "Done loading '" <<  fn << "'." << std::endl;
-//    std::cout << "Loading time                          : " << std::chrono::duration_cast<std::chrono::milliseconds>(finish_loading - start_loading).count() << " milliseconds" << std::endl;
-//    std::cout << "# of vertices in the mesh             : " << li.nv << std::endl;
-//    std::cout << "# of vertex normals in the mesh       : " << li.nvn << std::endl;
-//    std::cout << "# of triangles in the mesh            : " << li.nt << std::endl;
-//    std::cout << "# of faces in the mesh                : " << li.nf << std::endl;
-//    std::cout << std::endl;
-//
-//    cube.scale(0.5f, XYZ);
-//    cube.translate(-3.f, Z);
-//    cube.apply_transformations();
-//    objects.push_back(&cube);
-//
+    // load cube
+    sprintf(fn, "./cube.obj");
+    TriangleMesh cube(refr, false);
+
+    // measure loading the triangulated mesh
+    auto start_loading = std::chrono::high_resolution_clock::now();
+    std::cout << std::endl;
+    std::cout << "Start loading..." << std::endl;
+    li = cube.load_mesh(fn);
+    auto finish_loading = std::chrono::high_resolution_clock::now();
+    std::cout << "Done loading '" <<  fn << "'." << std::endl;
+    std::cout << "Loading time                          : " << std::chrono::duration_cast<std::chrono::milliseconds>(finish_loading - start_loading).count() << " milliseconds" << std::endl;
+    std::cout << "# of vertices in the mesh             : " << li.nv << std::endl;
+    std::cout << "# of vertex normals in the mesh       : " << li.nvn << std::endl;
+    std::cout << "# of triangles in the mesh            : " << li.nt << std::endl;
+    std::cout << "# of faces in the mesh                : " << li.nf << std::endl;
+    std::cout << std::endl;
+
+    cube.scale(0.5f, XYZ);
+    cube.translate(-3.f, Z);
+    cube.apply_transformations();
+    objects.push_back(&cube);
+
     /// lights set-up
 
     glm::vec4 lp1(-1.f, 1.5f, -2.f, 1);
@@ -599,7 +598,115 @@ void spheres() {
     ip.save_to_png("spheres.png");
 }
 
+void boxes() {
+    std::vector<Object*>    objects;
+    std::vector<Light*>     lights;
+    Camera*                 camera = new PerspectiveCamera();
+    ImagePlane              ip = ImagePlane(1280, 720);
+    ip.ns = 1;
+    render_info             ri;
+    loading_info            li;
+    char                    fn[100];    // file name
+    uint32_t                noc = 10;  // number of cubes
+    float_t                 r, g, b;    // values for rand generated rgb
+    std::random_device      rd;         // obtain a random number from hardware
+    std::mt19937            eng(rd());  // seed generator
+    std::uniform_real_distribution<float_t> crzp(-15.f, -5.f);  // define range for cubes's z-position
+    std::uniform_real_distribution<float_t> crxyp(-5.f, 5.f);   // define range for cubes's xy-position
+    std::uniform_real_distribution<float_t> crs(0.3f, 2.f);     // define range for cube's scale
+    std::uniform_real_distribution<float_t> cr(0.f, 1.f);       // define range for color values
+
+    /// materials set-up
+    material cm;
+    cm.ac = 0.f;
+    cm.dc = 0.7f;
+    cm.sc = 0.2f;
+    cm.se = 14.f;
+
+    /// objects set-up
+
+    // load cube
+    sprintf(fn, "./cube.obj");
+    TriangleMesh cube(cm, false);
+
+    // measure loading of the cube
+    auto start_loading = std::chrono::high_resolution_clock::now();
+    std::cout << std::endl;
+    std::cout << "Start loading..." << std::endl;
+    li = cube.load_mesh(fn);
+    auto finish_loading = std::chrono::high_resolution_clock::now();
+    std::cout << "Done loading '" <<  fn << "'." << std::endl;
+    std::cout << "Loading time                          : " << std::chrono::duration_cast<std::chrono::milliseconds>(finish_loading - start_loading).count() << " milliseconds" << std::endl;
+    std::cout << "# of vertices in the mesh             : " << li.nv << std::endl;
+    std::cout << "# of vertex normals in the mesh       : " << li.nvn << std::endl;
+    std::cout << "# of triangles in the mesh            : " << li.nt << std::endl;
+    std::cout << "# of faces in the mesh                : " << li.nf << std::endl;
+    std::cout << std::endl;
+
+    // place cubes randomly in the scene
+    for (int i = 0; i < noc; i++) {
+        TriangleMesh *cubec = new TriangleMesh(cube);
+
+        // randomly choose cube's position
+        (*cubec).translate(crxyp(eng), X);
+        (*cubec).translate(crxyp(eng), Y);
+        (*cubec).translate(crzp(eng), Z);
+
+        // randomly choose cube's scale
+        (*cubec).scale(crs(eng), XYZ);
+
+        // apply transformations for the cube
+        (*cubec).apply_transformations();
+
+        // randmly choose color
+        r = cr(eng);
+        g = cr(eng);
+        b = cr(eng);
+
+        cm.c = glm::vec3(r, g, b);
+
+        (*cubec).om = cm;
+
+        // add cube in the scene
+        objects.push_back(&(*cubec));
+    }
+
+    /// illuminate the scene
+    glm::vec4 lp1(-3.f, 0.0f, -3.f, 1);
+    glm::vec4 lp2(3.f, 0.0f, -3.f, 1);
+
+    PointLight l1(lp1, 200.f);
+    PointLight l2(lp2, 200.f);
+
+    lights.push_back(&l1);
+    lights.push_back(&l2);
+
+    /// render scene
+
+    // measure rendering time
+    std::cout << "Start rendering..." << std::endl;
+    auto start_rendering = std::chrono::high_resolution_clock::now();
+    ri = camera->render_scene(objects, lights, ip);
+    auto finish_rendering = std::chrono::high_resolution_clock::now();
+
+    // print out statistics
+    std::cout << "Done rendering." << std::endl;
+    std::cout << "Rendering time                        : " << std::chrono::duration_cast<std::chrono::seconds>(finish_rendering - start_rendering).count() << " seconds" << std::endl;
+
+    std::cout << "# of primary rays                     : " << ri.npr << std::endl;
+    std::cout << "# of shadow rays                      : " << ri.nsr << std::endl;
+    std::cout << "# of reflection rays                  : " << ri.nrr << std::endl;
+    std::cout << "# of objects in the scene             : " << ri.no << std::endl;
+    std::cout << "# of light sources in the scene       : " << ri.nls << std::endl;
+    std::cout << "# of ray-object intersection tests    : " << ri.nrot << std::endl;
+    std::cout << "# of ray-object intersections         : " << ri.nroi << std::endl;
+    std::cout << "ratio (isect tests / isect)           : " << (1.f * ri.nrot) / ri.nroi << std::endl;
+
+    // save image to disc
+    ip.save_to_png("boxes.png");
+}
+
 int main(int argc, char **argv) {
-    spheres();
+    boxes();
     return 0;
 }

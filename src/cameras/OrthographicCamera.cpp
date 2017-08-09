@@ -5,8 +5,7 @@
 #include "OrthographicCamera.h"
 
 
-render_info OrthographicCamera::render_scene(const std::vector<Object *, std::allocator<Object *>> &objects,
-                                             const std::vector<Light *, std::allocator<Light *>> &lights,
+render_info OrthographicCamera::render_scene(const std::vector<Object *> &objects, const std::vector<Light *> &lights,
                                              ImagePlane &ip) {
     float_t             curr_x;
     float_t             curr_y;
@@ -20,6 +19,9 @@ render_info OrthographicCamera::render_scene(const std::vector<Object *, std::al
 
     // position all objects in the scene relative to the camera's position at the origin; inverse view transformation
     apply_inverse_view_transform(objects, lights);
+
+    // reshape scene's bounding box
+    extend_scene_bb(objects);
 
     // Set the ray direction same as the direction of the camera
     // and normalize it, shouldn't be necessary, but just in case
