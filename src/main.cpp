@@ -616,10 +616,10 @@ void boxes() {
     float_t                 r, g, b;    // values for rand generated rgb
     std::random_device      rd;         // obtain a random number from hardware
     std::mt19937            eng(rd());  // seed generator
-    std::uniform_real_distribution<float_t> crzp(-10.f, -7.f);  // define range for cubes's z-position
-    std::uniform_real_distribution<float_t> crxyp(-4.f, 3.f);   // define range for cubes's xy-position
-    std::uniform_real_distribution<float_t> crs(1.f, 1.5f);     // define range for cube's scale
-    std::uniform_real_distribution<float_t> cr(0.f, 1.f);       // define range for color values
+    std::uniform_real_distribution<float_t> orzp(-10.f, -7.f);  // define range for object's z-position
+    std::uniform_real_distribution<float_t> orxyp(-4.f, 3.f);   // define range for object's xy-position
+    std::uniform_real_distribution<float_t> ors(1.f, 1.5f);     // define range for object's scale
+    std::uniform_real_distribution<float_t> orc(0.f, 1.f);      // define range for color values
 
     /// materials set-up
     material cm;
@@ -633,13 +633,13 @@ void boxes() {
     // load cube
     sprintf(ob, "monkey");
     sprintf(fn, "./%s.obj", ob);
-    TriangleMesh cube(cm, false);
+    TriangleMesh bunny(cm, false);
 
     // measure loading of the cube
     auto start_loading = std::chrono::high_resolution_clock::now();
     std::cout << std::endl;
     std::cout << "Start loading..." << std::endl;
-    li = cube.load_mesh(fn);
+    li = bunny.load_mesh(fn);
     auto finish_loading = std::chrono::high_resolution_clock::now();
     std::cout << "Done loading '" <<  fn << "'." << std::endl;
     std::cout << "Loading time                          : " << std::chrono::duration_cast<std::chrono::milliseconds>(finish_loading - start_loading).count() << " milliseconds" << std::endl;
@@ -651,30 +651,30 @@ void boxes() {
 
     // place cubes randomly in the scene
     for (int i = 0; i < noo; i++) {
-        auto *cube_copy = new TriangleMesh(cube);
+        auto *obj_copy = new TriangleMesh(bunny);
 
         // randomly choose cube's position
-        (*cube_copy).translate(crxyp(eng), X);
-        (*cube_copy).translate(crxyp(eng), Y);
-        (*cube_copy).translate(crzp(eng), Z);
+        (*obj_copy).translate(orxyp(eng), X);
+        (*obj_copy).translate(orxyp(eng), Y);
+        (*obj_copy).translate(orzp(eng), Z);
 
         // randomly choose cube's scale
-        (*cube_copy).scale(crs(eng), XYZ);
+        (*obj_copy).scale(ors(eng), XYZ);
 
         // apply transformations for the cube
-        (*cube_copy).apply_transformations();
+        (*obj_copy).apply_transformations();
 
         // randomly choose color
-        r = cr(eng);
-        g = cr(eng);
-        b = cr(eng);
+        r = orc(eng);
+        g = orc(eng);
+        b = orc(eng);
 
         cm.c = glm::vec3(r, g, b);
 
-        (*cube_copy).om = cm;
+        (*obj_copy).om = cm;
 
         // add cube in the scene
-        objects.push_back(&(*cube_copy));
+        objects.push_back(&(*obj_copy));
     }
 
     /// illuminate the scene

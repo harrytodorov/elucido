@@ -9,12 +9,12 @@ bool Triangle::intersect(const Ray &r, isect_info &i) {
     // check if ray is parallel to triangle; compute the dot product
     // of the triangle's normal and the ray direction
     // if ray and triangle's normal are close to 0, they don't intersect
-    float_t nomal_ray_d_prod = glm::dot(normal, r.dir());
+    float_t nomal_ray_d_prod = glm::dot(n, r.dir());
     if (fabs(nomal_ray_d_prod) < kEpsilon) return false;
 
     // compute the dot product of the vector between one of the triangle's vertices and
     // the ray's origin and the triangle's normal
-    float_t t_nominator = glm::dot(v0 - r.orig(), normal);
+    float_t t_nominator = glm::dot(v0 - r.orig(), n);
 
     // compute the distance between the ray's origin and the hit point
     // with the triangle
@@ -34,21 +34,21 @@ bool Triangle::intersect(const Ray &r, isect_info &i) {
     glm::vec4 edge0(v1 - v0);
     glm::vec4 vp0(ip - v0);
     perp_vec = glm::vec4(glm::cross(glm::vec3(edge0), glm::vec3(vp0)), 0);
-    d_prod = glm::dot(normal, perp_vec);
+    d_prod = glm::dot(n, perp_vec);
     if (d_prod < 0) return false;
 
     // edge 1
     glm::vec4 edge1(v2 - v1);
     glm::vec4 vp1(ip - v1);
     perp_vec = glm::vec4(glm::cross(glm::vec3(edge1), glm::vec3(vp1)), 0);
-    d_prod = glm::dot(normal, perp_vec);
+    d_prod = glm::dot(n, perp_vec);
     if (d_prod < 0) return false;
 
     // edge 2
     glm::vec4 edge2(v0 - v2);
     glm::vec4 vp2(ip - v2);
     perp_vec = glm::vec4(glm::cross(glm::vec3(edge2), glm::vec3(vp2)), 0);
-    d_prod = glm::dot(normal, perp_vec);
+    d_prod = glm::dot(n, perp_vec);
     if (d_prod < 0) return false;
 
     // test passed; assign variables
@@ -60,7 +60,7 @@ bool Triangle::intersect(const Ray &r, isect_info &i) {
 }
 
 void Triangle::get_surface_properties(isect_info &i) const {
-    i.ipn = normal;
+    i.ipn = n;
 }
 
 void Triangle::apply_camera_transformation(const glm::mat4 &ictm, const glm::mat4 &itictm) {
@@ -69,13 +69,8 @@ void Triangle::apply_camera_transformation(const glm::mat4 &ictm, const glm::mat
     v2 = ictm*v2;
     reshape_bb();
 
-//    // for normals we don't use the matrix with which we transform vertices and vectors
-//    // but use the transpose of the inverse of the matrix we have
-//    // (proof why:
-//    // https://www.scratchapixel.com/lessons/mathematics-physics-for-computer-graphics/geometry/transforming-normals)
-//    glm::mat4 nm = glm::transpose(glm::inverse(t));
-//    normal = glm::normalize(nm * normal);
-    normal = glm::normalize(glm::vec4(glm::cross(glm::vec3(v1)-glm::vec3(v0), glm::vec3(v2)-glm::vec3(v0)), 0));
+    // apply the normal transformation matrix
+    n = glm::normalize(itictm * n);
 }
 
 void Triangle::translate(const float_t &translation, const uint32_t &axes_of_translation) {
@@ -154,6 +149,7 @@ void Triangle::rotate(const float_t &angle_of_rotation, const uint32_t &axes_of_
     // get the rotation matrix
     glm::mat4 rm = glm::rotate(glm::mat4(1), glm::radians(angle_of_rotation), rv);
     mt = rm * mt;
+    nmt = rm * nmt;
 }
 
 void Triangle::scale(const float_t &scaling_factor, const uint32_t &axes_of_scale) {
@@ -193,6 +189,8 @@ void Triangle::scale(const float_t &scaling_factor, const uint32_t &axes_of_scal
     // assign the scale matrix to the object's model transform
     glm::mat4 sm = glm::scale(glm::mat4(1), sv);
     mt = sm * mt;
+    nmt = sm * nmt;
+
 }
 
 void Triangle::apply_transformations() {
@@ -202,12 +200,12 @@ void Triangle::apply_transformations() {
     v2 = mt * v2;
     reshape_bb();
 
-//    // for transforming normals we don't use the matrix with which we transform vertices and vectors
-//    // but use the transpose of the inverse of the matrix we have proof why:
-//    // https://www.scratchapixel.com/lessons/mathematics-physics-for-computer-graphics/geometry/transforming-normals
-//    glm::mat4 nm = glm::transpose(glm::inverse(mt));
-//    normal = glm::normalize(nm * normal);
-    normal = glm::normalize(glm::vec4(glm::cross(glm::vec3(v1)-glm::vec3(v0), glm::vec3(v2)-glm::vec3(v0)), 0));
+    // for normals we don't use the matrix with which we transform vertices and vectors
+    // but use the transpose of the inverse of the matrix we have
+    // (proof why:
+    // https://www.scratchapixel.com/lessons/mathematics-physics-for-computer-graphics/geometry/transforming-normals)
+    // apply the normal transformation to a triangle
+    n = glm::normalize(glm::transpose(glm::inverse(nmt)) * n);
 
     // after applying the transformations to a triangle; its model transform matrix is set back to the identity matrix
     mt = glm::mat4(1);

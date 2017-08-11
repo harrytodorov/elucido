@@ -10,7 +10,7 @@
 class Triangle : public Object{
 public:
     glm::vec4 v0, v1, v2;       // vertices of the triangle
-    glm::vec4 normal;           // normal of the triangle
+    glm::vec4 n;           // n of the triangle
 
     // Vertices have to be defined in counterclockwise direction, starting from vertex v0 going to v2
     // otherwise strange artefacts could occur
@@ -21,7 +21,7 @@ public:
             v1( 1, -1, 0, 1),
             v2( 0,  1, 0, 1)
     {
-        normal = glm::normalize(glm::vec4(glm::cross(glm::vec3(v1)-glm::vec3(v0), glm::vec3(v2)-glm::vec3(v0)), 0));
+        n = glm::normalize(glm::vec4(glm::cross(glm::vec3(v1)-glm::vec3(v0), glm::vec3(v2)-glm::vec3(v0)), 0));
         reshape_bb();
         ot = triangle;
     }
@@ -31,7 +31,7 @@ public:
             v1( 1, -1, 0, 1),
             v2( 0,  1, 0, 1)
     {
-        normal = glm::normalize(glm::vec4(glm::cross(glm::vec3(v1)-glm::vec3(v0), glm::vec3(v2)-glm::vec3(v0)), 0));
+        n = glm::normalize(glm::vec4(glm::cross(glm::vec3(v1)-glm::vec3(v0), glm::vec3(v2)-glm::vec3(v0)), 0));
         reshape_bb();
         ot = triangle;
     }
@@ -55,11 +55,11 @@ public:
             v1(vec1),
             v2(vec2)
     {
-        normal = glm::normalize(glm::vec4(glm::cross(glm::vec3(v1)-glm::vec3(v0), glm::vec3(v2)-glm::vec3(v0)), 0));
+        n = glm::normalize(glm::vec4(glm::cross(glm::vec3(v1)-glm::vec3(v0), glm::vec3(v2)-glm::vec3(v0)), 0));
         reshape_bb();
         ot = triangle;
     }
-    Triangle(const Triangle &t) : Object(t) {this->v0 = t.v0; this->v1 = t.v1; this->v2 = t.v2; this->normal = t.normal; }
+    Triangle(const Triangle &t) : Object(t) {this->v0 = t.v0; this->v1 = t.v1; this->v2 = t.v2; this->n = t.n; }
     ~Triangle() {}
 
     bool intersect(const Ray &r, isect_info &i);

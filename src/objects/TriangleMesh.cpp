@@ -285,7 +285,7 @@ void TriangleMesh::apply_transformations() {
         vn = _ti;
 
         // apply the normal transformation matrix
-        vn = glm::normalize(nmt * vn);
+        vn = glm::normalize(glm::transpose(glm::inverse(nmt)) * vn);
 
         // assign the transformed vertex normal
         _ti = vn;
@@ -368,7 +368,7 @@ void TriangleMesh::rotate(const float_t &angle_of_rotation, const uint32_t &axes
     // get the rotation matrix
     glm::mat4 rm = glm::rotate(glm::mat4(1), glm::radians(angle_of_rotation), rv);
     mt = rm * mt;
-    nmt = glm::transpose(glm::inverse(rm)) * nmt;
+    nmt = rm * nmt;
 }
 
 void TriangleMesh::scale(const float_t &scaling_factor, const uint32_t &axes_of_scale) {
@@ -408,7 +408,7 @@ void TriangleMesh::scale(const float_t &scaling_factor, const uint32_t &axes_of_
     // assign the scale matrix to the object's model transform
     glm::mat4 sm = glm::scale(glm::mat4(1), sv);
     mt = sm * mt;
-    nmt = glm::transpose(glm::inverse(sm)) * nmt;
+    nmt = sm * nmt;
 }
 
 TriangleMesh::TriangleMesh(const TriangleMesh &tm) : Object(tm) {
