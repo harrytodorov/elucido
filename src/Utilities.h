@@ -38,8 +38,8 @@ const glm::vec3 skyblue(0.258f, 0.674f, 0.831f);
 const glm::vec3 pink(1.f,105.f/255,180.f/255);
 
 const float_t bias = 0.0001;            // shadow bias is used for avoiding self-shadows
-const uint32_t max_depth = 10;          // maximum depth of recursion
-const glm::vec3 bgc(lightslategray);           // background color
+const uint32_t max_depth = 5;           // maximum depth of recursion
+const glm::vec3 bgc(lightslategray);    // background color
 
 const std::string vertex("v");
 const std::string vertex_normal("vn");
@@ -80,7 +80,7 @@ struct render_info {
     uint64_t nrrr{0};   // number of refraction rays
     uint64_t no{0};     // number of objects in the scene
     uint64_t nls{0};    // number of light sources in the scene
-    uint64_t nrot{0};   // number of ray-object intersection tests
+    uint64_t nrpt{0};   // number of ray-primitive intersection tests
     uint64_t nroi{0};   // number of ray-object intersections; ray-bounding box intersection does not count
                         // as a valid ray-object intersection; so just ray-object intersections are counted
 };

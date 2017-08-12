@@ -70,7 +70,7 @@ void Triangle::apply_camera_transformation(const glm::mat4 &ictm, const glm::mat
     reshape_bb();
 
     // apply the normal transformation matrix
-    n = glm::normalize(itictm * n);
+    n = glm::normalize(glm::vec4(glm::cross(glm::vec3(v1)-glm::vec3(v0), glm::vec3(v2)-glm::vec3(v0)), 0));
 }
 
 void Triangle::translate(const float_t &translation, const uint32_t &axes_of_translation) {
@@ -207,6 +207,8 @@ void Triangle::apply_transformations() {
     // apply the normal transformation to a triangle
     n = glm::normalize(glm::transpose(glm::inverse(nmt)) * n);
 
-    // after applying the transformations to a triangle; its model transform matrix is set back to the identity matrix
+    // after applying the transformations to a triangle; its model transform and normal transform matrices are
+    // set back to the identity matrix
     mt = glm::mat4(1);
+    nmt = glm::mat4(1);
 }

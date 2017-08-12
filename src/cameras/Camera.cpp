@@ -58,7 +58,7 @@ glm::vec3 Camera::cast_ray(const Ray &ray, const std::vector<Light *> &lights, c
                 shadow_ray.set_dir(-light_direction);
 
                 // ignore self-shadows; those would be handled correctly later
-                if ((shadow_ray.trace(objects, dummy, ri) && dummy.ho != ii.ho) && dummy.tn < light_dist) {
+                if (shadow_ray.trace(objects, dummy, ri) && dummy.tn < light_dist & dummy.ho != ii.ho) {
                     visibility = 0.f;
                     continue;
                 }
@@ -67,18 +67,18 @@ glm::vec3 Camera::cast_ray(const Ray &ray, const std::vector<Light *> &lights, c
                 lamb_refl = glm::dot(ii.ipn, -light_direction);
 
                 // calculate diffuse component
-                diffuse += visibility * (mat.c * light_intensity * glm::max(0.f, lamb_refl));
+                diffuse = mat.c * light_intensity * glm::max(0.f, lamb_refl);
 
                 // calculate specular component
                 glm::vec4 light_reflection = glm::normalize(2.f * lamb_refl * ii.ipn + light_direction);
                 float_t max_lf_vd = glm::max(0.f, glm::dot(light_reflection, -ray.dir()));
                 float_t pow_max_se = glm::pow(max_lf_vd, mat.se);
 
-                specular += visibility * (light_intensity * pow_max_se);
-            }
+                specular = light_intensity * pow_max_se;
 
-            // add ambient, diffuse and specular to the the hit color
-            hc += mat.ac*mat.c + mat.dc*diffuse + mat.sc*specular;
+                // add ambient, diffuse and specular to the the hit color
+                hc += visibility * (mat.ac*mat.c + mat.dc*diffuse + mat.sc*specular);
+            }
         }
 
         //  for reflective materials
@@ -160,6 +160,9 @@ glm::vec3 Camera::cast_ray(const Ray &ray, const std::vector<Light *> &lights, c
             // mix reflection & refraction according to Fresnel + add color of the object
             hc += (reflectance*reflection_col + (1.f-reflectance)*refraction_col) * mat.c;
         }
+
+
+        //
     }
 
     return hc;

@@ -162,6 +162,8 @@ void Sphere::apply_transformations() {
     c = mt * c;
     reshape_bb();
 
-    // after applying the transformations to a sphere; its model transform matrix is set back to the identity matrix
+    // after applying the transformations to a sphereits model transform and normal transform matrices are
+    // set back to the identity matrix
     mt = glm::mat4(1);
+    nmt = glm::mat4(1);
 }

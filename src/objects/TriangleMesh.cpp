@@ -153,7 +153,7 @@ bool TriangleMesh::triangle_intersect(const Ray &r, const glm::vec4 &v0, const g
     // calculate t
     t = glm::dot(qv, e1) * inv_det;
 
-    return t > 0;
+    return t > kEpsilon;
 }
 
 bool TriangleMesh::intersect(const Ray &r, const uint32_t &ti, isect_info &i) const {
@@ -290,6 +290,11 @@ void TriangleMesh::apply_transformations() {
         // assign the transformed vertex normal
         _ti = vn;
     }
+
+    // after applying the transformations to a triangle mesh; its model transform and normal transform matrices are
+    // set back to the identity matrix
+    mt = glm::mat4(1);
+    nmt = glm::mat4(1);
 }
 
 void TriangleMesh::translate(const float_t &translation, const uint32_t &axes_of_translation) {
