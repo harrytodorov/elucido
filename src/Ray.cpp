@@ -9,9 +9,6 @@ bool Ray::trace(const std::vector<Object *> &objects, isect_info &ii, render_inf
     // reset the information stored in the intersection structure
     ii = isect_info();
 
-    // increment number of primary rays
-    if (this->rt == primary) __sync_fetch_and_add(&ri.npr, 1);
-
     // increment number of shadow rays
     if (this->rt == shadow) __sync_fetch_and_add(&ri.nsr, 1);
 
@@ -30,8 +27,9 @@ bool Ray::trace(const std::vector<Object *> &objects, isect_info &ii, render_inf
         __sync_fetch_and_add(&ri.nrpt, 1);
 
         // first intersect with object's bounding box
-        // for spheres we don't intersect with the bounding box, because their test is fast
-        if (object->ot != sphere && !object->bb.intersect(*this)) continue;
+        // we only intersect triangulated meshes with their bounding boxes, because tests
+        // for spheres and triangles are already cheap enough
+        if (object->ot == triangle_mesh && !object->bb.intersect(*this)) continue;
 
         // for a triangulated mesh, the number of ray-primitive intersections
         // is equal to the number of triangles in the mesh

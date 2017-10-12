@@ -13,11 +13,14 @@ glm::vec3 Camera::cast_ray(const Ray &ray, const std::vector<Light *> &lights, c
     // intersection information
     isect_info ii;
 
+    // increment number of primary rays
+    if (ray.rt == primary) __sync_fetch_and_add(&ri.npr, 1);
+
     // check if a ray intersects the scene's bounding box and if so
     // trace it through the scene
     if (scene_bb.intersect(ray) && ray.trace(objects, ii, ri)) {
 
-//    // just tracing without using scene's bb
+//    // tracing without using scene's bb
 //    if (ray.trace(objects, ii, ri)) {
 
         // get the surface properties of the intersection
@@ -160,9 +163,6 @@ glm::vec3 Camera::cast_ray(const Ray &ray, const std::vector<Light *> &lights, c
             // mix reflection & refraction according to Fresnel + add color of the object
             hc += (reflectance*reflection_col + (1.f-reflectance)*refraction_col) * mat.c;
         }
-
-
-        //
     }
 
     return hc;

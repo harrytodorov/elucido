@@ -13,7 +13,7 @@ public:
     glm::vec4 d{glm::vec4(0, 0, -1, 0)};
 
     DirectionalLight() = default;
-    DirectionalLight(const glm::vec4 &d, const float_t &i) : Light(i), d(glm::normalize(d)) {}
+    DirectionalLight(const glm::vec4 &d, const float_t &i) : Light(i), d(glm::normalize(d) ) {}
     DirectionalLight(const glm::vec4 &d, const glm::vec3 &c, const float_t &i) : Light(c, i), d(glm::normalize(d)) {}
     ~DirectionalLight() = default;
 

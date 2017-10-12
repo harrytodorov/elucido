@@ -52,7 +52,7 @@ render_info OrthographicCamera::render_scene(const std::vector<Object *> &object
                     curr_y = (1.f - 2.f * ((r*ip.ns + ny + pr(eng)) / (ip.vres*ip.ns))) * zf;
 
                     // set the ray origin for each sample position
-                    ray.set_orig(glm::vec4(curr_x, curr_y, -1.f, 1.f));
+                    ray.set_orig(glm::vec4(curr_x, curr_y, 0.f, 1.f));
 
                     // cast a ray into the scene and get the color value for it
                     pc += cast_ray(ray, lights, objects, 0, ri);

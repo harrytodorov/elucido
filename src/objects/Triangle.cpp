@@ -23,10 +23,10 @@ bool Triangle::intersect(const Ray &r, isect_info &i) {
     // if the computed distance is negative, the triangle is behind the ray's origin
     if (t < kEpsilon) return false;
 
-    // compute the intersection point
+    // compute the possible intersection point
     glm::vec4 ip = r.orig() + t * r.dir();
 
-    // check if intersection point is within the defined triangle
+    // check if the point is within the defined triangle
     glm::vec4 perp_vec;
     float_t d_prod;
 

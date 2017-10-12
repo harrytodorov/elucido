@@ -10,7 +10,7 @@
 class Triangle : public Object{
 public:
     glm::vec4 v0, v1, v2;       // vertices of the triangle
-    glm::vec4 n;           // n of the triangle
+    glm::vec4 n;                // n of the triangle
 
     // Vertices have to be defined in counterclockwise direction, starting from vertex v0 going to v2
     // otherwise strange artefacts could occur
