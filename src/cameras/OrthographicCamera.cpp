@@ -1,7 +1,7 @@
 // Copyright 2017, University of Freiburg.
 // Author: Haralambi Todorov <harrytodorov@gmail.com>
 
-#include "OrthographicCamera.h"
+#include "../../include/elucido/OrthographicCamera.h"
 
 //=============================================================================
 render_info OrthographicCamera::render_scene(const std::vector<Object *> &objects,

@@ -1,7 +1,7 @@
 // Copyright 2017, University of Freiburg.
 // Author: Haralambi Todorov <harrytodorov@gmail.com>
 
-#include "Object.h"
+#include "../../include/elucido/Object.h"
 
 //=============================================================================
 Object::Object(const Object &o) {

@@ -1,7 +1,7 @@
 // Copyright 2017, University of Freiburg.
 // Author: Haralambi Todorov <harrytodorov@gmail.com>
 
-#include "Triangle.h"
+#include "../../include/elucido/Triangle.h"
 
 //=============================================================================
 bool Triangle::intersect(const Ray &r, isect_info &i) {

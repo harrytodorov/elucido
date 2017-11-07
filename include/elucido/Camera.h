@@ -11,10 +11,10 @@
 #include <vector>
 #include <iostream>
 #include <random>
-#include "../objects/Object.h"
-#include "../ImagePlane.h"
-#include "../lights/Light.h"
-#include "../Utilities.h"
+#include "Object.h"
+#include "ImagePlane.h"
+#include "Light.h"
+#include "Utilities.h"
 
 class Camera {
 

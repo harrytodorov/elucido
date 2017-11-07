@@ -21,9 +21,9 @@
 #include <vector>
 #include <cstdint>
 
-#include "../Ray.h"
+#include "Ray.h"
 #include "AABBox.h"
-#include "../Utilities.h"
+#include "Utilities.h"
 
 class Object {
  public:

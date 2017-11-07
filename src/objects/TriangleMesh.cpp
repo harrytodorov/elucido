@@ -1,7 +1,7 @@
 // Copyright 2017, University of Freiburg.
 // Author: Haralambi Todorov <harrytodorov@gmail.com>
 
-#include "TriangleMesh.h"
+#include "../../include/elucido/TriangleMesh.h"
 
 //=============================================================================
 loading_info TriangleMesh::load_mesh(const char *f) {

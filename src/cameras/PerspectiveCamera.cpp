@@ -1,7 +1,7 @@
 // Copyright 2017, University of Freiburg.
 // Author: Haralambi Todorov <harrytodorov@gmail.com>
 
-#include "PerspectiveCamera.h"
+#include "../../include/elucido/PerspectiveCamera.h"
 
 //=============================================================================
 render_info PerspectiveCamera::render_scene(const std::vector<Object *> &objects,

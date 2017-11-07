@@ -1,7 +1,7 @@
 // Copyright 2017, University of Freiburg.
 // Author: Haralambi Todorov <harrytodorov@gmail.com>
 
-#include "./ImagePlane.h"
+#include "../include/elucido/ImagePlane.h"
 #include <glm/exponential.hpp>
 
 //=============================================================================

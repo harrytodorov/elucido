@@ -51,5 +51,9 @@ fabric.properties
 .DS_Store
 .idea/deployment.xml
 .idea/vcs.xml
-build/
 include/.DS_Store
+
+# Exclude custom directories
+/bin
+/rendered_images
+/object_files

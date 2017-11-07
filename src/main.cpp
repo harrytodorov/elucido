@@ -2,14 +2,14 @@
 // Author: Haralambi Todorov <harrytodorov@gmail.com>
 
 #include <iostream>
-#include "objects/Object.h"
-#include "objects/TriangleMesh.h"
-#include "lights/PointLight.h"
-#include "cameras/PerspectiveCamera.h"
-#include "objects/Triangle.h"
-#include "objects/Sphere.h"
-#include "lights/DirectionalLight.h"
-#include "cameras/OrthographicCamera.h"
+#include "../include/elucido/Object.h"
+#include "../include/elucido/TriangleMesh.h"
+#include "../include/elucido/PointLight.h"
+#include "../include/elucido/PerspectiveCamera.h"
+#include "../include/elucido/Triangle.h"
+#include "../include/elucido/Sphere.h"
+#include "../include/elucido/DirectionalLight.h"
+#include "../include/elucido/OrthographicCamera.h"
 
 void render_cornell_scene() {
     std::vector<Object*> objects;

@@ -12,7 +12,7 @@
 #include <cmath>
 #include <cstdio>
 
-#include "../Utilities.h"
+#include "Utilities.h"
 
 class Light {
 

@@ -2,15 +2,42 @@ cmake_minimum_required(VERSION 3.7)
 project(elucido)
 set(CMAKE_CXX_STANDARD 11)
 
-# Add source files to project
-set(SOURCE_FILES src/Utilities.h src/Ray.h src/Ray.cpp src/ImagePlane.h src/ImagePlane.cpp
-        src/cameras/Camera.cpp src/cameras/Camera.h src/cameras/OrthographicCamera.cpp src/cameras/OrthographicCamera.h src/cameras/PerspectiveCamera.cpp src/cameras/PerspectiveCamera.h
-        src/objects/Object.h src/objects/Object.cpp src/objects/Sphere.cpp src/objects/Sphere.h src/objects/Triangle.cpp src/objects/Triangle.h src/objects/TriangleMesh.h src/objects/TriangleMesh.cpp src/objects/AABBox.h src/objects/AABBox.cpp
-        src/lights/Light.h src/lights/Light.cpp src/lights/PointLight.cpp src/lights/PointLight.h src/lights/DirectionalLight.cpp src/lights/DirectionalLight.h
-        src/main.cpp)
+# Set source files
+set(ELUCIDO_SOURCE_FILES
+        src/cameras/Camera.cpp
+        src/cameras/OrthographicCamera.cpp
+        src/cameras/PerspectiveCamera.cpp
+        src/lights/Light.cpp
+        src/lights/DirectionalLight.cpp
+        src/lights/PointLight.cpp
+        src/objects/Object.cpp
+        src/objects/AABBox.cpp
+        src/objects/Sphere.cpp
+        src/objects/Triangle.cpp
+        src/objects/TriangleMesh.cpp
+        src/acceleration/AccelerationStructure.cpp
+        src/ImagePlane.cpp
+        src/Ray.cpp)
+
+set(ELUCIDO_HEADER_FILES
+        include/elucido/Camera.h
+        include/elucido/OrthographicCamera.h
+        include/elucido/PerspectiveCamera.h
+        include/elucido/Light.h
+        include/elucido/DirectionalLight.h
+        include/elucido/PointLight.h
+        include/elucido/Object.h
+        include/elucido/AABBox.h
+        include/elucido/Sphere.h
+        include/elucido/Triangle.h
+        include/elucido/TriangleMesh.h
+        include/elucido/AccelerationStructure.h
+        include/elucido/ImagePlane.h
+        include/elucido/Ray.h
+        include/elucido/Utilities.h)
 
 # Create executable
-add_executable(elucido ${SOURCE_FILES})
+add_executable(elucido src/main.cpp ${ELUCIDO_SOURCE_FILES})
 
 # Set up glm library
 include_directories(include)
@@ -22,3 +49,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
 find_package(PNG REQUIRED)
 include_directories(${PNG_INCLUDE_DIR})
 target_link_libraries(elucido ${PNG_LIBRARY})
+
+# Set up gtest
+enable_testing()
