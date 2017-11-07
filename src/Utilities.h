@@ -1,6 +1,5 @@
-//
-// Created by Haralambi Todorov on 25/05/2017.
-//
+// Copyright 2017, University of Freiburg.
+// Author: Haralambi Todorov <harrytodorov@gmail.com>
 
 #ifndef ELUCIDO_UTILITIES_H
 #define ELUCIDO_UTILITIES_H
@@ -21,13 +20,13 @@ const uint32_t XZ   = 4;
 const uint32_t YZ   = 5;
 const uint32_t XYZ  = 6;
 
-const glm::vec3 red(1.f, 0, 0);                 // red color
-const glm::vec3 green(0, 1.f, 0);               // green color
-const glm::vec3 blue(0, 0, 1.f);                // blue color
-const glm::vec3 white(1);                       // white color
-const glm::vec3 black(0);                       // black color
-const glm::vec3 sienna(0.627f, 0.321f, 0.176f); // sienna color
-const glm::vec3 bluish(0.357f, 0.439f, 0.569f); // bluish color
+const glm::vec3 red(1.f, 0, 0);                                 // red color
+const glm::vec3 green(0, 1.f, 0);                               // green color
+const glm::vec3 blue(0, 0, 1.f);                                // blue color
+const glm::vec3 white(1);                                       // white color
+const glm::vec3 black(0);                                       // black color
+const glm::vec3 sienna(0.627f, 0.321f, 0.176f);                 // sienna color
+const glm::vec3 bluish(0.357f, 0.439f, 0.569f);                 // bluish color
 const glm::vec3 deadgold(0.647f, 0.604f, 0.486f);
 const glm::vec3 violet(0.573f, 0.384f, 0.757f);
 const glm::vec3 orangish(0.929f, 0.615f, 0.306f);

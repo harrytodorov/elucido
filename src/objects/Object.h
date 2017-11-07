@@ -1,6 +1,5 @@
-//
-// Created by Haralambi Todorov on 19/05/2017.
-//
+// Copyright 2017, University of Freiburg.
+// Author: Haralambi Todorov <harrytodorov@gmail.com>
 
 #ifndef ELUCIDO_OBJECT_H
 #define ELUCIDO_OBJECT_H
@@ -27,28 +26,49 @@
 #include "../Utilities.h"
 
 class Object {
-public:
-    material    om;         // object's material
-    AABBox      bb;         // bounding box of the object
-    ObjectType  ot;         // object's type
+ public:
+//=============================================================================
+// Data members
+//=============================================================================
+  material om;         // object's material
+  AABBox bb;         // bounding box of the object
+  ObjectType ot;         // object's type
 
-    Object() : om(material()), mt(glm::mat4(1)), bb(AABBox()), ot(def) {}
-    Object(const material &m) : om(m), mt(glm::mat4(1)), nmt(glm::mat4(1)), bb(AABBox()), ot(def) {}
-    Object(const Object &o);
-    virtual ~Object() {}
 
-    virtual bool intersect(const Ray &r, isect_info &i) = 0;
-    virtual void get_surface_properties(isect_info &i) const = 0;
-    virtual void apply_camera_transformation(const glm::mat4 &ctm, const glm::mat4 &tictm) = 0;
-    virtual void apply_transformations() = 0;
-    virtual void translate(const float_t &translation, const uint32_t &axes_of_translation) = 0;
-    virtual void rotate(const float_t &angle_of_rotation, const uint32_t &axes_of_rotation) = 0;
-    virtual void scale(const float_t &scaling_factor, const uint32_t &axes_of_scale) = 0;
+//=============================================================================
+// Constructors & destructors
+//=============================================================================
+  Object() : om(material()), mt(glm::mat4(1)), bb(AABBox()), ot(def) {}
 
-protected:
-    glm::mat4   mt;     // model transform matrix for an object
-                        // places and transforms the object in world coordinate space
-    glm::mat4   nmt;    // transformation matrix for object's normals
+//=============================================================================
+  Object(const material &m) : om(m), mt(glm::mat4(1)), nmt(glm::mat4(1)),
+                              bb(AABBox()), ot(def) {}
+
+//=============================================================================
+  Object(const Object &o);
+
+//=============================================================================
+  virtual ~Object() {}
+
+//=============================================================================
+// Function declarations
+//=============================================================================
+  virtual bool intersect(const Ray &r, isect_info &i) = 0;
+  virtual void get_surface_properties(isect_info &i) const = 0;
+  virtual void apply_camera_transformation(const glm::mat4 &ctm,
+                                           const glm::mat4 &tictm) = 0;
+  virtual void apply_transformations() = 0;
+  virtual void translate(const float_t &translation,
+                         const uint32_t &axes_of_translation) = 0;
+  virtual void rotate(const float_t &angle_of_rotation,
+                      const uint32_t &axes_of_rotation) = 0;
+  virtual void scale(const float_t &scaling_factor,
+                     const uint32_t &axes_of_scale) = 0;
+
+ protected:
+  glm::mat4 mt;     // model transform matrix for an object
+  // places and transforms the object in world coordinate space
+  glm::mat4 nmt;    // transformation matrix for object's normals
 };
 
 #endif //ELUCIDO_OBJECT_H

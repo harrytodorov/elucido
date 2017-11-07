@@ -1,3 +1,6 @@
+// Copyright 2017, University of Freiburg.
+// Author: Haralambi Todorov <harrytodorov@gmail.com>
+
 #include <iostream>
 #include "objects/Object.h"
 #include "objects/TriangleMesh.h"

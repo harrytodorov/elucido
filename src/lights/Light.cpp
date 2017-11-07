@@ -1,4 +1,3 @@
-//
-// Created by Haralambi Todorov on 26/05/2017.
-//
+// Copyright 2017, University of Freiburg.
+// Author: Haralambi Todorov <harrytodorov@gmail.com>
 

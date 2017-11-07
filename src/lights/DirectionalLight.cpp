@@ -1,6 +1,5 @@
-//
-// Created by Haralambi Todorov on 25/06/2017.
-//
+// Copyright 2017, University of Freiburg.
+// Author: Haralambi Todorov <harrytodorov@gmail.com>
 
 #include "DirectionalLight.h"
 
