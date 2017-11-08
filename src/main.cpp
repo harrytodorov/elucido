@@ -106,7 +106,7 @@ void render_cornell_scene() {
 
 
     // load teapot
-    sprintf(fn, "./wt_teapot.obj");
+    sprintf(fn, "../object_files/wt_teapot.obj");
     TriangleMesh teapot(tm, true);
 
     // measure loading the triangulated mesh
@@ -462,9 +462,9 @@ void spheres() {
     std::vector<Light*> lights;
     Camera* camera = new PerspectiveCamera();
     ImagePlane ip = ImagePlane(1280, 720);
-    ip.ns = 4;
+    ip.ns = 3;
     render_info ri;
-    uint32_t nos = 100;  // number of spheres
+    uint32_t nos = 10;  // number of spheres
     std::random_device  rd;                                     // obtain a random number from hardware
     std::mt19937        eng(rd());                              // seed generator
     std::uniform_real_distribution<float_t> srzp(-13.f, -7.f);  // define range for sphere's z-position
@@ -1332,6 +1332,6 @@ void specular() {
 
 
 int main(int argc, char **argv) {
-    render_cornell_scene();
+    spheres();
     return 0;
 }
