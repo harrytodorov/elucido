@@ -88,7 +88,7 @@ class Triangle : public Object {
 //=============================================================================
 // Function declarations
 //=============================================================================
-  bool intersect(const Ray &r, isect_info &i);
+  bool intersect(const Ray &r, isect_info &i) const;
   void get_surface_properties(isect_info &i) const;
   void apply_camera_transformation(const glm::mat4 &ictm,
                                    const glm::mat4 &itictm);

@@ -4,7 +4,7 @@
 #include "../../include/elucido/Triangle.h"
 
 //=============================================================================
-bool Triangle::intersect(const Ray &r, isect_info &i) {
+bool Triangle::intersect(const Ray &r, isect_info &i) const {
 
   // check if ray is parallel to triangle; compute the dot product
   // of the triangle's normal and the ray direction

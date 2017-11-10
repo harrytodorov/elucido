@@ -53,7 +53,7 @@ class Object {
 //=============================================================================
 // Function declarations
 //=============================================================================
-  virtual bool intersect(const Ray &r, isect_info &i) = 0;
+  virtual bool intersect(const Ray &r, isect_info &i) const = 0;
   virtual void get_surface_properties(isect_info &i) const = 0;
   virtual void apply_camera_transformation(const glm::mat4 &ctm,
                                            const glm::mat4 &tictm) = 0;

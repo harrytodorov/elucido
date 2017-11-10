@@ -192,7 +192,7 @@ bool TriangleMesh::intersect(const Ray &r,
 }
 
 //=============================================================================
-bool TriangleMesh::intersect(const Ray &r, isect_info &i) {
+bool TriangleMesh::intersect(const Ray &r, isect_info &i) const {
   glm::vec4 v0, v1, v2;
   bool intersected{false};
 
@@ -426,4 +426,18 @@ TriangleMesh::TriangleMesh(const TriangleMesh &tm) : Object(tm) {
   this->nf = tm.nf;
   this->in = tm.in;
   this->ot = tm.ot;
+}
+
+//=============================================================================
+const AABBox* TriangleMesh::getBoundingBoxForTriangle(const uint32_t &ti) const {
+  AABBox *box = new AABBox();
+  glm::vec4 v0, v1, v2;
+  // get the vertices for the current triangle
+  v0 = va[via[3 * ti] - 1];
+  v1 = va[via[3 * ti + 1] - 1];
+  v2 = va[via[3 * ti + 2] - 1];
+  box->extend_by(v0);
+  box->extend_by(v1);
+  box->extend_by(v2);
+  return box;
 }

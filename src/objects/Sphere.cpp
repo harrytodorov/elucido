@@ -4,7 +4,7 @@
 #include "../../include/elucido/Sphere.h"
 
 //=============================================================================
-bool Sphere::intersect(const Ray &r, isect_info &i) {
+bool Sphere::intersect(const Ray &r, isect_info &i) const {
   // variable to hold distance between ray's origin and intersection point(s)
   float_t t;
 

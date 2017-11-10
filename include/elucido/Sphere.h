@@ -63,7 +63,7 @@ class Sphere : public Object {
 //=============================================================================
   void set_radius(const float_t &r);
   void set_center_p(const glm::vec4 &p);
-  bool intersect(const Ray &r, isect_info &i);
+  bool intersect(const Ray &r, isect_info &i) const;
   virtual void get_surface_properties(isect_info &i) const;
   void apply_camera_transformation(const glm::mat4 &ictm,
                                    const glm::mat4 &itictm);

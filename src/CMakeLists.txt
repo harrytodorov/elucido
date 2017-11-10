@@ -21,6 +21,7 @@ set(ELUCIDO_SOURCE_FILES
         objects/Triangle.cpp
         objects/TriangleMesh.cpp
         acceleration/AccelerationStructure.cpp
+        acceleration/Grid.cpp
         ImagePlane.cpp
         Ray.cpp)
 
@@ -38,6 +39,7 @@ set(ELUCIDO_HEADER_FILES
         ../include/elucido/Triangle.h
         ../include/elucido/TriangleMesh.h
         ../include/elucido/AccelerationStructure.h
+        ../include/elucido/Grid.h
         ../include/elucido/ImagePlane.h
         ../include/elucido/Ray.h
         ../include/elucido/Utilities.h)

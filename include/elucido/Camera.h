@@ -24,7 +24,7 @@ class Camera {
  protected:
   glm::vec4 eye;        // eye / camera position
   glm::vec4 lookat;     // the point at which the camera looks
-  AABBox scene_bb;   // bounding box for the scene
+  AABBox scene_bb;      // bounding box for the scene
  private:
   glm::mat4 ctm;        // camera's transformation matrix
   glm::mat4
