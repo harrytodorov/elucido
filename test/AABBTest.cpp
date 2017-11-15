@@ -4,12 +4,8 @@
 #include <gtest/gtest.h>
 #include "../include/elucido/AABBox.h"
 
-namespace {
-class AABBTest : public ::testing::Test {
-
-};
-
-TEST(AABBTest, extend_by) {
+//==============================================================================
+TEST(AABBox, extend_by) {
   glm::vec4 extent1(0, 0, 0, 1);
   glm::vec4 extent2(1, 1, 1, 1);
   glm::vec4 to_extend(2, 2, 2, 1);
@@ -27,4 +23,17 @@ TEST(AABBTest, extend_by) {
   EXPECT_FLOAT_EQ(to_compare.bounds[0].w,
                   result.bounds[0].w);
 }
+
+//==============================================================================
+TEST(AABBox, getVolume) {
+  glm::vec4 e1(0, 0, 0, 1);
+  glm::vec4 e2(1, 1, 1, 1);
+  glm::vec4 e3(2, 1.5, 1, 1);
+
+  AABBox box(e1, e1);
+  EXPECT_FLOAT_EQ(0.f, box.getVolume());
+  box.extend_by(e2);
+  EXPECT_FLOAT_EQ(1.f, box.getVolume());
+  box.extend_by(e3);
+  EXPECT_FLOAT_EQ(3.f, box.getVolume());
 }

@@ -15,11 +15,8 @@ class Grid : public AccelerationStructure {
 //=============================================================================
   struct Cell {
     Cell() {}
-    void insert(const Object *object) {
-      primitives.push_back(Primitive(object, 0));
-    }
-    void insert(const Object *object, const uint32_t &tri_ind) {
-      primitives.push_back(Primitive(object, tri_ind));
+    void insert(const Primitive &primitive) {
+      primitives.emplace_back(primitive);
     }
     void intersect(const Ray &r, isect_info &i) {
       for (auto primitive : primitives) {
@@ -30,17 +27,20 @@ class Grid : public AccelerationStructure {
   };
 
  public:
-  Grid(const AABBox &box, const std::vector<const Object> &_objects);
+  Grid(const AABBox &box,
+       const std::vector<Object *> &objects);
   ~Grid() {
     for (size_t i = 0; i < resolution[0] * resolution[1] * resolution[2]; i++) {
       if (cells[i] != NULL) delete cells[i];
       delete [] cells;
     }
   }
-
   Cell **cells;
+ private:
   size_t resolution[3];
-  glm::vec3 cellDimention;
+  size_t maxResolution{128};
+  float_t alpha{5.f};
+  glm::vec4 cellDimension;
 };
 
 #endif //ELUCIDO_ALL_GRID_H

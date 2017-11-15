@@ -22,6 +22,7 @@ class Sphere : public Object {
   Sphere() : Object(), r(1.0), c(0, 0, 0, 1) {
     r2 = 1.f;
     reshape_bb();
+    ot = sphere;
   }
 
 //=============================================================================
@@ -52,6 +53,7 @@ class Sphere : public Object {
     this->r = s.r;
     this->c = s.c;
     this->r2 = glm::pow(r, 2.f);
+    ot = sphere;
   }
 
 //=============================================================================

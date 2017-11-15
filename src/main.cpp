@@ -1543,6 +1543,27 @@ void specular() {
 }
 
 int main(int argc, char **argv) {
-  monkey();
+  AABBox box;
+
+  std::vector<Object *> objects;
+//  objects.emplace_back(new Sphere);
+  char fn[100];
+  sprintf(fn, "../../object_files/monkey.obj");
+  objects.emplace_back(new TriangleMesh(fn));
+
+  for (auto object : objects) {
+    box.extend_by(object->bb.bounds[0]);
+    box.extend_by(object->bb.bounds[1]);
+  }
+
+  Grid *grid = new Grid(box, objects);
+  for (size_t i = 0; i < 4300; i++) {
+    if (grid->cells[i] != NULL) {
+      std::cout << "Cell " << i << " has " << grid->cells[i]->primitives.size()
+                << " prmitive(s)." << std::endl;
+    }
+
+  }
+  std::cout << "Box's volume: " << box.getVolume() << std::endl;
   return 0;
 }
