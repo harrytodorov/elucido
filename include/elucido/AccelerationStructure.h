@@ -7,12 +7,6 @@
 #include "Object.h"
 #include "TriangleMesh.h"
 
-//=============================================================================
-// Container for a primitive
-//=============================================================================
-// Define a container to hold a primitive object
-// Consist of a pair: pointer to an object and triangle index
-// in case the object pointed to is a Triangle mesh
 struct Primitive {
   Primitive() {}
   Primitive(const Object &obj, const size_t ti) {

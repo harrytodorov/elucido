@@ -1557,13 +1557,17 @@ int main(int argc, char **argv) {
   }
 
   Grid *grid = new Grid(box, objects);
-  for (size_t i = 0; i < 4300; i++) {
-    if (grid->cells[i] != NULL) {
-      std::cout << "Cell " << i << " has " << grid->cells[i]->primitives.size()
-                << " prmitive(s)." << std::endl;
-    }
+  grid->setAlpha(1000000.f);
+  grid_info i;
+  i = grid->constructGrid();
 
-  }
-  std::cout << "Box's volume: " << box.getVolume() << std::endl;
+  std::cout << "Grid's alpha:" << grid->getAlpha() << std::endl;
+  std::cout << "Grid's resoultion: " << i.r[0] << 'x' << i.r[1] << 'x' << i.r[2]
+            << std::endl;
+  std::cout << "Number of cells: " << i.r[0]*i.r[1]*i.r[2] << std::endl;
+  std::cout << "Number of  primitives: " << i.np << std::endl;
+  std::cout << "Number of non-empty cells: " << i.nfc << std::endl;
+  std::cout << "Average number of primitives per cell: " << i.nppc << std::endl;
+
   return 0;
 }

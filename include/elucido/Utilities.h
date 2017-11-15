@@ -96,6 +96,13 @@ struct isect_info {
     const Object    *ho = nullptr;              // pointer to the object hit by the ray
 };
 
+struct grid_info {
+  size_t  r[3];     // grid's resolution
+  size_t  nfc{0};   // number of cells, which contain one or more primitives
+  size_t  np{0};    // number of primitives contained in the grid
+  float_t nppc{0};  // average number of primitives per non-empty cell
+};
+
 struct material {
     glm::vec3       c{white};       // material's color
     MaterialType    mt{pm};         // material's type (see MaterialType enum)
