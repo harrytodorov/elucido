@@ -110,3 +110,59 @@ grid_info Grid::constructGrid() {
 
   return info;
 }
+
+bool Grid::intersect(const Ray &r, isect_info &i) const {
+  // Scalar distance from the ray's origin to the nearest hit point of
+  // the ray with the grid's bounding box.
+  float_t tBoundingBox;
+
+  // Check if the ray intersect's the grid at all.
+  if (!bbox.intersect(r, tBoundingBox))
+    return false;
+
+  glm::vec4 deltaT, nextCrossingT;
+  size_t currentCell[3];
+  int step[3];  // Steps could be also negative.
+  int exit[3];  // The same argument.
+
+
+  // Compute delta t, the parametric distance along the ray between two
+  // planes perpendicular to x,y or z.
+  // Compute the next crossing of the ray with one of the planes perpendicular
+  // to x,y, or z.
+  // Take in account that the sign of the
+  // ray's direction plays a role into determining the proper value.
+  for (size_t i = 0; i < 3; i++) {
+    float_t rayOrigToGrid = (r.orig()[i] + r.dir()[i]*tBoundingBox) -
+                            bbox.bounds[0][i];
+    currentCell[i] = glm::clamp(static_cast<size_t>(rayOrigToGrid / cellDimension[i]),
+                                static_cast<size_t>(0),
+                                static_cast<size_t>(resolution[i] - 1));
+
+    // Ray's direction is negative in i-axis.
+    if (r.dir()[i] < 0) {
+      deltaT[i] = -cellDimension[i] * r.inv_dir()[i];
+      nextCrossingT[i] = (currentCell[i] * cellDimension[i] - rayOrigToGrid) *
+                          r.inv_dir()[i];
+      step[i] = -1;
+      exit[i] = -1;
+    } else {
+      // Ray's direction is positive in i-axis.
+      deltaT[i] = cellDimension[i] / r.inv_dir()[i];
+      nextCrossingT[i] = ((currentCell[i] + 1) * cellDimension[i] -
+                          rayOrigToGrid) * r.inv_dir()[i];
+      step[i] = 1;
+      exit[i] = resolution[i];
+    }
+  }
+
+  // The actual traversal of the grid.
+  while (1) {
+    size_t cellIndex = currentCell[2] * resolution[2] +
+                       currentCell[1] * resolution[1] + currentCell[1];
+    if (cells[cellIndex] != nullptr) {
+      cells[cellIndex]->intersect(r, i);
+    }
+    return (i.ho != nullptr);
+  }
+}

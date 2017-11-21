@@ -43,3 +43,37 @@ bool AABBox::intersect(const Ray &r) {
 
   return !((tmin > tzmax) || (tzmin > tmax));
 }
+
+//=============================================================================
+bool AABBox::intersect(const Ray &r, float_t &tBox) const {
+  float_t tmin, tmax, tymin, tymax, tzmin, tzmax;
+
+  tmin = (bounds[r.sign()[0]].x - r.orig().x) * r.inv_dir().x;
+  tmax = (bounds[1 - r.sign()[0]].x - r.orig().x) * r.inv_dir().x;
+
+  tymin = (bounds[r.sign()[1]].y - r.orig().y) * r.inv_dir().y;
+  tymax = (bounds[1 - r.sign()[1]].y - r.orig().y) * r.inv_dir().y;
+
+  if ((tmin > tymax) || (tymin > tmax))
+    return false;
+
+  if (tymin > tmin)
+    tmin = tymin;
+
+  if (tymax < tmax)
+    tmax = tymax;
+
+  tzmin = (bounds[r.sign()[2]].z - r.orig().z) * r.inv_dir().z;
+  tzmax = (bounds[1 - r.sign()[2]].z - r.orig().z) * r.inv_dir().z;
+
+  if ((tmin > tzmax) || (tzmin > tmax))
+    return false;
+
+  if (tzmin > tmin)
+    tmin = tzmin;
+  if (tzmax < tmax)
+    tmax = tzmax;
+
+  tBox = tmin;
+  return true;
+}

@@ -46,6 +46,7 @@ class AABBox {
     return glm::abs(glm::vec4(bounds[1] - bounds[0]));
   }
   bool intersect(const Ray &r);
+  bool intersect(const Ray &r, float_t &tBox) const;
   AABBox &extend_by(const glm::vec4 &p);
 };
 

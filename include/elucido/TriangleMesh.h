@@ -24,7 +24,9 @@ class TriangleMesh : public Object {
 //=============================================================================
 // Constructors & destructors
 //=============================================================================
-  TriangleMesh() {}
+  TriangleMesh() {
+    ot = triangle_mesh;
+  }
 
 //=============================================================================
   TriangleMesh(const material &m, const bool &in) : Object(m), in(in) {

@@ -25,9 +25,6 @@ glm::vec3 Camera::cast_ray(const Ray &ray,
   // trace it through the scene
   if (scene_bb.intersect(ray) && ray.trace(objects, ii, ri)) {
 
-    // tracing without using scene's bb
-//    if (ray.trace(objects, ii, ri)) {
-
     // get the surface properties of the intersection
     ii.ho->get_surface_properties(ii);
 

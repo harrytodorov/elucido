@@ -34,6 +34,7 @@ class Grid : public AccelerationStructure {
   }
 
   grid_info constructGrid();
+  bool intersect(const Ray &r, isect_info &i) const;
   inline float_t getAlpha() const {
     return this->alpha;
   }

@@ -1546,28 +1546,42 @@ int main(int argc, char **argv) {
   AABBox box;
 
   std::vector<Object *> objects;
-//  objects.emplace_back(new Sphere);
   char fn[100];
   sprintf(fn, "../../object_files/monkey.obj");
-  objects.emplace_back(new TriangleMesh(fn));
+  TriangleMesh *monkey = new TriangleMesh();
+  monkey->load_mesh(fn);
+//  monkey->translate(-0.851562f, Z);
+//  monkey->apply_transformations();
+  objects.emplace_back(monkey);
 
   for (auto object : objects) {
     box.extend_by(object->bb.bounds[0]);
     box.extend_by(object->bb.bounds[1]);
   }
+  std::cout << "Grid's bounding box min extent: (" << box.bounds[0].x << ", " <<
+            box.bounds[0].y << ", " << box.bounds[0].z << ")" << std::endl;
+  std::cout << "Grid's bounding box max extent: (" << box.bounds[1].x << ", " <<
+            box.bounds[1].y << ", " << box.bounds[1].z << ")" << std::endl;
 
   Grid *grid = new Grid(box, objects);
-  grid->setAlpha(1000000.f);
+  grid->setAlpha(3.f);
   grid_info i;
   i = grid->constructGrid();
 
-  std::cout << "Grid's alpha:" << grid->getAlpha() << std::endl;
+  std::cout << "Grid's alpha: " << grid->getAlpha() << std::endl;
   std::cout << "Grid's resoultion: " << i.r[0] << 'x' << i.r[1] << 'x' << i.r[2]
             << std::endl;
   std::cout << "Number of cells: " << i.r[0]*i.r[1]*i.r[2] << std::endl;
   std::cout << "Number of  primitives: " << i.np << std::endl;
   std::cout << "Number of non-empty cells: " << i.nfc << std::endl;
   std::cout << "Average number of primitives per cell: " << i.nppc << std::endl;
+
+  glm::vec4 o(0, 0.f, -1, 1);
+  glm::vec4 d(0, 0, -1, 1);
+  Ray r(o, d);
+
+  isect_info ii;
+  grid->intersect(r, ii);
 
   return 0;
 }

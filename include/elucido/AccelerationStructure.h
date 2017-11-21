@@ -50,6 +50,7 @@ class AccelerationStructure {
   }
 
   std::vector<Primitive> convertToPrimitive(const Object &obj);
+  virtual bool intersect(const Ray &r, isect_info &i) const = 0;
   AABBox bbox;
   std::vector<Primitive> primitives;
 };
