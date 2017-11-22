@@ -15,6 +15,8 @@
 #include "ImagePlane.h"
 #include "Light.h"
 #include "Utilities.h"
+#include "AccelerationStructure.h"
+#include "Grid.h"
 
 class Camera {
 
@@ -73,9 +75,16 @@ class Camera {
                      const std::vector<Object *> &objects,
                      const uint32_t &depth,
                      render_info &ri);
+  glm::vec3 cast_ray(const Ray &ray,
+                     const std::vector<Light *> &lights,
+                     const std::vector<Object *> &objects,
+                     const uint32_t &depth,
+                     const AccelerationStructure *structure,
+                     render_info &ri);
   virtual render_info render_scene(const std::vector<Object *> &objects,
                                    const std::vector<Light *> &lights,
                                    ImagePlane &ip) = 0;
+
   inline glm::vec4 reflect(const glm::vec4 &incident_direction,
                            const glm::vec4 &surface_normal) {
     return incident_direction

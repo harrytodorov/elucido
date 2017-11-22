@@ -28,6 +28,29 @@ render_info PerspectiveCamera::render_scene(const std::vector<Object *> &objects
   // reshape scene's bounding box
   extend_scene_bb(objects);
 
+  // Initialize the acceleration structure.
+  Grid *grid = new Grid(scene_bb, objects);
+  grid->setAlpha(5.5f);
+  grid_info i;
+
+  // Print some useful information regarding grid's construction.
+  auto startConstruction = std::chrono::high_resolution_clock::now();
+  i = grid->constructGrid();
+  auto finishConstruction = std::chrono::high_resolution_clock::now();
+  std::cout << std::endl;
+  std::cout << "Grid's construction time: " <<
+            std::chrono::duration_cast<std::chrono::milliseconds>
+            (finishConstruction - startConstruction).count() << "ms"
+            << std::endl;
+  std::cout << "Grid's alpha: " << grid->getAlpha() << std::endl;
+  std::cout << "Grid's resoultion: " << i.r[0] << 'x' << i.r[1] << 'x' << i.r[2]
+            << std::endl;
+  std::cout << "Number of cells: " << i.r[0]*i.r[1]*i.r[2] << std::endl;
+  std::cout << "Number of  primitives: " << i.np << std::endl;
+  std::cout << "Number of non-empty cells: " << i.nfc << std::endl;
+  std::cout << "Average number of primitives per cell: " << i.nppc << std::endl;
+  std::cout << std::endl;
+
   // set the origin of the rays
   ray.set_orig(eye);
 
@@ -68,8 +91,13 @@ render_info PerspectiveCamera::render_scene(const std::vector<Object *> &objects
           // compute the direction of the ray vector from the eye to the current image plane's sample
           ray.set_dir(glm::normalize(cp - eye));
 
+//          // cast a ray into the scene and get the color value for it
+//          // without acceleration structure
+//          pc += cast_ray(ray, lights, objects, 0, ri);
+
           // cast a ray into the scene and get the color value for it
-          pc += cast_ray(ray, lights, objects, 0, ri);
+          // with acceleration structure
+          pc += cast_ray(ray, lights, objects, 0, grid, ri);
         }
       }
 

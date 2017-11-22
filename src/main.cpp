@@ -109,7 +109,7 @@ void render_cornell_scene() {
 
 
   // load teapot
-  sprintf(fn, "../object_files/wt_teapot.obj");
+  sprintf(fn, "../../object_files/wt_teapot.obj");
   TriangleMesh teapot(tm, true);
 
   // measure loading the triangulated mesh
@@ -138,7 +138,7 @@ void render_cornell_scene() {
   objects.push_back(&teapot);
 
   // load monkey
-  sprintf(fn, "./monkey.obj");
+  sprintf(fn, "../../object_files/monkey.obj");
   TriangleMesh monkey(mm, true);
 
   // measure loading the triangulated mesh
@@ -168,7 +168,7 @@ void render_cornell_scene() {
   objects.push_back(&monkey);
 
   // load bunny
-  sprintf(fn, "./bunny.obj");
+  sprintf(fn, "../../object_files/bunny.obj");
   TriangleMesh bunny(bm, true);
 
   // measure loading the triangulated mesh
@@ -982,7 +982,7 @@ void triangle_meshes() {
   float_t r, g, b;
 
   // load monkey
-  sprintf(fn, "./monkey.obj");
+  sprintf(fn, "../../object_files/monkey.obj");
   TriangleMesh monkey(mm, true);
 
   // measure loading monkey
@@ -1004,7 +1004,7 @@ void triangle_meshes() {
   std::cout << std::endl;
 
   // load teapot
-  sprintf(fn, "./wt_teapot.obj");
+  sprintf(fn, "../../object_files/wt_teapot.obj");
   TriangleMesh teapot(mm, true);
 
   // measure loading teapot
@@ -1353,7 +1353,7 @@ void teapot() {
 //    objects.push_back(&t2);
 
   // load teapot
-  sprintf(fn, "./wt_teapot.obj");
+  sprintf(fn, "../../object_files/wt_teapot.obj");
   TriangleMesh teapot(mm, true);
 
   // measure loading teapot
@@ -1542,7 +1542,7 @@ void specular() {
   ip.save_to_png("specular_sc_0_2_se_1024.png");
 }
 
-int main(int argc, char **argv) {
+void grid_tests() {
   AABBox box;
 
   std::vector<Object *> objects;
@@ -1553,24 +1553,24 @@ int main(int argc, char **argv) {
   dragon->translate(-20, Z);
   dragon->apply_transformations();
   objects.emplace_back(dragon);
-//
-//  dragon->translate(-10, Z);
-//  dragon->apply_transformations();
-//  objects.emplace_back(dragon);
-//
-//  dragon->translate(10, Y);
-//  dragon->apply_transformations();
-//  objects.emplace_back(dragon);
-//
-//  dragon->translate(10, X);
-//  dragon->apply_transformations();
-//  objects.emplace_back(dragon);
 
-//  Sphere *s = new Sphere();
-//  objects.emplace_back(s);
-//
-//  s->translate(-1, Z);
-//  objects.emplace_back(s);
+  dragon->translate(-10, Z);
+  dragon->apply_transformations();
+  objects.emplace_back(dragon);
+
+  dragon->translate(10, Y);
+  dragon->apply_transformations();
+  objects.emplace_back(dragon);
+
+  dragon->translate(10, X);
+  dragon->apply_transformations();
+  objects.emplace_back(dragon);
+
+  Sphere *s = new Sphere();
+  objects.emplace_back(s);
+
+  s->translate(-1, Z);
+  objects.emplace_back(s);
 
   for (auto object : objects) {
     box.extend_by(object->bb.bounds[0]);
@@ -1615,5 +1615,9 @@ int main(int argc, char **argv) {
   r.trace(objects, ii, ri);
   std::cout << "Intersection point basic: \t\t(" << ii.ip.x << ", " << ii.ip.y
             << ", " << ii.ip.z << ")" << std::endl;
+}
+
+int main(int argc, char **argv) {
+  render_cornell_scene();
   return 0;
 }

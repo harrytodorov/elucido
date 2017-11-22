@@ -13,10 +13,20 @@ struct Cell {
   void insert(const Primitive &primitive) {
     primitives.emplace_back(primitive);
   }
-  void intersect(const Ray &r, isect_info &i) {
+  bool intersect(const Ray &r, isect_info &i) {
     for (auto primitive : primitives) {
-      primitive.intersect(r, i);
+      // Information we got from the intersection with the current object.
+      isect_info co;
+
+      if (primitive.intersect(r, co) && co.tn < i.tn) {
+        i = co;
+        i.ho = primitive.obj_pointer;
+        if (i.ho->ot == triangle_mesh) {
+          i.ti = primitive.tri_ind;
+        }
+      }
     }
+    return (i.ho != nullptr);
   }
   std::vector<Primitive> primitives;
 };

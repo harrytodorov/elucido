@@ -112,7 +112,7 @@ grid_info Grid::constructGrid() {
   return info;
 }
 
-bool Grid::intersect(const Ray &r, isect_info &i) const {
+bool Grid::intersect(const Ray &r, isect_info &ii) const {
   // Scalar distance from the ray's origin to the nearest hit point of
   // the ray with the grid's bounding box.
   float_t tBoundingBox;
@@ -133,53 +133,56 @@ bool Grid::intersect(const Ray &r, isect_info &i) const {
   // to x,y, or z.
   // Take in account that the sign of the
   // ray's direction plays a role into determining the proper value.
-  for (size_t i = 0; i < 3; i++) {
-    float_t rayOrigToGrid = (r.orig()[i] + r.dir()[i]*tBoundingBox) -
-                            bbox.bounds[0][i];
-    currentCell[i] = glm::clamp(static_cast<size_t>(rayOrigToGrid / cellDimension[i]),
+  for (size_t j = 0; j < 3; j++) {
+    float_t rayOrigToGrid = (r.orig()[j] + r.dir()[j]*tBoundingBox) -
+                            bbox.bounds[0][j];
+    currentCell[j] = glm::clamp(static_cast<size_t>(rayOrigToGrid / cellDimension[j]),
                                 static_cast<size_t>(0),
-                                static_cast<size_t>(resolution[i] - 1));
+                                static_cast<size_t>(resolution[j] - 1));
 
-    // Ray's direction is negative in i-axis.
-    if (r.dir()[i] < 0) {
-      deltaT[i] = -cellDimension[i] * r.inv_dir()[i];
-      nextCrossingT[i] = (currentCell[i] * cellDimension[i] - rayOrigToGrid) *
-                          r.inv_dir()[i];
-      step[i] = -1;
-      exit[i] = -1;
+    // Ray's direction is negative in j-axis.
+    if (r.dir()[j] < 0) {
+      deltaT[j] = -cellDimension[j] * r.inv_dir()[j];
+      nextCrossingT[j] = (currentCell[j] * cellDimension[j] - rayOrigToGrid) *
+                          r.inv_dir()[j];
+      step[j] = -1;
+      exit[j] = -1;
     } else {
-      // Ray's direction is positive in i-axis.
-      deltaT[i] = cellDimension[i] / r.inv_dir()[i];
-      nextCrossingT[i] = ((currentCell[i] + 1) * cellDimension[i] -
-                          rayOrigToGrid) * r.inv_dir()[i];
-      step[i] = 1;
-      exit[i] = resolution[i];
+      // Ray's direction is positive in j-axis.
+      deltaT[j] = cellDimension[j] / r.inv_dir()[j];
+      nextCrossingT[j] = ((currentCell[j] + 1) * cellDimension[j] -
+                          rayOrigToGrid) * r.inv_dir()[j];
+      step[j] = 1;
+      exit[j] = resolution[j];
     }
   }
+
+  // Reset the intersection information.
+  ii = isect_info();
 
   // The actual traversal of the grid.
   while (1) {
     size_t cellIndex = currentCell[2] * resolution[2] +
                        currentCell[1] * resolution[1] + currentCell[0];
 
-    // Intersect primitive.
-    if (cells[cellIndex] != nullptr) {
-      cells[cellIndex]->intersect(r, i);
+    // Check if there are any primitives in the current cell and if yes
+    // check if the ray intersects any of the primitives in the cell.
+    if (cells[cellIndex] != nullptr)
+      cells[cellIndex]->intersect(r, ii);
+
+    // Find the plane with the smallest crossing.
+    size_t planeIndex{0};
+    for (size_t i = 0; i < 3; i++) {
+      if (nextCrossingT[i] < nextCrossingT[planeIndex]) {
+        planeIndex = i;
+      }
     }
 
-      // Find the plane with the smallest crossing.
-      size_t planeIndex{0};
-      for (size_t i = 0; i < 3; i++) {
-        if (nextCrossingT[i] < nextCrossingT[planeIndex]) {
-          planeIndex = i;
-        }
-      }
-
     // Advance the grid.
-    if (i.tn < nextCrossingT[planeIndex]) break;
+    if (ii.tn < nextCrossingT[planeIndex]) break;
     currentCell[planeIndex] += step[planeIndex];
     if (currentCell[planeIndex] == exit[planeIndex]) break;
     nextCrossingT[planeIndex] += deltaT[planeIndex];
   }
-  return (i.ho != nullptr);
+  return (ii.ho != nullptr);
 }

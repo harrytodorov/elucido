@@ -25,6 +25,29 @@ render_info OrthographicCamera::render_scene(const std::vector<Object *> &object
   // reshape scene's bounding box
   extend_scene_bb(objects);
 
+  // Initialize the acceleration structure.
+  Grid *grid = new Grid(scene_bb, objects);
+  grid->setAlpha(5.5f);
+  grid_info i;
+
+  // Print some useful information regarding grid's construction.
+  auto startConstruction = std::chrono::high_resolution_clock::now();
+  i = grid->constructGrid();
+  auto finishConstruction = std::chrono::high_resolution_clock::now();
+  std::cout << std::endl;
+  std::cout << "Grid's construction time: " <<
+            std::chrono::duration_cast<std::chrono::milliseconds>
+                (finishConstruction - startConstruction).count() << "ms"
+            << std::endl;
+  std::cout << "Grid's alpha: " << grid->getAlpha() << std::endl;
+  std::cout << "Grid's resoultion: " << i.r[0] << 'x' << i.r[1] << 'x' << i.r[2]
+            << std::endl;
+  std::cout << "Number of cells: " << i.r[0]*i.r[1]*i.r[2] << std::endl;
+  std::cout << "Number of  primitives: " << i.np << std::endl;
+  std::cout << "Number of non-empty cells: " << i.nfc << std::endl;
+  std::cout << "Average number of primitives per cell: " << i.nppc << std::endl;
+  std::cout << std::endl;
+
   // Set the ray direction same as the direction of the camera
   // and normalize it, shouldn't be necessary, but just in case
   ray.set_dir(glm::normalize(lookat - eye));
@@ -60,8 +83,13 @@ render_info OrthographicCamera::render_scene(const std::vector<Object *> &object
           // set the ray origin for each sample position
           ray.set_orig(glm::vec4(curr_x, curr_y, 0.f, 1.f));
 
+//          // cast a ray into the scene and get the color value for it
+//          // without acceleration structure
+//          pc += cast_ray(ray, lights, objects, 0, ri);
+
           // cast a ray into the scene and get the color value for it
-          pc += cast_ray(ray, lights, objects, 0, ri);
+          // with acceleration structure
+          pc += cast_ray(ray, lights, objects, 0, grid, ri);
         }
       }
 

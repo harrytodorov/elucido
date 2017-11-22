@@ -179,6 +179,182 @@ glm::vec3 Camera::cast_ray(const Ray &ray,
 }
 
 //=============================================================================
+glm::vec3 Camera::cast_ray(const Ray &ray,
+                   const std::vector<Light *> &lights,
+                   const std::vector<Object *> &objects,
+                   const uint32_t &depth,
+                   const AccelerationStructure *structure,
+                   render_info &ri) {
+  // if we've reached the bottom of the recursion tree, we return the background color
+  if (depth > max_depth) return bgc;
+
+  // hit color
+  glm::vec3 hc(bgc);
+
+  // intersection information
+  isect_info ii;
+
+  // increment number of primary rays
+  if (ray.rt == primary) __sync_fetch_and_add(&ri.npr, 1);
+
+  // check if a ray intersects the scene's bounding box and if so
+  // trace it through the scene
+  if (structure->intersect(ray, ii)) {
+
+    // get the surface properties of the intersection
+    ii.ho->get_surface_properties(ii);
+
+    // material of the intersected object
+    material mat = ii.ho->om;
+
+    // if we have an intersection we set the background color to 0 for all components; black
+    hc = black;
+
+    // for materials with Phong Illumination model
+    if (mat.mt == pm) {
+      Ray shadow_ray;
+      isect_info dummy;
+
+      // holders for diffuse & specular values;
+      glm::vec3 diffuse(0), specular(0);
+      float_t lamb_refl(0);
+
+      // iterate through all light sources and calculate specular and defuse components
+      for (auto &light : lights) {
+        glm::vec4 light_direction(0);
+        glm::vec3 light_intensity(0);
+        float_t light_dist = infinity;
+        float_t visibility(1.f);
+
+        light->illuminate(ii.ip, light_direction, light_intensity, light_dist);
+
+        // compute if the surface point is in shadow
+        shadow_ray.rt = shadow;
+
+        // hit_normal * bias is used to translate the origin point by a slightly bit
+        // set_orig one could avoid self-shadows, because of float number precision
+        shadow_ray.set_orig(ii.ip + ii.ipn * bias);
+
+        // for the direction of the shadow ray we take the opposite of the light direction
+        shadow_ray.set_dir(-light_direction);
+
+        // ignore self-shadows; those would be handled correctly later
+        if (shadow_ray.trace(objects, dummy, ri)
+            && dummy.tn < light_dist & dummy.ho != ii.ho) {
+          visibility = 0.f;
+          continue;
+        }
+
+        // dot product based on Lambert's cosine law for Lambertian reflectance;
+        lamb_refl = glm::dot(ii.ipn, -light_direction);
+
+        // calculate diffuse component
+        diffuse = mat.c * light_intensity * glm::max(0.f, lamb_refl);
+
+        // calculate specular component
+        glm::vec4 light_reflection =
+            glm::normalize(2.f * lamb_refl * ii.ipn + light_direction);
+        float_t
+            max_lf_vd = glm::max(0.f, glm::dot(light_reflection, -ray.dir()));
+        float_t pow_max_se = glm::pow(max_lf_vd, mat.se);
+
+        specular = light_intensity * pow_max_se;
+
+        // add ambient, diffuse and specular to the the hit color
+        hc += visibility
+            * (mat.ac * mat.c + mat.dc * diffuse + mat.sc * specular);
+      }
+    }
+
+    //  for reflective materials
+    if (mat.mt == rm) {
+      glm::vec4 reflection_vec = glm::normalize(reflect(ray.dir(), ii.ipn));
+
+      // create a reflection ray
+      Ray rr;
+      rr.rt = reflection;
+      rr.set_orig(ii.ip + ii.ipn * bias);
+      rr.set_dir(reflection_vec);
+
+      hc += mat.ri * cast_ray(rr, lights, objects, depth + 1, ri);
+
+      // compute a specular reflection for reflective materials
+      glm::vec3 specular(0);
+
+      // iterate through all light sources and calculate specular
+      for (auto &light : lights) {
+        glm::vec4 light_direction(0);
+        glm::vec3 light_intensity(0);
+        float_t light_dist = infinity, lamb_refl(0);
+
+        light->illuminate(ii.ip, light_direction, light_intensity, light_dist);
+
+        // dot product based on Lambert's cosine law for Lambertian reflectance;
+        lamb_refl = glm::dot(ii.ipn, -light_direction);
+
+        // calculate specular component
+        glm::vec4 light_reflection =
+            glm::normalize(2.f * lamb_refl * ii.ipn + light_direction);
+        float_t
+            max_lf_vd = glm::max(0.f, glm::dot(light_reflection, -ray.dir()));
+        float_t pow_max_se = glm::pow(max_lf_vd, mat.se);
+
+        specular += light_intensity * pow_max_se;
+      }
+
+      // add specular highlight to the material
+      hc += mat.sc * specular;
+
+      // add color to the reflective material
+      hc = hc * mat.c;
+    }
+
+    // for refractive materials
+    if (mat.mt == rrm) {
+      Ray rr;
+      glm::vec3 reflection_col(0), refraction_col(0);
+      glm::vec4 direction;
+      float_t reflectance;
+
+      // evaluate the reflectance-refraction ratio using Fresnel equations
+      compute_fresnel(ray.dir(), ii.ipn, mat.ior, reflectance);
+
+      // is the ray hitting the object from the inside or the outside
+      bool outside = glm::dot(ray.dir(), ii.ipn) < 0.f;
+
+      // compute refraction if it's not the case of total internal reflection
+      if (reflectance < 1.f) {
+        rr.rt = refraction;
+        rr.set_orig(outside ? ii.ip - bias * ii.ipn : ii.ip + bias * ii.ipn);
+
+        // calculate and set direction for the refraction
+        direction = refract(ray.dir(), ii.ipn, mat.ior);
+        rr.set_dir(direction);
+
+        refraction_col = cast_ray(rr, lights, objects, depth + 1, ri);
+      }
+
+      // compute the reflection
+      rr.rt = reflection;
+      rr.set_orig(outside ? ii.ip + bias * ii.ipn : ii.ip - bias * ii.ipn);
+
+      // calculate and set direction for the reflection
+      direction = reflect(ray.dir(), ii.ipn);
+      rr.set_dir(direction);
+
+      reflection_col = cast_ray(rr, lights, objects, depth + 1, ri);
+
+      // mix reflection & refraction according to Fresnel + add color of the object
+      hc +=
+          (reflectance * reflection_col + (1.f - reflectance) * refraction_col)
+              * mat.c;
+    }
+  }
+
+  return hc;
+}
+
+//=============================================================================
 void Camera::rotate(float_t rot_angle, uint32_t axes_of_rotation) {
   // create 3d vector to determine the axis of rotation
   glm::vec3 rv(0);
