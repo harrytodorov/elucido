@@ -44,7 +44,7 @@ class Grid : public AccelerationStructure {
  private:
   Cell **cells;
   size_t resolution[3];
-  size_t maxResolution{128};
+  size_t maxResolution{256};
   float_t alpha{3.5f};
   glm::vec4 cellDimension;
 };

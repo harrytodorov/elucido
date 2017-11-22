@@ -1547,12 +1547,30 @@ int main(int argc, char **argv) {
 
   std::vector<Object *> objects;
   char fn[100];
-  sprintf(fn, "../../object_files/monkey.obj");
-  TriangleMesh *monkey = new TriangleMesh();
-  monkey->load_mesh(fn);
-//  monkey->translate(-0.851562f, Z);
-//  monkey->apply_transformations();
-  objects.emplace_back(monkey);
+  sprintf(fn, "../../object_files/dragon.obj");
+  TriangleMesh *dragon = new TriangleMesh();
+  dragon->load_mesh(fn);
+  dragon->translate(-20, Z);
+  dragon->apply_transformations();
+  objects.emplace_back(dragon);
+//
+//  dragon->translate(-10, Z);
+//  dragon->apply_transformations();
+//  objects.emplace_back(dragon);
+//
+//  dragon->translate(10, Y);
+//  dragon->apply_transformations();
+//  objects.emplace_back(dragon);
+//
+//  dragon->translate(10, X);
+//  dragon->apply_transformations();
+//  objects.emplace_back(dragon);
+
+//  Sphere *s = new Sphere();
+//  objects.emplace_back(s);
+//
+//  s->translate(-1, Z);
+//  objects.emplace_back(s);
 
   for (auto object : objects) {
     box.extend_by(object->bb.bounds[0]);
@@ -1564,10 +1582,16 @@ int main(int argc, char **argv) {
             box.bounds[1].y << ", " << box.bounds[1].z << ")" << std::endl;
 
   Grid *grid = new Grid(box, objects);
-  grid->setAlpha(3.f);
+  grid->setAlpha(5.5f);
   grid_info i;
-  i = grid->constructGrid();
 
+  auto startConstruction = std::chrono::high_resolution_clock::now();
+  i = grid->constructGrid();
+  auto finishConstruction = std::chrono::high_resolution_clock::now();
+  std::cout << "Grid's construction time: " <<
+            std::chrono::duration_cast<std::chrono::milliseconds>
+            (finishConstruction - startConstruction).count() << "ms"
+            << std::endl;
   std::cout << "Grid's alpha: " << grid->getAlpha() << std::endl;
   std::cout << "Grid's resoultion: " << i.r[0] << 'x' << i.r[1] << 'x' << i.r[2]
             << std::endl;
@@ -1575,13 +1599,21 @@ int main(int argc, char **argv) {
   std::cout << "Number of  primitives: " << i.np << std::endl;
   std::cout << "Number of non-empty cells: " << i.nfc << std::endl;
   std::cout << "Average number of primitives per cell: " << i.nppc << std::endl;
+  std::cout << std::endl;
 
-  glm::vec4 o(0, 0.f, -1, 1);
+  glm::vec4 o(0, 0, 0, 1);
   glm::vec4 d(0, 0, -1, 1);
   Ray r(o, d);
 
   isect_info ii;
   grid->intersect(r, ii);
+  std::cout << "Intersection point from grid: \t(" << ii.ip.x << ", " << ii.ip.y
+            << ", " << ii.ip.z << ")" << std::endl;
 
+  render_info ri;
+  ii = isect_info();
+  r.trace(objects, ii, ri);
+  std::cout << "Intersection point basic: \t\t(" << ii.ip.x << ", " << ii.ip.y
+            << ", " << ii.ip.z << ")" << std::endl;
   return 0;
 }

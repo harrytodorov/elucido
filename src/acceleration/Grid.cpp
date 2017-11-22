@@ -25,7 +25,8 @@ grid_info Grid::constructGrid() {
 
   // Convert resolution from floating number to an integer.
   for (size_t i = 0; i < 3; i++) {
-    if (resFloat[i] > 128.f) resFloat[i] = 128.f;
+    if (resFloat[i] > static_cast<float_t>(maxResolution))
+      resFloat[i] = static_cast<float_t>(maxResolution);
     if (resFloat[i] < 1.f) resFloat[i] = 1.f;
     // Static cast to size_t is equivalent to std::floor of the
     // floating value.
@@ -159,10 +160,26 @@ bool Grid::intersect(const Ray &r, isect_info &i) const {
   // The actual traversal of the grid.
   while (1) {
     size_t cellIndex = currentCell[2] * resolution[2] +
-                       currentCell[1] * resolution[1] + currentCell[1];
+                       currentCell[1] * resolution[1] + currentCell[0];
+
+    // Intersect primitive.
     if (cells[cellIndex] != nullptr) {
       cells[cellIndex]->intersect(r, i);
     }
-    return (i.ho != nullptr);
+
+      // Find the plane with the smallest crossing.
+      size_t planeIndex{0};
+      for (size_t i = 0; i < 3; i++) {
+        if (nextCrossingT[i] < nextCrossingT[planeIndex]) {
+          planeIndex = i;
+        }
+      }
+
+    // Advance the grid.
+    if (i.tn < nextCrossingT[planeIndex]) break;
+    currentCell[planeIndex] += step[planeIndex];
+    if (currentCell[planeIndex] == exit[planeIndex]) break;
+    nextCrossingT[planeIndex] += deltaT[planeIndex];
   }
+  return (i.ho != nullptr);
 }
