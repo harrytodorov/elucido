@@ -45,6 +45,9 @@ class Grid : public AccelerationStructure {
 
   grid_info constructGrid();
   bool intersect(const Ray &r, isect_info &i) const;
+  inline size_t offset(size_t x, size_t y, size_t z) const {
+    return z * resolution[0] * resolution[1] + y * resolution[0] + x;
+  }
   inline float_t getAlpha() const {
     return this->alpha;
   }
@@ -54,8 +57,8 @@ class Grid : public AccelerationStructure {
  private:
   Cell **cells;
   size_t resolution[3];
-  size_t maxResolution{256};
-  float_t alpha{3.5f};
+  size_t maxResolution{64};
+  float_t alpha{3.f};
   glm::vec4 cellDimension;
 };
 

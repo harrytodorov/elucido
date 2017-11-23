@@ -208,7 +208,6 @@ void render_cornell_scene() {
   ri = camera->render_scene(objects, lights, ip);
   auto finish_rendering = std::chrono::high_resolution_clock::now();
   std::cout << "Done rendering." << std::endl;
-  std::cout << "Scene without intersection acceleration" << std::endl;
   std::cout << "Rendering time                        : "
             << std::chrono::duration_cast<std::chrono::seconds>(
                 finish_rendering - start_rendering).count() << " seconds"
@@ -1315,7 +1314,7 @@ void monkey() {
 void teapot() {
   std::vector<Object *> objects;
   std::vector<Light *> lights;
-  Camera *camera = new OrthographicCamera();
+  Camera *camera = new PerspectiveCamera();
   ImagePlane ip = ImagePlane(550, 550);
   ip.ns = 3;
   render_info ri;

@@ -30,7 +30,6 @@ render_info PerspectiveCamera::render_scene(const std::vector<Object *> &objects
 
   // Initialize the acceleration structure.
   Grid *grid = new Grid(scene_bb, objects);
-  grid->setAlpha(5.5f);
   grid_info i;
 
   // Print some useful information regarding grid's construction.

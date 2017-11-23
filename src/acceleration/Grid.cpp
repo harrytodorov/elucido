@@ -27,7 +27,9 @@ grid_info Grid::constructGrid() {
   for (size_t i = 0; i < 3; i++) {
     if (resFloat[i] > static_cast<float_t>(maxResolution))
       resFloat[i] = static_cast<float_t>(maxResolution);
-    if (resFloat[i] < 1.f) resFloat[i] = 1.f;
+    if (resFloat[i] < 1.f)
+      resFloat[i] = 1.f;
+
     // Static cast to size_t is equivalent to std::floor of the
     // floating value.
     resolution[i] = static_cast<size_t>(resFloat[i]);
@@ -42,6 +44,7 @@ grid_info Grid::constructGrid() {
   // Allocate memory for cells in the grid.
   size_t numOfCells = resolution[0] * resolution[1] * resolution[2];
   cells = new Cell*[numOfCells];
+
   // Set the cell's content initially to NULL.
   memset(cells, 0x0, sizeof(Cell*) * numOfCells);
 
@@ -60,38 +63,44 @@ grid_info Grid::constructGrid() {
     // a primitive into integers.
 
     // min, x
-    minCell[0] = static_cast<size_t>(glm::clamp(minPrimCellCoord.x,
-                                                0.f,
-                                                1.f * (resolution[0] - 1)));
+    minCell[0] = static_cast<size_t>(
+        glm::clamp(minPrimCellCoord.x,
+        0.f,
+        1.f * (resolution[0] - 1)));
     // min, y
-    minCell[1] = static_cast<size_t>(glm::clamp(minPrimCellCoord.y,
-                                                0.f,
-                                                1.f * (resolution[1] - 1)));
+    minCell[1] = static_cast<size_t>(
+        glm::clamp(minPrimCellCoord.y,
+        0.f,
+        1.f * (resolution[1] - 1)));
     // min, z
-    minCell[2] = static_cast<size_t>(glm::clamp(minPrimCellCoord.z,
-                                                0.f,
-                                                1.f * (resolution[2] - 1)));
+    minCell[2] = static_cast<size_t>(
+        glm::clamp(minPrimCellCoord.z,
+        0.f,
+        1.f * (resolution[2] - 1)));
     // max, x
-    maxCell[0] = static_cast<size_t>(glm::clamp(maxPrimCellCoord.x,
-                                                0.f,
-                                                1.f * (resolution[0] - 1)));
+    maxCell[0] = static_cast<size_t>(
+        glm::clamp(maxPrimCellCoord.x,
+        0.f,
+        1.f * (resolution[0] - 1)));
     // max, y
-    maxCell[1] = static_cast<size_t>(glm::clamp(maxPrimCellCoord.y,
-                                                0.f,
-                                                1.f * (resolution[1] - 1)));
+    maxCell[1] = static_cast<size_t>(
+        glm::clamp(maxPrimCellCoord.y,
+        0.f,
+        1.f * (resolution[1] - 1)));
     // max, z
-    maxCell[2] = static_cast<size_t>(glm::clamp(maxPrimCellCoord.z,
-                                                0.f,
-                                                1.f * (resolution[2] - 1)));
+    maxCell[2] = static_cast<size_t>(
+        glm::clamp(maxPrimCellCoord.z,
+        0.f,
+        1.f * (resolution[2] - 1)));
 
     // Iterate over corresponding grid cells and add primitive to it.
     for (size_t z = minCell[2]; z <= maxCell[2]; ++z) {
       for (size_t y = minCell[1]; y <= maxCell[1]; ++y) {
         for (size_t x = minCell[0]; x <= maxCell[0]; ++x) {
           // Compute the cell's index.
-          size_t cellIndex = z * resolution[2] + y * resolution[1] + x;
+          size_t cellIndex = offset(x, y, z);
           // Initialize cell, if needed.
-          if (cells[cellIndex] == NULL) cells[cellIndex] = new Cell;
+          if (cells[cellIndex] == nullptr) cells[cellIndex] = new Cell;
           cells[cellIndex]->insert(primitive);
         }
       }
@@ -122,7 +131,7 @@ bool Grid::intersect(const Ray &r, isect_info &ii) const {
     return false;
 
   glm::vec4 deltaT, nextCrossingT;
-  size_t currentCell[3];
+  int currentCell[3];
   int step[3];  // Steps could be also negative.
   int exit[3];  // The same argument.
 
@@ -133,27 +142,31 @@ bool Grid::intersect(const Ray &r, isect_info &ii) const {
   // to x,y, or z.
   // Take in account that the sign of the
   // ray's direction plays a role into determining the proper value.
-  for (size_t j = 0; j < 3; j++) {
-    float_t rayOrigToGrid = (r.orig()[j] + r.dir()[j]*tBoundingBox) -
-                            bbox.bounds[0][j];
-    currentCell[j] = glm::clamp(static_cast<size_t>(rayOrigToGrid / cellDimension[j]),
-                                static_cast<size_t>(0),
-                                static_cast<size_t>(resolution[j] - 1));
+  for (size_t axis = 0; axis < 3; axis++) {
+    float_t rayOrigToGrid = (r.orig()[axis] + r.dir()[axis]*tBoundingBox) -
+                            bbox.bounds[0][axis];
+    currentCell[axis] = static_cast<int>(glm::clamp(
+        std::floor(rayOrigToGrid / cellDimension[axis]),
+        0.f,
+        1.f * (resolution[axis] - 1)));
 
-    // Ray's direction is negative in j-axis.
-    if (r.dir()[j] < 0) {
-      deltaT[j] = -cellDimension[j] * r.inv_dir()[j];
-      nextCrossingT[j] = (currentCell[j] * cellDimension[j] - rayOrigToGrid) *
-                          r.inv_dir()[j];
-      step[j] = -1;
-      exit[j] = -1;
-    } else {
-      // Ray's direction is positive in j-axis.
-      deltaT[j] = cellDimension[j] / r.inv_dir()[j];
-      nextCrossingT[j] = ((currentCell[j] + 1) * cellDimension[j] -
-                          rayOrigToGrid) * r.inv_dir()[j];
-      step[j] = 1;
-      exit[j] = resolution[j];
+    if (r.dir()[axis] >= 0) {
+      // Ray's direction is positive in axis-axis.
+      deltaT[axis] = cellDimension[axis] * r.inv_dir()[axis];
+      nextCrossingT[axis] = tBoundingBox +
+              ((currentCell[axis] + 1) * cellDimension[axis] - rayOrigToGrid) *
+              r.inv_dir()[axis];
+      step[axis] = 1;
+      exit[axis] = resolution[axis];
+    }
+    else {
+      // Ray's direction is negative in axis-axis.
+      deltaT[axis] = -cellDimension[axis] * r.inv_dir()[axis];
+      nextCrossingT[axis] = tBoundingBox +
+          (currentCell[axis] * cellDimension[axis] - rayOrigToGrid) *
+          r.inv_dir()[axis];
+      step[axis] = -1;
+      exit[axis] = -1;
     }
   }
 
@@ -162,8 +175,7 @@ bool Grid::intersect(const Ray &r, isect_info &ii) const {
 
   // The actual traversal of the grid.
   while (1) {
-    size_t cellIndex = currentCell[2] * resolution[2] +
-                       currentCell[1] * resolution[1] + currentCell[0];
+    size_t cellIndex = offset(currentCell[0], currentCell[1], currentCell[2]);
 
     // Check if there are any primitives in the current cell and if yes
     // check if the ray intersects any of the primitives in the cell.

@@ -239,8 +239,8 @@ glm::vec3 Camera::cast_ray(const Ray &ray,
         shadow_ray.set_dir(-light_direction);
 
         // ignore self-shadows; those would be handled correctly later
-        if (shadow_ray.trace(objects, dummy, ri)
-            && dummy.tn < light_dist & dummy.ho != ii.ho) {
+        if (structure->intersect(shadow_ray, dummy) &&
+            dummy.tn < light_dist & dummy.ho != ii.ho) {
           visibility = 0.f;
           continue;
         }
@@ -276,7 +276,7 @@ glm::vec3 Camera::cast_ray(const Ray &ray,
       rr.set_orig(ii.ip + ii.ipn * bias);
       rr.set_dir(reflection_vec);
 
-      hc += mat.ri * cast_ray(rr, lights, objects, depth + 1, ri);
+      hc += mat.ri * cast_ray(rr, lights, objects, depth + 1, structure, ri);
 
       // compute a specular reflection for reflective materials
       glm::vec3 specular(0);
@@ -331,7 +331,7 @@ glm::vec3 Camera::cast_ray(const Ray &ray,
         direction = refract(ray.dir(), ii.ipn, mat.ior);
         rr.set_dir(direction);
 
-        refraction_col = cast_ray(rr, lights, objects, depth + 1, ri);
+        refraction_col = cast_ray(rr, lights, objects, depth + 1, structure, ri);
       }
 
       // compute the reflection
@@ -342,7 +342,7 @@ glm::vec3 Camera::cast_ray(const Ray &ray,
       direction = reflect(ray.dir(), ii.ipn);
       rr.set_dir(direction);
 
-      reflection_col = cast_ray(rr, lights, objects, depth + 1, ri);
+      reflection_col = cast_ray(rr, lights, objects, depth + 1, structure, ri);
 
       // mix reflection & refraction according to Fresnel + add color of the object
       hc +=
