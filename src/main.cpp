@@ -1616,7 +1616,254 @@ void grid_tests() {
             << ", " << ii.ip.z << ")" << std::endl;
 }
 
+void dragon() {
+  std::vector<Object *> objects;
+  std::vector<Light *> lights;
+  Camera *camera = new PerspectiveCamera();
+  ImagePlane ip = ImagePlane(1280, 720);
+  ip.ns = 3;
+  char fn[100];
+  loading_info li;
+  render_info ri;
+
+  /// material set-up
+
+  material box_white;
+  box_white.c = white;
+  box_white.ac = 0.f;
+
+  material dm;
+  dm.mt = rrm;
+  dm.ior = 1.5111f;
+
+  /// light set-up
+
+  glm::vec4 lp1(0.0f, 2.5f, -9.5f, 1);
+  glm::vec4 lp2(3.5f, 2.5f, -9.5f, 1);
+  glm::vec4 lp3(-3.5f, 2.5f, -9.5f, 1);
+
+  PointLight l1(lp3, white, 60);
+  lights.push_back(&l1);
+
+  PointLight l2(lp1, bg_green, 60);
+  lights.push_back(&l2);
+
+  PointLight l3(lp2, red, 60);
+  lights.push_back(&l3);
+
+  PointLight l4(lp1, white, 90);
+  l4.translate(6, Z);
+  l4.translate(-0.5f, X);
+  l4.apply_transformations();
+  lights.push_back(&l4);
+
+
+  /// object set-up
+
+  glm::vec4 v0(-5, 0, -3, 1);
+  glm::vec4 v1(5, 0, -3, 1);
+  glm::vec4 v2(-5, 10, -3, 1);
+  glm::vec4 v3(5, 10, -3, 1);
+  glm::vec4 v4(-5, 0, -13, 1);
+  glm::vec4 v5(5, 0, -13, 1);
+  glm::vec4 v6(-5, 10, -13, 1);
+  glm::vec4 v7(5, 10, -13, 1);
+
+  // floor
+  Triangle t1(v0, v1, v4, box_white);
+  objects.push_back(&t1);
+  Triangle t2(v1, v5, v4, box_white);
+  objects.push_back(&t2);
+
+  // dragon
+  sprintf(fn, "../../object_files/dragon.obj");
+  TriangleMesh dragon(dm, true);
+
+  // measure loading the triangulated mesh
+  std::cout << std::endl;
+  std::cout << "Start loading..." << std::endl;
+  auto start_loading = std::chrono::high_resolution_clock::now();ф
+  li = dragon.load_mesh(fn);
+  auto finish_loading = std::chrono::high_resolution_clock::now();
+  std::cout << "Done loading '" << fn << "'." << std::endl;
+  std::cout << "Loading time                          : "
+            << std::chrono::duration_cast<std::chrono::milliseconds>(
+                finish_loading - start_loading).count() << " milliseconds"
+            << std::endl;
+  std::cout << "# of vertices in the mesh             : " << li.nv << std::endl;
+  std::cout << "# of vertex normals in the mesh       : " << li.nvn
+            << std::endl;
+  std::cout << "# of triangles in the mesh            : " << li.nt << std::endl;
+  std::cout << "# of faces in the mesh                : " << li.nf << std::endl;
+  std::cout << std::endl;
+
+  dragon.rotate(98.f, Y);
+  dragon.translate(0.84887f, Y);
+  dragon.translate(-8.f, Z);
+  dragon.apply_transformations();
+  objects.push_back(&dragon);
+
+  /// camera transformations
+
+  camera->rotate(-10.f, X);
+  camera->translate(-4.f, Z);
+  camera->translate(2.5f, Y);
+
+  std::cout << "Dragons bounding box min: (" << dragon.bb.bounds[0].x << ", " <<
+            dragon.bb.bounds[0].y << ", " << dragon.bb.bounds[0].z << ")" <<
+            std::endl;
+  std::cout << "Dragons bounding box max: (" << dragon.bb.bounds[1].x << ", "
+            << dragon.bb.bounds[1].y << ", " << dragon.bb.bounds[1].z << ")" <<
+            std::endl << std::endl;
+
+  /// rendering
+
+  // measure rendering time
+  std::cout << "Start rendering..." << std::endl;
+  auto start_rendering = std::chrono::high_resolution_clock::now();
+  ri = camera->render_scene(objects, lights, ip);
+  auto finish_rendering = std::chrono::high_resolution_clock::now();
+
+  // print some rendering statistics
+  std::cout << "Done rendering." << std::endl;
+  std::cout << "Rendering time                        : "
+            << std::chrono::duration_cast<std::chrono::seconds>(
+                finish_rendering - start_rendering).count() << " seconds"
+            << std::endl;
+  std::cout << "# of primary rays                     : " << ri.npr
+            << std::endl;
+  std::cout << "# of shadow rays                      : " << ri.nsr
+            << std::endl;
+  std::cout << "# of reflection rays                  : " << ri.nrr
+            << std::endl;
+  std::cout << "# of objects in the scene             : " << ri.no << std::endl;
+  std::cout << "# of light sources in the scene       : " << ri.nls
+            << std::endl;
+  std::cout << "# of ray-primitive intersection tests : " << ri.nrpt
+            << std::endl;
+  std::cout << "# of ray-object intersections         : " << ri.nroi
+            << std::endl;
+  std::cout << "ratio (isect tests / isect)           : "
+            << (1.f * ri.nrpt) / ri.nroi << std::endl;
+  ip.save_to_png("dragon_scene_bg_flag_full_size_01.png");
+}
+
+void spheres_grid() {
+  std::vector<Object *> objects;
+  std::vector<Light *> lights;
+  Camera *camera = new PerspectiveCamera();
+  ImagePlane ip = ImagePlane(1280, 720);
+  ip.ns = 3;
+  char fn[100];
+  loading_info li;
+  render_info ri;
+
+  /// light set-up
+  glm::vec4 lp1(0.0f, 1.5f, 0.5f, 1);
+
+  PointLight l1(lp1, white, 50);
+  lights.push_back(&l1);
+
+  /// object set-up
+  // first row spheres
+  Sphere *s1 = new Sphere(glm::vec4(0, 0, -1, 1), 0.5f);
+  objects.push_back(&(*s1));
+  Sphere *s2 = new Sphere(glm::vec4(0, 0, -1.5f, 1), 0.5f);
+  objects.push_back(&(*s2));
+  Sphere *s3 = new Sphere(glm::vec4(0, 0, -2, 1), 0.5f);
+  objects.push_back(&(*s3));
+  Sphere *s4 = new Sphere(glm::vec4(0, 0, -2.5, 1), 0.5f);
+  objects.push_back(&(*s4));
+
+  // second row spheres
+  Sphere *s5 = new Sphere(glm::vec4(1.f, 0, -1, 1), 0.5f);
+  objects.push_back(&(*s5));
+  Sphere *s6 = new Sphere(glm::vec4(1.f, 0, -1.5f, 1), 0.5f);
+  objects.push_back(&(*s6));
+  Sphere *s7 = new Sphere(glm::vec4(1.f, 0, -2, 1), 0.5f);
+  objects.push_back(&(*s7));
+  Sphere *s8 = new Sphere(glm::vec4(1.f, 0, -2.5, 1), 0.5f);
+  objects.push_back(&(*s8));
+
+  // third row spheres
+  Sphere *s9 = new Sphere(glm::vec4(-1.f, 0, -1, 1), 0.5f);
+  objects.push_back(&(*s9));
+  Sphere *s10 = new Sphere(glm::vec4(-1.f, 0, -1.5f, 1), 0.5f);
+  objects.push_back(&(*s10));
+  Sphere *s11 = new Sphere(glm::vec4(-1.f, 0, -2, 1), 0.5f);
+  objects.push_back(&(*s11));
+  Sphere *s12 = new Sphere(glm::vec4(-1.f, 0, -2.5, 1), 0.5f);
+  objects.push_back(&(*s12));
+
+  // first row spheres, second column
+  Sphere *s13 = new Sphere(glm::vec4(0, 1.2f, -1, 1), 0.5f);
+  objects.push_back(&(*s13));
+  Sphere *s14 = new Sphere(glm::vec4(0, 1.2f, -1.5f, 1), 0.5f);
+  objects.push_back(&(*s14));
+  Sphere *s15 = new Sphere(glm::vec4(0, 1.2f, -2, 1), 0.5f);
+  objects.push_back(&(*s15));
+  Sphere *s16 = new Sphere(glm::vec4(0, 1.2f, -2.5, 1), 0.5f);
+  objects.push_back(&(*s16));
+
+  // second row spheres
+  Sphere *s17 = new Sphere(glm::vec4(1.f, 1.2f, -1, 1), 0.5f);
+  objects.push_back(&(*s17));
+  Sphere *s18 = new Sphere(glm::vec4(1.f, 1.2f, -1.5f, 1), 0.5f);
+  objects.push_back(&(*s18));
+  Sphere *s19 = new Sphere(glm::vec4(1.f, 1.2f, -2, 1), 0.5f);
+  objects.push_back(&(*s19));
+  Sphere *s20 = new Sphere(glm::vec4(1.f, 1.2f, -2.5, 1), 0.5f);
+  objects.push_back(&(*s20));
+
+  // third row spheres
+  Sphere *s21 = new Sphere(glm::vec4(-1.f, 1.2f, -1, 1), 0.5f);
+  objects.push_back(&(*s21));
+  Sphere *s22 = new Sphere(glm::vec4(-1.f, 1.2f, -1.5f, 1), 0.5f);
+  objects.push_back(&(*s22));
+  Sphere *s23 = new Sphere(glm::vec4(-1.f, 1.2f, -2, 1), 0.5f);
+  objects.push_back(&(*s23));
+  Sphere *s24 = new Sphere(glm::vec4(-1.f, 1.2f, -2.5, 1), 0.5f);
+  objects.push_back(&(*s24));
+
+
+//  /// camera transformations
+  camera->rotate(-30.f, X);
+//  camera->translate(2.5, Y);
+//  camera->translate(0.5f, Z);
+
+  /// rendering
+
+  // measure rendering time
+  std::cout << "Start rendering..." << std::endl;
+  auto start_rendering = std::chrono::high_resolution_clock::now();
+  ri = camera->render_scene(objects, lights, ip);
+  auto finish_rendering = std::chrono::high_resolution_clock::now();
+
+  // print some rendering statistics
+  std::cout << "Done rendering." << std::endl;
+  std::cout << "Rendering time                        : "
+            << std::chrono::duration_cast<std::chrono::seconds>(
+                finish_rendering - start_rendering).count() << " seconds"
+            << std::endl;
+  std::cout << "# of primary rays                     : " << ri.npr
+            << std::endl;
+  std::cout << "# of shadow rays                      : " << ri.nsr
+            << std::endl;
+  std::cout << "# of reflection rays                  : " << ri.nrr
+            << std::endl;
+  std::cout << "# of objects in the scene             : " << ri.no << std::endl;
+  std::cout << "# of light sources in the scene       : " << ri.nls
+            << std::endl;
+  std::cout << "# of ray-primitive intersection tests : " << ri.nrpt
+            << std::endl;
+  std::cout << "# of ray-object intersections         : " << ri.nroi
+            << std::endl;
+  std::cout << "ratio (isect tests / isect)           : "
+            << (1.f * ri.nrpt) / ri.nroi << std::endl;
+  ip.save_to_png("grid_test_spheres.png");
+}
+
 int main(int argc, char **argv) {
-  render_cornell_scene();
+  dragon();
   return 0;
 }

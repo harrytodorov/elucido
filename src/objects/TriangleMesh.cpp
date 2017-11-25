@@ -111,6 +111,11 @@ loading_info TriangleMesh::load_mesh(const char *f) {
     }
   }
 
+  // close file after the data from it is extracted
+  if (fs.is_open()) {
+    fs.close();
+  }
+
   ret.nv = (uint32_t) va.size();
   ret.nvn = (uint32_t) vna.size();
   ret.nf = nf;

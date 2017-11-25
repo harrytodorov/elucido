@@ -37,6 +37,8 @@ const glm::vec3 skyblue(0.258f, 0.674f, 0.831f);
 const glm::vec3 pink(1.f,105.f/255,180.f/255);
 const glm::vec3 gold(1.f, 0.843f, 0.f);
 const glm::vec3 rabit_color(0.847f, 0.105f, 0.376f);
+const glm::vec3 bg_green(0.230f, 0.656f, 0.320f);               // Bulgaria's
+                                                                // green
 
 const float_t bias = 0.0001;            // shadow bias is used for avoiding self-shadows
 const uint32_t max_depth = 5;           // maximum depth of recursion
