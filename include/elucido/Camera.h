@@ -27,6 +27,7 @@ class Camera {
   glm::vec4 eye;        // eye / camera position
   glm::vec4 lookat;     // the point at which the camera looks
   AABBox scene_bb;      // bounding box for the scene
+  bool use_as;          // Use an acceleration structure.
  private:
   glm::mat4 ctm;        // camera's transformation matrix
   glm::mat4
@@ -43,6 +44,7 @@ class Camera {
       lookat(0, 0, -1, 1),
       ctm(1),
       tictm(1),
+      use_as(true),
       scene_bb() {}
 
 //=============================================================================
@@ -51,9 +53,20 @@ class Camera {
       lookat(d),
       ctm(1),
       tictm(1),
+      use_as(true),
       scene_bb() {}
 
 //=============================================================================
+Camera(const glm::vec4 &p, const glm::vec4 &d, const bool &as) :
+    eye(p),
+    lookat(d),
+    ctm(1),
+    tictm(1),
+    use_as(as),
+    scene_bb() {}
+
+
+  //=============================================================================
   ~Camera() = default;
 
 
@@ -85,6 +98,9 @@ class Camera {
                                    const std::vector<Light *> &lights,
                                    ImagePlane &ip) = 0;
 
+  inline void use_acceleration(const bool &as) {
+    this->use_as = as;
+  }
   inline glm::vec4 reflect(const glm::vec4 &incident_direction,
                            const glm::vec4 &surface_normal) {
     return incident_direction

@@ -1682,7 +1682,7 @@ void dragon() {
   // measure loading the triangulated mesh
   std::cout << std::endl;
   std::cout << "Start loading..." << std::endl;
-  auto start_loading = std::chrono::high_resolution_clock::now();ф
+  auto start_loading = std::chrono::high_resolution_clock::now();
   li = dragon.load_mesh(fn);
   auto finish_loading = std::chrono::high_resolution_clock::now();
   std::cout << "Done loading '" << fn << "'." << std::endl;
@@ -1836,6 +1836,7 @@ void spheres_grid() {
   // measure rendering time
   std::cout << "Start rendering..." << std::endl;
   auto start_rendering = std::chrono::high_resolution_clock::now();
+  camera->use_acceleration(false);
   ri = camera->render_scene(objects, lights, ip);
   auto finish_rendering = std::chrono::high_resolution_clock::now();
 
@@ -1864,6 +1865,6 @@ void spheres_grid() {
 }
 
 int main(int argc, char **argv) {
-  dragon();
+  spheres_grid();
   return 0;
 }
