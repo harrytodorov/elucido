@@ -28,6 +28,7 @@ class Camera {
   glm::vec4 lookat;     // the point at which the camera looks
   AABBox scene_bb;      // bounding box for the scene
   bool use_as;          // Use an acceleration structure.
+  float_t grid_alpha;   // Alpha parameter of the grid acceleration structure.
  private:
   glm::mat4 ctm;        // camera's transformation matrix
   glm::mat4
@@ -98,8 +99,9 @@ Camera(const glm::vec4 &p, const glm::vec4 &d, const bool &as) :
                                    const std::vector<Light *> &lights,
                                    ImagePlane &ip) = 0;
 
-  inline void use_acceleration(const bool &as) {
+  inline void use_acceleration(const bool &as, const float_t &ga = 3) {
     this->use_as = as;
+    this->grid_alpha = ga;
   }
   inline glm::vec4 reflect(const glm::vec4 &incident_direction,
                            const glm::vec4 &surface_normal) {

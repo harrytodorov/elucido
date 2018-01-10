@@ -34,6 +34,9 @@ render_info PerspectiveCamera::render_scene(const std::vector<Object *> &objects
     as = new Grid(scene_bb, objects);
     grid_info i;
 
+    // Set grid's alpha parameter.
+    (static_cast<Grid*>(as))->setAlpha(grid_alpha);
+
     // Print some useful information regarding grid's construction.
     auto startConstruction = std::chrono::high_resolution_clock::now();
     i = (static_cast<Grid*>(as))->constructGrid();

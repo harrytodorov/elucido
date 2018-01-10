@@ -1828,15 +1828,18 @@ void spheres_grid() {
 
 //  /// camera transformations
   camera->rotate(-30.f, X);
-//  camera->translate(2.5, Y);
-//  camera->translate(0.5f, Z);
+  camera->translate(2.5, Y);
+  camera->translate(0.5f, Z);
 
   /// rendering
+
+
+  // Turn on/off acceleration structure.
+  camera->use_acceleration(true);
 
   // measure rendering time
   std::cout << "Start rendering..." << std::endl;
   auto start_rendering = std::chrono::high_resolution_clock::now();
-  camera->use_acceleration(false);
   ri = camera->render_scene(objects, lights, ip);
   auto finish_rendering = std::chrono::high_resolution_clock::now();
 
@@ -1864,7 +1867,80 @@ void spheres_grid() {
   ip.save_to_png("grid_test_spheres.png");
 }
 
+void triangles_grid() {
+  std::vector<Object *> objects;
+  std::vector<Light *> lights;
+  Camera *camera = new PerspectiveCamera();
+  ImagePlane ip = ImagePlane(1280, 720);
+  ip.ns = 3;
+  char fn[100];
+  loading_info li;
+  render_info ri;
+
+  /// Light set-up.
+  glm::vec4 lp1(0.5f, 1.5f, 0.f, 1);
+
+  PointLight l1(lp1, white, 50);
+  lights.push_back(&l1);
+
+  /// Material set-up.
+  // teapot
+  material mm;
+  mm.c = orangish;
+  mm.ac = 0.f;
+
+  // floor
+  material f;
+  f.c = whitish;
+  f.ac = 0.f;
+
+  /// Object set-up.
+  // Load cube.
+  sprintf(fn, "../../object_files/cube.obj");
+  TriangleMesh cube(f, false);
+  li = cube.load_mesh(fn);
+  cube.translate(-2, Z);
+  cube.translate(-1, Y);
+//  cube.translate(1.5f, X);
+  cube.apply_transformations();
+  objects.push_back(&cube);
+
+  /// render scene
+  // Turn on/off acceleration structure.
+  camera->use_acceleration(true, 1);
+
+  // measure rendering time
+  std::cout << "Start rendering..." << std::endl;
+  auto start_rendering = std::chrono::high_resolution_clock::now();
+  ri = camera->render_scene(objects, lights, ip);
+  auto finish_rendering = std::chrono::high_resolution_clock::now();
+  std::cout << "Done rendering." << std::endl;
+  std::cout << "Rendering time                        : "
+            << std::chrono::duration_cast<std::chrono::seconds>(
+                finish_rendering - start_rendering).count() << " seconds"
+            << std::endl;
+  std::cout << "# of primary rays                     : " << ri.npr
+            << std::endl;
+  std::cout << "# of shadow rays                      : " << ri.nsr
+            << std::endl;
+  std::cout << "# of reflection rays                  : " << ri.nrr
+            << std::endl;
+  std::cout << "# of objects in the scene             : " << ri.no << std::endl;
+  std::cout << "# of light sources in the scene       : " << ri.nls
+            << std::endl;
+  std::cout << "# of ray-primitive intersection tests : " << ri.nrpt
+            << std::endl;
+  std::cout << "# of ray-primitive intersections      : " << ri.nroi
+            << std::endl;
+  std::cout << "ratio (isect tests / isect)           : "
+            << (1.f * ri.nrpt) / ri.nroi << std::endl;
+
+  sprintf(fn, "cube.png");
+  ip.save_to_png(fn);
+
+}
+
 int main(int argc, char **argv) {
-  spheres_grid();
+  triangles_grid();
   return 0;
 }
