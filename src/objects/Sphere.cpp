@@ -62,27 +62,34 @@ void Sphere::apply_camera_transformation(const glm::mat4 &ictm,
 
 //=============================================================================
 void Sphere::translate(const float_t &translation,
-                       const uint32_t &axes_of_translation) {
+                       const Axis &axes_of_translation) {
   // create 3d vector to determine the axes of translation
   glm::vec3 tv(0);
 
   switch (axes_of_translation) {
-    case X :tv.x = translation;
+    case Axis::X :
+      tv.x = translation;
       break;
-    case Y :tv.y = translation;
-      break;
-    case Z :tv.z = translation;
-      break;
-    case XY :tv.x = translation;
+    case Axis::Y :
       tv.y = translation;
       break;
-    case XZ :tv.x = translation;
+    case Axis::Z :
       tv.z = translation;
       break;
-    case YZ :tv.y = translation;
+    case Axis::XY :
+      tv.x = translation;
+      tv.y = translation;
+      break;
+    case Axis::XZ :
+      tv.x = translation;
       tv.z = translation;
       break;
-    case XYZ :tv = glm::vec3(translation);
+    case Axis::YZ :
+      tv.y = translation;
+      tv.z = translation;
+      break;
+    case Axis::XYZ :
+      tv = glm::vec3(translation);
       break;
     default:printf("You're using an undefined axis of translation.");
       break;
@@ -95,7 +102,7 @@ void Sphere::translate(const float_t &translation,
 
 //=============================================================================
 void Sphere::rotate(const float_t &angle_of_rotation,
-                    const uint32_t &axes_of_rotation) {
+                    const Axis &axes_of_rotation) {
   // well...sphere is defined using parametric equation, set_orig it has just a c and a r
   // not much sense in rotating a perfect sphere...EXCEPT, when there is a texture applied to the sphere
 
@@ -103,22 +110,29 @@ void Sphere::rotate(const float_t &angle_of_rotation,
   glm::vec3 rv(0);
 
   switch (axes_of_rotation) {
-    case X :rv.x = 1;
+    case Axis::X :
+      rv.x = 1;
       break;
-    case Y :rv.y = 1;
-      break;
-    case Z :rv.z = 1;
-      break;
-    case XY :rv.x = 1;
+    case Axis::Y :
       rv.y = 1;
       break;
-    case XZ :rv.x = 1;
+    case Axis::Z :
       rv.z = 1;
       break;
-    case YZ :rv.y = 1;
+    case Axis::XY :
+      rv.x = 1;
+      rv.y = 1;
+      break;
+    case Axis::XZ :
+      rv.x = 1;
       rv.z = 1;
       break;
-    case XYZ :rv = glm::vec3(1);
+    case Axis::YZ :
+      rv.y = 1;
+      rv.z = 1;
+      break;
+    case Axis::XYZ :
+      rv = glm::vec3(1);
       break;
     default:printf("You're using an undefined axis of rotation.");
       break;
@@ -131,7 +145,7 @@ void Sphere::rotate(const float_t &angle_of_rotation,
 
 //=============================================================================
 void Sphere::scale(const float_t &scaling_factor,
-                   const uint32_t &axes_of_scale) {
+                   const Axis &axes_of_scale) {
   // multiply the r by the scaling factor
   r *= scaling_factor;
 

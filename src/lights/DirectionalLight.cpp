@@ -14,33 +14,33 @@ void DirectionalLight::apply_camera_transformation(const glm::mat4 &ictm, const 
     d = ictm * d;
 }
 
-void DirectionalLight::translate(const float_t &translation, const uint32_t &axes_of_translation) {
+void DirectionalLight::translate(const float_t &translation, const Axis &axes_of_translation) {
     // create 3d vector to determine the axes of translation
     glm::vec3 tv(0);
 
     switch (axes_of_translation) {
-        case X :
+        case Axis::X :
             tv.x = translation;
             break;
-        case Y :
+        case Axis::Y :
             tv.y = translation;
             break;
-        case Z :
+        case Axis::Z :
             tv.z = translation;
             break;
-        case XY :
+        case Axis::XY :
             tv.x = translation;
             tv.y = translation;
             break;
-        case XZ :
+        case Axis::XZ :
             tv.x = translation;
             tv.z = translation;
             break;
-        case YZ :
+        case Axis::YZ :
             tv.y = translation;
             tv.z = translation;
             break;
-        case XYZ :
+        case Axis::XYZ :
             tv = glm::vec3(translation);
             break;
         default:
@@ -53,33 +53,33 @@ void DirectionalLight::translate(const float_t &translation, const uint32_t &axe
     mt = tm * mt;
 }
 
-void DirectionalLight::rotate(const float_t &angle_of_rotation, const uint32_t &axes_of_rotation) {
+void DirectionalLight::rotate(const float_t &angle_of_rotation, const Axis &axes_of_rotation) {
     // create 3d vector to determine the axis of rotation
     glm::vec3 rv(0);
 
     switch (axes_of_rotation) {
-        case X :
+        case Axis::X :
             rv.x = 1;
             break;
-        case Y :
+        case Axis::Y :
             rv.y = 1;
             break;
-        case Z :
+        case Axis::Z :
             rv.z = 1;
             break;
-        case XY :
+        case Axis::XY :
             rv.x = 1;
             rv.y = 1;
             break;
-        case XZ :
+        case Axis::XZ :
             rv.x = 1;
             rv.z = 1;
             break;
-        case YZ :
+        case Axis::YZ :
             rv.y = 1;
             rv.z = 1;
             break;
-        case XYZ :
+        case Axis::XYZ :
             rv = glm::vec3(1);
             break;
         default:

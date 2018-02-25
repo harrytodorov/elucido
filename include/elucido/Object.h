@@ -30,9 +30,9 @@ class Object {
 //=============================================================================
 // Data members
 //=============================================================================
-  material om;         // object's material
-  AABBox bb;         // bounding box of the object
-  ObjectType ot;         // object's type
+  material om;        // object's material
+  AABBox bb;          // bounding box of the object
+  ObjectType ot;      // object's type
 
 
 //=============================================================================
@@ -59,11 +59,11 @@ class Object {
                                            const glm::mat4 &tictm) = 0;
   virtual void apply_transformations() = 0;
   virtual void translate(const float_t &translation,
-                         const uint32_t &axes_of_translation) = 0;
+                         const Axis &axes_of_translation) = 0;
   virtual void rotate(const float_t &angle_of_rotation,
-                      const uint32_t &axes_of_rotation) = 0;
+                      const Axis &axes_of_rotation) = 0;
   virtual void scale(const float_t &scaling_factor,
-                     const uint32_t &axes_of_scale) = 0;
+                     const Axis &axes_of_scale) = 0;
 
  protected:
   glm::mat4 mt;     // model transform matrix for an object

@@ -4,17 +4,18 @@
 #ifndef ELUCIDO_CAMERA_H
 #define ELUCIDO_CAMERA_H
 
+#include <vector>
+#include <iostream>
+#include <random>
 #include <glm/vec3.hpp>
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <math.h>
-#include <vector>
-#include <iostream>
-#include <random>
+
+#include "Utilities.h"
 #include "Object.h"
 #include "ImagePlane.h"
 #include "Light.h"
-#include "Utilities.h"
 #include "AccelerationStructure.h"
 #include "Grid.h"
 
@@ -75,8 +76,8 @@ Camera(const glm::vec4 &p, const glm::vec4 &d, const bool &as) :
 // Function declarations, inline functions
 //=============================================================================
   void translate(const float_t &translation,
-                 const uint32_t &axes_of_translation);
-  void rotate(float_t rot_angle, uint32_t axes_of_rotation);
+                 const Axis &axes_of_translation);
+  void rotate(float_t rot_angle, Axis axes_of_rotation);
   glm::vec4 refract(const glm::vec4 &incident_direction,
                     const glm::vec4 &surface_normal,
                     const float_t &ior);

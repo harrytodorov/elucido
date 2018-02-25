@@ -23,7 +23,8 @@ set(ELUCIDO_SOURCE_FILES
         acceleration/AccelerationStructure.cpp
         acceleration/Grid.cpp
         ImagePlane.cpp
-        Ray.cpp)
+        Ray.cpp
+        extra/Scene.cpp)
 
 # Set header files
 set(ELUCIDO_HEADER_FILES
@@ -42,7 +43,8 @@ set(ELUCIDO_HEADER_FILES
         ../include/elucido/Grid.h
         ../include/elucido/ImagePlane.h
         ../include/elucido/Ray.h
-        ../include/elucido/Utilities.h)
+        ../include/elucido/Utilities.h
+        ../include/elucido/Scene.h)
 
 # Include own header files
 include_directories(../include/elucido)

@@ -2,8 +2,10 @@
 // Author: Haralambi Todorov <harrytodorov@gmail.com>
 
 #include <iostream>
-#include <AccelerationStructure.h>
-#include <Grid.h>
+#include <string>
+#include "../include/elucido/AccelerationStructure.h"
+#include "../include/elucido/Grid.h"
+
 #include "../include/elucido/Object.h"
 #include "../include/elucido/TriangleMesh.h"
 #include "../include/elucido/PointLight.h"
@@ -13,6 +15,7 @@
 #include "../include/elucido/DirectionalLight.h"
 #include "../include/elucido/OrthographicCamera.h"
 #include "../include/elucido/AccelerationStructure.h"
+#include "../include/elucido/Scene.h"
 
 void render_cornell_scene() {
   std::vector<Object *> objects;
@@ -130,10 +133,10 @@ void render_cornell_scene() {
   std::cout << "# of faces in the mesh                : " << li.nf << std::endl;
   std::cout << std::endl;
 
-  teapot.rotate(-60.f, Y);
-  teapot.scale(1.7f, XYZ);
-  teapot.translate(-7.f, Z);
-  teapot.translate(2.3f, X);
+  teapot.rotate(-60.f, Axis::Y);
+  teapot.scale(1.7f, Axis::XYZ);
+  teapot.translate(-7.f, Axis::Z);
+  teapot.translate(2.3f, Axis::X);
   teapot.apply_transformations();
   objects.push_back(&teapot);
 
@@ -159,11 +162,11 @@ void render_cornell_scene() {
   std::cout << "# of faces in the mesh                : " << li.nf << std::endl;
   std::cout << std::endl;
 
-  monkey.rotate(-30.f, X);
-  monkey.rotate(25.f, Y);
-  monkey.translate(-7.2f, Z);
-  monkey.translate(-2.f, X);
-  monkey.translate(0.6f, Y);
+  monkey.rotate(-30.f, Axis::X);
+  monkey.rotate(25.f, Axis::Y);
+  monkey.translate(-7.2f, Axis::Z);
+  monkey.translate(-2.f, Axis::X);
+  monkey.translate(0.6f, Axis::Y);
   monkey.apply_transformations();
   objects.push_back(&monkey);
 
@@ -189,16 +192,16 @@ void render_cornell_scene() {
   std::cout << "# of faces in the mesh                : " << li.nf << std::endl;
   std::cout << std::endl;
 
-  bunny.rotate(45.f, Y);
-  bunny.translate(-10.f, Z);
-  bunny.translate(0.35f, Y);
+  bunny.rotate(45.f, Axis::Y);
+  bunny.translate(-10.f, Axis::Z);
+  bunny.translate(0.35f, Axis::Y);
   bunny.apply_transformations();
   objects.push_back(&bunny);
 
   /// camera transformations
-  camera->rotate(-10.f, X);
-  camera->translate(-4.f, Z);
-  camera->translate(2.5f, Y);
+  camera->rotate(-10.f, Axis::X);
+  camera->translate(-4.f, Axis::Z);
+  camera->translate(2.5f, Axis::Y);
 
   /// rendering
 
@@ -316,11 +319,11 @@ void render_simple_refl_scene() {
   std::cout << "# of faces in the mesh                : " << li.nf << std::endl;
   std::cout << std::endl;
 
-  monkey.rotate(-30.f, X);
-  monkey.rotate(25.f, Y);
-  monkey.translate(0.1f, Y);
-  monkey.translate(-0.7f, Z);
-  monkey.translate(-1.f, X);
+  monkey.rotate(-30.f, Axis::X);
+  monkey.rotate(25.f, Axis::Y);
+  monkey.translate(0.1f, Axis::Y);
+  monkey.translate(-0.7f, Axis::Z);
+  monkey.translate(-1.f, Axis::X);
   monkey.apply_transformations();
   objects.push_back(&monkey);
 
@@ -346,11 +349,11 @@ void render_simple_refl_scene() {
   std::cout << "# of faces in the mesh                : " << li.nf << std::endl;
   std::cout << std::endl;
 
-  teapot.scale(1.3f, XYZ);
-  teapot.rotate(-135.f, Y);
-  teapot.translate(-0.3f, Y);
-  teapot.translate(-1.5f, Z);
-  teapot.translate(1.3f, X);
+  teapot.scale(1.3f, Axis::XYZ);
+  teapot.rotate(-135.f, Axis::Y);
+  teapot.translate(-0.3f, Axis::Y);
+  teapot.translate(-1.5f, Axis::Z);
+  teapot.translate(1.3f, Axis::X);
   teapot.apply_transformations();
   objects.push_back(&teapot);
 
@@ -370,9 +373,9 @@ void render_simple_refl_scene() {
   dynamic_cast<PerspectiveCamera *>(camera)->set_fov(90.f);
 
   // place the camera to look at the plane
-  camera->rotate(-10.f, X);
-  camera->translate(0.5f, Y);
-  camera->translate(1.5f, Z);
+  camera->rotate(-10.f, Axis::X);
+  camera->translate(0.5f, Axis::Y);
+  camera->translate(1.5f, Axis::Z);
 
   /// render scene
   // measure rendering time
@@ -459,15 +462,15 @@ void test_refraction_scene() {
   std::cout << "# of faces in the mesh                : " << li.nf << std::endl;
   std::cout << std::endl;
 
-  cube.scale(0.5f, XYZ);
-  cube.translate(-3.f, Z);
+  cube.scale(0.5f, Axis::XYZ);
+  cube.translate(-3.f, Axis::Z);
   cube.apply_transformations();
 //    objects.push_back(&cube);
 
   Triangle t1;
-  t1.rotate(90.f, Z);
-  t1.translate(-3.f, Z);
-//    t1.translate(1.f, Y);
+  t1.rotate(90.f, Axis::Z);
+  t1.translate(-3.f, Axis::Z);
+//    t1.translate(1.f, Axis::Y);
   t1.apply_transformations();
   objects.push_back(&t1);
 
@@ -480,10 +483,10 @@ void test_refraction_scene() {
   lights.push_back(&l1);
 
   /// camera set-up
-  camera->translate(3.f, Z);
-  camera->rotate(20.f, X);
-  camera->rotate(20, Y);
-  camera->translate(-3.f, Z);
+  camera->translate(3.f, Axis::Z);
+  camera->rotate(20.f, Axis::X);
+  camera->rotate(20, Axis::Y);
+  camera->translate(-3.f, Axis::Z);
 
   /// render scene
   // measure rendering time
@@ -678,12 +681,12 @@ void boxes() {
     auto *obj_copy = new TriangleMesh(bunny);
 
     // randomly choose cube's position
-    (*obj_copy).translate(orxyp(eng), X);
-    (*obj_copy).translate(orxyp(eng), Y);
-    (*obj_copy).translate(orzp(eng), Z);
+    (*obj_copy).translate(orxyp(eng), Axis::X);
+    (*obj_copy).translate(orxyp(eng), Axis::Y);
+    (*obj_copy).translate(orzp(eng), Axis::Z);
 
     // randomly choose cube's scale
-    (*obj_copy).scale(ors(eng), XYZ);
+    (*obj_copy).scale(ors(eng), Axis::XYZ);
 
     // apply transformations for the cube
     (*obj_copy).apply_transformations();
@@ -792,9 +795,9 @@ void test_scene() {
   std::cout << "# of faces in the mesh                : " << li.nf << std::endl;
   std::cout << std::endl;
 
-  bunny.rotate(30.f, Y);
-  bunny.translate(-4.f, Z);
-  bunny.translate(-2.f, Y);
+  bunny.rotate(30.f, Axis::Y);
+  bunny.translate(-4.f, Axis::Z);
+  bunny.translate(-2.f, Axis::Y);
   bunny.apply_transformations();
 
   objects.push_back(&bunny);
@@ -881,14 +884,14 @@ void triangles() {
   for (uint32_t i = 0; i < notr; i++) {
     t = new Triangle();
     // scale triangle randomly
-    (*t).scale(trs(eng), XYZ);
+    (*t).scale(trs(eng), Axis::XYZ);
     // place triangle randomly
     rot = trr(eng);
-    (rot >= 30.f) ? (*t).rotate(rot, X) : ((rot <= 15.f) ? (*t).rotate(rot, Z)
-                                                         : (*t).rotate(rot, Y));
-    (*t).translate(trzp(eng), Z);
-    (*t).translate(trxyp(eng), X);
-    (*t).translate(trxyp(eng), Y);
+    (rot >= 30.f) ? (*t).rotate(rot, Axis::X) : ((rot <= 15.f) ? (*t).rotate(rot, Axis::Z)
+                                                         : (*t).rotate(rot, Axis::Y));
+    (*t).translate(trzp(eng), Axis::Z);
+    (*t).translate(trxyp(eng), Axis::X);
+    (*t).translate(trxyp(eng), Axis::Y);
 
     // randomly choose and assign color
     r = cr(eng);
@@ -1030,15 +1033,15 @@ void triangle_meshes() {
 
     tm = new TriangleMesh(monkey);
     // scale monkey randomly
-    (*tm).scale(tms(eng), XYZ);
+    (*tm).scale(tms(eng), Axis::XYZ);
     // place monkey randomly
     rot = tmr(eng);
-    (rot >= 30.f) ? (*tm).rotate(rot, X) : ((rot <= 15.f) ? (*tm).rotate(rot, Z)
+    (rot >= 30.f) ? (*tm).rotate(rot, Axis::X) : ((rot <= 15.f) ? (*tm).rotate(rot, Axis::Z)
                                                           : (*tm).rotate(rot,
-                                                                         Y));
-    (*tm).translate(tmzp(eng), Z);
-    (*tm).translate(tmxyp(eng), X);
-    (*tm).translate(tmxyp(eng), Y);
+                                                                         Axis::Y));
+    (*tm).translate(tmzp(eng), Axis::Z);
+    (*tm).translate(tmxyp(eng), Axis::X);
+    (*tm).translate(tmxyp(eng), Axis::Y);
     // randomly choose and assign color
     r = cr(eng);
     g = cr(eng);
@@ -1053,15 +1056,15 @@ void triangle_meshes() {
 
     tm = new TriangleMesh(teapot);
     // scale teapot randomly
-    (*tm).scale(tms(eng), XYZ);
+    (*tm).scale(tms(eng), Axis::XYZ);
     // place teapot randomly
     rot = tmr(eng);
-    (rot >= 30.f) ? (*tm).rotate(rot, X) : ((rot <= 15.f) ? (*tm).rotate(rot, Z)
+    (rot >= 30.f) ? (*tm).rotate(rot, Axis::X) : ((rot <= 15.f) ? (*tm).rotate(rot, Axis::Z)
                                                           : (*tm).rotate(rot,
-                                                                         Y));
-    (*tm).translate(tmzp(eng), Z);
-    (*tm).translate(tmxyp(eng), X);
-    (*tm).translate(tmxyp(eng), Y);
+                                                                         Axis::Y));
+    (*tm).translate(tmzp(eng), Axis::Z);
+    (*tm).translate(tmxyp(eng), Axis::X);
+    (*tm).translate(tmxyp(eng), Axis::Y);
     // randomly choose and assign color
     r = cr(eng);
     g = cr(eng);
@@ -1233,12 +1236,12 @@ void monkey() {
 
   // floor
   Triangle t1(v0, v1, v2, f);
-  t1.translate(0.5f, Z);
+  t1.translate(0.5f, Axis::Z);
   t1.apply_transformations();
   objects.push_back(&t1);
 
   Triangle t2(v1, v3, v2, f);
-  t2.translate(0.5f, Z);
+  t2.translate(0.5f, Axis::Z);
   t2.apply_transformations();
   objects.push_back(&t2);
 
@@ -1265,10 +1268,10 @@ void monkey() {
   std::cout << "# of faces in the mesh                : " << li.nf << std::endl;
   std::cout << std::endl;
 
-  monkey.scale(0.8f, XYZ);
-  monkey.rotate(-13.f, X);
-  monkey.translate(-2.f, Z);
-  monkey.translate(-0.3f, Y);
+  monkey.scale(0.8f, Axis::XYZ);
+  monkey.rotate(-13.f, Axis::X);
+  monkey.translate(-2.f, Axis::Z);
+  monkey.translate(-0.3f, Axis::Y);
   monkey.apply_transformations();
   objects.push_back(&monkey);
 
@@ -1342,12 +1345,12 @@ void teapot() {
 
   // floor
   Triangle t1(v0, v1, v2, f);
-  t1.translate(0.5f, Z);
+  t1.translate(0.5f, Axis::Z);
   t1.apply_transformations();
 //    objects.push_back(&t1);
 
   Triangle t2(v1, v3, v2, f);
-  t2.translate(0.5f, Z);
+  t2.translate(0.5f, Axis::Z);
   t2.apply_transformations();
 //    objects.push_back(&t2);
 
@@ -1373,9 +1376,9 @@ void teapot() {
   std::cout << "# of faces in the mesh                : " << li.nf << std::endl;
   std::cout << std::endl;
 
-  teapot.scale(0.9f, XYZ);
-  teapot.translate(-1.7f, Z);
-  teapot.translate(-0.5f, Y);
+  teapot.scale(0.9f, Axis::XYZ);
+  teapot.translate(-1.7f, Axis::Z);
+  teapot.translate(-0.5f, Axis::Y);
   teapot.apply_transformations();
   objects.push_back(&teapot);
 
@@ -1418,7 +1421,7 @@ void teapot() {
   ip.save_to_png(fn);
 }
 
-void diffuse() {
+void diffuse_scene() {
   std::vector<Object *> objects;
   std::vector<Light *> lights;
   Camera *camera = new PerspectiveCamera();
@@ -1545,43 +1548,50 @@ void grid_tests() {
   AABBox box;
 
   std::vector<Object *> objects;
-  char fn[100];
-  sprintf(fn, "../../object_files/dragon.obj");
-  TriangleMesh *dragon = new TriangleMesh();
-  dragon->load_mesh(fn);
-  dragon->translate(-20, Z);
-  dragon->apply_transformations();
-  objects.emplace_back(dragon);
+//  char fn[100];
+//  sprintf(fn, "../../object_files/dragon.obj");
+//  TriangleMesh *dragon = new TriangleMesh();
+//  dragon->load_mesh(fn);
+//  dragon->translate(-20, Axis::Z);
+//  dragon->apply_transformations();
+//  objects.emplace_back(dragon);
+//
+//  dragon->translate(-10, Axis::Z);
+//  dragon->apply_transformations();
+//  objects.emplace_back(dragon);
+//
+//  dragon->translate(10, Axis::Y);
+//  dragon->apply_transformations();
+//  objects.emplace_back(dragon);
+//
+//  dragon->translate(10, Axis::X);
+//  dragon->apply_transformations();
+//  objects.emplace_back(dragon);
 
-  dragon->translate(-10, Z);
-  dragon->apply_transformations();
-  objects.emplace_back(dragon);
+//  Sphere *s = new Sphere(glm::vec4(0,0,0,1), 0.5f);
+//  objects.emplace_back(s);
 
-  dragon->translate(10, Y);
-  dragon->apply_transformations();
-  objects.emplace_back(dragon);
+//  s->translate(-1, Axis::Z);
+//  objects.emplace_back(s);
 
-  dragon->translate(10, X);
-  dragon->apply_transformations();
-  objects.emplace_back(dragon);
-
-  Sphere *s = new Sphere();
-  objects.emplace_back(s);
-
-  s->translate(-1, Z);
-  objects.emplace_back(s);
+  Triangle *t = new Triangle();
+  t->rotate(15.f, Axis::X);
+  t->apply_transformations();
+  objects.emplace_back(t);
 
   for (auto object : objects) {
     box.extend_by(object->bb.bounds[0]);
     box.extend_by(object->bb.bounds[1]);
   }
+
   std::cout << "Grid's bounding box min extent: (" << box.bounds[0].x << ", " <<
             box.bounds[0].y << ", " << box.bounds[0].z << ")" << std::endl;
   std::cout << "Grid's bounding box max extent: (" << box.bounds[1].x << ", " <<
-            box.bounds[1].y << ", " << box.bounds[1].z << ")" << std::endl;
+            box.bounds[1].y << ", " << box.bounds[1].z << ")" << std::endl
+      << std::endl;
 
   Grid *grid = new Grid(box, objects);
-  grid->setAlpha(5.5f);
+  grid->setAlpha(300.f);
   grid_info i;
 
   auto startConstruction = std::chrono::high_resolution_clock::now();
@@ -1599,21 +1609,21 @@ void grid_tests() {
   std::cout << "Number of non-empty cells: " << i.nfc << std::endl;
   std::cout << "Average number of primitives per cell: " << i.nppc << std::endl;
   std::cout << std::endl;
-
-  glm::vec4 o(0, 0, 0, 1);
-  glm::vec4 d(0, 0, -1, 1);
-  Ray r(o, d);
-
-  isect_info ii;
-  grid->intersect(r, ii);
-  std::cout << "Intersection point from grid: \t(" << ii.ip.x << ", " << ii.ip.y
-            << ", " << ii.ip.z << ")" << std::endl;
-
-  render_info ri;
-  ii = isect_info();
-  r.trace(objects, ii, ri);
-  std::cout << "Intersection point basic: \t\t(" << ii.ip.x << ", " << ii.ip.y
-            << ", " << ii.ip.z << ")" << std::endl;
+//
+//  glm::vec4 o(0, 0, 0, 1);
+//  glm::vec4 d(0, 0, -1, 1);
+//  Ray r(o, d);
+//
+//  isect_info ii;
+//  grid->intersect(r, ii);
+//  std::cout << "Intersection point from grid: \t(" << ii.ip.x << ", " << ii.ip.y
+//            << ", " << ii.ip.z << ")" << std::endl;
+//
+//  render_info ri;
+//  ii = isect_info();
+//  r.trace(objects, ii, ri);
+//  std::cout << "Intersection point basic: \t\t(" << ii.ip.x << ", " << ii.ip.y
+//            << ", " << ii.ip.z << ")" << std::endl;
 }
 
 void dragon() {
@@ -1652,8 +1662,8 @@ void dragon() {
   lights.push_back(&l3);
 
   PointLight l4(lp1, white, 90);
-  l4.translate(6, Z);
-  l4.translate(-0.5f, X);
+  l4.translate(6, Axis::Z);
+  l4.translate(-0.5f, Axis::X);
   l4.apply_transformations();
   lights.push_back(&l4);
 
@@ -1697,17 +1707,17 @@ void dragon() {
   std::cout << "# of faces in the mesh                : " << li.nf << std::endl;
   std::cout << std::endl;
 
-  dragon.rotate(98.f, Y);
-  dragon.translate(0.84887f, Y);
-  dragon.translate(-8.f, Z);
+  dragon.rotate(98.f, Axis::Y);
+  dragon.translate(0.84887f, Axis::Y);
+  dragon.translate(-8.f, Axis::Z);
   dragon.apply_transformations();
   objects.push_back(&dragon);
 
   /// camera transformations
 
-  camera->rotate(-10.f, X);
-  camera->translate(-4.f, Z);
-  camera->translate(2.5f, Y);
+  camera->rotate(-10.f, Axis::X);
+  camera->translate(-4.f, Axis::Z);
+  camera->translate(2.5f, Axis::Y);
 
   std::cout << "Dragons bounding box min: (" << dragon.bb.bounds[0].x << ", " <<
             dragon.bb.bounds[0].y << ", " << dragon.bb.bounds[0].z << ")" <<
@@ -1827,9 +1837,9 @@ void spheres_grid() {
 
 
 //  /// camera transformations
-  camera->rotate(-30.f, X);
-  camera->translate(2.5, Y);
-  camera->translate(0.5f, Z);
+  camera->rotate(-30.f, Axis::X);
+  camera->translate(2.5, Axis::Y);
+  camera->translate(0.5f, Axis::Z);
 
   /// rendering
 
@@ -1899,9 +1909,9 @@ void triangles_grid() {
   sprintf(fn, "../../object_files/cube.obj");
   TriangleMesh cube(f, false);
   li = cube.load_mesh(fn);
-  cube.translate(-2, Z);
-  cube.translate(-1, Y);
-//  cube.translate(1.5f, X);
+  cube.translate(-2, Axis::Z);
+  cube.translate(-1, Axis::Y);
+//  cube.translate(1.5f, Axis::X);
   cube.apply_transformations();
   objects.push_back(&cube);
 
@@ -1941,6 +1951,8 @@ void triangles_grid() {
 }
 
 int main(int argc, char **argv) {
-  triangles_grid();
+  std::string filename = "test_scene.txt";
+  Scene *scene = new Scene();
+  std::cout << "Load scene: " << scene->load_scene(filename);
   return 0;
 }

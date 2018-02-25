@@ -94,11 +94,11 @@ class Triangle : public Object {
                                    const glm::mat4 &itictm);
   void apply_transformations();
   void translate(const float_t &translation,
-                 const uint32_t &axes_of_translation);
+                 const Axis &axes_of_translation);
   void rotate(const float_t &angle_of_rotation,
-              const uint32_t &axes_of_rotation);
+              const Axis &axes_of_rotation);
   void scale(const float_t &scaling_factor,
-             const uint32_t &axes_of_scale);
+             const Axis &axes_of_scale);
 
 
  private:

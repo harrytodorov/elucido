@@ -5,6 +5,8 @@
 #define ELUCIDO_UTILITIES_H
 
 #include <string>
+#include <map>
+#include <vector>
 #include "glm/gtc/epsilon.hpp"
 
 class Object;
@@ -12,13 +14,13 @@ class Object;
 const float_t kEpsilon = glm::epsilon<float_t>();               // epsilon value; used to deal with some edge cases
 const float_t infinity = std::numeric_limits<float_t>::max();   // infinity value
 
-const uint32_t X    = 0;
-const uint32_t Y    = 1;
-const uint32_t Z    = 2;
-const uint32_t XY   = 3;
-const uint32_t XZ   = 4;
-const uint32_t YZ   = 5;
-const uint32_t XYZ  = 6;
+//const uint32_t X    = 0;
+//const uint32_t Y    = 1;
+//const uint32_t Z    = 2;
+//const uint32_t XY   = 3;
+//const uint32_t XZ   = 4;
+//const uint32_t YZ   = 5;
+//const uint32_t XYZ  = 6;
 
 const glm::vec3 red(1.f, 0, 0);                                 // red color
 const glm::vec3 green(0, 1.f, 0);                               // green color
@@ -48,7 +50,6 @@ const std::string vertex("v");
 const std::string vertex_normal("vn");
 const std::string face("f");
 
-
 enum RayType: uint8_t {
     primary,
     shadow,
@@ -62,11 +63,99 @@ enum MaterialType: uint8_t {
     rrm,    // Refractive material
 };
 
+enum MaterialProperty: uint8_t {
+  ambient,
+  diffuse,
+  spec_const,
+  spec_exp,
+  reflection_index,
+  ior
+};
+
 enum ObjectType: uint8_t {
     def,
     sphere,
     triangle,
     triangle_mesh
+};
+
+enum CameraType: uint8_t {
+  perspective,
+  orthographic
+};
+
+enum CameraProperty: uint8_t {
+  zoom_factor,
+  field_of_view
+};
+
+enum Axis: uint8_t {
+  X,
+  Y,
+  Z,
+  XY,
+  XZ,
+  YZ,
+  XYZ
+};
+
+enum LightType: uint8_t {
+  point,
+  directional
+};
+
+enum LightProperty: uint8_t {
+  position,
+  direction
+};
+
+enum TransformationType: uint8_t {
+  translation,
+  rotation,
+  scale
+};
+
+struct color_description {
+  std::string name;
+  uint8_t r;
+  uint8_t g;
+  uint8_t b;
+};
+
+struct vector_description {
+  std::string name;
+  float_t x;
+  float_t y;
+  float_t z;
+};
+
+struct transformation_description {
+  Axis axis;
+  TransformationType type;
+  float_t amount;
+};
+
+struct material_description {
+  std::string name;
+  MaterialType type;
+  std::map<MaterialProperty, float_t> properties;
+  color_description color;
+};
+
+struct camera_description {
+  std::string name;
+  CameraType type;
+  std::pair<CameraProperty, float_t> property;
+  std::vector<transformation_description> transformations;
+};
+
+struct light_description {
+  std::string name;
+  LightType type;
+  color_description color;
+  float_t intensity;
+  std::pair<LightProperty, vector_description> property;
+  std::vector<transformation_description> transformations;
 };
 
 struct loading_info {
