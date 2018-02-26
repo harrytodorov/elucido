@@ -1,0 +1,5 @@
+# Create a camera
+create camera c1
+
+# Set camera type; invalid; parameter value is missing
+set camera c1 type

@@ -1,0 +1,6 @@
+# Create a color
+create color green
+
+# Set a rgb-parameter to the color
+set color green rgb 01,255,255
+

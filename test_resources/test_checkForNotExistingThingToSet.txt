@@ -1,0 +1,3 @@
+# Set a parameter to a camera, which does not exist
+set camera c1 type orthographic
+

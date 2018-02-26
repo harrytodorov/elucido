@@ -1,0 +1,7 @@
+# Create a color
+create color c1
+
+# Set just 2 digits to the rgb parameter of color;
+# Should produce an error
+set color c1 rgb 0,124
+

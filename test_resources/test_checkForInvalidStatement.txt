@@ -1,0 +1,5 @@
+# Create a color
+create color c1
+
+# Erronous line
+monkey run m1

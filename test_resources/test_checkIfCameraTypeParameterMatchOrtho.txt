@@ -1,0 +1,8 @@
+# Create a camera
+create camera c1
+
+# Set the camera type to orthographic and try to set field of view to it; should
+# produce an error
+set camera c1 type orthographic
+set camera c1 fov 45.0
+ 

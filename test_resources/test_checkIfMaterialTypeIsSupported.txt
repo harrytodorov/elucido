@@ -1,0 +1,7 @@
+# Create a material
+create material m1
+
+# Set an invalid material type;
+# Should produce an error
+set material m1 type blabla
+

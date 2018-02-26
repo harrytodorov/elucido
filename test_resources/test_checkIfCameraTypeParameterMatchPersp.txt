@@ -1,0 +1,8 @@
+# Create a camera
+create camera c1
+
+# Set the camera type to perspective and try to set zoom factor for it
+# Should produce an error
+set camera c1 type perspective
+set camera c1 zoom_factor 1.4
+

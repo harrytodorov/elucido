@@ -1,0 +1,7 @@
+# Create a camera
+create camera c1
+
+# Create a camera; with the same name
+# Should get duplucate error
+create camera c1
+

@@ -1,0 +1,5 @@
+# Create a camera
+create camera c1
+
+# Set something invalid to the camera
+set camera c1 love much

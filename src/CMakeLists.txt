@@ -22,8 +22,8 @@ set(ELUCIDO_SOURCE_FILES
         objects/TriangleMesh.cpp
         acceleration/AccelerationStructure.cpp
         acceleration/Grid.cpp
-        ImagePlane.cpp
-        Ray.cpp
+        extra/ImagePlane.cpp
+        extra/Ray.cpp
         extra/Scene.cpp)
 
 # Set header files

@@ -1,8 +1,8 @@
 // Copyright 2017, University of Freiburg.
 // Author: Haralambi Todorov <harrytodorov@gmail.com>
 
-#include "../include/elucido/Ray.h"
-#include "../include/elucido/TriangleMesh.h"
+#include "Ray.h"
+#include "TriangleMesh.h"
 
 //=============================================================================
 bool Ray::trace(const std::vector<Object *> &objects,

@@ -1,0 +1,5 @@
+# Valid create statement
+create camera c1
+
+# Invalid create statement; name of the camera is missing
+create camera

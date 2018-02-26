@@ -1,0 +1,7 @@
+# Create a material
+create material m1
+
+# Set a color to the material, which is not deifned;
+# Should produce an error
+set material m1 color green
+

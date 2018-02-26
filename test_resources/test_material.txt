@@ -1,0 +1,9 @@
+create color c1
+set color c1 rgb 0,144,124
+
+create material m1
+set material m1 type phong
+set material m1 color c1
+set material m1 ambient 0.1
+set material m1 diffuse 0.2
+

@@ -1,0 +1,8 @@
+# Create a color
+create color c1
+
+# Set rgb parameter for the color
+# If one of the rgb values is not in the range [0, 255] an error
+# should occur
+set color c1 rgb -1,256,1000
+

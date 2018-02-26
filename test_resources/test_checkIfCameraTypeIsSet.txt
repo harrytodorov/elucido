@@ -1,0 +1,6 @@
+# Create a camera
+create camera c1
+
+# Set zoom factor before setting the camera type; should produce an error
+set camera c1 zoom_factor 1.4
+

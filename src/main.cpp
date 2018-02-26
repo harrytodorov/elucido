@@ -16,6 +16,7 @@
 #include "../include/elucido/OrthographicCamera.h"
 #include "../include/elucido/AccelerationStructure.h"
 #include "../include/elucido/Scene.h"
+#include "extra/UtilityFunctions.cpp"
 
 void render_cornell_scene() {
   std::vector<Object *> objects;
@@ -1951,8 +1952,8 @@ void triangles_grid() {
 }
 
 int main(int argc, char **argv) {
-  std::string filename = "test_scene.txt";
-  Scene *scene = new Scene();
-  std::cout << "Load scene: " << scene->load_scene(filename);
+  std::string filename = "/Users/harry/dev/elucido/test_resources/test_material.txt";
+  size_t code = read_scene_from_file(filename).first;
+  std::cout << "=====" << std::endl << "Code: " << code << std::endl;
   return 0;
 }

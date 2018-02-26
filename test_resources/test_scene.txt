@@ -1,0 +1,38 @@
+# Create a camera
+create camera c1
+set camera c1 type orthographic
+set camera c1 zoom_factor 1.4
+
+# Create a vector
+create vector v1
+
+# Create a material
+create material m1
+
+# Create a second material
+create material m2
+
+# Create a light
+create light l1
+
+# Create an object
+create object o1
+
+# Create an image plane
+create image-plane ip1
+
+# Create a second image plane
+create	image-plane	 ip2
+
+# Create an acceleration structure
+create acceleration-structure ac1
+
+# Create an animation
+create animation anim1
+
+# Create a scene
+create scene scene1
+
+# Create second scene
+create scene scene2
+

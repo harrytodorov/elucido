@@ -1,0 +1,4 @@
+# Create a camera with invalid type proerty value
+create camera c1
+set camera c1 type blabla
+

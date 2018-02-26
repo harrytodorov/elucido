@@ -1,0 +1,3 @@
+create vector v1
+set vector v1 coordinates -1.4,0.5,100.6034
+
