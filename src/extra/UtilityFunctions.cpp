@@ -309,7 +309,6 @@ std::pair<SceneParserErrorCodes, std::vector<scene_description>>
           } break;
 
           case SceneThings::light_d: {
-
             std::cout << "Name: " << lights.find(name)->second.name << std::endl
                       << "Type: " << lights.find(name)->second.type << std::endl
                       << "Color: " << ((lights.find(name)->second.color == nullptr) ? "ok" : "not ok") << std::endl
@@ -320,11 +319,6 @@ std::pair<SceneParserErrorCodes, std::vector<scene_description>>
           } break;
 
           case SceneThings::object_d: {
-            if (objects.find(name) != objects.end()) {
-              std::cout << "Duplicate" << std::endl;
-              return {duplicate, {}};
-            }
-            objects.insert({name, object_description(name)});
             std::cout << "Name: " << objects.find(name)->second.name << std::endl
                       << "Type: " << objects.find(name)->second.type << std::endl
                       << "Material: " << ((objects.find(name)->second.material == nullptr) ? "ok" : "not ok") << std::endl
@@ -337,11 +331,6 @@ std::pair<SceneParserErrorCodes, std::vector<scene_description>>
           } break;
 
           case SceneThings::image_plane_d: {
-            if (image_planes.find(name) != image_planes.end()) {
-              std::cout << "Duplicate" << std::endl;
-              return {duplicate, {}};
-            }
-            image_planes.insert({name, image_plane_description(name)});
             std::cout << "Name: " << image_planes.find(name)->second.name << std::endl
                       << "Output type: " << image_planes.find(name)->second.output_type << std::endl
                       << "Horizontal: " << unsigned(image_planes.find(name)->second.horizontal) << std::endl
@@ -351,11 +340,6 @@ std::pair<SceneParserErrorCodes, std::vector<scene_description>>
           } break;
 
           case SceneThings::acceleration_structure_d: {
-            if (acceleration_structures.find(name) != acceleration_structures.end()) {
-              std::cout << "Duplicate" << std::endl;
-              return {duplicate, {}};
-            }
-            acceleration_structures.insert({name, acceleration_structure_description(name)});
             std::cout << "Name: " << acceleration_structures.find(name)->second.name << std::endl
                       << "Type: " << unsigned(acceleration_structures.find(name)->second.type) << std::endl
                       << "Alpha: " << acceleration_structures.find(name)->second.alpha << std::endl
@@ -363,11 +347,6 @@ std::pair<SceneParserErrorCodes, std::vector<scene_description>>
           } break;
 
           case SceneThings::animation_d: {
-            if (animations.find(name) != animations.end()) {
-              std::cout << "Duplicate" << std::endl;
-              return {duplicate, {}};
-            }
-            animations.insert({name, animation_description(name)});
             std::cout << "Name: " << animations.find(name)->second.name << std::endl
                       << "Number of images in sequence: " << unsigned(animations.find(name)->second.num_of_images_in_sequence) << std::endl
                       << "Objects size: " << animations.find(name)->second.objects.size() << std::endl
@@ -377,11 +356,6 @@ std::pair<SceneParserErrorCodes, std::vector<scene_description>>
           } break;
 
           case SceneThings::scene_d: {
-            if (scenes.find(name) != scenes.end()) {
-              std::cout << "Duplicate" << std::endl;
-              return {duplicate, {}};
-            }
-            scenes.insert({name, scene_description(name)});
             std::cout << "Name: " << scenes.find(name)->second.name << std::endl
                       << "Camera: " << ((scenes.find(name)->second.camera == nullptr) ? "ok" : "not ok" ) << std::endl
                       << "Image plane: " << ((scenes.find(name)->second.image_plane == nullptr) ? "ok" : "not ok" ) << std::endl
