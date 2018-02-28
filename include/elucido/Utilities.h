@@ -42,8 +42,9 @@ const std::string vertex("v");
 const std::string vertex_normal("vn");
 const std::string face("f");
 
-// Available error codes for parsing scene files.
-enum SceneParserErrorCodes {
+// Available status codes for parsing scene files +
+// mappings for the status code in human language.
+enum SceneParserStatusCodes {
   file_problem,
   invalid_statement,
   invalid_syntax,
@@ -52,6 +53,16 @@ enum SceneParserErrorCodes {
   invalid_set_property,
   invalid_set_property_value,
   success
+};
+const std::map<SceneParserStatusCodes, std::string> STATUS_CODES_MAP = {
+    {file_problem, "There was a problem with loading the file."},
+    {invalid_statement, "An invalid statement."},
+    {invalid_syntax, "Invalid syntax."},
+    {duplicate, "Duplicate"},
+    {thing_not_created, "The thing you want to set is not created."},
+    {invalid_set_property, "The set property you're using is not defined."},
+    {invalid_set_property_value, "The value of the set property is not valid"},
+    {success, "File was successfully parsed."}
 };
 
 // The available start words (statements) within the scene format +
@@ -163,6 +174,30 @@ const std::map<std::string, MaterialProperty> MATERIAL_PROPERTIES_MAP = {
     {"ior", ior}
 };
 
+// Available light types +
+// corresponding mappings for the parser.
+enum LightType {
+  not_set_lt,
+  point,
+  directional
+};
+const std::map<std::string, LightType> LIGHT_TYPES_MAP = {
+    {"point", point},
+    {"directional", directional}
+};
+
+// Available light properties +
+// corresponding mappings for the parser.
+enum LightProperty {
+  not_set_lp,
+  position,
+  direction
+};
+const std::map<std::string, LightProperty> LIGHT_PROPERTIES_MAP = {
+    {"position", position},
+    {"direction", direction}
+};
+
 enum RayType {
   primary,
   shadow,
@@ -185,18 +220,6 @@ enum Axis {
   XZ,
   YZ,
   XYZ
-};
-
-enum LightType {
-  not_set_lt,
-  point,
-  directional
-};
-
-enum LightProperty {
-  not_set_lp,
-  position,
-  direction
 };
 
 enum ObjectProperty {
@@ -285,12 +308,12 @@ struct camera_description {
 };
 
 struct light_description {
-  std::string                                   name;
-  LightType                                     type;
-  color_description                             *color;
-  float_t                                       intensity;
+  std::string                                     name;
+  LightType                                       type;
+  color_description                               *color;
+  float_t                                         intensity;
   std::pair<LightProperty, vector_description *>  property;
-  std::vector<transformation_description>       transformations;
+  std::vector<transformation_description>         transformations;
   light_description(const std::string &_name) :
       name(_name),
       type(not_set_lt),

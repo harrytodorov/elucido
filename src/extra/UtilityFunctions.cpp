@@ -9,12 +9,21 @@
 #include <stdlib.h>
 
 #include "../../include/elucido/Utilities.h"
+
 /**
- *
- * @param filename
- * @return
+ * Reads a text file following given protocol (see Report) and extracts
+ * scene descriptions(s) from it.
+ * @param filename: The text file containing scene description(s).
+ * @return:         A (1) pair of a
+ *                      (1) pair of
+ *                          (2) status code and
+ *                          (2) the line at which an error occurred
+ *                              (in case of an error) and a
+ *                      (1) vector of scene descriptions; in case an error
+ *                      occurred, an empty vector is returned.
  */
-std::pair<SceneParserErrorCodes, std::vector<scene_description>>
+std::pair<std::pair<SceneParserStatusCodes, size_t>,
+          std::vector<scene_description>>
         read_scene_from_file(const std::string &filename) {
   // Open file.
   std::ifstream input_file;
@@ -22,7 +31,7 @@ std::pair<SceneParserErrorCodes, std::vector<scene_description>>
 
   // Check, if the input file exist and is not damaged in some way.
   if (!input_file.good()) {
-    return {file_problem, {}};
+    return {{file_problem, 0}, {}};
   }
 
   std::map<std::string, color_description>                    colors;
@@ -37,7 +46,11 @@ std::pair<SceneParserErrorCodes, std::vector<scene_description>>
   std::map<std::string, scene_description>                    scenes;
   std::string                                                 line;
   std::string                                                 action_token;
+  size_t                                                      line_number{0};
   while (std::getline(input_file, line)) {
+    // Increment the line number.
+    line_number++;
+
     // Check if it's an empty line.
     if (line.empty()) continue;
 
@@ -47,7 +60,7 @@ std::pair<SceneParserErrorCodes, std::vector<scene_description>>
     // Get the start word of a line, and check if it is a valid one.
     tokenized_line >> action_token;
     if (START_WORDS.find(action_token) == START_WORDS.end()) {
-      return {invalid_statement, {}};
+      return {{invalid_statement, line_number}, {}};
     }
     SceneFileActionWord action = START_WORDS.find(action_token)->second;
     // If the line is a comment, skip it.
@@ -67,79 +80,79 @@ std::pair<SceneParserErrorCodes, std::vector<scene_description>>
         // If either of the strings is empty, the create statement was
         // invalid, so one exists the function.
         if (thing.empty() || name.empty()) {
-          return {invalid_syntax, {}};
+          return {{invalid_syntax, line_number}, {}};
         }
         if (AVAILABLE_THINGS.find(thing) == AVAILABLE_THINGS.end()) {
-          return {invalid_statement, {}};
+          return {{invalid_statement, line_number}, {}};
         }
 
         switch (AVAILABLE_THINGS.find(thing)->second) {
           case SceneThings::camera_d: {
             if (cameras.find(name) != cameras.end()) {
-              return {duplicate, {}};
+              return {{duplicate, line_number}, {}};
             }
             cameras.insert({name, camera_description(name)});
           } break;
 
           case SceneThings::color_d: {
             if (colors.find(name) != colors.end()) {
-              return {duplicate, {}};
+              return {{duplicate, line_number}, {}};
             }
             colors.insert({name, color_description(name)});
           } break;
 
           case SceneThings::vector_d: {
             if (vectors.find(name) != vectors.end()) {
-              return {duplicate, {}};
+              return {{duplicate, line_number}, {}};
             }
             vectors.insert({name, vector_description(name)});
           } break;
 
           case SceneThings::material_d: {
             if (materials.find(name) != materials.end()) {
-              return {duplicate, {}};
+              return {{duplicate, line_number}, {}};
             }
             materials.insert({name, material_description(name)});
           } break;
 
           case SceneThings::light_d: {
             if (lights.find(name) != lights.end()) {
-              return {duplicate, {}};
+              return {{duplicate, line_number}, {}};
             }
             lights.insert({name, light_description(name)});
           } break;
 
           case SceneThings::object_d: {
             if (objects.find(name) != objects.end()) {
-              return {duplicate, {}};
+              return {{duplicate, line_number}, {}};
             }
             objects.insert({name, object_description(name)});
           } break;
 
           case SceneThings::image_plane_d: {
             if (image_planes.find(name) != image_planes.end()) {
-              return {duplicate, {}};
+              return {{duplicate, line_number}, {}};
             }
             image_planes.insert({name, image_plane_description(name)});
           } break;
 
           case SceneThings::acceleration_structure_d: {
             if (acceleration_structures.find(name) != acceleration_structures.end()) {
-              return {duplicate, {}};
+              return {{duplicate, line_number}, {}};
             }
             acceleration_structures.insert({name, acceleration_structure_description(name)});
           } break;
 
           case SceneThings::animation_d: {
             if (animations.find(name) != animations.end()) {
-              return {duplicate, {}};
+              return {{duplicate, line_number}, {}};
             }
             animations.insert({name, animation_description(name)});
           } break;
 
           case SceneThings::scene_d: {
             if (scenes.find(name) != scenes.end()) {
-              return {duplicate, {}};
+              return {{duplicate, line_number}, {}};
             }
             scenes.insert({name, scene_description(name)});
           } break;
@@ -161,65 +174,63 @@ std::pair<SceneParserErrorCodes, std::vector<scene_description>>
         // If either of the strings is empty, the set statement is invalid; so
         // one exists the function.
         if (thing.empty() || name.empty() || property.empty() || property_value.empty()) {
-          return {invalid_syntax, {}};
+          return {{invalid_syntax, line_number}, {}};
         }
         // Check if the thing to be set is supported.
         if (AVAILABLE_THINGS.find(thing) == AVAILABLE_THINGS.end()) {
-          return {invalid_statement, {}};
+          return {{invalid_statement, line_number}, {}};
         }
 
         switch (AVAILABLE_THINGS.find(thing)->second) {
 
           case SceneThings::camera_d: {
             if (cameras.find(name) == cameras.end()) {
-              return {thing_not_created, {}};
+              return {{thing_not_created, line_number}, {}};
             }
             if (CAMERA_SET_PROPERTIES.find(property) == CAMERA_SET_PROPERTIES.end()) {
-              return {invalid_set_property, {}};
+              return {{invalid_set_property, line_number}, {}};
             }
             // Set the camera type.
             if (CAMERA_SET_PROPERTIES.find(property) == CAMERA_SET_PROPERTIES.find("type")) {
               if (CAMERA_TYPES_MAP.find(property_value) == CAMERA_TYPES_MAP.end()) {
-                return {invalid_set_property_value, {}};
+                return {{invalid_set_property_value, line_number}, {}};
               }
               cameras.find(name)->second.type = CAMERA_TYPES_MAP.find(property_value)->second;
-              break;
-            } else {
-              // Check if camera type is set.
-              if (cameras.find(name)->second.type == not_set_ct) {
-                return {invalid_set_property_value, {}};
-              }
+            }
+            // Check if camera type is set.
+            if (cameras.find(name)->second.type == not_set_ct) {
+              return {{invalid_set_property_value, line_number}, {}};
+            }
 
-              // Zoom factor can only be set on orthographic cameras.
-              if (CAMERA_SET_PROPERTIES.find(property) == CAMERA_SET_PROPERTIES.find("zoom_factor") &&
-                  cameras.find(name)->second.type == orthographic) {
-                // Set zoom factor.
-                cameras.find(name)->second.property.first = zoom_factor;
-                cameras.find(name)->second.property.second =
-                    static_cast<float_t>(std::atof(property_value.c_str()));
-              }
-              // Field of view can only be set on perspective cameras.
-              else if (CAMERA_SET_PROPERTIES.find(property) == CAMERA_SET_PROPERTIES.find("fov") &&
-                       cameras.find(name)->second.type == perspective) {
-                // Set fov.
-                cameras.find(name)->second.property.first = field_of_view;
-                cameras.find(name)->second.property.second =
-                    static_cast<float_t>(std::atof(property_value.c_str()));
-              }
-              // Invalid.
-              else {
-                return {invalid_set_property_value, {}};
-              }
+            // Zoom factor can only be set on orthographic cameras.
+            if (CAMERA_SET_PROPERTIES.find(property) == CAMERA_SET_PROPERTIES.find("zoom_factor") &&
+                cameras.find(name)->second.type == orthographic) {
+              // Set zoom factor.
+              cameras.find(name)->second.property.first = zoom_factor;
+              cameras.find(name)->second.property.second =
+                  static_cast<float_t>(std::atof(property_value.c_str()));
+            }
+            // Field of view can only be set on perspective cameras.
+            else if (CAMERA_SET_PROPERTIES.find(property) == CAMERA_SET_PROPERTIES.find("fov") &&
+                     cameras.find(name)->second.type == perspective) {
+              // Set fov.
+              cameras.find(name)->second.property.first = field_of_view;
+              cameras.find(name)->second.property.second =
+                  static_cast<float_t>(std::atof(property_value.c_str()));
+            }
+            // Invalid.
+            else {
+              return {{invalid_set_property_value, line_number}, {}};
             }
           } break;
 
           case SceneThings::color_d: {
             if (colors.find(name) == colors.end()) {
-              return {thing_not_created, {}};
+              return {{thing_not_created, line_number}, {}};
             }
             // Color has only just one property: rgb.
             if (property != "rgb") {
-              return {invalid_set_property, {}};
+              return {{invalid_set_property, line_number}, {}};
             }
             // Extract r,g,b values from string.
             // A comma ',' is used as a delimiter.
@@ -231,7 +242,7 @@ std::pair<SceneParserErrorCodes, std::vector<scene_description>>
             }
             // Check if only 3 values are set (r,g,b)
             if (color_values.size() != 3) {
-              return {invalid_set_property_value, {}};
+              return {{invalid_set_property_value, line_number}, {}};
             }
             // Check if the values are in range [0, 255]
             int r = std::stoi(color_values[0]);
@@ -240,7 +251,7 @@ std::pair<SceneParserErrorCodes, std::vector<scene_description>>
             if ((r < 0) || (r > 255) ||
                 (g < 0) || (g > 255) ||
                 (b < 0) || (b > 255)) {
-              return {invalid_set_property_value, {}};
+              return {{invalid_set_property_value, line_number}, {}};
             }
             // Set rgb values.
             colors.find(name)->second.r = r;
@@ -250,11 +261,11 @@ std::pair<SceneParserErrorCodes, std::vector<scene_description>>
 
           case SceneThings::vector_d: {
             if (vectors.find(name) == vectors.end()) {
-              return {thing_not_created, {}};
+              return {{thing_not_created, line_number}, {}};
             }
             // Vector has just one property: coordinates.
             if (property != "coordinates") {
-              return {invalid_set_property, {}};
+              return {{invalid_set_property, line_number}, {}};
             }
             // Extract x,y,z values from string.
             // A comma ',' is used as a delimiter.
@@ -266,7 +277,7 @@ std::pair<SceneParserErrorCodes, std::vector<scene_description>>
             }
             // Check if only 3 values are set (x,y,z)
             if (vector_values.size() != 3) {
-              return {invalid_set_property_value, {}};
+              return {{invalid_set_property_value, line_number}, {}};
             }
             // Set vector's x,y,z values.
             vectors.find(name)->second.x = std::stof(vector_values[0]);
@@ -276,11 +287,11 @@ std::pair<SceneParserErrorCodes, std::vector<scene_description>>
 
           case SceneThings::material_d: {
             if (materials.find(name) == materials.end()) {
-              return {thing_not_created, {}};
+              return {{thing_not_created, line_number}, {}};
             }
             if (MATERIAL_PROPERTIES_MAP.find(property) == MATERIAL_PROPERTIES_MAP.end() &&
                   property != "type" && property != "color") {
-              return {invalid_set_property, {}};
+              return {{invalid_set_property, line_number}, {}};
             }
 
             // Set material's type.
@@ -288,7 +299,7 @@ std::pair<SceneParserErrorCodes, std::vector<scene_description>>
               if (MATERIAL_TYPES_MAP.find(property_value) != MATERIAL_TYPES_MAP.end()) {
                 materials.find(name)->second.type = MATERIAL_TYPES_MAP.find(property_value)->second;
               } else {
-                return {invalid_set_property_value, {}};
+                return {{invalid_set_property_value, line_number}, {}};
               }
             }
             // Set material's color.
@@ -297,7 +308,7 @@ std::pair<SceneParserErrorCodes, std::vector<scene_description>>
               if (colors.find(property_value) != colors.end()) {
                 materials.find(name)->second.color = &(colors.find(property_value)->second);
               } else {
-                return {invalid_set_property_value, {}};
+                return {{invalid_set_property_value, line_number}, {}};
               }
             }
             // Set the remaining material properties.
@@ -309,9 +320,55 @@ std::pair<SceneParserErrorCodes, std::vector<scene_description>>
           } break;
 
           case SceneThings::light_d: {
+            if (lights.find(name) == lights.end()) {
+              return {{thing_not_created, line_number}, {}};
+            }
+            if (LIGHT_PROPERTIES_MAP.find(property) == LIGHT_PROPERTIES_MAP.end() &&
+                property != "type" && property != "color") {
+              return {{invalid_set_property, line_number}, {}};
+            }
+
+            // Set light's type.
+            if (property == "type") {
+              if (LIGHT_TYPES_MAP.find(property_value) != LIGHT_TYPES_MAP.end()) {
+                lights.find(name)->second.type = LIGHT_TYPES_MAP.find(property_value)->second;
+              } else {
+                return {{invalid_set_property_value, line_number}, {}};
+              }
+            }
+            // Set light's color.
+            // Color should exist.
+            else if (property == "color") {
+              if (colors.find(property_value) != colors.end()) {
+                lights.find(name)->second.color = &(colors.find(property_value)->second);
+              } else {
+                return {{invalid_set_property_value, line_number}, {}};
+              }
+            } else {
+              // Check if type is set before setting position or direction
+              // property of a light.
+              if (lights.find(name)->second.type == not_set_lt) {
+                return {{invalid_set_property_value, line_number}, {}};
+              }
+              // Check if the vector in the property value exists.
+              if (vectors.find(property_value) == vectors.end()) {
+                return {{invalid_set_property_value, line_number}, {}};
+              }
+
+              // Property and type should match.
+              if ((property == "position" && lights.find(name)->second.type == point) ||
+                  (property == "direction" && lights.find(name)->second.type != directional)) {
+                LightProperty lp = LIGHT_PROPERTIES_MAP.find(property)->second;
+                auto lp_value = vectors.find(property_value)->second;
+                lights.find(name)->second.property.first = lp;
+                lights.find(name)->second.property.second = &(lp_value);
+              } else {
+                return {{invalid_set_property_value, line_number}, {}};
+                }
+            }
             std::cout << "Name: " << lights.find(name)->second.name << std::endl
                       << "Type: " << lights.find(name)->second.type << std::endl
-                      << "Color: " << ((lights.find(name)->second.color == nullptr) ? "ok" : "not ok") << std::endl
+                      << "Color(value): " << lights.find(name)->second.color->name << std::endl
                       << "Intensity: " << lights.find(name)->second.intensity << std::endl
                       << "Property(type): " << lights.find(name)->second.property.first << std::endl
                       << "Property(value): " << ((lights.find(name)->second.property.second == nullptr) ? "ok" : "not ok") << std::endl
@@ -319,6 +376,7 @@ std::pair<SceneParserErrorCodes, std::vector<scene_description>>
           } break;
 
           case SceneThings::object_d: {
+
             std::cout << "Name: " << objects.find(name)->second.name << std::endl
                       << "Type: " << objects.find(name)->second.type << std::endl
                       << "Material: " << ((objects.find(name)->second.material == nullptr) ? "ok" : "not ok") << std::endl
@@ -385,5 +443,5 @@ std::pair<SceneParserErrorCodes, std::vector<scene_description>>
 
   std::vector<scene_description> result;
 
-  return {success, result};
+  return {{success, line_number}, result};
 }
