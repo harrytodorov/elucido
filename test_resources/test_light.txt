@@ -1,0 +1,16 @@
+# Define colors
+create color green
+set color green rgb 0,255,0
+
+# Define a position
+create vector p1
+set vector p1 coordinates 1,1,1
+
+# Create a light.
+create light l1
+
+# Set properties to light
+set light l1 color green
+set light l1 type point
+set light l1 position p1
+

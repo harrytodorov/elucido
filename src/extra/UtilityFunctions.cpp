@@ -11,6 +11,7 @@
 #include "../../include/elucido/Utilities.h"
 
 /**
+ *
  * Reads a text file following given protocol (see Report) and extracts
  * scene descriptions(s) from it.
  * @param filename: The text file containing scene description(s).
@@ -359,36 +360,152 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
               if ((property == "position" && lights.find(name)->second.type == point) ||
                   (property == "direction" && lights.find(name)->second.type != directional)) {
                 LightProperty lp = LIGHT_PROPERTIES_MAP.find(property)->second;
-                auto lp_value = vectors.find(property_value)->second;
+                vector_description lp_value = vectors.find(property_value)->second;
                 lights.find(name)->second.property.first = lp;
-                lights.find(name)->second.property.second = &(lp_value);
+                lights.at(name).property.second = &(lp_value);
               } else {
                 return {{invalid_set_property_value, line_number}, {}};
                 }
             }
-            std::cout << "Name: " << lights.find(name)->second.name << std::endl
-                      << "Type: " << lights.find(name)->second.type << std::endl
-                      << "Color(value): " << lights.find(name)->second.color->name << std::endl
-                      << "Intensity: " << lights.find(name)->second.intensity << std::endl
-                      << "Property(type): " << lights.find(name)->second.property.first << std::endl
-                      << "Property(value): " << ((lights.find(name)->second.property.second == nullptr) ? "ok" : "not ok") << std::endl
-                      << "Transformations size: " << lights.find(name)->second.transformations.size() << std::endl;
           } break;
 
           case SceneThings::object_d: {
+            if (objects.find(name) == objects.end()) {
+              return {{thing_not_created, line_number}, {}};
+            }
+            if (OBJECT_PROPERTIES_MAP.find(property) == OBJECT_PROPERTIES_MAP.end() &&
+                property != "type" && property != "material") {
+              return {{invalid_set_property, line_number}, {}};
+            }
 
-            std::cout << "Name: " << objects.find(name)->second.name << std::endl
-                      << "Type: " << objects.find(name)->second.type << std::endl
-                      << "Material: " << ((objects.find(name)->second.material == nullptr) ? "ok" : "not ok") << std::endl
-                      << "Center: " <<  ((objects.find(name)->second.center == nullptr) ? "ok" : "not ok") << std::endl
-                      << "Radius: " << objects.find(name)->second.radius << std::endl
-                      << "Vertices: " << ((objects.find(name)->second.vertices == nullptr) ? "ok" : "not ok") << std::endl
-                      << "File name: " << objects.find(name)->second.file_name << std::endl
-                      << "Interpolation: " << unsigned(objects.find(name)->second.interpolation) << std::endl
-                      << "Transformations size: " << objects.find(name)->second.transformations.size() << std::endl;
+            // Set object's type.
+            if (property == "type") {
+              if (OBJECT_TYPES_MAP.find(property_value) != OBJECT_TYPES_MAP.end()) {
+                objects.at(name).type = OBJECT_TYPES_MAP.at(property_value);
+              } else {
+                return {{invalid_set_property_value, line_number}, {}};
+              }
+            }
+            // Set object's material.
+            // Material should exist.
+            else if (property == "material") {
+              if (materials.find(property_value) != materials.end()) {
+                objects.at(name).material = &(materials.at(property_value));
+              } else {
+                return {{invalid_set_property_value, line_number}, {}};
+              }
+            } else {
+              // Check if type is set.
+              if (objects.at(name).type == not_set_ot) {
+                return {{invalid_set_property_value, line_number}, {}};
+              }
+
+              // Check if type and property match.
+              // SPHERE
+              if (objects.at(name).type == sphere) {
+                if (OBJECT_PROPERTIES_MAP.at(property) == radius) {
+                  objects.at(name).radius = std::stof(property_value);
+                } else if (OBJECT_PROPERTIES_MAP.at(property) == center) {
+                  // Vector should be defined before.
+                  if (vectors.find(property_value) == vectors.end()) {
+                    return {{invalid_set_property_value, line_number}, {}};
+                  }
+                  objects.at(name).center = &(vectors.at(property_value));
+                } else {
+                  return {{invalid_set_property_value, line_number}, {}};
+                }
+              }
+              // TRIANGLE
+              else if (objects.at(name).type == triangle) {
+                if (OBJECT_PROPERTIES_MAP.at(property) == vertices) {
+                  // Extract vertices(vectors) values from string.
+                  // A comma ',' is used as a delimiter.
+                  std::vector<std::string> vertices_values;
+                  std::istringstream vertices_values_stream(property_value);
+                  std::string vertex_token;
+                  while (std::getline(vertices_values_stream, vertex_token, ',')) {
+                    vertices_values.push_back(vertex_token);
+                  }
+
+                  // Check if only 3 values are set (v1,v2,v3)
+                  if (vertices_values.size() != 3) {
+                    return {{invalid_set_property_value, line_number}, {}};
+                  }
+
+                  // Check if the vertices exist.
+                  if (vectors.find(vertices_values[0]) == vectors.end() ||
+                      vectors.find(vertices_values[1]) == vectors.end() ||
+                      vectors.find(vertices_values[2]) == vectors.end()) {
+                    return {{invalid_set_property_value, line_number}, {}};
+                  }
+
+                  // Set the vertices.
+                  objects.at(name).vertices = new vector_description*[3];
+                  objects.at(name).vertices[0] = &(vectors.at(vertices_values[0]));
+                  objects.at(name).vertices[1] = &(vectors.at(vertices_values[1]));
+                  objects.at(name).vertices[2] = &(vectors.at(vertices_values[2]));
+                } else {
+                  return {{invalid_set_property_value, line_number}, {}};
+                }
+              }
+              // TRIANGLE MESH
+              else if (objects.at(name).type == triangle_mesh) {
+                if (OBJECT_PROPERTIES_MAP.at(property) == file_name) {
+                  objects.at(name).file_name = property_value;
+                } else if (OBJECT_PROPERTIES_MAP.at(property) == interpolation) {
+                  int interpolation = std::stoi(property_value);
+                  if (interpolation != 0) interpolation = 1;
+                  objects.at(name).interpolation = interpolation;
+                } else {
+                  return {{invalid_set_property_value, line_number}, {}};
+                }
+              }
+            }
           } break;
 
           case SceneThings::image_plane_d: {
+            if (image_planes.find(name) == image_planes.end()) {
+              return {{thing_not_created, line_number}, {}};
+            }
+            if (IMAGE_PLANE_PROPERTIES.find(property) == IMAGE_PLANE_PROPERTIES.end()) {
+              return {{invalid_set_property, line_number}, {}};
+            }
+
+            // OUTPUT TYPE
+            if (IMAGE_PLANE_PROPERTIES.at(property) == output_type) {
+              // Check if desired output type is available.
+              if (IMAGE_PLANE_OUT_TYPES.find(property_value) == IMAGE_PLANE_OUT_TYPES.end()) {
+                return {{invalid_set_property_value, line_number}, {}};
+              }
+
+              if (IMAGE_PLANE_OUT_TYPES.at(property_value) == ppm_o) {
+                image_planes.at(name).output_type = ppm_o;
+              } else if (IMAGE_PLANE_OUT_TYPES.at(property_value) == png_o) {
+                image_planes.at(name).output_type = png_o;
+              }
+            }
+            // RESOLUTION HORIZONTAL
+            else if (IMAGE_PLANE_PROPERTIES.at(property) == horizontal) {
+              image_planes.at(name).horizontal =
+                  static_cast<uint32_t>(std::stoi(property_value));
+            }
+            // RESOLUTION VERTICAL
+            else if (IMAGE_PLANE_PROPERTIES.at(property) == vertical) {
+              image_planes.at(name).vertical =
+                  static_cast<uint32_t>(std::stoi(property_value));
+            }
+            // GAMMA
+            else if (IMAGE_PLANE_PROPERTIES.at(property) == gamma) {
+              int gamma_value = std::stoi(property_value);
+              if (gamma_value < 0) gamma_value = 0;
+              if (gamma_value > 2) gamma_value = 2;
+              image_planes.at(name).gamma = gamma_value;
+            }
+            // NUMBER SAMPLES
+            else if (IMAGE_PLANE_PROPERTIES.at(property) == number_samples) {
+              image_planes.at(name).number_samples =
+                  static_cast<uint32_t>(std::stoi(property_value));
+            }
             std::cout << "Name: " << image_planes.find(name)->second.name << std::endl
                       << "Output type: " << image_planes.find(name)->second.output_type << std::endl
                       << "Horizontal: " << unsigned(image_planes.find(name)->second.horizontal) << std::endl

@@ -1,0 +1,7 @@
+# Create an object
+create object o1
+
+# Try to set a material to an object, before declaring it
+# Should produce an error
+set object o1 material m1
+

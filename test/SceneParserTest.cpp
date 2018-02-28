@@ -132,3 +132,66 @@ TEST(SceneParser, checkIfMaterialColorIsAlreadyDefined) {
   EXPECT_EQ(result.first.first, invalid_set_property_value);
   EXPECT_EQ(result.second.size(), 0);
 }
+
+//==============================================================================
+TEST(SceneParser, checkIfLightTypeIsDefined) {
+  std::string filename = "/Users/harry/dev/elucido/test_resources/test_checkIfLighTypeIsDefined.txt";
+  auto result = read_scene_from_file(filename);
+  EXPECT_EQ(result.first.first, invalid_set_property_value);
+  EXPECT_EQ(result.first.second, 9);
+  EXPECT_EQ(result.second.size(), 0);
+}
+
+//==============================================================================
+TEST(SceneParser, checkIfLightTypeAndPropertyMatch) {
+  std::string filename = "/Users/harry/dev/elucido/test_resources/test_checkIfLighTypeAndPropertyMatch.txt";
+  auto result = read_scene_from_file(filename);
+  EXPECT_EQ(result.first.first, invalid_set_property_value);
+  EXPECT_EQ(result.first.second, 11);
+  EXPECT_EQ(result.second.size(), 0);
+}
+
+//==============================================================================
+TEST(SceneParser, checkForObjectIfMaterialIsDefinedBeforeSettingIt) {
+  std::string filename = "/Users/harry/dev/elucido/test_resources/test_checkForObjectIfMaterialIsDefinedBeforeSettingIt.txt";
+  auto result = read_scene_from_file(filename);
+  EXPECT_EQ(result.first.first, invalid_set_property_value);
+  EXPECT_EQ(result.first.second, 6);
+  EXPECT_EQ(result.second.size(), 0);
+}
+
+//==============================================================================
+TEST(SceneParser, checkForObjectIfTypeAndPropertyMatch) {
+  std::string filename = "/Users/harry/dev/elucido/test_resources/test_checkForObjectIfTypeAndPropertyMatch.txt";
+  auto result = read_scene_from_file(filename);
+  EXPECT_EQ(result.first.first, invalid_set_property_value);
+  EXPECT_EQ(result.first.second, 10);
+  EXPECT_EQ(result.second.size(), 0);
+}
+
+//==============================================================================
+TEST(SceneParser, checkForObjectIfVectorIsDefinedBeforeSettingIt) {
+  std::string filename = "/Users/harry/dev/elucido/test_resources/test_checkForObjectIfVectorIsDefinedBeforeSettingIt.txt";
+  auto result = read_scene_from_file(filename);
+  EXPECT_EQ(result.first.first, invalid_set_property_value);
+  EXPECT_EQ(result.first.second, 8);
+  EXPECT_EQ(result.second.size(), 0);
+}
+
+//==============================================================================
+TEST(SceneParser, checkForObjectIfVectorIsDefinedBeforeSettingIt2) {
+  std::string filename = "/Users/harry/dev/elucido/test_resources/test_checkForObjectIfVectorIsDefinedBeforeSettingIt2.txt";
+  auto result = read_scene_from_file(filename);
+  EXPECT_EQ(result.first.first, invalid_set_property_value);
+  EXPECT_EQ(result.first.second, 8);
+  EXPECT_EQ(result.second.size(), 0);
+}
+
+//==============================================================================
+TEST(SceneParser, checkForObjectIfVectorCountMatchForProperty) {
+  std::string filename = "/Users/harry/dev/elucido/test_resources/test_checkForObjectIfVectorCountMatchForProperty.txt";
+  auto result = read_scene_from_file(filename);
+  EXPECT_EQ(result.first.first, invalid_set_property_value);
+  EXPECT_EQ(result.first.second, 10);
+  EXPECT_EQ(result.second.size(), 0);
+}

@@ -1,0 +1,11 @@
+# Create an object
+create object o1
+
+# Create a vector
+create vector v1
+
+# Set object's type to triangle and try to set its center
+# Should produce an error; center is a property only for objects of type sphere
+set object o1 type triangle
+set object o1 center v1
+

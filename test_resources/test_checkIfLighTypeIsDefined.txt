@@ -1,0 +1,10 @@
+# Create a light
+create light l1
+
+# Create a position vector
+create vector p1
+set vector p1 coordinates 1,1,1
+
+# Set a light position, before defining its type
+set light l1 position p1
+

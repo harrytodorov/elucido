@@ -1,0 +1,11 @@
+# Create an object
+create object o1
+
+# Create vectors
+create vector v1
+create vector v2
+
+# Set only two vertices to a triangle's vertices property;
+# Should produce an error, 3 vertices expected
+set object o1 vertices v1,v2
+

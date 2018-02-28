@@ -1,0 +1,9 @@
+# Create an object
+create object o1
+
+# Try to set a sphere's center parameter with vector as a center
+# which does not exist;
+# Should produce an error
+set object o1 type sphere
+set object o1 center v1
+

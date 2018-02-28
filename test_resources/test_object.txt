@@ -1,0 +1,19 @@
+create material m1
+
+create color green
+set material m1 color green
+
+create vector v1
+
+set material m1 type phong
+set material m1 ambient 1.4
+
+create object o1
+set object o1 type sphere
+set object o1 material m1
+set object o1 center v1
+
+create object o2
+# set object o2 type triangle
+set object o2 vertices v1,v1,v1
+

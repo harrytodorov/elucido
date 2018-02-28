@@ -55,14 +55,14 @@ enum SceneParserStatusCodes {
   success
 };
 const std::map<SceneParserStatusCodes, std::string> STATUS_CODES_MAP = {
-    {file_problem, "There was a problem with loading the file."},
-    {invalid_statement, "An invalid statement."},
-    {invalid_syntax, "Invalid syntax."},
-    {duplicate, "Duplicate"},
-    {thing_not_created, "The thing you want to set is not created."},
-    {invalid_set_property, "The set property you're using is not defined."},
-    {invalid_set_property_value, "The value of the set property is not valid"},
-    {success, "File was successfully parsed."}
+    {file_problem,                "There was a problem with loading the file."},
+    {invalid_statement,           "An invalid statement."},
+    {invalid_syntax,              "Invalid syntax."},
+    {duplicate,                   "Duplicate"},
+    {thing_not_created,           "The thing you want to set is not created."},
+    {invalid_set_property,        "The set property you're using is not defined."},
+    {invalid_set_property_value,  "The value of the set property is not valid"},
+    {success,                     "File was successfully parsed."}
 };
 
 // The available start words (statements) within the scene format +
@@ -75,11 +75,11 @@ enum SceneFileActionWord {
   comment
 };
 const std::map<std::string, SceneFileActionWord> START_WORDS = {
-    {"create", create},
-    {"set", set},
+    {"create",    create},
+    {"set",       set},
     {"transform", transform},
-    {"for", animate},
-    {"#", comment}
+    {"for",       animate},
+    {"#",         comment}
 };
 
 // The available things to apply statements on within the scene format +
@@ -117,9 +117,9 @@ enum CameraSetProperties {
   camera_fov
 };
 const std::map<std::string, CameraSetProperties> CAMERA_SET_PROPERTIES = {
-    {"type", camera_type},
+    {"type",        camera_type},
     {"zoom_factor", camera_zoom_factor},
-    {"fov", camera_fov}
+    {"fov",         camera_fov}
 };
 
 // Available camera types +
@@ -130,8 +130,8 @@ enum CameraType {
   orthographic
 };
 const std::map<std::string, CameraType> CAMERA_TYPES_MAP = {
-    {"orthographic", orthographic},
-    {"perspective", perspective}
+    {"orthographic",  orthographic},
+    {"perspective",   perspective}
 };
 
 // Available camera properties.
@@ -150,9 +150,9 @@ enum MaterialType {
   rrm,    // Refractive material
 };
 const std::map<std::string, MaterialType> MATERIAL_TYPES_MAP = {
-    {"phong", pm},
-    {"reflective", rm},
-    {"refractive", rrm}
+    {"phong",       pm},
+    {"reflective",  rm},
+    {"refractive",  rrm}
 };
 
 // Available material properties +
@@ -166,11 +166,11 @@ enum MaterialProperty {
   ior
 };
 const std::map<std::string, MaterialProperty> MATERIAL_PROPERTIES_MAP = {
-    {"ambient", ambient},
-    {"diffuse", diffuse},
-    {"spec_const", spec_const},
-    {"spec_exp", spec_exp},
-    {"refl_ind", refl_ind},
+    {"ambient",     ambient},
+    {"diffuse",     diffuse},
+    {"spec_const",  spec_const},
+    {"spec_exp",    spec_exp},
+    {"refl_ind",    refl_ind},
     {"ior", ior}
 };
 
@@ -182,7 +182,7 @@ enum LightType {
   directional
 };
 const std::map<std::string, LightType> LIGHT_TYPES_MAP = {
-    {"point", point},
+    {"point",       point},
     {"directional", directional}
 };
 
@@ -194,8 +194,68 @@ enum LightProperty {
   direction
 };
 const std::map<std::string, LightProperty> LIGHT_PROPERTIES_MAP = {
-    {"position", position},
+    {"position",  position},
     {"direction", direction}
+};
+
+// Available object types +
+// corresponding mappings for the parser.
+enum ObjectType {
+  not_set_ot,
+  sphere,
+  triangle,
+  triangle_mesh
+};
+const std::map<std::string, ObjectType> OBJECT_TYPES_MAP = {
+    {"sphere",        sphere},
+    {"triangle",      triangle},
+    {"triangle_mesh", triangle_mesh}
+};
+
+// Available object properties +
+// corresponding mappings for the parser.
+enum ObjectProperty {
+  radius,
+  center,
+  vertices,
+  file_name,
+  interpolation
+};
+const std::map<std::string, ObjectProperty> OBJECT_PROPERTIES_MAP = {
+    {"radius",          radius},
+    {"center",          center},
+    {"vertices",        vertices},
+    {"file_name",       file_name},
+    {"interpolation",   interpolation}
+};
+
+// Available image plane output types +
+// corresponding mappings for the parser.
+enum OutputType {
+  not_set_out,
+  ppm_o,
+  png_o
+};
+const std::map<std::string, OutputType> IMAGE_PLANE_OUT_TYPES = {
+    {"ppm", ppm_o},
+    {"png", png_o}
+};
+
+// Available image plane properties +
+// corresponding mappings for the parser.
+enum ImagePlaneProperty {
+  output_type,
+  horizontal,
+  vertical,
+  gamma,
+  number_samples
+};
+const std::map<std::string, ImagePlaneProperty> IMAGE_PLANE_PROPERTIES = {
+    {"output_type",     output_type},
+    {"horizontal",      horizontal},
+    {"vertical",        vertical},
+    {"gamma",           gamma},
+    {"number_samples",  number_samples}
 };
 
 enum RayType {
@@ -203,13 +263,6 @@ enum RayType {
   shadow,
   reflection,
   refraction
-};
-
-enum ObjectType {
-  not_set_ot,
-  sphere,
-  triangle,
-  triangle_mesh
 };
 
 enum Axis {
@@ -222,25 +275,11 @@ enum Axis {
   XYZ
 };
 
-enum ObjectProperty {
-  radius,
-  center,
-  vertices,
-  file_name,
-  interpolation
-};
-
 enum TransformationType {
   not_set_tt,
   translation,
   rotation,
   scale
-};
-
-enum OutputType {
-  not_set_out,
-  ppm_o,
-  png_o
 };
 
 enum AccelerationStructureType {
@@ -329,7 +368,7 @@ struct object_description {
   material_description                    *material;
   float_t                                 radius;
   vector_description                      *center;
-  vector_description                      *vertices;
+  vector_description                      **vertices;
   std::string                             file_name;
   uint8_t                                 interpolation;  // One wants to encode 3 states:
                                                           // 0: interpolation is not set
