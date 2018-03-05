@@ -1,0 +1,10 @@
+# Create an image plane
+create image-plane ip1
+
+# Set some properties on it
+set image-plane ip1 output_type png
+set image-plane ip1 horizontal 1920
+set image-plane ip1 vertical 1080
+set image-plane ip1 number_samples 25
+set image-plane ip1 gamma 1
+

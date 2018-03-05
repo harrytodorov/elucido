@@ -52,6 +52,10 @@ enum SceneParserStatusCodes {
   thing_not_created,
   invalid_set_property,
   invalid_set_property_value,
+  invalid_thing_to_transform,
+  invalid_transformation_type,
+  invalid_transformation_axix,
+  invalid_animation_camera,
   success
 };
 const std::map<SceneParserStatusCodes, std::string> STATUS_CODES_MAP = {
@@ -59,9 +63,13 @@ const std::map<SceneParserStatusCodes, std::string> STATUS_CODES_MAP = {
     {invalid_statement,           "An invalid statement."},
     {invalid_syntax,              "Invalid syntax."},
     {duplicate,                   "Duplicate"},
-    {thing_not_created,           "The thing you want to set is not created."},
+    {thing_not_created,           "The thing is not created."},
     {invalid_set_property,        "The set property you're using is not defined."},
-    {invalid_set_property_value,  "The value of the set property is not valid"},
+    {invalid_set_property_value,  "The value of the set property is not valid."},
+    {invalid_thing_to_transform,  "The thing does not support transformation."},
+    {invalid_transformation_type, "The transformation type is not supported"},
+    {invalid_transformation_axix, "You have entered invalid transformation axis."},
+    {invalid_animation_camera,    "You can only animate one camera per animation."},
     {success,                     "File was successfully parsed."}
 };
 
@@ -78,7 +86,7 @@ const std::map<std::string, SceneFileActionWord> START_WORDS = {
     {"create",    create},
     {"set",       set},
     {"transform", transform},
-    {"for",       animate},
+    {"animate",   animate},
     {"#",         comment}
 };
 
@@ -103,8 +111,8 @@ const std::map<std::string, SceneThings> AVAILABLE_THINGS = {
     {"material",                material_d},
     {"light",                   light_d},
     {"object",                  object_d},
-    {"image-plane",             image_plane_d},
-    {"acceleration-structure",  acceleration_structure_d},
+    {"image_plane",             image_plane_d},
+    {"acceleration_structure",  acceleration_structure_d},
     {"animation",               animation_d},
     {"scene",                   scene_d}
 };
@@ -236,7 +244,7 @@ enum OutputType {
   ppm_o,
   png_o
 };
-const std::map<std::string, OutputType> IMAGE_PLANE_OUT_TYPES = {
+const std::map<std::string, OutputType> IMAGE_PLANE_OUT_TYPES_MAP = {
     {"ppm", ppm_o},
     {"png", png_o}
 };
@@ -247,24 +255,86 @@ enum ImagePlaneProperty {
   output_type,
   horizontal,
   vertical,
-  gamma,
+  use_gamma,
   number_samples
 };
-const std::map<std::string, ImagePlaneProperty> IMAGE_PLANE_PROPERTIES = {
+const std::map<std::string, ImagePlaneProperty> IMAGE_PLANE_PROPERTIES_MAP = {
     {"output_type",     output_type},
     {"horizontal",      horizontal},
     {"vertical",        vertical},
-    {"gamma",           gamma},
+    {"gamma",           use_gamma},
     {"number_samples",  number_samples}
 };
 
-enum RayType {
-  primary,
-  shadow,
-  reflection,
-  refraction
+// Available acceleration structure properties +
+// corresponding mappings.
+enum AccelerationStructureProperties {
+  alpha,
+  max_resolution
+};
+const std::map<std::string, AccelerationStructureProperties> AC_PROPERTIES_MAP = {
+    {"alpha",           alpha},
+    {"max_resolution",  max_resolution}
 };
 
+// Available acceleration structure types + 
+// corresponding mappings.
+enum AccelerationStructureType {
+  not_set_act,
+  grid
+};
+const std::map<std::string, AccelerationStructureType> AC_TYPES_MAP = {
+    {"grid",  grid}
+};
+
+// Available animation properties +
+// corresponding mappings.
+enum AnimationProperties {
+  number_of_images_in_seq,
+  object_anim,
+  light_anim,
+  camera_anim
+};
+const std::map<std::string, AnimationProperties> ANIMATION_PROPERTIES_MAP = {
+    {"number_of_images_in_seq", number_of_images_in_seq},
+    {"object",                  object_anim},
+    {"light",                   light_anim},
+    {"camera",                  camera_anim}
+};
+
+// Available scene properties +
+// corresponding mappings.
+enum SceneProperties {
+  scene_camera,
+  scene_image_plane,
+  scene_as,
+  scene_objects,
+  scene_lights,
+  scene_animations
+};
+const std::map<std::string, SceneProperties> SCENE_PROPERTIES_MAP = {
+    {"camera",                  scene_camera},
+    {"image_plane",             scene_image_plane},
+    {"acceleration_structure",  scene_as},
+    {"objects",                 scene_objects},
+    {"lights",                  scene_lights},
+    {"animations",              scene_animations}
+};
+
+// Available transformation type + corresponding mappings.
+enum TransformationType {
+  not_set_tt,
+  translation,
+  rotation,
+  scale
+};
+const std::map<std::string, TransformationType> TRANSFORMATION_TYPES_MAP = {
+    {"translate", translation},
+    {"rotate",    rotation},
+    {"scale",       scale}
+};
+
+// Available transformation axes + corresponding mappings.
 enum Axis {
   X,
   Y,
@@ -274,17 +344,21 @@ enum Axis {
   YZ,
   XYZ
 };
-
-enum TransformationType {
-  not_set_tt,
-  translation,
-  rotation,
-  scale
+const std::map<std::string, Axis> AXES_MAP = {
+    {"X",   X},
+    {"Y",   Y},
+    {"Z",   Z},
+    {"XY",  XY},
+    {"XZ",  XZ},
+    {"YZ",  YZ},
+    {"XYZ", XYZ}
 };
 
-enum AccelerationStructureType {
-  not_set_act,
-  grid
+enum RayType {
+  primary,
+  shadow,
+  reflection,
+  refraction
 };
 
 struct color_description {
@@ -392,7 +466,7 @@ struct image_plane_description {
   OutputType    output_type;
   uint32_t      horizontal;
   uint32_t      vertical;
-  uint8_t       gamma;  // One wants to encode 3 states:
+  uint8_t       use_gamma;  // One wants to encode 3 states:
                         // 0: gamma is not set
                         // 1: gamma is set to true
                         // 2: gamma is set to false
@@ -402,7 +476,7 @@ struct image_plane_description {
       output_type(not_set_out),
       horizontal(0),
       vertical(0),
-      gamma(0),
+      use_gamma(0),
       number_samples(0) {}
 };
 

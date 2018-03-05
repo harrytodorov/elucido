@@ -1,0 +1,16 @@
+# Create an animation
+create animation anim1
+
+# Set number of images in animation sequence
+set animation anim1 number_of_images_in_seq 100
+
+# Create an object
+create object o1
+
+# Create a light source
+create light l1
+
+# Add object and light to the animation
+set animation anim1 object o1
+set animation anim1 light l1
+

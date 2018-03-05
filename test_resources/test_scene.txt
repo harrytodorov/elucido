@@ -1,7 +1,6 @@
 # Create a camera
 create camera c1
-set camera c1 type orthographic
-set camera c1 zoom_factor 1.4
+set camera c1 type perspective
 
 # Create a vector
 create vector v1
@@ -19,13 +18,10 @@ create light l1
 create object o1
 
 # Create an image plane
-create image-plane ip1
-
-# Create a second image plane
-create	image-plane	 ip2
+create image_plane ip1
 
 # Create an acceleration structure
-create acceleration-structure ac1
+create acceleration_structure ac1
 
 # Create an animation
 create animation anim1
@@ -33,6 +29,10 @@ create animation anim1
 # Create a scene
 create scene scene1
 
-# Create second scene
-create scene scene2
+# Set things to the scene
+set scene scene1 camera c1
+set scene scene1 image_plane ip1
+set scene scene1 acceleration_structure ac1
+set scene scene1 objects o1
+set scene scene1 lights l1
 

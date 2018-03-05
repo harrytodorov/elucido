@@ -6,11 +6,14 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
-#include <stdlib.h>
+#include <cstdlib>
 
 #include "../../include/elucido/Utilities.h"
 
 /**
+ * TODO: clean-up code, where possible
+ * TODO: make code, a bit more readable; comment+spacing
+ * TODO: look at CameraProperty and CameraSetProperties; why?
  *
  * Reads a text file following given protocol (see Report) and extracts
  * scene descriptions(s) from it.
@@ -60,6 +63,7 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
 
     // Get the start word of a line, and check if it is a valid one.
     tokenized_line >> action_token;
+
     if (START_WORDS.find(action_token) == START_WORDS.end()) {
       return {{invalid_statement, line_number}, {}};
     }
@@ -182,7 +186,7 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
           return {{invalid_statement, line_number}, {}};
         }
 
-        switch (AVAILABLE_THINGS.find(thing)->second) {
+        switch (AVAILABLE_THINGS.at(thing)) {
 
           case SceneThings::camera_d: {
             if (cameras.find(name) == cameras.end()) {
@@ -191,37 +195,37 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
             if (CAMERA_SET_PROPERTIES.find(property) == CAMERA_SET_PROPERTIES.end()) {
               return {{invalid_set_property, line_number}, {}};
             }
-            // Set the camera type.
-            if (CAMERA_SET_PROPERTIES.find(property) == CAMERA_SET_PROPERTIES.find("type")) {
+
+            // CAMERA TYPE
+            if (CAMERA_SET_PROPERTIES.at(property) == camera_type) {
               if (CAMERA_TYPES_MAP.find(property_value) == CAMERA_TYPES_MAP.end()) {
                 return {{invalid_set_property_value, line_number}, {}};
               }
-              cameras.find(name)->second.type = CAMERA_TYPES_MAP.find(property_value)->second;
-            }
-            // Check if camera type is set.
-            if (cameras.find(name)->second.type == not_set_ct) {
-              return {{invalid_set_property_value, line_number}, {}};
-            }
+              cameras.at(name).type = CAMERA_TYPES_MAP.at(property_value);
+            } else {
+              // Check if camera type is set.
+              if (cameras.at(name).type == not_set_ct) {
+                return {{invalid_set_property_value, line_number}, {}};
+              }
 
-            // Zoom factor can only be set on orthographic cameras.
-            if (CAMERA_SET_PROPERTIES.find(property) == CAMERA_SET_PROPERTIES.find("zoom_factor") &&
-                cameras.find(name)->second.type == orthographic) {
-              // Set zoom factor.
-              cameras.find(name)->second.property.first = zoom_factor;
-              cameras.find(name)->second.property.second =
-                  static_cast<float_t>(std::atof(property_value.c_str()));
-            }
-            // Field of view can only be set on perspective cameras.
-            else if (CAMERA_SET_PROPERTIES.find(property) == CAMERA_SET_PROPERTIES.find("fov") &&
-                     cameras.find(name)->second.type == perspective) {
-              // Set fov.
-              cameras.find(name)->second.property.first = field_of_view;
-              cameras.find(name)->second.property.second =
-                  static_cast<float_t>(std::atof(property_value.c_str()));
-            }
-            // Invalid.
-            else {
-              return {{invalid_set_property_value, line_number}, {}};
+              // ZOOM FACTOR
+              if (CAMERA_SET_PROPERTIES.at(property) == camera_zoom_factor &&
+                  cameras.at(name).type == orthographic) {
+                cameras.at(name).property.first = zoom_factor;
+                cameras.at(name).property.second =
+                    static_cast<float_t>(std::atof(property_value.c_str()));
+              }
+              // FIELD OF VIEW
+              else if (CAMERA_SET_PROPERTIES.at(property) == camera_fov &&
+                  cameras.at(name).type == perspective) {
+                cameras.at(name).property.first = field_of_view;
+                cameras.at(name).property.second =
+                    static_cast<float_t>(std::atof(property_value.c_str()));
+              }
+              // CAMERA TYPE AND PARAMETER SHOULD MATCH
+              else {
+                return {{invalid_set_property_value, line_number}, {}};
+              }
             }
           } break;
 
@@ -255,9 +259,9 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
               return {{invalid_set_property_value, line_number}, {}};
             }
             // Set rgb values.
-            colors.find(name)->second.r = r;
-            colors.find(name)->second.b = b;
-            colors.find(name)->second.g = g;
+            colors.at(name).r = r;
+            colors.at(name).b = b;
+            colors.at(name).g = g;
           } break;
 
           case SceneThings::vector_d: {
@@ -281,9 +285,9 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
               return {{invalid_set_property_value, line_number}, {}};
             }
             // Set vector's x,y,z values.
-            vectors.find(name)->second.x = std::stof(vector_values[0]);
-            vectors.find(name)->second.y = std::stof(vector_values[1]);
-            vectors.find(name)->second.z = std::stof(vector_values[2]);
+            vectors.at(name).x = std::stof(vector_values[0]);
+            vectors.at(name).y = std::stof(vector_values[1]);
+            vectors.at(name).z = std::stof(vector_values[2]);
           } break;
 
           case SceneThings::material_d: {
@@ -295,28 +299,28 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
               return {{invalid_set_property, line_number}, {}};
             }
 
-            // Set material's type.
+            // MATERIAL TYPE
             if (property == "type") {
               if (MATERIAL_TYPES_MAP.find(property_value) != MATERIAL_TYPES_MAP.end()) {
-                materials.find(name)->second.type = MATERIAL_TYPES_MAP.find(property_value)->second;
+                materials.at(name).type = MATERIAL_TYPES_MAP.at(property_value);
               } else {
                 return {{invalid_set_property_value, line_number}, {}};
               }
             }
-            // Set material's color.
+            // MATERIAL COLOR
             // The color should exist.
             else if (property == "color") {
               if (colors.find(property_value) != colors.end()) {
-                materials.find(name)->second.color = &(colors.find(property_value)->second);
+                materials.at(name).color = &(colors.at(property_value));
               } else {
                 return {{invalid_set_property_value, line_number}, {}};
               }
             }
-            // Set the remaining material properties.
+            // REMAINING PROPERTIES
             else {
-              MaterialProperty mp = MATERIAL_PROPERTIES_MAP.find(property)->second;
+              MaterialProperty mp = MATERIAL_PROPERTIES_MAP.at(property);
               float_t mp_value    = std::stof(property_value.c_str());
-              materials.find(name)->second.properties[mp] = mp_value;
+              materials.at(name).properties[mp] = mp_value;
             }
           } break;
 
@@ -329,38 +333,35 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
               return {{invalid_set_property, line_number}, {}};
             }
 
-            // Set light's type.
+            // LIGHT TYPE
             if (property == "type") {
               if (LIGHT_TYPES_MAP.find(property_value) != LIGHT_TYPES_MAP.end()) {
-                lights.find(name)->second.type = LIGHT_TYPES_MAP.find(property_value)->second;
+                lights.at(name).type = LIGHT_TYPES_MAP.at(property_value);
               } else {
                 return {{invalid_set_property_value, line_number}, {}};
               }
             }
-            // Set light's color.
-            // Color should exist.
+            // LIGHT COLOR
             else if (property == "color") {
               if (colors.find(property_value) != colors.end()) {
-                lights.find(name)->second.color = &(colors.find(property_value)->second);
+                lights.at(name).color = &(colors.at(property_value));
               } else {
                 return {{invalid_set_property_value, line_number}, {}};
               }
             } else {
-              // Check if type is set before setting position or direction
-              // property of a light.
+              // CHECK IF TYPE AND PROPERTY MATCH
               if (lights.find(name)->second.type == not_set_lt) {
                 return {{invalid_set_property_value, line_number}, {}};
               }
-              // Check if the vector in the property value exists.
               if (vectors.find(property_value) == vectors.end()) {
                 return {{invalid_set_property_value, line_number}, {}};
               }
 
-              // Property and type should match.
+              // POSITION & DIRECTION
               if ((property == "position" && lights.find(name)->second.type == point) ||
                   (property == "direction" && lights.find(name)->second.type != directional)) {
-                LightProperty lp = LIGHT_PROPERTIES_MAP.find(property)->second;
-                vector_description lp_value = vectors.find(property_value)->second;
+                LightProperty lp = LIGHT_PROPERTIES_MAP.at(property);
+                vector_description lp_value = vectors.at(property_value);
                 lights.find(name)->second.property.first = lp;
                 lights.at(name).property.second = &(lp_value);
               } else {
@@ -378,7 +379,7 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
               return {{invalid_set_property, line_number}, {}};
             }
 
-            // Set object's type.
+            // OBJECT'S TYPE
             if (property == "type") {
               if (OBJECT_TYPES_MAP.find(property_value) != OBJECT_TYPES_MAP.end()) {
                 objects.at(name).type = OBJECT_TYPES_MAP.at(property_value);
@@ -386,8 +387,7 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
                 return {{invalid_set_property_value, line_number}, {}};
               }
             }
-            // Set object's material.
-            // Material should exist.
+            // OBJECT'S MATERIAL
             else if (property == "material") {
               if (materials.find(property_value) != materials.end()) {
                 objects.at(name).material = &(materials.at(property_value));
@@ -395,12 +395,10 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
                 return {{invalid_set_property_value, line_number}, {}};
               }
             } else {
-              // Check if type is set.
               if (objects.at(name).type == not_set_ot) {
                 return {{invalid_set_property_value, line_number}, {}};
               }
 
-              // Check if type and property match.
               // SPHERE
               if (objects.at(name).type == sphere) {
                 if (OBJECT_PROPERTIES_MAP.at(property) == radius) {
@@ -467,77 +465,181 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
             if (image_planes.find(name) == image_planes.end()) {
               return {{thing_not_created, line_number}, {}};
             }
-            if (IMAGE_PLANE_PROPERTIES.find(property) == IMAGE_PLANE_PROPERTIES.end()) {
+            if (IMAGE_PLANE_PROPERTIES_MAP.find(property) == IMAGE_PLANE_PROPERTIES_MAP.end()) {
               return {{invalid_set_property, line_number}, {}};
             }
 
             // OUTPUT TYPE
-            if (IMAGE_PLANE_PROPERTIES.at(property) == output_type) {
+            if (IMAGE_PLANE_PROPERTIES_MAP.at(property) == output_type) {
               // Check if desired output type is available.
-              if (IMAGE_PLANE_OUT_TYPES.find(property_value) == IMAGE_PLANE_OUT_TYPES.end()) {
+              if (IMAGE_PLANE_OUT_TYPES_MAP.find(property_value) == IMAGE_PLANE_OUT_TYPES_MAP.end()) {
                 return {{invalid_set_property_value, line_number}, {}};
               }
 
-              if (IMAGE_PLANE_OUT_TYPES.at(property_value) == ppm_o) {
+              if (IMAGE_PLANE_OUT_TYPES_MAP.at(property_value) == ppm_o) {
                 image_planes.at(name).output_type = ppm_o;
-              } else if (IMAGE_PLANE_OUT_TYPES.at(property_value) == png_o) {
+              } else if (IMAGE_PLANE_OUT_TYPES_MAP.at(property_value) == png_o) {
                 image_planes.at(name).output_type = png_o;
               }
             }
             // RESOLUTION HORIZONTAL
-            else if (IMAGE_PLANE_PROPERTIES.at(property) == horizontal) {
+            else if (IMAGE_PLANE_PROPERTIES_MAP.at(property) == horizontal) {
               image_planes.at(name).horizontal =
                   static_cast<uint32_t>(std::stoi(property_value));
             }
             // RESOLUTION VERTICAL
-            else if (IMAGE_PLANE_PROPERTIES.at(property) == vertical) {
+            else if (IMAGE_PLANE_PROPERTIES_MAP.at(property) == vertical) {
               image_planes.at(name).vertical =
                   static_cast<uint32_t>(std::stoi(property_value));
             }
             // GAMMA
-            else if (IMAGE_PLANE_PROPERTIES.at(property) == gamma) {
+            else if (IMAGE_PLANE_PROPERTIES_MAP.at(property) == use_gamma) {
               int gamma_value = std::stoi(property_value);
-              if (gamma_value < 0) gamma_value = 0;
-              if (gamma_value > 2) gamma_value = 2;
-              image_planes.at(name).gamma = gamma_value;
+              if (gamma_value < 0 || gamma_value > 1)
+                return {{invalid_set_property_value, line_number}, {}};
+              image_planes.at(name).use_gamma = gamma_value;
             }
             // NUMBER SAMPLES
-            else if (IMAGE_PLANE_PROPERTIES.at(property) == number_samples) {
+            else if (IMAGE_PLANE_PROPERTIES_MAP.at(property) == number_samples) {
               image_planes.at(name).number_samples =
                   static_cast<uint32_t>(std::stoi(property_value));
             }
-            std::cout << "Name: " << image_planes.find(name)->second.name << std::endl
-                      << "Output type: " << image_planes.find(name)->second.output_type << std::endl
-                      << "Horizontal: " << unsigned(image_planes.find(name)->second.horizontal) << std::endl
-                      << "Vertical: " << unsigned(image_planes.find(name)->second.vertical) << std::endl
-                      << "Gamma: " << unsigned(image_planes.find(name)->second.gamma) << std::endl
-                      << "Number samples: " << unsigned(image_planes.find(name)->second.number_samples) << std::endl;
           } break;
 
           case SceneThings::acceleration_structure_d: {
-            std::cout << "Name: " << acceleration_structures.find(name)->second.name << std::endl
-                      << "Type: " << unsigned(acceleration_structures.find(name)->second.type) << std::endl
-                      << "Alpha: " << acceleration_structures.find(name)->second.alpha << std::endl
-                      << "Max resolution: " << unsigned(acceleration_structures.find(name)->second.max_resolution) << std::endl;
+            if (acceleration_structures.find(name) == acceleration_structures.end()) {
+              return {{thing_not_created, line_number}, {}};
+            }
+            if (AC_PROPERTIES_MAP.find(property) == AC_PROPERTIES_MAP.end() &&
+                property != "type") {
+              return {{invalid_set_property, line_number}, {}};
+            }
+
+            // TYPE
+            if (property == "type") {
+              if (AC_TYPES_MAP.find(property_value) == AC_TYPES_MAP.end()) {
+                return {{invalid_set_property_value, line_number}, {}};
+              }
+
+              if (AC_TYPES_MAP.at(property_value) == grid) {
+                acceleration_structures.at(name).type = grid;
+              }
+            }
+            else {
+              // Check if type is defined.
+              if (acceleration_structures.at(name).type == not_set_act) {
+                return {{invalid_set_property_value, line_number}, {}};
+              }
+
+              // ALPHA
+              if (AC_PROPERTIES_MAP.at(property) == alpha) {
+                acceleration_structures.at(name).alpha = std::stof(property_value);
+              }
+              // MAX RESOLUTION
+              else if (AC_PROPERTIES_MAP.at(property) == max_resolution) {
+                acceleration_structures.at(name).max_resolution =
+                    static_cast<uint32_t>(std::stoi(property_value));
+              }
+            }
           } break;
 
+
           case SceneThings::animation_d: {
-            std::cout << "Name: " << animations.find(name)->second.name << std::endl
-                      << "Number of images in sequence: " << unsigned(animations.find(name)->second.num_of_images_in_sequence) << std::endl
-                      << "Objects size: " << animations.find(name)->second.objects.size() << std::endl
-                      << "Lights size: " << animations.find(name)->second.lights.size() << std::endl
-                      << "Camera(name): " << animations.find(name)->second.camera.first << std::endl
-                      << "Camera(transformations): " << unsigned(animations.find(name)->second.camera.second.size()) << std::endl;
+            if (animations.find(name) == animations.end()) {
+              return {{thing_not_created, line_number}, {}};
+            }
+            if (ANIMATION_PROPERTIES_MAP.find(property) == ANIMATION_PROPERTIES_MAP.end()) {
+              return {{invalid_set_property, line_number}, {}};
+            }
+
+            // NUMBER OF IMAGES IN SEQUENCE
+            if (ANIMATION_PROPERTIES_MAP.at(property) == number_of_images_in_seq) {
+              int noiis_value = std::stoi(property_value);
+              animations.at(name).num_of_images_in_sequence =
+                  static_cast<uint32_t>(noiis_value);
+            }
+            // OBJECT
+            else if (ANIMATION_PROPERTIES_MAP.at(property) == object_anim) {
+              // Check if object exist.
+              if (objects.find(property_value) == objects.end()) {
+                return {{invalid_set_property_value, line_number}, {}};
+              }
+              animations.at(name).objects[objects.at(property_value).name] = {};
+
+            }
+            // LIGHT
+            else if (ANIMATION_PROPERTIES_MAP.at(property) == light_anim) {
+              // Check if light exist.
+              if (lights.find(property_value) == lights.end()) {
+                return {{invalid_set_property_value, line_number}, {}};
+              }
+              animations.at(name).lights[lights.at(property_value).name] =  {};
+            }
+            // CAMERA
+            else if (ANIMATION_PROPERTIES_MAP.at(property) == camera_anim) {
+              if (cameras.find(property_value) == cameras.end()) {
+                return {{invalid_set_property_value, line_number}, {}};
+              }
+              animations.at(name).camera = {cameras.at(property).name, {}};
+            }
           } break;
 
           case SceneThings::scene_d: {
-            std::cout << "Name: " << scenes.find(name)->second.name << std::endl
-                      << "Camera: " << ((scenes.find(name)->second.camera == nullptr) ? "ok" : "not ok" ) << std::endl
-                      << "Image plane: " << ((scenes.find(name)->second.image_plane == nullptr) ? "ok" : "not ok" ) << std::endl
-                      << "Acceleration structure: " << ((scenes.find(name)->second.acceleration_structure == nullptr) ? "ok" : "not ok" ) << std::endl
-                      << "Objects size: " << scenes.find(name)->second.objects.size() << std::endl
-                      << "Lights size: " << scenes.find(name)->second.lights.size() << std::endl
-                      << "Animations size: " << scenes.find(name)->second.animations.size() << std::endl;
+            if (scenes.find(name) == scenes.end()) {
+              return {{thing_not_created, line_number}, {}};
+            }
+            if (SCENE_PROPERTIES_MAP.find(property) == SCENE_PROPERTIES_MAP.end()) {
+              return {{invalid_set_property, line_number}, {}};
+            }
+
+            // CAMERA
+            if (SCENE_PROPERTIES_MAP.at(property) == scene_camera) {
+              // Check if camera exists.
+              if (cameras.find(property_value) == cameras.end()) {
+                return {{invalid_set_property_value, line_number}, {}};
+              }
+              scenes.at(name).camera = &(cameras.at(property_value));
+            }
+            // IMAGE PLANE
+            else if (SCENE_PROPERTIES_MAP.at(property) == scene_image_plane) {
+              // Check if image plane exists.
+              if (image_planes.find(property_value) == image_planes.end()) {
+                return {{invalid_set_property_value, line_number}, {}};
+              }
+              scenes.at(name).image_plane = &(image_planes.at(property_value));
+            }
+            // ACCELERATION STRUCTURE
+            else if (SCENE_PROPERTIES_MAP.at(property) == scene_as) {
+              // Check if acceleration structure exists.
+              if (acceleration_structures.find(property_value) == acceleration_structures.end()) {
+                return {{invalid_set_property_value, line_number}, {}};
+              }
+              scenes.at(name).acceleration_structure = &(acceleration_structures.at(property_value));
+            }
+            // OBJECT
+            else if (SCENE_PROPERTIES_MAP.at(property) == scene_objects) {
+              // Check if object exists.
+              if (objects.find(property_value) == objects.end()) {
+                return {{invalid_set_property_value, line_number}, {}};
+              }
+              scenes.at(name).objects.push_back(objects.at(property_value));
+            }
+            // LIGHT
+            else if (SCENE_PROPERTIES_MAP.at(property) == scene_lights) {
+              // Check if light exists.
+              if (lights.find(property_value) == lights.end()) {
+                return {{invalid_set_property_value, line_number}, {}};
+              }
+              scenes.at(name).lights.push_back(lights.at(property_value));
+            }
+            // ANIMATION
+            else if (SCENE_PROPERTIES_MAP.at(property) == scene_animations) {
+              // Check if animation exists.
+              if (animations.find(property_value) == animations.end()) {
+                return {{invalid_set_property_value, line_number}, {}};
+              }
+              scenes.at(name).animations.push_back(animations.at(property_value));
+            }
           } break;
         }
 
@@ -545,12 +647,207 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
 
         // Execute 'transform' statement.
       case SceneFileActionWord::transform: {
+        std::string thing;
+        std::string name;
+        std::string type;
+        std::string axes;
+        std::string amount;
 
+        tokenized_line >> thing;
+        tokenized_line >> name;
+        tokenized_line >> type;
+        tokenized_line >> axes;
+        tokenized_line >> amount;
+
+        // If either of the strings is empty, the transform statement is invalid.
+        if (thing.empty() || name.empty() || type.empty() || axes.empty() ||
+            amount.empty()) {
+          return {{invalid_syntax, line_number}, {}};
+        }
+        // Check if the thing to be transform is supported.
+        if (AVAILABLE_THINGS.find(thing) == AVAILABLE_THINGS.end()) {
+          return {{invalid_statement, line_number}, {}};
+        }
+        // Check if the transformation type is valid.
+        if (TRANSFORMATION_TYPES_MAP.find(type) == TRANSFORMATION_TYPES_MAP.end()) {
+          return {{invalid_transformation_type, line_number}, {}};
+        }
+        // Check if the transformation axis is valid.
+        if (AXES_MAP.find(axes) == AXES_MAP.end()) {
+          return {{invalid_transformation_axix, line_number}, {}};
+        }
+
+        switch (AVAILABLE_THINGS.at(thing)) {
+          case SceneThings::light_d: {
+            // Check if the light to be transformed exists.
+            if (lights.find(name) == lights.end()) {
+              return {{thing_not_created, line_number}, {}};
+            }
+            // Check if the transformation type is valid.
+            // Light supports only rotation and translation.
+            if (TRANSFORMATION_TYPES_MAP.at(type) == scale) {
+              return {{invalid_transformation_type, line_number}, {}};
+            }
+
+            // Create transformation.
+            transformation_description transform_light = {};
+            transform_light.type = TRANSFORMATION_TYPES_MAP.at(type);
+            transform_light.axis = AXES_MAP.at(axes);
+            transform_light.amount = std::stof(amount);
+
+            // Apply transformation to light.
+            lights.at(name).transformations.push_back(transform_light);
+          } break;
+
+          case SceneThings::object_d: {
+            // Check if the object to be transformed exists.
+            if (objects.find(name) == objects.end()) {
+              return {{thing_not_created, line_number}, {}};
+            }
+
+            // Create transformation.
+            transformation_description transform_object = {};
+            transform_object.type = TRANSFORMATION_TYPES_MAP.at(type);
+            transform_object.axis = AXES_MAP.at(axes);
+            transform_object.amount = std::stof(amount);
+
+            // Apply transformation to object.
+            objects.at(name).transformations.push_back(transform_object);
+          } break;
+
+          case SceneThings::camera_d: {
+            // Check if camera to be transformed exists.
+            if (cameras.find(name) == cameras.end()) {
+              return {{thing_not_created, line_number}, {}};
+            }
+            // Check if the transformation type is valid.
+            // Camera supports only rotation and translation.
+            if (TRANSFORMATION_TYPES_MAP.at(type) == scale) {
+              return {{invalid_transformation_type, line_number}, {}};
+            }
+
+            // Create transformation.
+            transformation_description transform_camera = {};
+            transform_camera.type = TRANSFORMATION_TYPES_MAP.at(type);
+            transform_camera.axis = AXES_MAP.at(axes);
+            transform_camera.amount = std::stof(amount);
+
+            // Apply transformation to camera.
+            cameras.at(name).transformations.push_back(transform_camera);
+          } break;
+
+          default: return {{invalid_thing_to_transform, line_number}, {}};
+        }
       } break;
 
         // Execute 'animate' statement.
       case SceneFileActionWord::animate: {
+        std::string anim_name;
+        std::string thing;
+        std::string thing_name;
+        std::string trans_type;
+        std::string axes;
+        std::string amount;
 
+        tokenized_line >> anim_name;
+        tokenized_line >> thing;
+        tokenized_line >> thing_name;
+        tokenized_line >> trans_type;
+        tokenized_line >> axes;
+        tokenized_line >> amount;
+
+        // If either of the strings is empty, the animate statement is invalid.
+        if (anim_name.empty() || thing.empty() || thing_name.empty() ||
+            trans_type.empty() || axes.empty() || amount.empty()) {
+          return {{invalid_syntax, line_number}, {}};
+        }
+        // Check if the animation exists.
+        if (animations.find(anim_name) == anim_name.end()) {
+          return {{thing_not_created, line_number}, {}};
+        }
+        // Check if the thing to be animated is supported.
+        if (AVAILABLE_THINGS.find(thing) == AVAILABLE_THINGS.end()) {
+          return {{invalid_statement, line_number}, {}};
+        }
+        // Check if the transformation type is valid.
+        if (TRANSFORMATION_TYPES_MAP.find(trans_type) == TRANSFORMATION_TYPES_MAP.end()) {
+          return {{invalid_transformation_type, line_number}, {}};
+        }
+        // Check if the transformation axis is valid.
+        if (AXES_MAP.find(axes) == AXES_MAP.end()) {
+          return {{invalid_transformation_axix, line_number}, {}};
+        }
+
+        switch (AVAILABLE_THINGS.at(thing)) {
+          case SceneThings::light_d: {
+            // Check if the light to be animated exists.
+            if (lights.find(thing_name) == lights.end()) {
+              return {{thing_not_created, line_number}, {}};
+            }
+            // Check if the transformation type is valid.
+            // Light supports only rotation and translation.
+            if (TRANSFORMATION_TYPES_MAP.at(trans_type) == scale) {
+              return {{invalid_transformation_type, line_number}, {}};
+            }
+
+            // Create transformation.
+            transformation_description animate_light = {};
+            animate_light.type = TRANSFORMATION_TYPES_MAP.at(trans_type);
+            animate_light.axis = AXES_MAP.at(axes);
+            animate_light.amount = std::stof(amount);
+
+            // Apply transformation to the animation.
+            animations.at(anim_name).lights[thing_name].push_back(animate_light);
+          } break;
+
+          case SceneThings::object_d: {
+            // Check if the object to be animated exists.
+            if (objects.find(thing_name) == objects.end()) {
+              return {{thing_not_created, line_number}, {}};
+            }
+
+            // Create transformation.
+            transformation_description animate_object = {};
+            animate_object.type = TRANSFORMATION_TYPES_MAP.at(trans_type);
+            animate_object.axis = AXES_MAP.at(axes);
+            animate_object.amount = std::stof(amount);
+
+            // Apply transformation to the animation.
+            animations.at(anim_name).objects[thing_name].push_back(animate_object);
+          } break;
+
+          case SceneThings::camera_d: {
+            // Check if the camera to be animated exists.
+            if (cameras.find(thing_name) == cameras.end()) {
+              return {{thing_not_created, line_number}, {}};
+            }
+            // Check if the transformation type is valid.
+            // Camera supports only rotation and translation.
+            if (TRANSFORMATION_TYPES_MAP.at(trans_type) == scale) {
+              return {{invalid_transformation_type, line_number}, {}};
+            }
+
+            // Create transformation.
+            transformation_description animate_camera = {};
+            animate_camera.type = TRANSFORMATION_TYPES_MAP.at(trans_type);
+            animate_camera.axis = AXES_MAP.at(axes);
+            animate_camera.amount = std::stof(amount);
+
+            if (animations.at(anim_name).camera.first.empty()) {
+              animations.at(anim_name).camera.first = thing_name;
+            } else {
+              // Check if the camera name matches.
+              if (animations.at(anim_name).camera.first != thing_name) {
+                return {{invalid_animation_camera, line_number}, {}};
+              }
+            }
+
+            // Apply transformation to the animation.
+            animations.at(anim_name).camera.second.push_back(animate_camera);
+          } break;
+
+          default: return {{invalid_thing_to_transform, line_number}, {}};
+        }
       } break;
     }
   }

@@ -1952,7 +1952,7 @@ void triangles_grid() {
 }
 
 int main(int argc, char **argv) {
-  std::string filename = "/Users/harry/dev/elucido/test_resources/test_object.txt";
+  std::string filename = "/Users/harry/dev/elucido/test_resources/test_scene.txt";
   auto result = read_scene_from_file(filename);
   SceneParserStatusCodes code = result.first.first;
   size_t line = result.first.second;

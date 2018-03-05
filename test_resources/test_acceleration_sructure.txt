@@ -1,0 +1,8 @@
+# Create an acceleration structure
+create acceleration_structure ac1
+
+# Set some values on it
+set acceleration_structure ac1 type		 		grid
+set acceleration_structure ac1 alpha 			3.0
+set acceleration_structure ac1 max_resolution 	64
+
