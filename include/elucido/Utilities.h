@@ -7,6 +7,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <utility>
 #include "glm/gtc/epsilon.hpp"
 
 class Object;
@@ -199,11 +200,15 @@ const std::map<std::string, LightType> LIGHT_TYPES_MAP = {
 enum LightProperty {
   not_set_lp,
   position,
-  direction
+  direction,
+  intensity,
+  color
 };
 const std::map<std::string, LightProperty> LIGHT_PROPERTIES_MAP = {
     {"position",  position},
-    {"direction", direction}
+    {"direction", direction},
+    {"intensity", intensity},
+    {"color",     color}
 };
 
 // Available object types +
@@ -291,16 +296,9 @@ const std::map<std::string, AccelerationStructureType> AC_TYPES_MAP = {
 // corresponding mappings.
 enum AnimationProperties {
   number_of_images_in_seq,
-  object_anim,
-  light_anim,
-  camera_anim
 };
 const std::map<std::string, AnimationProperties> ANIMATION_PROPERTIES_MAP = {
-    {"number_of_images_in_seq", number_of_images_in_seq},
-    {"object",                  object_anim},
-    {"light",                   light_anim},
-    {"camera",                  camera_anim}
-};
+    {"number_of_images_in_seq", number_of_images_in_seq}};
 
 // Available scene properties +
 // corresponding mappings.
@@ -393,14 +391,13 @@ struct transformation_description {
       axis(X),
       type(not_set_tt),
       amount(0.f) {}
-
 };
 
 struct material_description {
   std::string                         name;
   MaterialType                        type;
   std::map<MaterialProperty, float_t> properties;
-  color_description                   *color;
+  std::shared_ptr<color_description>  color;
   material_description(const std::string &_name) :
       name(_name),
       type(not_set_mt),
@@ -423,9 +420,10 @@ struct camera_description {
 struct light_description {
   std::string                                     name;
   LightType                                       type;
-  color_description                               *color;
+  std::shared_ptr<color_description>              color;
   float_t                                         intensity;
-  std::pair<LightProperty, vector_description *>  property;
+  std::pair<LightProperty, 
+            std::shared_ptr<vector_description>>  property;
   std::vector<transformation_description>         transformations;
   light_description(const std::string &_name) :
       name(_name),
@@ -439,9 +437,9 @@ struct light_description {
 struct object_description {
   std::string                             name;
   ObjectType                              type;
-  material_description                    *material;
+  std::shared_ptr<material_description>   material;
   float_t                                 radius;
-  vector_description                      *center;
+  std::shared_ptr<vector_description>     center;
   vector_description                      **vertices;
   std::string                             file_name;
   uint8_t                                 interpolation;  // One wants to encode 3 states:
@@ -508,9 +506,9 @@ struct animation_description {
 
 struct scene_description {
   std::string                         name;
-  camera_description                  *camera;
-  image_plane_description             *image_plane;
-  acceleration_structure_description  *acceleration_structure;
+  std::shared_ptr<camera_description> camera;
+  std::shared_ptr<image_plane_description> image_plane;
+  std::shared_ptr<acceleration_structure_description>  acceleration_structure;
   std::vector<object_description>     objects;
   std::vector<light_description>      lights;
   std::vector<animation_description>  animations;

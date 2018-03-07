@@ -4,9 +4,12 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <utility>
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
+#include <memory>
+
 
 #include "../../include/elucido/Utilities.h"
 
@@ -311,7 +314,7 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
             // The color should exist.
             else if (property == "color") {
               if (colors.find(property_value) != colors.end()) {
-                materials.at(name).color = &(colors.at(property_value));
+                materials.at(name).color = std::make_shared<color_description>(colors.at(property_value));
               } else {
                 return {{invalid_set_property_value, line_number}, {}};
               }
@@ -342,13 +345,18 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
               }
             }
             // LIGHT COLOR
-            else if (property == "color") {
+            else if (LIGHT_PROPERTIES_MAP.at(property) == color) {
               if (colors.find(property_value) != colors.end()) {
-                lights.at(name).color = &(colors.at(property_value));
+                lights.at(name).color = std::make_shared<color_description>(colors.at(property_value));
               } else {
                 return {{invalid_set_property_value, line_number}, {}};
               }
-            } else {
+            }
+            else if (LIGHT_PROPERTIES_MAP.at(property) == intensity) {
+              lights.at(name).intensity = std::stof(property_value);
+            }
+            // POSITION & DIRECTION
+            else {
               // CHECK IF TYPE AND PROPERTY MATCH
               if (lights.find(name)->second.type == not_set_lt) {
                 return {{invalid_set_property_value, line_number}, {}};
@@ -357,13 +365,12 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
                 return {{invalid_set_property_value, line_number}, {}};
               }
 
-              // POSITION & DIRECTION
-              if ((property == "position" && lights.find(name)->second.type == point) ||
-                  (property == "direction" && lights.find(name)->second.type != directional)) {
+              if ((LIGHT_PROPERTIES_MAP.at(property) == position && lights.at(name).type == point) ||
+                  (LIGHT_PROPERTIES_MAP.at(property) == direction && lights.at(name).type == directional)) {
                 LightProperty lp = LIGHT_PROPERTIES_MAP.at(property);
                 vector_description lp_value = vectors.at(property_value);
                 lights.find(name)->second.property.first = lp;
-                lights.at(name).property.second = &(lp_value);
+                lights.at(name).property.second = std::make_shared<vector_description>(lp_value);
               } else {
                 return {{invalid_set_property_value, line_number}, {}};
                 }
@@ -390,7 +397,7 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
             // OBJECT'S MATERIAL
             else if (property == "material") {
               if (materials.find(property_value) != materials.end()) {
-                objects.at(name).material = &(materials.at(property_value));
+                objects.at(name).material = std::make_shared<material_description>(materials.at(property_value));
               } else {
                 return {{invalid_set_property_value, line_number}, {}};
               }
@@ -408,7 +415,7 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
                   if (vectors.find(property_value) == vectors.end()) {
                     return {{invalid_set_property_value, line_number}, {}};
                   }
-                  objects.at(name).center = &(vectors.at(property_value));
+                  objects.at(name).center = std::make_shared<vector_description>(vectors.at(property_value));
                 } else {
                   return {{invalid_set_property_value, line_number}, {}};
                 }
@@ -558,30 +565,6 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
               animations.at(name).num_of_images_in_sequence =
                   static_cast<uint32_t>(noiis_value);
             }
-            // OBJECT
-            else if (ANIMATION_PROPERTIES_MAP.at(property) == object_anim) {
-              // Check if object exist.
-              if (objects.find(property_value) == objects.end()) {
-                return {{invalid_set_property_value, line_number}, {}};
-              }
-              animations.at(name).objects[objects.at(property_value).name] = {};
-
-            }
-            // LIGHT
-            else if (ANIMATION_PROPERTIES_MAP.at(property) == light_anim) {
-              // Check if light exist.
-              if (lights.find(property_value) == lights.end()) {
-                return {{invalid_set_property_value, line_number}, {}};
-              }
-              animations.at(name).lights[lights.at(property_value).name] =  {};
-            }
-            // CAMERA
-            else if (ANIMATION_PROPERTIES_MAP.at(property) == camera_anim) {
-              if (cameras.find(property_value) == cameras.end()) {
-                return {{invalid_set_property_value, line_number}, {}};
-              }
-              animations.at(name).camera = {cameras.at(property).name, {}};
-            }
           } break;
 
           case SceneThings::scene_d: {
@@ -598,7 +581,7 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
               if (cameras.find(property_value) == cameras.end()) {
                 return {{invalid_set_property_value, line_number}, {}};
               }
-              scenes.at(name).camera = &(cameras.at(property_value));
+              scenes.at(name).camera = std::make_shared<camera_description>(cameras.at(property_value));
             }
             // IMAGE PLANE
             else if (SCENE_PROPERTIES_MAP.at(property) == scene_image_plane) {
@@ -606,7 +589,7 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
               if (image_planes.find(property_value) == image_planes.end()) {
                 return {{invalid_set_property_value, line_number}, {}};
               }
-              scenes.at(name).image_plane = &(image_planes.at(property_value));
+              scenes.at(name).image_plane = std::make_shared<image_plane_description>(image_planes.at(property_value));
             }
             // ACCELERATION STRUCTURE
             else if (SCENE_PROPERTIES_MAP.at(property) == scene_as) {
@@ -614,7 +597,7 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
               if (acceleration_structures.find(property_value) == acceleration_structures.end()) {
                 return {{invalid_set_property_value, line_number}, {}};
               }
-              scenes.at(name).acceleration_structure = &(acceleration_structures.at(property_value));
+              scenes.at(name).acceleration_structure = std::make_shared<acceleration_structure_description>(acceleration_structures.at(property_value));
             }
             // OBJECT
             else if (SCENE_PROPERTIES_MAP.at(property) == scene_objects) {
@@ -740,7 +723,7 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
         }
       } break;
 
-        // Execute 'animate' statement.
+      // Execute 'animate' statement.
       case SceneFileActionWord::animate: {
         std::string anim_name;
         std::string thing;
@@ -762,7 +745,7 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
           return {{invalid_syntax, line_number}, {}};
         }
         // Check if the animation exists.
-        if (animations.find(anim_name) == anim_name.end()) {
+        if (animations.find(anim_name) == animations.end()) {
           return {{thing_not_created, line_number}, {}};
         }
         // Check if the thing to be animated is supported.
@@ -855,7 +838,12 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
   // Close file.
   input_file.close();
 
-  std::vector<scene_description> result;
+  std::vector<scene_description> result_scenes;
 
-  return {{success, line_number}, result};
+  // Place the scene description(s) in a result vector;
+  for (auto const &scene : scenes) {
+    result_scenes.push_back(scene.second);
+  }
+
+  return {{success, line_number}, result_scenes};
 }
