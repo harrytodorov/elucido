@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 
-#include "../src/extra/UtilityFunctions.cpp"
+#include "../src/extra/Utilities.cpp"
 #include "../src/extra/Utilities.h"
 
 //==============================================================================

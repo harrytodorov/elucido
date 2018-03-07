@@ -33,37 +33,7 @@ void PointLight::apply_camera_transformation(const glm::mat4 &ictm,
 //=============================================================================
 void PointLight::translate(const float_t &translation,
                            const Axis &axes_of_translation) {
-  // create 3d vector to determine the axes of translation
-  glm::vec3 tv(0);
-
-  switch (axes_of_translation) {
-    case Axis::X :
-      tv.x = translation;
-      break;
-    case Axis::Y :
-      tv.y = translation;
-      break;
-    case Axis::Z :
-      tv.z = translation;
-      break;
-    case Axis::XY :
-      tv.x = translation;
-      tv.y = translation;
-      break;
-    case Axis::XZ :
-      tv.x = translation;
-      tv.z = translation;
-      break;
-    case Axis::YZ :
-      tv.y = translation;
-      tv.z = translation;
-      break;
-    case Axis::XYZ :
-      tv = glm::vec3(translation);
-      break;
-    default:printf("You're using an undefined axis of translation.");
-      break;
-  }
+  glm::vec3 tv = create_transformation_vector(axes_of_translation, translation);
 
   // assign the translation matrix to object's model transform
   glm::mat4 tm = glm::translate(glm::mat4(1), tv);
@@ -73,37 +43,8 @@ void PointLight::translate(const float_t &translation,
 //=============================================================================
 void PointLight::rotate(const float_t &angle_of_rotation,
                         const Axis &axes_of_rotation) {
-  // create 3d vector to determine the axis of rotation
-  glm::vec3 rv(0);
-
-  switch (axes_of_rotation) {
-    case Axis::X :
-      rv.x = 1;
-      break;
-    case Axis::Y :
-      rv.y = 1;
-      break;
-    case Axis::Z :
-      rv.z = 1;
-      break;
-    case Axis::XY :
-      rv.x = 1;
-      rv.y = 1;
-      break;
-    case Axis::XZ :
-      rv.x = 1;
-      rv.z = 1;
-      break;
-    case Axis::YZ :
-      rv.y = 1;
-      rv.z = 1;
-      break;
-    case Axis::XYZ :
-      rv = glm::vec3(1);
-      break;
-    default:printf("You're using an undefined axis of rotation.");
-      break;
-  }
+  glm::vec3 rv = create_transformation_vector(axes_of_rotation,
+                                              angle_of_rotation);
 
   // assign the rotation matrix to object's model transform
   glm::mat4 rm = glm::rotate(glm::mat4(1), glm::radians(angle_of_rotation), rv);

@@ -17,7 +17,7 @@
 #include "cameras/OrthographicCamera.h"
 #include "acceleration/AccelerationStructure.h"
 #include "extra/Scene.h"
-#include "extra/UtilityFunctions.cpp"
+#include "extra/Utilities.h"
 
 void render_cornell_scene() {
   std::vector<Object *> objects;
@@ -1959,6 +1959,7 @@ int main(int argc, char **argv) {
   }
   std::string filename = argv[1];
   auto result = read_scene_from_file(filename);
-
+  Scene *scene = new Scene;
+  
   return 0;
 }

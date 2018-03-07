@@ -1,33 +1,12 @@
 // Copyright (c) 2018, University of Freiburg.
 // Author: Haralambi Todorov <harrytodorov@gmail.com>
 
-#include <string>
-#include <map>
-#include <vector>
-#include <utility>
-#include <iostream>
-#include <fstream>
-#include <cstdlib>
-#include <memory>
-
-
 #include "Utilities.h"
 
 /**
  * TODO: clean-up code, where possible
  * TODO: make code, a bit more readable; comment+spacing
  * TODO: look at CameraProperty and CameraSetProperties; why?
- *
- * Reads a text file following given protocol (see Report) and extracts
- * scene descriptions(s) from it.
- * @param filename: The text file containing scene description(s).
- * @return:         A (1) pair of a
- *                      (1) pair of
- *                          (2) status code and
- *                          (2) the line at which an error occurred
- *                              (in case of an error) and a
- *                      (1) vector of scene descriptions; in case an error
- *                      occurred, an empty vector is returned.
  */
 std::pair<std::pair<SceneParserStatusCodes, size_t>,
           std::vector<scene_description>>
@@ -77,6 +56,7 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
     }
     // Execute the line statement.
     switch (action) {
+
       // Execute 'create' statement.
       case SceneFileActionWord::create: {
         std::string thing;
@@ -847,4 +827,40 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
   }
 
   return {{success, line_number}, result_scenes};
+}
+
+//=============================================================================
+glm::vec3 create_transformation_vector(const Axis &transformation_axes,
+                                       const float_t &transformation_amount) {
+  glm::vec3 tv(0);
+
+  switch (transformation_axes) {
+    case Axis::X :
+      tv.x = transformation_amount;
+      return tv;
+    case Axis::Y :
+      tv.y = transformation_amount;
+      return tv;
+    case Axis::Z :
+      tv.z = transformation_amount;
+      return tv;
+    case Axis::XY :
+      tv.x = transformation_amount;
+      tv.y = transformation_amount;
+      return tv;
+    case Axis::XZ :
+      tv.x = transformation_amount;
+      tv.z = transformation_amount;
+      return tv;
+    case Axis::YZ :
+      tv.y = transformation_amount;
+      tv.z = transformation_amount;
+      return tv;
+    case Axis::XYZ :
+      tv = glm::vec3(transformation_amount);
+      return tv;
+    default:
+      std::cout << "You're using an undefined axis of scale." << std::endl;
+      return glm::vec3(1);
+  }
 }

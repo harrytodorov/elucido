@@ -4,10 +4,16 @@
 #ifndef ELUCIDO_UTILITIES_H
 #define ELUCIDO_UTILITIES_H
 
-#include <string>
+#include <iostream>
+#include <cstdlib>
+#include <memory>
+#include <fstream>
+#include <sstream>
+#include <memory>
 #include <map>
+#include <string>
 #include <vector>
-#include <utility>
+
 #include "glm/gtc/epsilon.hpp"
 
 class Object;
@@ -568,5 +574,43 @@ struct material {
   float_t         ri{0.8f};       // reflection index
   float_t         ior{1.00029f};  // index of refraction
 };
+
+//------------------------------------------------------------------------------
+// FUNCTION DEFINITIONS
+//------------------------------------------------------------------------------
+
+/**
+ * TODO: clean-up code, where possible
+ * TODO: make code, a bit more readable; comment+spacing
+ * TODO: look at CameraProperty and CameraSetProperties; why?
+ *
+ * Reads a text file following given protocol (see Report) and extracts
+ * scene descriptions(s) from it.
+ * @param filename: The text file containing scene description(s).
+ * @return:         A (1) pair of a
+ *                      (1) pair of
+ *                          (2) status code and
+ *                          (2) the line at which an error occurred
+ *                              (in case of an error) and a
+ *                      (1) vector of scene descriptions; in case an error
+ *                      occurred, an empty vector is returned.
+ */
+std::pair<std::pair<SceneParserStatusCodes, size_t>,
+          std::vector<scene_description>>
+read_scene_from_file(const std::string &f);
+
+/**
+ * Create a transformation vector.
+ * @param transformation_axes:   Axes along which a transformation would be
+  *                              applied.
+ * @param transformation_amount: The amount to be transformed along these axes.
+ * @return:                      The transformation vector.
+ *                               In case an invalid axes of transformation is
+ *                               provided, a vector of 1s is returned.
+ */
+glm::vec3 create_transformation_vector(const Axis &transformation_axes,
+                                       const float_t &transformation_amount);
+//------------------------------------------------------------------------------
+
 
 #endif //ELUCIDO_UTILITIES_H

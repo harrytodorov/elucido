@@ -2,44 +2,32 @@
 // Author: Haralambi Todorov <harrytodorov@gmail.com>
 
 #include "Scene.h"
+#include "../objects/Sphere.h"
 
-bool Scene::load_scene(const std::string &filename) {
-  // Open file.
-  std::ifstream input_file;
-  input_file.open(filename, std::ifstream::in);
+bool Scene::load_scene(const scene_description &description) {
 
-  // Check, if the input file exist and is not damaged in some way.
-  if (!input_file.good()) {
-    return false;
-  }
+  // Validate scene description.
 
-  std::string line;   // One line of the file.
-  std::string token;
-  while (std::getline(input_file, line)) {
-    // Convert line into tokens.
-    std::stringstream tokens(line);
+  // Initialize the scene.
+  this->name = description.name;
 
-    // Each line of the input scene file can start with one of the following
-    // words: set, create, transform, for and render
-    tokens >> token;
+  /// Object.
+  for (auto const &object : description.objects) {
+    Object *obj;
 
-    if (token.compare("set")) {
+    // Extract material.
+    material obj_mat;
+    if (object.material != nullptr) {
+      obj_mat.mt = object.material->type;
 
-    } else if (token.compare("create")) {
+    }
+    switch (object.type) {
 
-    } else if (token.compare("transform")) {
+      case ObjectType::sphere: {
+        obj = new Sphere();
 
-    } else if (token.compare("for")) {
-
-    } else if (token.compare("render")) {
-
-    } else {
-      // An undefined start word has being used.
-      return false;
+      }
     }
   }
-
-  // Close file.
-  input_file.close();
-  return true;
+  return false;
 }

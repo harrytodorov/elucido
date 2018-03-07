@@ -38,11 +38,17 @@ class Object {
 //=============================================================================
 // Constructors & destructors
 //=============================================================================
-  Object() : om(material()), mt(glm::mat4(1)), bb(AABBox()), ot(not_set_ot) {}
+  Object() : om(material()),
+             mt(glm::mat4(1)),
+             bb(AABBox()),
+             ot(not_set_ot) {}
 
 //=============================================================================
-  Object(const material &m) : om(m), mt(glm::mat4(1)), nmt(glm::mat4(1)),
-                              bb(AABBox()), ot(not_set_ot) {}
+  Object(const material &m) : om(m),
+                              mt(glm::mat4(1)),
+                              nmt(glm::mat4(1)),
+                              bb(AABBox()),
+                              ot(not_set_ot) {}
 
 //=============================================================================
   Object(const Object &o);

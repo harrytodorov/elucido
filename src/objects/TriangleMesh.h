@@ -6,7 +6,6 @@
 
 #include "Object.h"
 
-
 class TriangleMesh : public Object {
 
  public:

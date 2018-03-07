@@ -80,37 +80,7 @@ void Triangle::apply_camera_transformation(const glm::mat4 &ictm,
 //=============================================================================
 void Triangle::translate(const float_t &translation,
                          const Axis &axes_of_translation) {
-  // create 3d vector to determine the axes of translation
-  glm::vec3 tv(0);
-
-  switch (axes_of_translation) {
-    case Axis::X :
-      tv.x = translation;
-      break;
-    case Axis::Y :
-      tv.y = translation;
-      break;
-    case Axis::Z :
-      tv.z = translation;
-      break;
-    case Axis::XY :
-      tv.x = translation;
-      tv.y = translation;
-      break;
-    case Axis::XZ :
-      tv.x = translation;
-      tv.z = translation;
-      break;
-    case Axis::YZ :
-      tv.y = translation;
-      tv.z = translation;
-      break;
-    case Axis::XYZ :
-      tv = glm::vec3(translation);
-      break;
-    default:printf("You're using an undefined axis of translation.");
-      break;
-  }
+  glm::vec3 tv = create_transformation_vector(axes_of_translation, translation);
 
   // assign the translation matrix to the object's model transform
   glm::mat4 tm = glm::translate(glm::mat4(1), tv);
@@ -120,37 +90,8 @@ void Triangle::translate(const float_t &translation,
 //=============================================================================
 void Triangle::rotate(const float_t &angle_of_rotation,
                       const Axis &axes_of_rotation) {
-  // create 3d vector to determine the axis of rotation
-  glm::vec3 rv(0);
-
-  switch (axes_of_rotation) {
-    case Axis::X :
-      rv.x = 1;
-      break;
-    case Axis::Y :
-      rv.y = 1;
-      break;
-    case Axis::Z :
-      rv.z = 1;
-      break;
-    case Axis::XY :
-      rv.x = 1;
-      rv.y = 1;
-      break;
-    case Axis::XZ :
-      rv.x = 1;
-      rv.z = 1;
-      break;
-    case Axis::YZ :
-      rv.y = 1;
-      rv.z = 1;
-      break;
-    case Axis::XYZ :
-      rv = glm::vec3(1);
-      break;
-    default:printf("You're using an undefined axis of rotation.");
-      break;
-  }
+  glm::vec3 rv = create_transformation_vector(axes_of_rotation,
+                                              angle_of_rotation);
 
   // get the rotation matrix
   glm::mat4 rm = glm::rotate(glm::mat4(1), glm::radians(angle_of_rotation), rv);
@@ -161,37 +102,7 @@ void Triangle::rotate(const float_t &angle_of_rotation,
 //=============================================================================
 void Triangle::scale(const float_t &scaling_factor,
                      const Axis &axes_of_scale) {
-  // create 3d vector to determine the axes of scale
-  glm::vec3 sv(0);
-
-  switch (axes_of_scale) {
-    case Axis::X :
-      sv.x = scaling_factor;
-      break;
-    case Axis::Y :
-      sv.y = scaling_factor;
-      break;
-    case Axis::Z :
-      sv.z = scaling_factor;
-      break;
-    case Axis::XY :
-      sv.x = scaling_factor;
-      sv.y = scaling_factor;
-      break;
-    case Axis::XZ :
-      sv.x = scaling_factor;
-      sv.z = scaling_factor;
-      break;
-    case Axis::YZ :
-      sv.y = scaling_factor;
-      sv.z = scaling_factor;
-      break;
-    case Axis::XYZ :
-      sv = glm::vec3(scaling_factor);
-      break;
-    default:printf("You're using an undefined axis of scale.");
-      break;
-  }
+  glm::vec3 sv = create_transformation_vector(axes_of_scale, scaling_factor);
 
   // assign the scale matrix to the object's model transform
   glm::mat4 sm = glm::scale(glm::mat4(1), sv);

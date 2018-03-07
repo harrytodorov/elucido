@@ -9,6 +9,7 @@ set(CMAKE_CXX_STANDARD 11)
 
 # Set source files
 set(ELUCIDO_SOURCE_FILES
+        extra/Utilities.cpp
         cameras/Camera.cpp
         cameras/OrthographicCamera.cpp
         cameras/PerspectiveCamera.cpp
@@ -28,6 +29,7 @@ set(ELUCIDO_SOURCE_FILES
 
 # Set header files
 set(ELUCIDO_HEADER_FILES
+        extra/Utilities.h
         cameras/Camera.h
         cameras/OrthographicCamera.h
         cameras/PerspectiveCamera.h
@@ -43,7 +45,6 @@ set(ELUCIDO_HEADER_FILES
         acceleration/Grid.h
         extra/ImagePlane.h
         extra/Ray.h
-        extra/Utilities.h
         extra/Scene.h)
 
 # Create executable

@@ -355,38 +355,8 @@ glm::vec3 Camera::cast_ray(const Ray &ray,
 }
 
 //=============================================================================
-void Camera::rotate(float_t rot_angle, Axis axes_of_rotation) {
-  // create 3d vector to determine the axis of rotation
-  glm::vec3 rv(0);
-
-  switch (axes_of_rotation) {
-    case Axis::X :
-      rv.x = 1;
-      break;
-    case Axis::Y :
-      rv.y = 1;
-      break;
-    case Axis::Z :
-      rv.z = 1;
-      break;
-    case Axis::XY :
-      rv.x = 1;
-      rv.y = 1;
-      break;
-    case Axis::XZ :
-      rv.x = 1;
-      rv.z = 1;
-      break;
-    case Axis::YZ :
-      rv.y = 1;
-      rv.z = 1;
-      break;
-    case Axis::XYZ :
-      rv = glm::vec3(1);
-      break;
-    default:printf("You're using an undefined axis of rotation.");
-      break;
-  }
+void Camera::rotate(const float_t &rot_angle, const Axis &axes_of_rotation) {
+  glm::vec3 rv = create_transformation_vector(axes_of_rotation, rot_angle);
 
   // get the rotation matrix
   glm::mat4 rm = glm::rotate(glm::mat4(1), glm::radians(rot_angle), rv);
@@ -401,37 +371,8 @@ void Camera::rotate(float_t rot_angle, Axis axes_of_rotation) {
 //=============================================================================
 void Camera::translate(const float_t &translation,
                        const Axis &axes_of_translation) {
-  // create 3d vector to determine the axes of translation
-  glm::vec3 tv(0);
+  glm::vec3 tv = create_transformation_vector(axes_of_translation, translation);
 
-  switch (axes_of_translation) {
-    case Axis::X :
-      tv.x = translation;
-      break;
-    case Axis::Y :
-      tv.y = translation;
-      break;
-    case Axis::Z :
-      tv.z = translation;
-      break;
-    case Axis::XY :
-      tv.x = translation;
-      tv.y = translation;
-      break;
-    case Axis::XZ :
-      tv.x = translation;
-      tv.z = translation;
-      break;
-    case Axis::YZ :
-      tv.y = translation;
-      tv.z = translation;
-      break;
-    case Axis::XYZ :
-      tv = glm::vec3(translation);
-      break;
-    default:printf("You're using an undefined axis of translation.");
-      break;
-  }
   // get the translation matrix
   glm::mat4 tm = glm::translate(glm::mat4(1), tv);
 

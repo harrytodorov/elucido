@@ -32,8 +32,7 @@ class Camera {
   float_t grid_alpha;   // Alpha parameter of the grid acceleration structure.
  private:
   glm::mat4 ctm;        // camera's transformation matrix
-  glm::mat4
-      tictm;      // the transpose of the inverse of the camera's transformation matrix;
+  glm::mat4 tictm;      // the transpose of the inverse of the camera's transformation matrix;
 
 //=============================================================================
 // Constructors & destructors
@@ -77,7 +76,7 @@ Camera(const glm::vec4 &p, const glm::vec4 &d, const bool &as) :
 //=============================================================================
   void translate(const float_t &translation,
                  const Axis &axes_of_translation);
-  void rotate(float_t rot_angle, Axis axes_of_rotation);
+  void rotate(const float_t &rot_angle, const Axis &axes_of_rotation);
   glm::vec4 refract(const glm::vec4 &incident_direction,
                     const glm::vec4 &surface_normal,
                     const float_t &ior);
