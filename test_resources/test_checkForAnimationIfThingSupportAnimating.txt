@@ -1,0 +1,11 @@
+# Create an image plane
+create image_plane ip1
+
+# Create an animation
+create animation anim1
+
+# Try animating the image plane;
+# Should produce an error,
+# image planes do not support animation
+animate anim1 image_plane ip1 translate X 1.5
+

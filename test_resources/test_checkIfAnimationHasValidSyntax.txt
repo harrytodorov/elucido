@@ -1,0 +1,11 @@
+# Create an animation
+create animation anim1
+
+# Create an object to be animated
+create object o1
+
+# Animate the object, but skipping the last
+# part of the animate statement the amount;
+# Should produce an error
+animate anim1 object o1 translate X
+

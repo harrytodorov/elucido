@@ -1,0 +1,8 @@
+# Create an object
+create object o1
+
+# Transformation axis is not valid;
+# Should be XY;
+# Should produce an error;
+transform object o1 translate YX 14.1
+

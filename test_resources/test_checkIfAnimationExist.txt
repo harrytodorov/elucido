@@ -1,0 +1,7 @@
+# Create an object to be animated
+create object o1
+
+# Animate an object, before creating the animation;
+# Should produce an error
+animate anim1 object o1 translate X 1
+

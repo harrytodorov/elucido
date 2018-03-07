@@ -422,7 +422,7 @@ struct light_description {
   LightType                                       type;
   std::shared_ptr<color_description>              color;
   float_t                                         intensity;
-  std::pair<LightProperty, 
+  std::pair<LightProperty,
             std::shared_ptr<vector_description>>  property;
   std::vector<transformation_description>         transformations;
   light_description(const std::string &_name) :
@@ -435,25 +435,25 @@ struct light_description {
 };
 
 struct object_description {
-  std::string                             name;
-  ObjectType                              type;
-  std::shared_ptr<material_description>   material;
-  float_t                                 radius;
-  std::shared_ptr<vector_description>     center;
-  vector_description                      **vertices;
-  std::string                             file_name;
-  uint8_t                                 interpolation;  // One wants to encode 3 states:
-                                                          // 0: interpolation is not set
-                                                          // 1: interpolation is set to true
-                                                          // 2: interpolation is set to false
-  std::vector<transformation_description> transformations;
+  std::string                                       name;
+  ObjectType                                        type;
+  std::shared_ptr<material_description>             material;
+  float_t                                           radius;
+  std::shared_ptr<vector_description>               center;
+  std::vector<std::shared_ptr<vector_description>>  vertices;
+  std::string                                       file_name;
+  uint8_t                                           interpolation;  // One wants to encode 3 states:
+                                                                    // 0: interpolation is not set
+                                                                    // 1: interpolation is set to true
+                                                                    // 2: interpolation is set to false
+  std::vector<transformation_description>           transformations;
   object_description(const std::string &_name) :
       name(_name),
       type(not_set_ot),
       material(nullptr),
       radius(0),
       center(nullptr),
-      vertices(nullptr),
+      vertices({nullptr}),
       file_name({}),
       interpolation(0),
       transformations({}) {}

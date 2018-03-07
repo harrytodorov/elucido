@@ -1,0 +1,8 @@
+# Create an animation
+create animation anim1
+
+# Try to animate an object which does
+# not exist;
+# Should produce an error
+animate anim1 object o1 translate X 1.5
+

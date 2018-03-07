@@ -1,0 +1,8 @@
+# Create an acceleration structure
+create acceleration_structure ac1
+
+# Set the alpha value for a grid acceleration structure;
+# Should produce an error; alpha should be set
+# after specifiying the AS type
+set acceleration_structure ac1 alpha 3.5
+

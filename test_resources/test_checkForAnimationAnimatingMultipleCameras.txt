@@ -1,0 +1,17 @@
+# Create camera 1
+create camera c1
+
+# Create camera 2
+create camera c2
+
+# Create an animation
+create animation anim1
+
+# Animate the first camera
+animate anim1 camera c1 translate X 1.5
+
+# Try to animate the second camera within the same
+# animation;
+# Should produce an error
+animate anim1 camera c2 translate Z 1.5
+

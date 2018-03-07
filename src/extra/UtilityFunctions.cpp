@@ -445,10 +445,11 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
                   }
 
                   // Set the vertices.
-                  objects.at(name).vertices = new vector_description*[3];
-                  objects.at(name).vertices[0] = &(vectors.at(vertices_values[0]));
-                  objects.at(name).vertices[1] = &(vectors.at(vertices_values[1]));
-                  objects.at(name).vertices[2] = &(vectors.at(vertices_values[2]));
+                  objects.at(name).vertices.reserve(3);
+                  // Overwrites the nullptr at position 0.
+                  objects.at(name).vertices[0] = std::make_shared<vector_description>(vectors.at(vertices_values[0]));
+                  objects.at(name).vertices.push_back(std::make_shared<vector_description>(vectors.at(vertices_values[1])));
+                  objects.at(name).vertices.push_back(std::make_shared<vector_description>(vectors.at(vertices_values[2])));
                 } else {
                   return {{invalid_set_property_value, line_number}, {}};
                 }

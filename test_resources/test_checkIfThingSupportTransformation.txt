@@ -1,0 +1,8 @@
+# Create an image plane
+create image_plane ip1
+
+# Try transforming the image plane;
+# Should produce an error;
+# Image planes cannot be transformed
+transform image_plane ip1 translate X 1
+

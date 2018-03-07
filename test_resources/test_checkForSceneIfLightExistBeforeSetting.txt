@@ -1,0 +1,7 @@
+# Create a scene
+create scene s1
+
+# Try setting a light to the scene before defining it;
+# Should produce an error
+set scene s1 lights l1
+

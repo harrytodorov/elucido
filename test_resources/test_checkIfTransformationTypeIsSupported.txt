@@ -1,0 +1,8 @@
+# Create a light
+create light l1
+
+# Try to scale the light;
+# Should produce an error;
+# Lights do not support scaling
+transform light l1 scale XYZ 1.5
+

@@ -1,0 +1,8 @@
+# Create an object
+create object o1
+
+# Transform the object using slerp;
+# Transformation type is not available;
+# Should produce an error
+transform object o1 slerp XY 14.1
+

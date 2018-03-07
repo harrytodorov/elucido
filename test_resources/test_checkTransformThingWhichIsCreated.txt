@@ -1,0 +1,4 @@
+# Transform an object which is not created;
+# Should produce an error
+transform object o1 translate X 1.4
+

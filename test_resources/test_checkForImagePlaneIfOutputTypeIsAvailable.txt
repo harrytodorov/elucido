@@ -1,0 +1,7 @@
+# Create an image plane
+create image_plane ip1
+
+# Set the output type: TIFF;
+# Currently it is not supported, so it should produce an error
+set image_plane ip1 output_type jpeg
+

@@ -1,0 +1,136 @@
+# Create orthographic camera, set its parameters
+# and position it on the scene.
+create camera c1
+set camera c1 type orthographic
+set camera c1 zoom_factor 1.5
+transform camera c1 translate XY 15
+transform camera c1 rotate Y 45
+
+# Create perspective camera, set its parameters
+# and position it on the scene.
+create camera c2
+set camera c2 type perspective
+set camera c2 fov 2.5
+transform camera c2 translate X -15
+transform camera c2 rotate Z 90
+
+# Create vectors
+create vector p1
+set vector p1 coordinates 1,1,1
+
+create vector p2
+set vector p2 coordinates 2,2,2
+
+create vector p3
+set vector p3 coordinates 3,3,3
+
+# Create color
+create color green
+set color green rgb 0,255,0
+
+# Create a material
+create material phong_basic
+set material phong_basic type phong
+set material phong_basic color green
+set material phong_basic ambient 0.5
+set material phong_basic diffuse 0.2
+set material phong_basic spec_exp 1.5
+set material phong_basic spec_const 0.15
+
+# Create a point light source, set its parameters
+# and position it on the scene
+create light l1
+set light l1 type point
+set light l1 intensity 100
+set light l1 color green
+set light l1 position p1
+transform light l1 translate Z -10
+
+# Create a directional light source, set its parameters
+# and position it on the scene
+create light l2
+set light l2 type directional
+set light l2 intensity 50
+set light l2 color green
+set light l2 direction p2
+transform light l2 rotate Y 45
+
+# Create a sphere, set its properties and 
+# position it on the scene
+create object sphere1
+set object sphere1 type sphere
+set object sphere1 center p1
+set object sphere1 radius 2.5
+set object sphere1 material phong_basic
+transform object sphere1 translate Y 5
+transform object sphere1 rotate XY 15
+transform object sphere1 scale XYZ 5
+
+# Create a triangle, set its properties and
+# position it on the scene
+create object triangle1
+set object triangle1 type triangle
+set object triangle1 vertices p1,p2,p3
+set object triangle1 material phong_basic
+transform object triangle1 translate X 1
+transform object triangle1 rotate XY 15
+transform object triangle1 scale Z 5
+
+# Create a triangle mesh, set its properties and
+# position it on the scene
+create object tm1
+set object tm1 type triangle_mesh
+set object tm1 file_name bunny.obj
+set object tm1 interpolation 1
+set object tm1 material phong_basic
+transform object tm1 translate X 5
+transform object tm1 rotate Y 45
+transform object tm1 scale XYZ 0.5
+
+# Create an image plane and set its paramters
+create image_plane ip1
+set image_plane ip1 output_type png
+set image_plane ip1 horizontal 	1920
+set image_plane ip1 vertical 	1080
+set image_plane ip1 gamma 1
+set image_plane ip1 number_samples 25
+
+# Create an acceleration structure and set its paramerters
+create acceleration_structure ac1
+set acceleration_structure ac1 type grid
+set acceleration_structure ac1 alpha 3.5
+set acceleration_structure ac1 max_resolution 64
+
+# Create animation and animate some things in it
+create animation anim_scene1
+set animation anim_scene1 number_of_images_in_seq 15
+animate anim_scene1 object triangle1 rotate X 15
+animate anim_scene1 light l1 translate Z -5
+animate anim_scene1 camera c1 translate XY 15
+
+# Create animation and animate some things in it
+create animation anim_scene2
+set animation anim_scene2 number_of_images_in_seq 100
+animate anim_scene2 object tm1 scale XYZ 1.5
+animate anim_scene2 light l2 rotate Y 35
+animate anim_scene2 camera c2 rotate Z 2
+
+# Create a scene and add things to it
+create scene scene1
+set scene scene1 camera c1
+set scene scene1 image_plane ip1
+set scene scene1 acceleration_structure ac1
+set scene scene1 objects sphere1
+set scene scene1 objects triangle1
+set scene scene1 lights l1
+set scene scene1 animations anim_scene1
+
+# Create a scene and add things to it
+create scene scene2
+set scene scene2 camera c2
+set scene scene2 image_plane ip1
+set scene scene2 acceleration_structure ac1
+set scene scene2 objects tm1
+set scene scene2 lights l2
+set scene scene2 animations anim_scene2
+

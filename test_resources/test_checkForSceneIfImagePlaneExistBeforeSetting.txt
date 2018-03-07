@@ -1,0 +1,7 @@
+# Create a scene
+create scene s1
+
+# Try setting an image plane to the scene before defining it;
+# Should produce an error
+set scene s1 image_plane ip1
+

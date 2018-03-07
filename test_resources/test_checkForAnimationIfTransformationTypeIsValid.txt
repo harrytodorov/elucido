@@ -1,0 +1,11 @@
+# Create an object
+create object o1
+
+# Create an animation
+create animation anim1
+
+# Try to slerp transform the object;
+# Should produce an error,
+# slerp transformation is not supported
+animate anim1 object o1 slerp XYZ 1.5
+

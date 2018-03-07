@@ -1,0 +1,11 @@
+# Create a light
+create light l1
+
+# Create an animation
+create animation anim1
+
+# Try animating the light's scale;
+# Should produce an error,
+# light do not support scale transformation
+animate anim1 light l1 scale X 1.5
+

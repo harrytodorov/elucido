@@ -1,0 +1,11 @@
+# Create an object
+create object o1
+
+# Create an animation
+create animation anim1
+
+# Try to animate the object along an
+# undefined axes;
+# Should produce an error
+animate anim1 object o1 translate YX 1.5
+
