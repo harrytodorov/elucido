@@ -11,7 +11,7 @@
 #include <memory>
 
 
-#include "../../include/elucido/Utilities.h"
+#include "Utilities.h"
 
 /**
  * TODO: clean-up code, where possible

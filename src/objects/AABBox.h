@@ -5,7 +5,7 @@
 #define ELUCIDO_BBOX_H
 
 #include <glm/vec4.hpp>
-#include "Utilities.h"
+#include "../extra/Utilities.h"
 
 // using forward declaration, cause the compiler somehow
 // does not want to include the Ray.h...

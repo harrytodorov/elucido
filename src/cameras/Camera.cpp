@@ -1,7 +1,7 @@
 // Copyright 2017, University of Freiburg.
 // Author: Haralambi Todorov <harrytodorov@gmail.com>
 
-#include "../../include/elucido/Camera.h"
+#include "Camera.h"
 
 //=============================================================================
 glm::vec3 Camera::cast_ray(const Ray &ray,

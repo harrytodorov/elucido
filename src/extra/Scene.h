@@ -7,12 +7,12 @@
 #include <string>
 #include <unordered_map>
 #include <fstream>
-#include "Object.h"
-#include "Light.h"
+#include "../objects/Object.h"
+#include "../lights/Light.h"
 #include "glm/vec3.hpp"
 #include "glm/vec4.hpp"
 #include "ImagePlane.h"
-#include "Camera.h"
+#include "../cameras/Camera.h"
 
 class Scene {
 

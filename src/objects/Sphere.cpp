@@ -1,7 +1,7 @@
 // Copyright 2017, University of Freiburg.
 // Author: Haralambi Todorov <harrytodorov@gmail.com>
 
-#include "../../include/elucido/Sphere.h"
+#include "Sphere.h"
 
 //=============================================================================
 bool Sphere::intersect(const Ray &r, isect_info &i) const {

@@ -6,7 +6,7 @@
 
 #include <vector>
 #include "AccelerationStructure.h"
-#include "Object.h"
+#include "../objects/Object.h"
 
 struct Cell {
   Cell() {}

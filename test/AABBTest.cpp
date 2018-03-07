@@ -2,7 +2,7 @@
 // Author: Haralambi Todorov <harrytodorov@gmail.com>
 
 #include <gtest/gtest.h>
-#include "../include/elucido/AABBox.h"
+#include "../src/objects/AABBox.h"
 
 //==============================================================================
 TEST(AABBox, extend_by) {

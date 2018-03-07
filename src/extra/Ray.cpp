@@ -2,7 +2,7 @@
 // Author: Haralambi Todorov <harrytodorov@gmail.com>
 
 #include "Ray.h"
-#include "TriangleMesh.h"
+#include "../objects/TriangleMesh.h"
 
 //=============================================================================
 bool Ray::trace(const std::vector<Object *> &objects,

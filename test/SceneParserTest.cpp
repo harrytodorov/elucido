@@ -6,7 +6,7 @@
 #include <string>
 
 #include "../src/extra/UtilityFunctions.cpp"
-#include "../include/elucido/Utilities.h"
+#include "../src/extra/Utilities.h"
 
 //==============================================================================
 TEST(SceneParser, checkForInvalidFile) {

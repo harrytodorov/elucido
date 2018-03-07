@@ -4,19 +4,19 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include "../include/elucido/AccelerationStructure.h"
-#include "../include/elucido/Grid.h"
+#include "acceleration/AccelerationStructure.h"
+#include "acceleration/Grid.h"
 
-#include "../include/elucido/Object.h"
-#include "../include/elucido/TriangleMesh.h"
-#include "../include/elucido/PointLight.h"
-#include "../include/elucido/PerspectiveCamera.h"
-#include "../include/elucido/Triangle.h"
-#include "../include/elucido/Sphere.h"
-#include "../include/elucido/DirectionalLight.h"
-#include "../include/elucido/OrthographicCamera.h"
-#include "../include/elucido/AccelerationStructure.h"
-#include "../include/elucido/Scene.h"
+#include "objects/Object.h"
+#include "objects/TriangleMesh.h"
+#include "lights/PointLight.h"
+#include "cameras/PerspectiveCamera.h"
+#include "objects/Triangle.h"
+#include "objects/Sphere.h"
+#include "lights/DirectionalLight.h"
+#include "cameras/OrthographicCamera.h"
+#include "acceleration/AccelerationStructure.h"
+#include "extra/Scene.h"
 #include "extra/UtilityFunctions.cpp"
 
 void render_cornell_scene() {
@@ -1959,91 +1959,6 @@ int main(int argc, char **argv) {
   }
   std::string filename = argv[1];
   auto result = read_scene_from_file(filename);
-  SceneParserStatusCodes code = result.first.first;
-  size_t line = result.first.second;
-  std::cout << "=====" << std::endl
-            << "Code: " << STATUS_CODES_MAP.at(code) << std::endl
-            << "Line: " << line << std::endl;
-  for (auto const &scene : result.second) {
-    // Print general scene information.
-    std::cout << "Scene name: "       << scene.name               << std::endl
-              << "Objects(size): "    << scene.objects.size()     << std::endl
-              << "Lights(size): "     << scene.lights.size()      << std::endl
-              << "Animations(size): " << scene.animations.size()  << std::endl
-              << "Camera: "           << ((scene.camera != nullptr) ? scene.camera->name : "") << std::endl
-              << "Image plane: "      << ((scene.image_plane != nullptr) ? scene.image_plane->name : "") << std::endl
-              << "Acceleration structure: " << ((scene.acceleration_structure != nullptr) ? scene.acceleration_structure->name : "") << std::endl
-              << std::endl;
-
-    // Print object information.
-    for (auto const &object : scene.objects) {
-      std::cout << "Object information::"                                                                             << std::endl
-                << "Object name: "                  << object.name                                                    << std::endl
-                << "Object type: "                  << object.type                                                    << std::endl
-                << "Object material name: "         << object.material->name                                          << std::endl
-                << "Object material type: "         << object.material->type                                          << std::endl
-                << "Object material color name: "   << object.material->color->name                                   << std::endl
-                << "Object transformations(size): " << object.transformations.size()                                  << std::endl
-                << "Object center: "                << ((object.type == sphere) ? object.center->name : "")           << std::endl
-                << "Object radius: "                << ((object.type == sphere) ? std::to_string(object.radius) : "") << std::endl
-                << "Object file name: "             << ((object.type == triangle_mesh) ? object.file_name : "")       << std::endl
-                << "Object interpolation: "         << object.interpolation                                           << std::endl
-                << std::endl;
-      for (auto const &obj_trans : object.transformations) {
-        std::cout << "Objects transformation:::"  << std::endl
-                  << "Transformation type: "      << obj_trans.type << std::endl
-                  << "Transformation axis: "      << obj_trans.axis << std::endl
-                  << "Amount: "                   << obj_trans.amount << std::endl
-                  << std::endl;
-      }
-    }
-
-    // Print light information.
-    for (auto const &light: scene.lights) {
-      std::cout << "Light information::" << std::endl
-                << "Light name: "                  << light.name  << std::endl
-                << "Light type: "                  << light.type << std::endl
-                << "Light color: " << ((light.color != nullptr) ? light.color->name : "") << std::endl
-                << "Light intensity: " << light.intensity << std::endl
-                << "Light property type: " << light.property.first << std::endl
-                << "Light property value: " << ((light.property.second != nullptr) ? std::to_string(light.property.second->y) : "null") << std::endl
-                << "Light transformations(size): " << light.transformations.size() << std::endl
-                << std::endl;
-      for (auto const &light_trans : light.transformations) {
-        std::cout << "Light transformation:::"    << std::endl
-                  << "Transformation type: "      << light_trans.type << std::endl
-                  << "Transformation axis: "      << light_trans.axis << std::endl
-                  << "Amount: "                   << light_trans.amount << std::endl
-                  << std::endl;
-      }
-    }
-
-    // Print animation information.
-    for (auto const &animation : scene.animations) {
-      std::cout << "Animation information::" << std::endl
-                << "Animation name: " << animation.name << std::endl
-                << "Number of images in sequence: " << animation.num_of_images_in_sequence << std::endl
-                << "Animated objects(size): " << animation.objects.size() << std::endl
-                << "Animated lights(size): " << animation.lights.size() << std::endl
-                << "Animated camera: " << animation.camera.first << std::endl
-                << "Animated camera transformations(size): " << animation.camera.second.size() << std::endl
-                << std::endl;
-    }
-
-    // Print camera information.
-    std::cout << "Camera type: " << scene.camera->type << std::endl
-              << "Camera property: " << scene.camera->property.first << std::endl
-              << "Camera property value: " << std::to_string(scene.camera->property.second) << std::endl
-              << "Camera transformations(size): " << scene.camera->transformations.size() << std::endl
-              << std::endl;
-    for (auto const &cam_trans : scene.camera->transformations) {
-      std::cout << "Camera transformation:::"    << std::endl
-                << "Transformation type: "      << cam_trans.type << std::endl
-                << "Transformation axis: "      << cam_trans.axis << std::endl
-                << "Amount: "                   << cam_trans.amount << std::endl
-                << std::endl;
-    }
-  }
 
   return 0;
 }

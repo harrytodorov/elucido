@@ -8,7 +8,7 @@
 
 #include <vector>
 
-#include "Object.h"
+#include "../objects/Object.h"
 #include "Utilities.h"
 
 class Ray {

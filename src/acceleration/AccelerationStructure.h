@@ -4,8 +4,8 @@
 #ifndef ELUCIDO_ACCELERATIONSTRUCTURE_H
 #define ELUCIDO_ACCELERATIONSTRUCTURE_H
 
-#include "Object.h"
-#include "TriangleMesh.h"
+#include "../objects/Object.h"
+#include "../objects/TriangleMesh.h"
 
 struct Primitive {
   Primitive() {}

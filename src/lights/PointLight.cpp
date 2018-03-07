@@ -1,7 +1,7 @@
 // Copyright 2017, University of Freiburg.
 // Author: Haralambi Todorov <harrytodorov@gmail.com>
 
-#include "../../include/elucido/PointLight.h"
+#include "PointLight.h"
 
 //=============================================================================
 void PointLight::illuminate(const glm::vec4 &hit_point,

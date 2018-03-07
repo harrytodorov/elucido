@@ -1,8 +1,8 @@
 // Copyright 2017, University of Freiburg.
 // Author: Haralambi Todorov <harrytodorov@gmail.com>
 
-#include "../../include/elucido/AABBox.h"
-#include "../../include/elucido/Ray.h"
+#include "AABBox.h"
+#include "../extra/Ray.h"
 
 //=============================================================================
 AABBox &AABBox::extend_by(const glm::vec4 &p) {

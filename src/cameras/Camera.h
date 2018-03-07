@@ -12,12 +12,12 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <math.h>
 
-#include "Utilities.h"
-#include "Object.h"
-#include "ImagePlane.h"
-#include "Light.h"
-#include "AccelerationStructure.h"
-#include "Grid.h"
+#include "../extra/Utilities.h"
+#include "../objects/Object.h"
+#include "../extra/ImagePlane.h"
+#include "../lights/Light.h"
+#include "../acceleration/AccelerationStructure.h"
+#include "../acceleration/Grid.h"
 
 class Camera {
 

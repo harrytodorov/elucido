@@ -1,7 +1,7 @@
 // Copyright (c) 2017, University of Freiburg.
 // Author: Haralambi Todorov <harrytodorov@gmail.com>
 
-#include "elucido/AccelerationStructure.h"
+#include "AccelerationStructure.h"
 
 std::vector<Primitive> AccelerationStructure::convertToPrimitive(
     const Object &obj) {

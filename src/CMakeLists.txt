@@ -28,32 +28,28 @@ set(ELUCIDO_SOURCE_FILES
 
 # Set header files
 set(ELUCIDO_HEADER_FILES
-        ../include/elucido/Camera.h
-        ../include/elucido/OrthographicCamera.h
-        ../include/elucido/PerspectiveCamera.h
-        ../include/elucido/Light.h
-        ../include/elucido/DirectionalLight.h
-        ../include/elucido/PointLight.h
-        ../include/elucido/Object.h
-        ../include/elucido/AABBox.h
-        ../include/elucido/Sphere.h
-        ../include/elucido/Triangle.h
-        ../include/elucido/TriangleMesh.h
-        ../include/elucido/AccelerationStructure.h
-        ../include/elucido/Grid.h
-        ../include/elucido/ImagePlane.h
-        ../include/elucido/Ray.h
-        ../include/elucido/Utilities.h
-        ../include/elucido/Scene.h)
-
-# Include own header files
-include_directories(../include/elucido)
+        cameras/Camera.h
+        cameras/OrthographicCamera.h
+        cameras/PerspectiveCamera.h
+        lights/Light.h
+        lights/DirectionalLight.h
+        lights/PointLight.h
+        objects/Object.h
+        objects/AABBox.h
+        objects/Sphere.h
+        objects/Triangle.h
+        objects/TriangleMesh.h
+        acceleration/AccelerationStructure.h
+        acceleration/Grid.h
+        extra/ImagePlane.h
+        extra/Ray.h
+        extra/Utilities.h
+        extra/Scene.h)
 
 # Create executable
 add_executable(elucido main.cpp ${ELUCIDO_SOURCE_FILES})
 
-add_library(elucido_lib STATIC
-        ${ELUCIDO_SOURCE_FILES})
+add_library(elucido_lib STATIC ${ELUCIDO_SOURCE_FILES})
 
 # Set up glm library
 include_directories(../include)
