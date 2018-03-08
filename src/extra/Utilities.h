@@ -291,11 +291,13 @@ const std::map<std::string, ImagePlaneProperty> IMAGE_PLANE_PROPERTIES_MAP = {
 // corresponding mappings.
 enum AccelerationStructureProperties {
   alpha,
-  max_resolution
+  max_resolution,
+  as_type
 };
 const std::map<std::string, AccelerationStructureProperties> AC_PROPERTIES_MAP = {
     {"alpha",           alpha},
-    {"max_resolution",  max_resolution}
+    {"max_resolution",  max_resolution},
+    {"type",            as_type}
 };
 
 // Available acceleration structure types + 

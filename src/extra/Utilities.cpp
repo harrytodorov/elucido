@@ -284,6 +284,45 @@ bool set_image_plane_property(const std::string &property,
 }
 
 //=============================================================================
+bool set_accel_str_property(const std::string &property,
+                            const std::string &property_value,
+                            const std::string &name,
+                            std::map<std::string, acceleration_structure_description> &acc_strs) {
+  /// Type.
+  if (AC_PROPERTIES_MAP.at(property) == as_type &&
+      AC_TYPES_MAP.find(property_value) != AC_TYPES_MAP.end()) {
+    if (AC_TYPES_MAP.at(property_value) == grid) {
+      acc_strs.at(name).type = grid;
+    }
+  } else if (acc_strs.at(name).type != not_set_act) {
+    /// Alpha.
+    if (AC_PROPERTIES_MAP.at(property) == alpha) {
+      acc_strs.at(name).alpha = std::stof(property_value);
+    /// Maximal resolution.
+    } else if (AC_PROPERTIES_MAP.at(property) == max_resolution) {
+      acc_strs.at(name).max_resolution =
+          static_cast<uint32_t>(std::stoi(property_value));
+    }
+  } else {
+    return false;
+  }
+  return true;
+}
+
+//=============================================================================
+bool set_animation_property(const std::string &property,
+                            const std::string &property_value,
+                            const std::string &name,
+                            std::map<std::string, animation_description> &animations) {
+  /// Number of images in a sequence.
+  if (ANIMATION_PROPERTIES_MAP.at(property) == number_of_images_in_seq) {
+    auto val = static_cast<uint32_t>(std::stoi(property_value));
+    animations.at(name).num_of_images_in_sequence = val;
+  }
+  return true;
+}
+
+//=============================================================================
 // TODO: clean-up code, where possible
 // TODO: make code, a bit more readable; comment+spacing
 // TODO: look at CameraProperty and CameraSetProperties; why?
@@ -417,6 +456,7 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
           return {{invalid_statement, line_number}, {}};
         }
 
+        bool r = true;
         switch (AVAILABLE_THINGS.at(thing)) {
 
           // CAMERA.
@@ -429,13 +469,10 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
               return {{invalid_set_property, line_number}, {}};
             }
 
-            auto r = set_camera_property(name,
-                                         property,
-                                         property_value,
-                                         cameras);
-
-            // Check for invalid set property.
-            if (!r) return {{invalid_set_property_value, line_number}, {}};
+            r = set_camera_property(name,
+                                    property,
+                                    property_value,
+                                    cameras);
           } break;
 
           // COLOR.
@@ -447,10 +484,8 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
             if (property != "rgb") {
               return {{invalid_set_property, line_number}, {}};
             }
-            auto r = set_color_property(property_value, name, colors);
 
-            // Check for invalid set property.
-            if (!r) return {{invalid_set_property_value, line_number}, {}};
+            r = set_color_property(property_value, name, colors);
           } break;
 
           case SceneThings::vector_d: {
@@ -461,8 +496,8 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
             if (property != "coordinates") {
               return {{invalid_set_property, line_number}, {}};
             }
-            auto r = set_vector_property(property_value, name, vectors);
-            if (!r) return {{invalid_set_property_value, line_number}, {}};
+
+            r = set_vector_property(property_value, name, vectors);
           } break;
 
           case SceneThings::material_d: {
@@ -473,13 +508,11 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
               return {{invalid_set_property, line_number}, {}};
             }
 
-            auto r = set_material_property(property,
-                                           property_value,
-                                           name,
-                                           colors,
-                                           materials);
-
-            if (!r) return {{invalid_set_property_value, line_number}, {}};
+            r = set_material_property(property,
+                                      property_value,
+                                      name,
+                                      colors,
+                                      materials);
           } break;
 
           case SceneThings::light_d: {
@@ -490,14 +523,12 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
               return {{invalid_set_property, line_number}, {}};
             }
 
-            auto r = set_light_property(property,
-                                        property_value,
-                                        name,
-                                        colors,
-                                        vectors,
-                                        lights);
-
-            if (!r) return {{invalid_set_property_value, line_number}, {}};
+            r = set_light_property(property,
+                                   property_value,
+                                   name,
+                                   colors,
+                                   vectors,
+                                   lights);
           } break;
 
           case SceneThings::object_d: {
@@ -508,14 +539,12 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
               return {{invalid_set_property, line_number}, {}};
             }
 
-            auto r = set_object_property(property,
-                                         property_value,
-                                         name,
-                                         vectors,
-                                         materials,
-                                         objects);
-
-            if (!r) return {{invalid_set_property_value, line_number}, {}};
+            r = set_object_property(property,
+                                    property_value,
+                                    name,
+                                    vectors,
+                                    materials,
+                                    objects);
           } break;
 
           case SceneThings::image_plane_d: {
@@ -526,49 +555,24 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
               return {{invalid_set_property, line_number}, {}};
             }
 
-            auto r = set_image_plane_property(property,
-                                              property_value,
-                                              name,
-                                              image_planes);
-
-            if (!r) return {{invalid_set_property_value, line_number}, {}};
+            r = set_image_plane_property(property,
+                                         property_value,
+                                         name,
+                                         image_planes);
           } break;
 
           case SceneThings::acceleration_structure_d: {
             if (acceleration_structures.find(name) == acceleration_structures.end()) {
               return {{thing_not_created, line_number}, {}};
             }
-            if (AC_PROPERTIES_MAP.find(property) == AC_PROPERTIES_MAP.end() &&
-                property != "type") {
+            if (AC_PROPERTIES_MAP.find(property) == AC_PROPERTIES_MAP.end()) {
               return {{invalid_set_property, line_number}, {}};
             }
 
-            // TYPE
-            if (property == "type") {
-              if (AC_TYPES_MAP.find(property_value) == AC_TYPES_MAP.end()) {
-                return {{invalid_set_property_value, line_number}, {}};
-              }
-
-              if (AC_TYPES_MAP.at(property_value) == grid) {
-                acceleration_structures.at(name).type = grid;
-              }
-            }
-            else {
-              // Check if type is defined.
-              if (acceleration_structures.at(name).type == not_set_act) {
-                return {{invalid_set_property_value, line_number}, {}};
-              }
-
-              // ALPHA
-              if (AC_PROPERTIES_MAP.at(property) == alpha) {
-                acceleration_structures.at(name).alpha = std::stof(property_value);
-              }
-              // MAX RESOLUTION
-              else if (AC_PROPERTIES_MAP.at(property) == max_resolution) {
-                acceleration_structures.at(name).max_resolution =
-                    static_cast<uint32_t>(std::stoi(property_value));
-              }
-            }
+            r = set_accel_str_property(property,
+                                       property_value,
+                                       name,
+                                       acceleration_structures);
           } break;
 
 
@@ -580,12 +584,10 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
               return {{invalid_set_property, line_number}, {}};
             }
 
-            // NUMBER OF IMAGES IN SEQUENCE
-            if (ANIMATION_PROPERTIES_MAP.at(property) == number_of_images_in_seq) {
-              int noiis_value = std::stoi(property_value);
-              animations.at(name).num_of_images_in_sequence =
-                  static_cast<uint32_t>(noiis_value);
-            }
+            r = set_animation_property(property,
+                                       property_value,
+                                       name,
+                                       animations);
           } break;
 
           case SceneThings::scene_d: {
@@ -596,57 +598,38 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
               return {{invalid_set_property, line_number}, {}};
             }
 
-            // CAMERA
-            if (SCENE_PROPERTIES_MAP.at(property) == scene_camera) {
-              // Check if camera exists.
-              if (cameras.find(property_value) == cameras.end()) {
-                return {{invalid_set_property_value, line_number}, {}};
-              }
+            /// Camera.
+            if (SCENE_PROPERTIES_MAP.at(property) == scene_camera &&
+                cameras.find(property_value) != cameras.end()) {
               scenes.at(name).camera = std::make_shared<camera_description>(cameras.at(property_value));
-            }
-            // IMAGE PLANE
-            else if (SCENE_PROPERTIES_MAP.at(property) == scene_image_plane) {
-              // Check if image plane exists.
-              if (image_planes.find(property_value) == image_planes.end()) {
-                return {{invalid_set_property_value, line_number}, {}};
-              }
+            /// Image plane.
+            } else if (SCENE_PROPERTIES_MAP.at(property) == scene_image_plane &&
+                     image_planes.find(property_value) != image_planes.end()) {
               scenes.at(name).image_plane = std::make_shared<image_plane_description>(image_planes.at(property_value));
-            }
-            // ACCELERATION STRUCTURE
-            else if (SCENE_PROPERTIES_MAP.at(property) == scene_as) {
-              // Check if acceleration structure exists.
-              if (acceleration_structures.find(property_value) == acceleration_structures.end()) {
-                return {{invalid_set_property_value, line_number}, {}};
-              }
+            /// Acceleration structure.
+            } else if (SCENE_PROPERTIES_MAP.at(property) == scene_as &&
+                     acceleration_structures.find(property_value) != acceleration_structures.end()) {
               scenes.at(name).acceleration_structure = std::make_shared<acceleration_structure_description>(acceleration_structures.at(property_value));
-            }
-            // OBJECT
-            else if (SCENE_PROPERTIES_MAP.at(property) == scene_objects) {
-              // Check if object exists.
-              if (objects.find(property_value) == objects.end()) {
-                return {{invalid_set_property_value, line_number}, {}};
-              }
+            /// Object.
+            } else if (SCENE_PROPERTIES_MAP.at(property) == scene_objects &&
+                     objects.find(property_value) != objects.end()) {
               scenes.at(name).objects.push_back(objects.at(property_value));
-            }
-            // LIGHT
-            else if (SCENE_PROPERTIES_MAP.at(property) == scene_lights) {
-              // Check if light exists.
-              if (lights.find(property_value) == lights.end()) {
-                return {{invalid_set_property_value, line_number}, {}};
-              }
+            /// Light.
+            } else if (SCENE_PROPERTIES_MAP.at(property) == scene_lights &&
+                       lights.find(property_value) != lights.end()) {
               scenes.at(name).lights.push_back(lights.at(property_value));
-            }
-            // ANIMATION
-            else if (SCENE_PROPERTIES_MAP.at(property) == scene_animations) {
-              // Check if animation exists.
-              if (animations.find(property_value) == animations.end()) {
-                return {{invalid_set_property_value, line_number}, {}};
-              }
+            /// Animation.
+            } else if (SCENE_PROPERTIES_MAP.at(property) == scene_animations &&
+                       animations.find(property_value) != animations.end()) {
               scenes.at(name).animations.push_back(animations.at(property_value));
+            } else {
+              r = false;
             }
           } break;
         }
 
+        // Check for invalid set property.
+        if (!r) return {{invalid_set_property_value, line_number}, {}};
       } break;
 
         // Execute 'transform' statement.
