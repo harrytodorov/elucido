@@ -323,9 +323,6 @@ bool set_animation_property(const std::string &property,
 }
 
 //=============================================================================
-// TODO: clean-up code, where possible
-// TODO: make code, a bit more readable; comment+spacing
-// TODO: look at CameraProperty and CameraSetProperties; why?
 std::pair<std::pair<SceneParserStatusCodes, size_t>,
           std::vector<scene_description>>
         read_scene_from_file(const std::string &filename) {
@@ -381,18 +378,16 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
       // Execute 'create' statement.
       case SceneFileActionWord::create: {
         std::string thing, name;
-        bool r;
 
         tokenized_line >> thing;
         tokenized_line >> name;
 
-        // If either of the strings is empty, the create statement was
-        // invalid, so one exists the function.
         if (thing.empty() || name.empty())
           return {{invalid_syntax, line_number}, {}};
         if (AVAILABLE_THINGS.find(thing) == AVAILABLE_THINGS.end())
           return {{invalid_statement, line_number}, {}};
 
+        bool r;
         switch (AVAILABLE_THINGS.at(thing)) {
           case SceneThings::camera_d:
             r = cameras.emplace(name, name).second;
@@ -425,14 +420,10 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
             r = scenes.emplace(name, name).second;
             break;
         }
-        // Check for duplicate.
-        if (!r) {
-          return {{duplicate, line_number}, {}};
-        }
-
+        if (!r) return {{duplicate, line_number}, {}};
       } break;
 
-        // Execute 'set' statement.
+      // Execute 'set' statement.
       case SceneFileActionWord::set: {
         std::string thing;
         std::string name;
@@ -444,14 +435,10 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
         tokenized_line >> property;
         tokenized_line >> property_value;
 
-        // If either of the strings is empty, the set statement is invalid; so
-        // one exists the function.
         if (thing.empty() || name.empty() || property.empty() ||
             property_value.empty()) {
           return {{invalid_syntax, line_number}, {}};
         }
-
-        // Check if the thing to be set is supported.
         if (AVAILABLE_THINGS.find(thing) == AVAILABLE_THINGS.end()) {
           return {{invalid_statement, line_number}, {}};
         }
@@ -646,27 +633,22 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
         tokenized_line >> axes;
         tokenized_line >> amount;
 
-        // If either of the strings is empty, the transform statement is invalid.
         if (thing.empty() || name.empty() || type.empty() || axes.empty() ||
             amount.empty()) {
           return {{invalid_syntax, line_number}, {}};
         }
-        // Check if the thing to be transform is supported.
         if (AVAILABLE_THINGS.find(thing) == AVAILABLE_THINGS.end()) {
           return {{invalid_statement, line_number}, {}};
         }
-        // Check if the transformation type is valid.
         if (TRANSFORMATION_TYPES_MAP.find(type) == TRANSFORMATION_TYPES_MAP.end()) {
           return {{invalid_transformation_type, line_number}, {}};
         }
-        // Check if the transformation axis is valid.
         if (AXES_MAP.find(axes) == AXES_MAP.end()) {
           return {{invalid_transformation_axix, line_number}, {}};
         }
 
         switch (AVAILABLE_THINGS.at(thing)) {
           case SceneThings::light_d: {
-            // Check if the light to be transformed exists.
             if (lights.find(name) == lights.end()) {
               return {{thing_not_created, line_number}, {}};
             }
@@ -676,32 +658,26 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
               return {{invalid_transformation_type, line_number}, {}};
             }
 
-            // Create transformation.
-            transformation_description transform_light = create_transformation_desc(type,
-                                                                                    axes,
-                                                                                    amount);
+            auto transform_light = create_transformation_desc(type,
+                                                              axes,
+                                                              amount);
 
-            // Apply transformation to light.
             lights.at(name).transformations.push_back(transform_light);
           } break;
 
           case SceneThings::object_d: {
-            // Check if the object to be transformed exists.
             if (objects.find(name) == objects.end()) {
               return {{thing_not_created, line_number}, {}};
             }
 
-            // Create transformation.
-            transformation_description transform_object = create_transformation_desc(type,
-                                                                                     axes,
-                                                                                     amount);
+            auto transform_object = create_transformation_desc(type,
+                                                               axes,
+                                                               amount);
 
-            // Apply transformation to object.
             objects.at(name).transformations.push_back(transform_object);
           } break;
 
           case SceneThings::camera_d: {
-            // Check if camera to be transformed exists.
             if (cameras.find(name) == cameras.end()) {
               return {{thing_not_created, line_number}, {}};
             }
@@ -711,12 +687,10 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
               return {{invalid_transformation_type, line_number}, {}};
             }
 
-            // Create transformation.
-            transformation_description transform_camera = create_transformation_desc(type,
-                                                                                     axes,
-                                                                                     amount);
+            auto transform_camera = create_transformation_desc(type,
+                                                               axes,
+                                                               amount);
 
-            // Apply transformation to camera.
             cameras.at(name).transformations.push_back(transform_camera);
           } break;
 
@@ -740,31 +714,25 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
         tokenized_line >> axes;
         tokenized_line >> amount;
 
-        // If either of the strings is empty, the animate statement is invalid.
         if (anim_name.empty() || thing.empty() || thing_name.empty() ||
             trans_type.empty() || axes.empty() || amount.empty()) {
           return {{invalid_syntax, line_number}, {}};
         }
-        // Check if the animation exists.
         if (animations.find(anim_name) == animations.end()) {
           return {{thing_not_created, line_number}, {}};
         }
-        // Check if the thing to be animated is supported.
         if (AVAILABLE_THINGS.find(thing) == AVAILABLE_THINGS.end()) {
           return {{invalid_statement, line_number}, {}};
         }
-        // Check if the transformation type is valid.
         if (TRANSFORMATION_TYPES_MAP.find(trans_type) == TRANSFORMATION_TYPES_MAP.end()) {
           return {{invalid_transformation_type, line_number}, {}};
         }
-        // Check if the transformation axis is valid.
         if (AXES_MAP.find(axes) == AXES_MAP.end()) {
           return {{invalid_transformation_axix, line_number}, {}};
         }
 
         switch (AVAILABLE_THINGS.at(thing)) {
           case SceneThings::light_d: {
-            // Check if the light to be animated exists.
             if (lights.find(thing_name) == lights.end())
               return {{thing_not_created, line_number}, {}};
 
@@ -773,32 +741,26 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
             if (TRANSFORMATION_TYPES_MAP.at(trans_type) == scale)
               return {{invalid_transformation_type, line_number}, {}};
 
-            // Create transformation.
-            transformation_description animate_light = create_transformation_desc(trans_type,
-                                                                                  axes,
-                                                                                  amount);
+            auto animate_light = create_transformation_desc(trans_type,
+                                                            axes,
+                                                            amount);
 
-            // Apply transformation to the animation.
             animations.at(anim_name).lights[thing_name].push_back(animate_light);
           } break;
 
           case SceneThings::object_d: {
-            // Check if the object to be animated exists.
             if (objects.find(thing_name) == objects.end()) {
               return {{thing_not_created, line_number}, {}};
             }
 
-            // Create transformation.
-            transformation_description animate_object = create_transformation_desc(trans_type,
-                                                                                   axes,
-                                                                                   amount);
+            auto animate_object = create_transformation_desc(trans_type,
+                                                             axes,
+                                                             amount);
 
-            // Apply transformation to the animation.
             animations.at(anim_name).objects[thing_name].push_back(animate_object);
           } break;
 
           case SceneThings::camera_d: {
-            // Check if the camera to be animated exists.
             if (cameras.find(thing_name) == cameras.end())
               return {{thing_not_created, line_number}, {}};
 
@@ -807,10 +769,9 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
             if (TRANSFORMATION_TYPES_MAP.at(trans_type) == scale)
               return {{invalid_transformation_type, line_number}, {}};
 
-            // Create transformation.
-            transformation_description animate_camera = create_transformation_desc(trans_type,
-                                                                                   axes,
-                                                                                   amount);
+            auto animate_camera = create_transformation_desc(trans_type,
+                                                             axes,
+                                                             amount);
 
             if (animations.at(anim_name).camera.first.empty()) {
               animations.at(anim_name).camera.first = thing_name;
@@ -821,7 +782,6 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
               }
             }
 
-            // Apply transformation to the animation.
             animations.at(anim_name).camera.second.push_back(animate_camera);
           } break;
 
