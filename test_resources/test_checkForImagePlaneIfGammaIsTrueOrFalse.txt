@@ -1,7 +1,0 @@
-# Create an image plane
-create image_plane ip1
-
-# Set gamma for the image plane;
-# If value != {0,1}, should produce an error
-set image_plane ip1 gamma 2
-

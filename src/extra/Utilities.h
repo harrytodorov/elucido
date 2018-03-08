@@ -52,18 +52,18 @@ const std::string face("f");
 // Available status codes for parsing scene files +
 // mappings for the status code in human language.
 enum SceneParserStatusCodes {
-  file_problem,
-  invalid_statement,
-  invalid_syntax,
-  duplicate,
-  thing_not_created,
-  invalid_set_property,
-  invalid_set_property_value,
-  invalid_thing_to_transform,
-  invalid_transformation_type,
-  invalid_transformation_axix,
-  invalid_animation_camera,
-  success
+  file_problem,                   // 0
+  invalid_statement,              // 1
+  invalid_syntax,                 // 2
+  duplicate,                      // 3
+  thing_not_created,              // 4
+  invalid_set_property,           // 5
+  invalid_set_property_value,     // 6
+  invalid_thing_to_transform,     // 7
+  invalid_transformation_type,    // 8
+  invalid_transformation_axix,    // 9
+  invalid_animation_camera,       // 10
+  success                         // 11
 };
 const std::map<SceneParserStatusCodes, std::string> STATUS_CODES_MAP = {
     {file_problem,                "There was a problem with loading the file."},
@@ -178,7 +178,9 @@ enum MaterialProperty {
   spec_const,
   spec_exp,
   refl_ind,
-  ior
+  ior,
+  mat_color,
+  mat_type
 };
 const std::map<std::string, MaterialProperty> MATERIAL_PROPERTIES_MAP = {
     {"ambient",     ambient},
@@ -186,7 +188,9 @@ const std::map<std::string, MaterialProperty> MATERIAL_PROPERTIES_MAP = {
     {"spec_const",  spec_const},
     {"spec_exp",    spec_exp},
     {"refl_ind",    refl_ind},
-    {"ior", ior}
+    {"ior",         ior},
+    {"color",       mat_color},
+    {"type",        mat_type}
 };
 
 // Available light types +
@@ -208,13 +212,15 @@ enum LightProperty {
   position,
   direction,
   intensity,
-  color
+  light_color,
+  light_type
 };
 const std::map<std::string, LightProperty> LIGHT_PROPERTIES_MAP = {
     {"position",  position},
     {"direction", direction},
     {"intensity", intensity},
-    {"color",     color}
+    {"color",     light_color},
+    {"type",      light_type}
 };
 
 // Available object types +
@@ -238,14 +244,18 @@ enum ObjectProperty {
   center,
   vertices,
   file_name,
-  interpolation
+  interpolation,
+  object_type,
+  object_mat
 };
 const std::map<std::string, ObjectProperty> OBJECT_PROPERTIES_MAP = {
     {"radius",          radius},
     {"center",          center},
     {"vertices",        vertices},
     {"file_name",       file_name},
-    {"interpolation",   interpolation}
+    {"interpolation",   interpolation},
+    {"type",            object_type},
+    {"material",        object_mat}
 };
 
 // Available image plane output types +

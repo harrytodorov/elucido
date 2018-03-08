@@ -205,15 +205,6 @@ TEST(SceneParser, checkForImagePlaneIfOutputTypeIsAvailable) {
 }
 
 //==============================================================================
-TEST(SceneParser, checkForImagePlaneIfGammaIsTrueOrFalse) {
-  std::string filename = "/Users/harry/dev/elucido/test_resources/test_checkForImagePlaneIfGammaIsTrueOrFalse.txt";
-  auto result = read_scene_from_file(filename);
-  EXPECT_EQ(result.first.first, invalid_set_property_value);
-  EXPECT_EQ(result.first.second, 6);
-  EXPECT_EQ(result.second.size(), 0);
-}
-
-//==============================================================================
 TEST(SceneParser, checkForASIfTypeIsDefinedBeforeSettingParameter) {
   std::string filename = "/Users/harry/dev/elucido/test_resources/test_checkForASIfTypeIsDefinedBeforeSettingParameter.txt";
   auto result = read_scene_from_file(filename);

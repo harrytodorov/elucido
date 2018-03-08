@@ -16,12 +16,281 @@ transformation_description create_transformation_desc(
 }
 
 //=============================================================================
+bool set_camera_property(
+    const std::string &name,
+    const std::string &property,
+    const std::string &property_value,
+    std::map<std::string, camera_description> &cameras
+) {
+
+  /// Type.
+  if (CAMERA_SET_PROPERTIES.at(property) == camera_type) {
+    if (CAMERA_TYPES_MAP.find(property_value) == CAMERA_TYPES_MAP.end()) {
+      return false;
+    }
+    cameras.at(name).type = CAMERA_TYPES_MAP.at(property_value);
+  } else {
+    // Check if camera type is set.
+    if (cameras.at(name).type == not_set_ct) {
+      return false;
+    }
+
+    /// Zoom factor; set the property.
+    if (CAMERA_SET_PROPERTIES.at(property) == camera_zoom_factor &&
+        cameras.at(name).type == orthographic) {
+      cameras.at(name).property.first = zoom_factor;
+    }
+    /// Field of view; set the property.
+    else if (CAMERA_SET_PROPERTIES.at(property) == camera_fov &&
+             cameras.at(name).type == perspective) {
+      cameras.at(name).property.first = field_of_view;
+    }
+    // Camera type and parameter should match.
+    else {
+      return false;
+    }
+
+    // If everything went fine, set the property value.
+    float prop_val = static_cast<float_t>(std::atof(property_value.c_str()));
+    cameras.at(name).property.second = prop_val;
+  }
+  return true;
+}
+
+//=============================================================================
+std::vector<std::string> split_string(
+    const std::string &string,
+    const char &delim) {
+  std::vector<std::string> values;
+  std::istringstream values_stream(string);
+  std::string val_token;
+  while (std::getline(values_stream, val_token, delim)) {
+    values.push_back(val_token);
+  }
+  return values;
+}
+
+//=============================================================================
+bool set_color_property(const std::string &property_value,
+                        const std::string &name,
+                        std::map<std::string, color_description> &colors) {
+  auto color_val = split_string(property_value, ',');
+  if (color_val.size() != 3) return false;
+
+  // Check if the values are in range [0, 255]
+  int r = std::stoi(color_val[0]);
+  int g = std::stoi(color_val[1]);
+  int b = std::stoi(color_val[2]);
+  if ((r < 0) || (r > 255) ||
+      (g < 0) || (g > 255) ||
+      (b < 0) || (b > 255)) {
+    return false;
+  }
+  // Set rgb values.
+  colors.at(name).r = r;
+  colors.at(name).b = b;
+  colors.at(name).g = g;
+  return true;
+}
+
+//=============================================================================
+bool set_vector_property(const std::string &property_value,
+                         const std::string &name,
+                         std::map<std::string, vector_description> &vectors) {
+
+  auto vector_val = split_string(property_value, ',');
+  if (vector_val.size() != 3) return false;
+
+  vectors.at(name).x = std::stof(vector_val[0]);
+  vectors.at(name).y = std::stof(vector_val[1]);
+  vectors.at(name).z = std::stof(vector_val[2]);
+  return true;
+}
+
+//=============================================================================
+bool set_material_property(const std::string &property,
+                           const std::string &property_value,
+                           const std::string &name,
+                           const std::map<std::string, color_description> &colors,
+                           std::map<std::string, material_description> &materials) {
+
+  /// Material type.
+  if (MATERIAL_PROPERTIES_MAP.at(property) == mat_type &&
+      MATERIAL_TYPES_MAP.find(property_value) != MATERIAL_TYPES_MAP.end()) {
+    materials.at(name).type = MATERIAL_TYPES_MAP.at(property_value);
+  /// Material color.
+  } else if (MATERIAL_PROPERTIES_MAP.at(property) == mat_color &&
+             colors.find(property_value) != colors.end()) {
+    materials.at(name).color = std::make_shared<color_description>(colors.at(property_value));
+  /// Remaining properties.
+  } else if (MATERIAL_PROPERTIES_MAP.at(property) != mat_type &&
+           MATERIAL_PROPERTIES_MAP.at(property) != mat_color) {
+    MaterialProperty mp = MATERIAL_PROPERTIES_MAP.at(property);
+    float_t mp_value    = std::stof(property_value.c_str());
+    materials.at(name).properties[mp] = mp_value;
+  } else {
+    return false;
+  }
+  return true;
+}
+
+//=============================================================================
+bool set_light_property(const std::string &property,
+                        const std::string &property_value,
+                        const std::string &name,
+                        const std::map<std::string, color_description> &colors,
+                        const std::map<std::string, vector_description> &vectors,
+                        std::map<std::string, light_description> &lights) {
+  /// Light type.
+  if (LIGHT_PROPERTIES_MAP.at(property) == light_type &&
+      LIGHT_TYPES_MAP.find(property_value) != LIGHT_TYPES_MAP.end()) {
+    lights.at(name).type = LIGHT_TYPES_MAP.at(property_value);
+  /// Light color.
+  } else if (LIGHT_PROPERTIES_MAP.at(property) == light_color &&
+             colors.find(property_value) != colors.end()) {
+    lights.at(name).color = std::make_shared<color_description>(colors.at(property_value));
+  /// Light intensity.
+  } else if (LIGHT_PROPERTIES_MAP.at(property) == intensity) {
+    lights.at(name).intensity = std::stof(property_value);
+  /// Position & Direction.
+  } else if ((LIGHT_PROPERTIES_MAP.at(property) == position && lights.at(name).type == point) ||
+             (LIGHT_PROPERTIES_MAP.at(property) == direction && lights.at(name).type == directional)) {
+    // Check if type is set and there is a defined vector
+    // for the position/direction.
+    if (lights.find(name)->second.type == not_set_lt ||
+        vectors.find(property_value) == vectors.end()) {
+      return false;
+    }
+
+    LightProperty lp = LIGHT_PROPERTIES_MAP.at(property);
+    vector_description lp_value = vectors.at(property_value);
+    lights.find(name)->second.property.first = lp;
+    lights.at(name).property.second = std::make_shared<vector_description>(lp_value);
+    } else {
+      return false;
+    }
+  return true;
+}
+
+//=============================================================================
+bool set_object_property(const std::string &property,
+                         const std::string &property_value,
+                         const std::string &name,
+                         const std::map<std::string, vector_description> &vectors,
+                         const std::map<std::string, material_description> &materials,
+                         std::map<std::string, object_description> &objects) {
+
+  /// Object type.
+  if (OBJECT_PROPERTIES_MAP.at(property) == object_type &&
+      OBJECT_TYPES_MAP.find(property_value) != OBJECT_TYPES_MAP.end()) {
+    objects.at(name).type = OBJECT_TYPES_MAP.at(property_value);
+  /// Object material.
+  } else if (OBJECT_PROPERTIES_MAP.at(property) == object_mat &&
+             materials.find(property_value) != materials.end()) {
+    objects.at(name).material = std::make_shared<material_description>(materials.at(property_value));
+  } else if (objects.at(name).type != not_set_ot) {
+
+    // Sphere.
+    if (objects.at(name).type == sphere) {
+      /// Sphere radius.
+      if (OBJECT_PROPERTIES_MAP.at(property) == radius) {
+        objects.at(name).radius = std::stof(property_value);
+      /// Sphere center.
+      } else if (OBJECT_PROPERTIES_MAP.at(property) == center &&
+                 vectors.find(property_value) != vectors.end()) {
+        objects.at(name).center = std::make_shared<vector_description>(vectors.at(property_value));
+      } else {
+        return false;
+      }
+    // Triangle.
+    } else if (objects.at(name).type == triangle) {
+      /// Triangle vertices.
+      if (OBJECT_PROPERTIES_MAP.at(property) == vertices) {
+        auto vertices = split_string(property_value, ',');
+        if (vertices.size() != 3) return false;
+
+        // Check if the vertices exist.
+        if (vectors.find(vertices[0]) == vectors.end() ||
+            vectors.find(vertices[1]) == vectors.end() ||
+            vectors.find(vertices[2]) == vectors.end()) {
+          return false;
+        }
+
+        // Overwrites the nullptr will be at position 0.
+        objects.at(name).vertices[0] = std::make_shared<vector_description>(vectors.at(vertices[0]));
+        objects.at(name).vertices.push_back(std::make_shared<vector_description>(vectors.at(vertices[1])));
+        objects.at(name).vertices.push_back(std::make_shared<vector_description>(vectors.at(vertices[2])));
+      } else {
+        return false;
+      }
+    // Triangle mesh.
+    } else if (objects.at(name).type == triangle_mesh) {
+      /// Triangle mesh file name.
+      if (OBJECT_PROPERTIES_MAP.at(property) == file_name) {
+        objects.at(name).file_name = property_value;
+      /// Triangle mesh interpolation.
+      } else if (OBJECT_PROPERTIES_MAP.at(property) == interpolation) {
+        int interpolation = std::stoi(property_value);
+        if (interpolation != 0) interpolation = 1;
+        objects.at(name).interpolation = interpolation;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  } else {
+    return false;
+  }
+  return true;
+}
+
+//=============================================================================
+bool set_image_plane_property(const std::string &property,
+                              const std::string &property_value,
+                              const std::string &name,
+                              std::map<std::string, image_plane_description> &image_planes) {
+
+  /// Output type.
+  if (IMAGE_PLANE_PROPERTIES_MAP.at(property) == output_type &&
+      IMAGE_PLANE_OUT_TYPES_MAP.find(property_value) != IMAGE_PLANE_OUT_TYPES_MAP.end()) {
+    if (IMAGE_PLANE_OUT_TYPES_MAP.at(property_value) == ppm_o) {
+      image_planes.at(name).output_type = ppm_o;
+    } else if (IMAGE_PLANE_OUT_TYPES_MAP.at(property_value) == png_o) {
+      image_planes.at(name).output_type = png_o;
+    }
+  /// Horizontal resolution.
+  } else if (IMAGE_PLANE_PROPERTIES_MAP.at(property) == horizontal) {
+    auto val = static_cast<uint32_t>(std::stoi(property_value));
+    image_planes.at(name).horizontal = val;
+  /// Vertical resolution.
+  } else if (IMAGE_PLANE_PROPERTIES_MAP.at(property) == vertical) {
+    auto val = static_cast<uint32_t>(std::stoi(property_value));
+    image_planes.at(name).vertical = val;
+  /// Gamma.
+  } else if (IMAGE_PLANE_PROPERTIES_MAP.at(property) == use_gamma) {
+    auto val = std::stoi(property_value);
+    if (val != 0) val = 1;
+    image_planes.at(name).use_gamma = val;
+  /// Number of samples.
+  } else if (IMAGE_PLANE_PROPERTIES_MAP.at(property) == number_samples) {
+    auto val = static_cast<uint32_t>(std::stoi(property_value));
+    image_planes.at(name).number_samples = val;
+  } else {
+    // In case an invalid output type is specified.
+    return false;
+  }
+  return true;
+}
+
+//=============================================================================
 // TODO: clean-up code, where possible
 // TODO: make code, a bit more readable; comment+spacing
 // TODO: look at CameraProperty and CameraSetProperties; why?
 std::pair<std::pair<SceneParserStatusCodes, size_t>,
           std::vector<scene_description>>
         read_scene_from_file(const std::string &filename) {
+
   // Open file.
   std::ifstream input_file;
   input_file.open(filename, std::ifstream::in);
@@ -118,8 +387,10 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
             break;
         }
         // Check for duplicate.
-        if (!r)
+        if (!r) {
           return {{duplicate, line_number}, {}};
+        }
+
       } break;
 
         // Execute 'set' statement.
@@ -136,9 +407,11 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
 
         // If either of the strings is empty, the set statement is invalid; so
         // one exists the function.
-        if (thing.empty() || name.empty() || property.empty() || property_value.empty()) {
+        if (thing.empty() || name.empty() || property.empty() ||
+            property_value.empty()) {
           return {{invalid_syntax, line_number}, {}};
         }
+
         // Check if the thing to be set is supported.
         if (AVAILABLE_THINGS.find(thing) == AVAILABLE_THINGS.end()) {
           return {{invalid_statement, line_number}, {}};
@@ -146,281 +419,103 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
 
         switch (AVAILABLE_THINGS.at(thing)) {
 
+          // CAMERA.
           case SceneThings::camera_d: {
-            if (cameras.find(name) == cameras.end())
+            if (cameras.find(name) == cameras.end()) {
               return {{thing_not_created, line_number}, {}};
-
-            if (CAMERA_SET_PROPERTIES.find(property) == CAMERA_SET_PROPERTIES.end())
-              return {{invalid_set_property, line_number}, {}};
-
-            // CAMERA TYPE
-            if (CAMERA_SET_PROPERTIES.at(property) == camera_type) {
-              if (CAMERA_TYPES_MAP.find(property_value) == CAMERA_TYPES_MAP.end()) {
-                return {{invalid_set_property_value, line_number}, {}};
-              }
-              cameras.at(name).type = CAMERA_TYPES_MAP.at(property_value);
-            } else {
-              // Check if camera type is set.
-              if (cameras.at(name).type == not_set_ct) {
-                return {{invalid_set_property_value, line_number}, {}};
-              }
-
-              // ZOOM FACTOR
-              if (CAMERA_SET_PROPERTIES.at(property) == camera_zoom_factor &&
-                  cameras.at(name).type == orthographic) {
-                cameras.at(name).property.first = zoom_factor;
-                cameras.at(name).property.second =
-                    static_cast<float_t>(std::atof(property_value.c_str()));
-              }
-              // FIELD OF VIEW
-              else if (CAMERA_SET_PROPERTIES.at(property) == camera_fov &&
-                  cameras.at(name).type == perspective) {
-                cameras.at(name).property.first = field_of_view;
-                cameras.at(name).property.second =
-                    static_cast<float_t>(std::atof(property_value.c_str()));
-              }
-              // CAMERA TYPE AND PARAMETER SHOULD MATCH
-              else {
-                return {{invalid_set_property_value, line_number}, {}};
-              }
             }
+
+            if (CAMERA_SET_PROPERTIES.find(property) == CAMERA_SET_PROPERTIES.end()) {
+              return {{invalid_set_property, line_number}, {}};
+            }
+
+            auto r = set_camera_property(name,
+                                         property,
+                                         property_value,
+                                         cameras);
+
+            // Check for invalid set property.
+            if (!r) return {{invalid_set_property_value, line_number}, {}};
           } break;
 
+          // COLOR.
           case SceneThings::color_d: {
             if (colors.find(name) == colors.end()) {
               return {{thing_not_created, line_number}, {}};
             }
-            // Color has only just one property: rgb.
+            /// RGB.
             if (property != "rgb") {
               return {{invalid_set_property, line_number}, {}};
             }
-            // Extract r,g,b values from string.
-            // A comma ',' is used as a delimiter.
-            std::vector<std::string> color_values;
-            std::istringstream color_values_stream(property_value);
-            std::string color_token;
-            while (std::getline(color_values_stream, color_token, ',')) {
-              color_values.push_back(color_token);
-            }
-            // Check if only 3 values are set (r,g,b)
-            if (color_values.size() != 3) {
-              return {{invalid_set_property_value, line_number}, {}};
-            }
-            // Check if the values are in range [0, 255]
-            int r = std::stoi(color_values[0]);
-            int g = std::stoi(color_values[1]);
-            int b = std::stoi(color_values[2]);
-            if ((r < 0) || (r > 255) ||
-                (g < 0) || (g > 255) ||
-                (b < 0) || (b > 255)) {
-              return {{invalid_set_property_value, line_number}, {}};
-            }
-            // Set rgb values.
-            colors.at(name).r = r;
-            colors.at(name).b = b;
-            colors.at(name).g = g;
+            auto r = set_color_property(property_value, name, colors);
+
+            // Check for invalid set property.
+            if (!r) return {{invalid_set_property_value, line_number}, {}};
           } break;
 
           case SceneThings::vector_d: {
             if (vectors.find(name) == vectors.end()) {
               return {{thing_not_created, line_number}, {}};
             }
-            // Vector has just one property: coordinates.
+            /// Coordinates.
             if (property != "coordinates") {
               return {{invalid_set_property, line_number}, {}};
             }
-            // Extract x,y,z values from string.
-            // A comma ',' is used as a delimiter.
-            std::vector<std::string> vector_values;
-            std::istringstream vector_values_stream(property_value);
-            std::string vector_token;
-            while (std::getline(vector_values_stream, vector_token, ',')) {
-              vector_values.push_back(vector_token);
-            }
-            // Check if only 3 values are set (x,y,z)
-            if (vector_values.size() != 3) {
-              return {{invalid_set_property_value, line_number}, {}};
-            }
-            // Set vector's x,y,z values.
-            vectors.at(name).x = std::stof(vector_values[0]);
-            vectors.at(name).y = std::stof(vector_values[1]);
-            vectors.at(name).z = std::stof(vector_values[2]);
+            auto r = set_vector_property(property_value, name, vectors);
+            if (!r) return {{invalid_set_property_value, line_number}, {}};
           } break;
 
           case SceneThings::material_d: {
             if (materials.find(name) == materials.end()) {
               return {{thing_not_created, line_number}, {}};
             }
-            if (MATERIAL_PROPERTIES_MAP.find(property) == MATERIAL_PROPERTIES_MAP.end() &&
-                  property != "type" && property != "color") {
+            if (MATERIAL_PROPERTIES_MAP.find(property) == MATERIAL_PROPERTIES_MAP.end()) {
               return {{invalid_set_property, line_number}, {}};
             }
 
-            // MATERIAL TYPE
-            if (property == "type") {
-              if (MATERIAL_TYPES_MAP.find(property_value) != MATERIAL_TYPES_MAP.end()) {
-                materials.at(name).type = MATERIAL_TYPES_MAP.at(property_value);
-              } else {
-                return {{invalid_set_property_value, line_number}, {}};
-              }
-            }
-            // MATERIAL COLOR
-            // The color should exist.
-            else if (property == "color") {
-              if (colors.find(property_value) != colors.end()) {
-                materials.at(name).color = std::make_shared<color_description>(colors.at(property_value));
-              } else {
-                return {{invalid_set_property_value, line_number}, {}};
-              }
-            }
-            // REMAINING PROPERTIES
-            else {
-              MaterialProperty mp = MATERIAL_PROPERTIES_MAP.at(property);
-              float_t mp_value    = std::stof(property_value.c_str());
-              materials.at(name).properties[mp] = mp_value;
-            }
+            auto r = set_material_property(property,
+                                           property_value,
+                                           name,
+                                           colors,
+                                           materials);
+
+            if (!r) return {{invalid_set_property_value, line_number}, {}};
           } break;
 
           case SceneThings::light_d: {
             if (lights.find(name) == lights.end()) {
               return {{thing_not_created, line_number}, {}};
             }
-            if (LIGHT_PROPERTIES_MAP.find(property) == LIGHT_PROPERTIES_MAP.end() &&
-                property != "type" && property != "color") {
+            if (LIGHT_PROPERTIES_MAP.find(property) == LIGHT_PROPERTIES_MAP.end()) {
               return {{invalid_set_property, line_number}, {}};
             }
 
-            // LIGHT TYPE
-            if (property == "type") {
-              if (LIGHT_TYPES_MAP.find(property_value) != LIGHT_TYPES_MAP.end()) {
-                lights.at(name).type = LIGHT_TYPES_MAP.at(property_value);
-              } else {
-                return {{invalid_set_property_value, line_number}, {}};
-              }
-            }
-            // LIGHT COLOR
-            else if (LIGHT_PROPERTIES_MAP.at(property) == color) {
-              if (colors.find(property_value) != colors.end()) {
-                lights.at(name).color = std::make_shared<color_description>(colors.at(property_value));
-              } else {
-                return {{invalid_set_property_value, line_number}, {}};
-              }
-            }
-            else if (LIGHT_PROPERTIES_MAP.at(property) == intensity) {
-              lights.at(name).intensity = std::stof(property_value);
-            }
-            // POSITION & DIRECTION
-            else {
-              // CHECK IF TYPE AND PROPERTY MATCH
-              if (lights.find(name)->second.type == not_set_lt) {
-                return {{invalid_set_property_value, line_number}, {}};
-              }
-              if (vectors.find(property_value) == vectors.end()) {
-                return {{invalid_set_property_value, line_number}, {}};
-              }
+            auto r = set_light_property(property,
+                                        property_value,
+                                        name,
+                                        colors,
+                                        vectors,
+                                        lights);
 
-              if ((LIGHT_PROPERTIES_MAP.at(property) == position && lights.at(name).type == point) ||
-                  (LIGHT_PROPERTIES_MAP.at(property) == direction && lights.at(name).type == directional)) {
-                LightProperty lp = LIGHT_PROPERTIES_MAP.at(property);
-                vector_description lp_value = vectors.at(property_value);
-                lights.find(name)->second.property.first = lp;
-                lights.at(name).property.second = std::make_shared<vector_description>(lp_value);
-              } else {
-                return {{invalid_set_property_value, line_number}, {}};
-                }
-            }
+            if (!r) return {{invalid_set_property_value, line_number}, {}};
           } break;
 
           case SceneThings::object_d: {
             if (objects.find(name) == objects.end()) {
               return {{thing_not_created, line_number}, {}};
             }
-            if (OBJECT_PROPERTIES_MAP.find(property) == OBJECT_PROPERTIES_MAP.end() &&
-                property != "type" && property != "material") {
+            if (OBJECT_PROPERTIES_MAP.find(property) == OBJECT_PROPERTIES_MAP.end()) {
               return {{invalid_set_property, line_number}, {}};
             }
 
-            // OBJECT'S TYPE
-            if (property == "type") {
-              if (OBJECT_TYPES_MAP.find(property_value) != OBJECT_TYPES_MAP.end()) {
-                objects.at(name).type = OBJECT_TYPES_MAP.at(property_value);
-              } else {
-                return {{invalid_set_property_value, line_number}, {}};
-              }
-            }
-            // OBJECT'S MATERIAL
-            else if (property == "material") {
-              if (materials.find(property_value) != materials.end()) {
-                objects.at(name).material = std::make_shared<material_description>(materials.at(property_value));
-              } else {
-                return {{invalid_set_property_value, line_number}, {}};
-              }
-            } else {
-              if (objects.at(name).type == not_set_ot) {
-                return {{invalid_set_property_value, line_number}, {}};
-              }
+            auto r = set_object_property(property,
+                                         property_value,
+                                         name,
+                                         vectors,
+                                         materials,
+                                         objects);
 
-              // SPHERE
-              if (objects.at(name).type == sphere) {
-                if (OBJECT_PROPERTIES_MAP.at(property) == radius) {
-                  objects.at(name).radius = std::stof(property_value);
-                } else if (OBJECT_PROPERTIES_MAP.at(property) == center) {
-                  // Vector should be defined before.
-                  if (vectors.find(property_value) == vectors.end()) {
-                    return {{invalid_set_property_value, line_number}, {}};
-                  }
-                  objects.at(name).center = std::make_shared<vector_description>(vectors.at(property_value));
-                } else {
-                  return {{invalid_set_property_value, line_number}, {}};
-                }
-              }
-              // TRIANGLE
-              else if (objects.at(name).type == triangle) {
-                if (OBJECT_PROPERTIES_MAP.at(property) == vertices) {
-                  // Extract vertices(vectors) values from string.
-                  // A comma ',' is used as a delimiter.
-                  std::vector<std::string> vertices_values;
-                  std::istringstream vertices_values_stream(property_value);
-                  std::string vertex_token;
-                  while (std::getline(vertices_values_stream, vertex_token, ',')) {
-                    vertices_values.push_back(vertex_token);
-                  }
-
-                  // Check if only 3 values are set (v1,v2,v3)
-                  if (vertices_values.size() != 3) {
-                    return {{invalid_set_property_value, line_number}, {}};
-                  }
-
-                  // Check if the vertices exist.
-                  if (vectors.find(vertices_values[0]) == vectors.end() ||
-                      vectors.find(vertices_values[1]) == vectors.end() ||
-                      vectors.find(vertices_values[2]) == vectors.end()) {
-                    return {{invalid_set_property_value, line_number}, {}};
-                  }
-
-                  // Set the vertices.
-                  objects.at(name).vertices.reserve(3);
-                  // Overwrites the nullptr at position 0.
-                  objects.at(name).vertices[0] = std::make_shared<vector_description>(vectors.at(vertices_values[0]));
-                  objects.at(name).vertices.push_back(std::make_shared<vector_description>(vectors.at(vertices_values[1])));
-                  objects.at(name).vertices.push_back(std::make_shared<vector_description>(vectors.at(vertices_values[2])));
-                } else {
-                  return {{invalid_set_property_value, line_number}, {}};
-                }
-              }
-              // TRIANGLE MESH
-              else if (objects.at(name).type == triangle_mesh) {
-                if (OBJECT_PROPERTIES_MAP.at(property) == file_name) {
-                  objects.at(name).file_name = property_value;
-                } else if (OBJECT_PROPERTIES_MAP.at(property) == interpolation) {
-                  int interpolation = std::stoi(property_value);
-                  if (interpolation != 0) interpolation = 1;
-                  objects.at(name).interpolation = interpolation;
-                } else {
-                  return {{invalid_set_property_value, line_number}, {}};
-                }
-              }
-            }
+            if (!r) return {{invalid_set_property_value, line_number}, {}};
           } break;
 
           case SceneThings::image_plane_d: {
@@ -431,41 +526,12 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
               return {{invalid_set_property, line_number}, {}};
             }
 
-            // OUTPUT TYPE
-            if (IMAGE_PLANE_PROPERTIES_MAP.at(property) == output_type) {
-              // Check if desired output type is available.
-              if (IMAGE_PLANE_OUT_TYPES_MAP.find(property_value) == IMAGE_PLANE_OUT_TYPES_MAP.end()) {
-                return {{invalid_set_property_value, line_number}, {}};
-              }
+            auto r = set_image_plane_property(property,
+                                              property_value,
+                                              name,
+                                              image_planes);
 
-              if (IMAGE_PLANE_OUT_TYPES_MAP.at(property_value) == ppm_o) {
-                image_planes.at(name).output_type = ppm_o;
-              } else if (IMAGE_PLANE_OUT_TYPES_MAP.at(property_value) == png_o) {
-                image_planes.at(name).output_type = png_o;
-              }
-            }
-            // RESOLUTION HORIZONTAL
-            else if (IMAGE_PLANE_PROPERTIES_MAP.at(property) == horizontal) {
-              image_planes.at(name).horizontal =
-                  static_cast<uint32_t>(std::stoi(property_value));
-            }
-            // RESOLUTION VERTICAL
-            else if (IMAGE_PLANE_PROPERTIES_MAP.at(property) == vertical) {
-              image_planes.at(name).vertical =
-                  static_cast<uint32_t>(std::stoi(property_value));
-            }
-            // GAMMA
-            else if (IMAGE_PLANE_PROPERTIES_MAP.at(property) == use_gamma) {
-              int gamma_value = std::stoi(property_value);
-              if (gamma_value < 0 || gamma_value > 1)
-                return {{invalid_set_property_value, line_number}, {}};
-              image_planes.at(name).use_gamma = gamma_value;
-            }
-            // NUMBER SAMPLES
-            else if (IMAGE_PLANE_PROPERTIES_MAP.at(property) == number_samples) {
-              image_planes.at(name).number_samples =
-                  static_cast<uint32_t>(std::stoi(property_value));
-            }
+            if (!r) return {{invalid_set_property_value, line_number}, {}};
           } break;
 
           case SceneThings::acceleration_structure_d: {
@@ -716,14 +782,13 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
         switch (AVAILABLE_THINGS.at(thing)) {
           case SceneThings::light_d: {
             // Check if the light to be animated exists.
-            if (lights.find(thing_name) == lights.end()) {
+            if (lights.find(thing_name) == lights.end())
               return {{thing_not_created, line_number}, {}};
-            }
+
             // Check if the transformation type is valid.
             // Light supports only rotation and translation.
-            if (TRANSFORMATION_TYPES_MAP.at(trans_type) == scale) {
+            if (TRANSFORMATION_TYPES_MAP.at(trans_type) == scale)
               return {{invalid_transformation_type, line_number}, {}};
-            }
 
             // Create transformation.
             transformation_description animate_light = create_transformation_desc(trans_type,
@@ -751,14 +816,13 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
 
           case SceneThings::camera_d: {
             // Check if the camera to be animated exists.
-            if (cameras.find(thing_name) == cameras.end()) {
+            if (cameras.find(thing_name) == cameras.end())
               return {{thing_not_created, line_number}, {}};
-            }
+
             // Check if the transformation type is valid.
             // Camera supports only rotation and translation.
-            if (TRANSFORMATION_TYPES_MAP.at(trans_type) == scale) {
+            if (TRANSFORMATION_TYPES_MAP.at(trans_type) == scale)
               return {{invalid_transformation_type, line_number}, {}};
-            }
 
             // Create transformation.
             transformation_description animate_camera = create_transformation_desc(trans_type,
