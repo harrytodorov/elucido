@@ -71,7 +71,7 @@ transform object sphere1 scale XYZ 5
 create object triangle1
 set object triangle1 type triangle
 set object triangle1 vertices p1,p2,p3
-set object triangle1 	 phong_basic
+set object triangle1 material phong_basic
 transform object triangle1 translate X 1
 transform object triangle1 rotate XY 15
 transform object triangle1 scale Z 5

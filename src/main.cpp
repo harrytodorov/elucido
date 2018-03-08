@@ -4,9 +4,10 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <map>
+
 #include "acceleration/AccelerationStructure.h"
 #include "acceleration/Grid.h"
-
 #include "objects/Object.h"
 #include "objects/TriangleMesh.h"
 #include "lights/PointLight.h"
@@ -1959,7 +1960,11 @@ int main(int argc, char **argv) {
   }
   std::string filename = argv[1];
   auto result = read_scene_from_file(filename);
-  Scene *scene = new Scene;
-  
+
+  std::map<std::string, color_description> cb;
+  bool ret = cb.emplace("bla", "bla").second;
+  ret = cb.emplace("bla", "bla").second;
+  std::cout << "Map size: " << cb.size() << std::endl;
+  std::cout << "Insertion return: " << ret << std::endl;
   return 0;
 }

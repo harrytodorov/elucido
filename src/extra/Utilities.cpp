@@ -3,11 +3,22 @@
 
 #include "Utilities.h"
 
-/**
- * TODO: clean-up code, where possible
- * TODO: make code, a bit more readable; comment+spacing
- * TODO: look at CameraProperty and CameraSetProperties; why?
- */
+//=============================================================================
+transformation_description create_transformation_desc(
+    const std::string &transformation_type,
+    const std::string &axes,
+    const std::string &amount) {
+  transformation_description td = {};
+  td.type   = TRANSFORMATION_TYPES_MAP.at(transformation_type);
+  td.axis   = AXES_MAP.at(axes);
+  td.amount = std::stof(amount);
+  return td;
+}
+
+//=============================================================================
+// TODO: clean-up code, where possible
+// TODO: make code, a bit more readable; comment+spacing
+// TODO: look at CameraProperty and CameraSetProperties; why?
 std::pair<std::pair<SceneParserStatusCodes, size_t>,
           std::vector<scene_description>>
         read_scene_from_file(const std::string &filename) {
@@ -46,105 +57,69 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
     // Get the start word of a line, and check if it is a valid one.
     tokenized_line >> action_token;
 
+    // Check if the line starts with a known start action word.
     if (START_WORDS.find(action_token) == START_WORDS.end()) {
       return {{invalid_statement, line_number}, {}};
     }
     SceneFileActionWord action = START_WORDS.find(action_token)->second;
-    // If the line is a comment, skip it.
-    if (action == START_WORDS.find("#")->second) {
-      continue;
-    }
+
     // Execute the line statement.
     switch (action) {
 
+      // If the line is a comment, skip it.
+      case SceneFileActionWord::comment:
+        continue;
+
       // Execute 'create' statement.
       case SceneFileActionWord::create: {
-        std::string thing;
-        std::string name;
+        std::string thing, name;
+        bool r;
 
         tokenized_line >> thing;
         tokenized_line >> name;
 
         // If either of the strings is empty, the create statement was
         // invalid, so one exists the function.
-        if (thing.empty() || name.empty()) {
+        if (thing.empty() || name.empty())
           return {{invalid_syntax, line_number}, {}};
-        }
-        if (AVAILABLE_THINGS.find(thing) == AVAILABLE_THINGS.end()) {
+        if (AVAILABLE_THINGS.find(thing) == AVAILABLE_THINGS.end())
           return {{invalid_statement, line_number}, {}};
+
+        switch (AVAILABLE_THINGS.at(thing)) {
+          case SceneThings::camera_d:
+            r = cameras.emplace(name, name).second;
+            break;
+          case SceneThings::color_d:
+            r = colors.emplace(name, name).second;
+            break;
+          case SceneThings::vector_d:
+            r = vectors.emplace(name, name).second;
+            break;
+          case SceneThings::material_d:
+            r = materials.emplace(name, name).second;
+            break;
+          case SceneThings::light_d:
+            r = lights.emplace(name, name).second;
+            break;
+          case SceneThings::object_d:
+            r = objects.emplace(name, name).second;
+            break;
+          case SceneThings::image_plane_d:
+            r = image_planes.emplace(name, name).second;
+            break;
+          case SceneThings::acceleration_structure_d:
+            r = acceleration_structures.emplace(name, name).second;
+            break;
+          case SceneThings::animation_d:
+            r = animations.emplace(name, name).second;
+            break;
+          case SceneThings::scene_d:
+            r = scenes.emplace(name, name).second;
+            break;
         }
-
-        switch (AVAILABLE_THINGS.find(thing)->second) {
-          case SceneThings::camera_d: {
-            if (cameras.find(name) != cameras.end()) {
-              return {{duplicate, line_number}, {}};
-            }
-            cameras.insert({name, camera_description(name)});
-          } break;
-
-          case SceneThings::color_d: {
-            if (colors.find(name) != colors.end()) {
-              return {{duplicate, line_number}, {}};
-            }
-            colors.insert({name, color_description(name)});
-          } break;
-
-          case SceneThings::vector_d: {
-            if (vectors.find(name) != vectors.end()) {
-              return {{duplicate, line_number}, {}};
-            }
-            vectors.insert({name, vector_description(name)});
-          } break;
-
-          case SceneThings::material_d: {
-            if (materials.find(name) != materials.end()) {
-              return {{duplicate, line_number}, {}};
-            }
-            materials.insert({name, material_description(name)});
-          } break;
-
-          case SceneThings::light_d: {
-            if (lights.find(name) != lights.end()) {
-              return {{duplicate, line_number}, {}};
-            }
-            lights.insert({name, light_description(name)});
-          } break;
-
-          case SceneThings::object_d: {
-            if (objects.find(name) != objects.end()) {
-              return {{duplicate, line_number}, {}};
-            }
-            objects.insert({name, object_description(name)});
-          } break;
-
-          case SceneThings::image_plane_d: {
-            if (image_planes.find(name) != image_planes.end()) {
-              return {{duplicate, line_number}, {}};
-            }
-            image_planes.insert({name, image_plane_description(name)});
-          } break;
-
-          case SceneThings::acceleration_structure_d: {
-            if (acceleration_structures.find(name) != acceleration_structures.end()) {
-              return {{duplicate, line_number}, {}};
-            }
-            acceleration_structures.insert({name, acceleration_structure_description(name)});
-          } break;
-
-          case SceneThings::animation_d: {
-            if (animations.find(name) != animations.end()) {
-              return {{duplicate, line_number}, {}};
-            }
-            animations.insert({name, animation_description(name)});
-          } break;
-
-          case SceneThings::scene_d: {
-            if (scenes.find(name) != scenes.end()) {
-              return {{duplicate, line_number}, {}};
-            }
-            scenes.insert({name, scene_description(name)});
-          } break;
-        }
+        // Check for duplicate.
+        if (!r)
+          return {{duplicate, line_number}, {}};
       } break;
 
         // Execute 'set' statement.
@@ -172,12 +147,11 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
         switch (AVAILABLE_THINGS.at(thing)) {
 
           case SceneThings::camera_d: {
-            if (cameras.find(name) == cameras.end()) {
+            if (cameras.find(name) == cameras.end())
               return {{thing_not_created, line_number}, {}};
-            }
-            if (CAMERA_SET_PROPERTIES.find(property) == CAMERA_SET_PROPERTIES.end()) {
+
+            if (CAMERA_SET_PROPERTIES.find(property) == CAMERA_SET_PROPERTIES.end())
               return {{invalid_set_property, line_number}, {}};
-            }
 
             // CAMERA TYPE
             if (CAMERA_SET_PROPERTIES.at(property) == camera_type) {
@@ -654,10 +628,9 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
             }
 
             // Create transformation.
-            transformation_description transform_light = {};
-            transform_light.type = TRANSFORMATION_TYPES_MAP.at(type);
-            transform_light.axis = AXES_MAP.at(axes);
-            transform_light.amount = std::stof(amount);
+            transformation_description transform_light = create_transformation_desc(type,
+                                                                                    axes,
+                                                                                    amount);
 
             // Apply transformation to light.
             lights.at(name).transformations.push_back(transform_light);
@@ -670,10 +643,9 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
             }
 
             // Create transformation.
-            transformation_description transform_object = {};
-            transform_object.type = TRANSFORMATION_TYPES_MAP.at(type);
-            transform_object.axis = AXES_MAP.at(axes);
-            transform_object.amount = std::stof(amount);
+            transformation_description transform_object = create_transformation_desc(type,
+                                                                                     axes,
+                                                                                     amount);
 
             // Apply transformation to object.
             objects.at(name).transformations.push_back(transform_object);
@@ -691,10 +663,9 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
             }
 
             // Create transformation.
-            transformation_description transform_camera = {};
-            transform_camera.type = TRANSFORMATION_TYPES_MAP.at(type);
-            transform_camera.axis = AXES_MAP.at(axes);
-            transform_camera.amount = std::stof(amount);
+            transformation_description transform_camera = create_transformation_desc(type,
+                                                                                     axes,
+                                                                                     amount);
 
             // Apply transformation to camera.
             cameras.at(name).transformations.push_back(transform_camera);
@@ -755,10 +726,9 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
             }
 
             // Create transformation.
-            transformation_description animate_light = {};
-            animate_light.type = TRANSFORMATION_TYPES_MAP.at(trans_type);
-            animate_light.axis = AXES_MAP.at(axes);
-            animate_light.amount = std::stof(amount);
+            transformation_description animate_light = create_transformation_desc(trans_type,
+                                                                                  axes,
+                                                                                  amount);
 
             // Apply transformation to the animation.
             animations.at(anim_name).lights[thing_name].push_back(animate_light);
@@ -771,10 +741,9 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
             }
 
             // Create transformation.
-            transformation_description animate_object = {};
-            animate_object.type = TRANSFORMATION_TYPES_MAP.at(trans_type);
-            animate_object.axis = AXES_MAP.at(axes);
-            animate_object.amount = std::stof(amount);
+            transformation_description animate_object = create_transformation_desc(trans_type,
+                                                                                   axes,
+                                                                                   amount);
 
             // Apply transformation to the animation.
             animations.at(anim_name).objects[thing_name].push_back(animate_object);
@@ -792,10 +761,9 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
             }
 
             // Create transformation.
-            transformation_description animate_camera = {};
-            animate_camera.type = TRANSFORMATION_TYPES_MAP.at(trans_type);
-            animate_camera.axis = AXES_MAP.at(axes);
-            animate_camera.amount = std::stof(amount);
+            transformation_description animate_camera = create_transformation_desc(trans_type,
+                                                                                   axes,
+                                                                                   amount);
 
             if (animations.at(anim_name).camera.first.empty()) {
               animations.at(anim_name).camera.first = thing_name;
