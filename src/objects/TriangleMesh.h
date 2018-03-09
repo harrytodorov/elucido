@@ -63,8 +63,7 @@ class TriangleMesh : public Object {
                           float_t &u,
                           float_t &v) const;
   void get_surface_properties(isect_info &i) const;
-  void apply_camera_transformation(const glm::mat4 &ctm,
-                                   const glm::mat4 &tictm);
+  void apply_camera_transformation(const glm::mat4 &ctm);
   void apply_transformations();
   void translate(const float_t &translation,
                  const Axis &axes_of_translation);

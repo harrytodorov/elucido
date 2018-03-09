@@ -90,8 +90,7 @@ class Triangle : public Object {
 //=============================================================================
   bool intersect(const Ray &r, isect_info &i) const;
   void get_surface_properties(isect_info &i) const;
-  void apply_camera_transformation(const glm::mat4 &ictm,
-                                   const glm::mat4 &itictm);
+  void apply_camera_transformation(const glm::mat4 &ivm);
   void apply_transformations();
   void translate(const float_t &translation,
                  const Axis &axes_of_translation);

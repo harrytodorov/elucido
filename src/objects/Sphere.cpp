@@ -38,7 +38,7 @@ bool Sphere::intersect(const Ray &r, isect_info &i) const {
   if (l2 > r2) t = s - q;
   else t = s + q;
 
-  // test passed; assign variables
+  // tests passed; assign variables
   i.tn = t;
   i.ip = r.orig() + t * r.dir();
   i.ti = (uint32_t) -1;
@@ -54,9 +54,8 @@ void Sphere::get_surface_properties(isect_info &i) const {
 }
 
 //=============================================================================
-void Sphere::apply_camera_transformation(const glm::mat4 &ictm,
-                                         const glm::mat4 &itictm) {
-  c = ictm * c;
+void Sphere::apply_camera_transformation(const glm::mat4 &ivm) {
+  c = ivm * c;
   reshape_bb();
 }
 
@@ -64,8 +63,6 @@ void Sphere::apply_camera_transformation(const glm::mat4 &ictm,
 void Sphere::translate(const float_t &translation,
                        const Axis &axes_of_translation) {
   glm::vec3 tv = create_transformation_vector(axes_of_translation, translation);
-
-  // assign the translation matrix to the object's model transform matrix
   glm::mat4 tm = glm::translate(glm::mat4(1), tv);
   mt = tm * mt;
 }
@@ -73,22 +70,13 @@ void Sphere::translate(const float_t &translation,
 //=============================================================================
 void Sphere::rotate(const float_t &angle_of_rotation,
                     const Axis &axes_of_rotation) {
-  glm::vec3 rv = create_transformation_vector(axes_of_rotation,
-                                              angle_of_rotation);
-
-  // assign the rotation matrix to the object's model transform matrix
-  glm::mat4 rm = glm::rotate(glm::mat4(1), glm::radians(angle_of_rotation), rv);
-  mt = rm * mt;
+  // Rotation does not effect implicit sphere.
 }
 
 //=============================================================================
 void Sphere::scale(const float_t &scaling_factor,
                    const Axis &axes_of_scale) {
-  // multiply the r by the scaling factor
-  r *= scaling_factor;
-
-  // update the squared radius of the sphere
-  r2 = powf(r, 2.f);
+  set_radius(r * scaling_factor);
 }
 
 //=============================================================================
@@ -106,12 +94,9 @@ void Sphere::set_center_p(const glm::vec4 &p) {
 
 //=============================================================================
 void Sphere::apply_transformations() {
-  // apply the transformations stored in the sphere's model transform matrix to its position
   c = mt * c;
   reshape_bb();
 
-  // after applying the transformations to a sphereits model transform and normal transform matrices are
-  // set back to the identity matrix
+  // Reset model transform matrix.
   mt = glm::mat4(1);
-  nmt = glm::mat4(1);
 }

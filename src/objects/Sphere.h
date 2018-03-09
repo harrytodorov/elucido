@@ -10,10 +10,9 @@ class Sphere : public Object {
 //=============================================================================
 // Data members
 //=============================================================================
-  float_t r;  // sphere's radius
-  float_t r2; // the squared sphere's radius; needed to compute the
-  // ray-sphere intersecion
-  glm::vec4 c;  // sphere's center
+  float_t r;
+  float_t r2;
+  glm::vec4 c;
 
  public:
 //=============================================================================
@@ -67,8 +66,7 @@ class Sphere : public Object {
   void set_center_p(const glm::vec4 &p);
   bool intersect(const Ray &r, isect_info &i) const;
   virtual void get_surface_properties(isect_info &i) const;
-  void apply_camera_transformation(const glm::mat4 &ictm,
-                                   const glm::mat4 &itictm);
+  void apply_camera_transformation(const glm::mat4 &ivm);
   void apply_transformations();
   void translate(const float_t &translation,
                  const Axis &axes_of_translation);

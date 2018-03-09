@@ -7,7 +7,6 @@
 Object::Object(const Object &o) {
   this->om = o.om;
   this->mt = o.mt;
-  this->nmt = o.nmt;
   this->bb = o.bb;
   this->ot = o.ot;
 }

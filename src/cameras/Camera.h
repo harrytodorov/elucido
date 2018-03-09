@@ -31,7 +31,7 @@ class Camera {
   bool use_as;          // Use an acceleration structure.
   float_t grid_alpha;   // Alpha parameter of the grid acceleration structure.
  private:
-  glm::mat4 ctm;        // camera's transformation matrix
+  glm::mat4 vm;         // Camera's view matrix.
   glm::mat4 tictm;      // the transpose of the inverse of the camera's transformation matrix;
 
 //=============================================================================
@@ -43,7 +43,7 @@ class Camera {
   Camera() :
       eye(0, 0, 0, 1),
       lookat(0, 0, -1, 1),
-      ctm(1),
+      vm(1),
       tictm(1),
       use_as(true),
       scene_bb() {}
@@ -52,7 +52,7 @@ class Camera {
   Camera(const glm::vec4 &p, const glm::vec4 &d) :
       eye(p),
       lookat(d),
-      ctm(1),
+      vm(1),
       tictm(1),
       use_as(true),
       scene_bb() {}
@@ -61,7 +61,7 @@ class Camera {
 Camera(const glm::vec4 &p, const glm::vec4 &d, const bool &as) :
     eye(p),
     lookat(d),
-    ctm(1),
+    vm(1),
     tictm(1),
     use_as(as),
     scene_bb() {}
@@ -115,11 +115,6 @@ Camera(const glm::vec4 &p, const glm::vec4 &d, const bool &as) :
                                       const std::vector<Light *> &lights);
   void extend_scene_bb(const std::vector<Object *> &objects);
  private:
-  inline glm::mat4 inverse_ctm() {
-    // return the inverse of the camera's transformation matrix
-    // needed to apply it to objects and light sources
-    return glm::inverse(ctm);
-  };
   inline glm::mat4 inverse_tictm() {
     // return the inverse of the transpose of the inverse of the camera's transformation matrix
     return glm::inverse(glm::transpose(tictm));

@@ -150,7 +150,7 @@ bool TriangleMesh::triangle_intersect(const Ray &r,
   // calculate the inverse determinant
   inv_det = 1.f / det;
 
-  // calculate u parameter and test for its bounds
+  // calculate u parameter and tests for its bounds
   u = glm::dot(pv, cv) * inv_det;
   if (u < 0.f || u > 1.f)
     return false;
@@ -158,7 +158,7 @@ bool TriangleMesh::triangle_intersect(const Ray &r,
   // calculate q vector from MT, used for calculating v parameter
   qv = glm::vec4(glm::cross(glm::vec3(cv), glm::vec3(e0)), 0);
 
-  // calculate v parameter and test for its bounds
+  // calculate v parameter and tests for its bounds
   v = glm::dot(qv, r.dir()) * inv_det;
   if (v < 0.f || (v + u > 1.f))
     return false;
@@ -183,7 +183,7 @@ bool TriangleMesh::intersect(const Ray &r,
 
   float_t tt{infinity}, u{0}, v{0};
 
-  // intersection test
+  // intersection tests
   if (triangle_intersect(r, v0, v1, v2, tt, u, v) && tt < i.tn) {
     intersected = true;
     i.tn = tt;
@@ -204,7 +204,7 @@ bool TriangleMesh::intersect(const Ray &r, isect_info &i) const {
   // iterate through triangles in the mesh
   for (uint32_t _ti = 0; _ti < nt; _ti++) {
 
-    // intersection test
+    // intersection tests
     if (intersect(r, _ti, i)) {
       intersected = true;
     }
@@ -247,36 +247,20 @@ void TriangleMesh::get_surface_properties(isect_info &i) const {
 }
 
 //=============================================================================
-void TriangleMesh::apply_camera_transformation(const glm::mat4 &ctm,
-                                               const glm::mat4 &tictm) {
+void TriangleMesh::apply_camera_transformation(const glm::mat4 &ctm) {
   glm::vec4 v, vn;
-
-  // reset the bounding box size
   bb.reset();
 
-  // iterate through vertices in the mesh and apply transformation
   for (auto &_ti : va) {
-    // get the vertex
     v = _ti;
-
-    // apply the matrix transformation on the vertices
     v = ctm * v;
-
     bb.extend_by(v);
-
-    // assign the transformed vertices
     _ti = v;
   }
 
-  // iterate through vertex normals and apply transformations
   for (auto &_ti : vna) {
-    // get the vertex normal
     vn = _ti;
-
-    // apply the normal transformation matrix
-    vn = glm::normalize(tictm * vn);
-
-    // assign the transformed vertex normal
+    vn = glm::transpose(glm::inverse(ctm)) * vn;
     _ti = vn;
   }
 }
@@ -284,48 +268,31 @@ void TriangleMesh::apply_camera_transformation(const glm::mat4 &ctm,
 //=============================================================================
 void TriangleMesh::apply_transformations() {
   glm::vec4 v, vn;
-
-  // reset the bounding box size
   bb.reset();
 
-  // iterate through vertices in the mesh and apply transformation
+  // Transform vertices.
   for (auto &_ti : va) {
-    // get the vertex
     v = _ti;
-
-    // apply the matrix transformation on the vertices
     v = mt * v;
-
     bb.extend_by(v);
-
-    // assign the transformed vertices
     _ti = v;
   }
 
-  // iterate through vertex normals and apply transformations
+  // Transform vertex normals.
   for (auto &_ti : vna) {
-    // get the vertex normal
     vn = _ti;
-
-    // apply the normal transformation matrix
-    vn = glm::normalize(glm::transpose(glm::inverse(nmt)) * vn);
-
-    // assign the transformed vertex normal
+    vn = glm::transpose(glm::inverse(mt)) * vn;
     _ti = vn;
   }
 
-  // after applying the transformations to a triangle mesh; its model transform and normal transform matrices are
-  // set back to the identity matrix
+  // Reset model transform matrix.
   mt = glm::mat4(1);
-  nmt = glm::mat4(1);
 }
 
 //=============================================================================
 void TriangleMesh::translate(const float_t &translation,
                              const Axis &axes_of_translation) {
   glm::vec3 tv = create_transformation_vector(axes_of_translation, translation);
-
-  // assign the translation matrix to the object's model transform
   glm::mat4 tm = glm::translate(glm::mat4(1), tv);
   mt = tm * mt;
 }
@@ -333,23 +300,17 @@ void TriangleMesh::translate(const float_t &translation,
 //=============================================================================
 void TriangleMesh::rotate(const float_t &angle_of_rotation,
                           const Axis &axes_of_rotation) {
-  glm::vec3 rv = create_transformation_vector(axes_of_rotation, angle_of_rotation);
-
-  // get the rotation matrix
+  glm::vec3 rv = create_transformation_vector(axes_of_rotation, 1);
   glm::mat4 rm = glm::rotate(glm::mat4(1), glm::radians(angle_of_rotation), rv);
   mt = rm * mt;
-  nmt = rm * nmt;
 }
 
 //=============================================================================
 void TriangleMesh::scale(const float_t &scaling_factor,
                          const Axis &axes_of_scale) {
   glm::vec3 sv = create_transformation_vector(axes_of_scale, scaling_factor);
-
-  // assign the scale matrix to the object's model transform
   glm::mat4 sm = glm::scale(glm::mat4(1), sv);
   mt = sm * mt;
-  nmt = sm * nmt;
 }
 
 //=============================================================================

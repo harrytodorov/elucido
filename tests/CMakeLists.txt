@@ -4,16 +4,17 @@ cmake_minimum_required(VERSION 3.7)
 # Project name
 project(elucido_test)
 
-# Add sources for test files
+# Add sources for tests files
 set(ELUCIDO_TEST_SOURCE_FILES
         RayTest.cpp
         AABBTest.cpp
-        SceneParserTest.cpp)
+        SceneParserTest.cpp
+        TransformationTest.cpp)
 
-# Create test executable
+# Create tests executable
 add_executable(elucido_test TestMain.cpp ${ELUCIDO_TEST_SOURCE_FILES})
 
-# Target the google test library, locally availably
+# Target the google tests library, locally availably
 target_link_libraries(elucido_test gtest gtest_main)
 target_link_libraries(elucido_test elucido_lib)
 

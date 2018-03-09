@@ -30,9 +30,9 @@ class Object {
 //=============================================================================
 // Data members
 //=============================================================================
-  material om;        // object's material
-  AABBox bb;          // bounding box of the object
-  ObjectType ot;      // object's type
+  material om;
+  AABBox bb;
+  ObjectType ot;
 
 
 //=============================================================================
@@ -46,7 +46,6 @@ class Object {
 //=============================================================================
   Object(const material &m) : om(m),
                               mt(glm::mat4(1)),
-                              nmt(glm::mat4(1)),
                               bb(AABBox()),
                               ot(not_set_ot) {}
 
@@ -61,8 +60,7 @@ class Object {
 //=============================================================================
   virtual bool intersect(const Ray &r, isect_info &i) const = 0;
   virtual void get_surface_properties(isect_info &i) const = 0;
-  virtual void apply_camera_transformation(const glm::mat4 &ctm,
-                                           const glm::mat4 &tictm) = 0;
+  virtual void apply_camera_transformation(const glm::mat4 &ctm) = 0;
   virtual void apply_transformations() = 0;
   virtual void translate(const float_t &translation,
                          const Axis &axes_of_translation) = 0;
@@ -72,9 +70,7 @@ class Object {
                      const Axis &axes_of_scale) = 0;
 
  protected:
-  glm::mat4 mt;     // model transform matrix for an object
-  // places and transforms the object in world coordinate space
-  glm::mat4 nmt;    // transformation matrix for object's normals
+  glm::mat4 mt;
 };
 
 #endif //ELUCIDO_OBJECT_H

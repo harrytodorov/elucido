@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include "glm/ext.hpp"
 
 #include "acceleration/AccelerationStructure.h"
 #include "acceleration/Grid.h"
@@ -1954,17 +1955,25 @@ void triangles_grid() {
 }
 
 int main(int argc, char **argv) {
-  if (argc != 2) {
-    std::cout << "Usage: " << argv[0] << " <scene file>" << std::endl;
-    exit(1);
-  }
-  std::string filename = argv[1];
-  auto result = read_scene_from_file(filename);
+  auto pl_pos = glm::vec4(0, 0, 2, 1);
 
-  std::map<std::string, color_description> cb;
-  bool ret = cb.emplace("bla", "bla").second;
-  ret = cb.emplace("bla", "bla").second;
-  std::cout << "Map size: " << cb.size() << std::endl;
-  std::cout << "Insertion return: " << ret << std::endl;
-  return 0;
+  auto tv = glm::vec3(0, 0, 3);
+  auto mat = glm::translate(glm::mat4(1), tv);
+
+  tv.z = 0.f;
+  tv.y = 1.f;
+  auto rm = glm::rotate(mat, glm::radians(90.f), tv);
+
+  mat = glm::inverse(mat);
+  std::cout << "Inversed transformation matrix: " << glm::to_string(mat) << std::endl;
+  pl_pos = mat * pl_pos;
+  std::cout << "Transformed point: " << glm::to_string(pl_pos) << std::endl;
+//  if (argc != 2) {
+//    std::cout << "Usage: " << argv[0] << " <scene file>" << std::endl;
+//    exit(1);
+//  }
+//  std::string filename = argv[1];
+//  auto result = read_scene_from_file(filename);
+//
+//  return 0;
 }

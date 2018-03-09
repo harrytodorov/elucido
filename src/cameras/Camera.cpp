@@ -356,13 +356,11 @@ glm::vec3 Camera::cast_ray(const Ray &ray,
 
 //=============================================================================
 void Camera::rotate(const float_t &rot_angle, const Axis &axes_of_rotation) {
-  glm::vec3 rv = create_transformation_vector(axes_of_rotation, rot_angle);
+  glm::vec3 rv = create_transformation_vector(axes_of_rotation, 1);
 
-  // get the rotation matrix
   glm::mat4 rm = glm::rotate(glm::mat4(1), glm::radians(rot_angle), rv);
 
-  // apply the rotation matrix to the camera's transformation matrix
-  ctm = rm * ctm;
+  vm = rm * vm;
 
   // update the transpose of the inverse of the camera's transformation matrix
   tictm = glm::transpose(glm::inverse(rm)) * tictm;
@@ -373,43 +371,32 @@ void Camera::translate(const float_t &translation,
                        const Axis &axes_of_translation) {
   glm::vec3 tv = create_transformation_vector(axes_of_translation, translation);
 
-  // get the translation matrix
   glm::mat4 tm = glm::translate(glm::mat4(1), tv);
 
   // assign the translation matrix to the camera's transformation matrix
-  ctm = tm * ctm;
+  vm = tm * vm;
 }
 
 //=============================================================================
 void Camera::apply_inverse_view_transform(const std::vector<Object *> &objects,
                                           const std::vector<Light *> &lights) {
-  // get the inverse camera transformation matrix
-  glm::mat4 ictm = inverse_ctm();
-
-  // apply the inverse camera's transformation matrix to all objects
-  // and light sources in the scene
+  glm::mat4 ivm = glm::inverse(vm);
   for (auto &object : objects) {
-    object->apply_camera_transformation(ictm, tictm);
+    object->apply_camera_transformation(ivm);
   }
   for (auto &light : lights) {
-    light->apply_camera_transformation(ictm, tictm);
+    light->apply_camera_transformation(ivm);
   }
 }
 
 //=============================================================================
 void Camera::reverse_inverse_view_transform(const std::vector<Object *> &objects,
                                             const std::vector<Light *> &lights) {
-  glm::mat4 itictm = inverse_tictm();
-
-  // after rendering reverse all objects and light sources to
-  // their original positions;
-  // use the camera transformation matrix to
-  // bring them to their original positions
   for (auto &object : objects) {
-    object->apply_camera_transformation(ctm, itictm);
+    object->apply_camera_transformation(vm);
   }
   for (auto &light : lights) {
-    light->apply_camera_transformation(ctm, itictm);
+    light->apply_camera_transformation(vm);
   }
 }
 

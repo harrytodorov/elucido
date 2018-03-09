@@ -25,9 +25,8 @@ void PointLight::illuminate(const glm::vec4 &hit_point,
 }
 
 //=============================================================================
-void PointLight::apply_camera_transformation(const glm::mat4 &ictm,
-                                             const glm::mat4 &itctm) {
-  p = ictm * p;
+void PointLight::apply_camera_transformation(const glm::mat4 &ivm) {
+  p = ivm * p;
 }
 
 //=============================================================================
@@ -35,7 +34,6 @@ void PointLight::translate(const float_t &translation,
                            const Axis &axes_of_translation) {
   glm::vec3 tv = create_transformation_vector(axes_of_translation, translation);
 
-  // assign the translation matrix to object's model transform
   glm::mat4 tm = glm::translate(glm::mat4(1), tv);
   mt = tm * mt;
 }
@@ -43,19 +41,14 @@ void PointLight::translate(const float_t &translation,
 //=============================================================================
 void PointLight::rotate(const float_t &angle_of_rotation,
                         const Axis &axes_of_rotation) {
-  glm::vec3 rv = create_transformation_vector(axes_of_rotation,
-                                              angle_of_rotation);
-
-  // assign the rotation matrix to object's model transform
-  glm::mat4 rm = glm::rotate(glm::mat4(1), glm::radians(angle_of_rotation), rv);
-  mt = rm * mt;
+  // One can ignore rotating point light sources.
+  // Rotation doesn't affect a single point in space.
 }
 
 //=============================================================================
 void PointLight::apply_transformations() {
-  // apply the transformations stored in the light's model transorm matrix to its position
   p = mt * p;
 
-  // after applying the transformations to a point light; its model transform matrix is set back to the identity matrix
+  // Reset the model transform matrix.
   mt = glm::mat4(1);
 }

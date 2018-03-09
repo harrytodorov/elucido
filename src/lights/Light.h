@@ -42,8 +42,7 @@ class Light {
 //=============================================================================
 // Function declarations
 //=============================================================================
-  virtual void apply_camera_transformation(const glm::mat4 &ictm,
-                                           const glm::mat4 &itctm) = 0;
+  virtual void apply_camera_transformation(const glm::mat4 &ivm) = 0;
   virtual void apply_transformations() = 0;
   virtual void translate(const float_t &translation,
                          const Axis &axes_of_translation) = 0;
@@ -55,10 +54,7 @@ class Light {
                           float_t &distance) = 0;
 
  protected:
-  glm::mat4 mt;   // model transform matrix of a light source
-  // not all kind of light sources can be transformed
-  // in some way, but to keep it clean, we define the matrix in
-  // the abstract class
+  glm::mat4 mt;
 };
 
 #endif //ELUCIDO_LIGHT_H

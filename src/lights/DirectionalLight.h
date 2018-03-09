@@ -38,8 +38,7 @@ class DirectionalLight : public Light {
                   glm::vec4 &light_dir,
                   glm::vec3 &light_intensity,
                   float_t &distance);
-  void apply_camera_transformation(const glm::mat4 &ictm,
-                                   const glm::mat4 &itctm);
+  void apply_camera_transformation(const glm::mat4 &ivm);
   void apply_transformations();
   void translate(const float_t &translation,
                  const Axis &axes_of_translation);

@@ -51,7 +51,7 @@ bool Triangle::intersect(const Ray &r, isect_info &i) const {
   d_prod = glm::dot(n, perp_vec);
   if (d_prod < 0) return false;
 
-  // test passed; assign variables
+  // tests passed; assign variables
   i.tn = t;
   i.ip = ip;
   i.ti = (uint32_t) -1;
@@ -65,24 +65,19 @@ void Triangle::get_surface_properties(isect_info &i) const {
 }
 
 //=============================================================================
-void Triangle::apply_camera_transformation(const glm::mat4 &ictm,
-                                           const glm::mat4 &itictm) {
-  v0 = ictm * v0;
-  v1 = ictm * v1;
-  v2 = ictm * v2;
+void Triangle::apply_camera_transformation(const glm::mat4 &ivm) {
+  v0 = ivm * v0;
+  v1 = ivm * v1;
+  v2 = ivm * v2;
   reshape_bb();
 
-  // apply the normal transformation matrix
-  n = glm::normalize(glm::vec4(glm::cross(glm::vec3(v1) - glm::vec3(v0),
-                                          glm::vec3(v2) - glm::vec3(v0)), 0));
+  n = glm::transpose(glm::inverse(ivm)) * n;
 }
 
 //=============================================================================
 void Triangle::translate(const float_t &translation,
                          const Axis &axes_of_translation) {
   glm::vec3 tv = create_transformation_vector(axes_of_translation, translation);
-
-  // assign the translation matrix to the object's model transform
   glm::mat4 tm = glm::translate(glm::mat4(1), tv);
   mt = tm * mt;
 }
@@ -90,44 +85,29 @@ void Triangle::translate(const float_t &translation,
 //=============================================================================
 void Triangle::rotate(const float_t &angle_of_rotation,
                       const Axis &axes_of_rotation) {
-  glm::vec3 rv = create_transformation_vector(axes_of_rotation,
-                                              angle_of_rotation);
-
-  // get the rotation matrix
+  glm::vec3 rv = create_transformation_vector(axes_of_rotation, 1);
   glm::mat4 rm = glm::rotate(glm::mat4(1), glm::radians(angle_of_rotation), rv);
   mt = rm * mt;
-  nmt = rm * nmt;
 }
 
 //=============================================================================
 void Triangle::scale(const float_t &scaling_factor,
                      const Axis &axes_of_scale) {
   glm::vec3 sv = create_transformation_vector(axes_of_scale, scaling_factor);
-
-  // assign the scale matrix to the object's model transform
   glm::mat4 sm = glm::scale(glm::mat4(1), sv);
   mt = sm * mt;
-  nmt = sm * nmt;
 
 }
 
 //=============================================================================
 void Triangle::apply_transformations() {
-  // apply transformations stored in the triangle's model transform matrix to the triangle's vertices
   v0 = mt * v0;
   v1 = mt * v1;
   v2 = mt * v2;
   reshape_bb();
 
-  // for normals we don't use the matrix with which we transform vertices and vectors
-  // but use the transpose of the inverse of the matrix we have
-  // (proof why:
-  // https://www.scratchapixel.com/lessons/mathematics-physics-for-computer-graphics/geometry/transforming-normals)
-  // apply the normal transformation to a triangle
-  n = glm::normalize(glm::transpose(glm::inverse(nmt)) * n);
+  n = glm::transpose(glm::inverse(mt)) * n;
 
-  // after applying the transformations to a triangle; its model transform and normal transform matrices are
-  // set back to the identity matrix
+  // Reset model transform matrix.
   mt = glm::mat4(1);
-  nmt = glm::mat4(1);
 }
