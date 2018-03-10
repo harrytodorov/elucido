@@ -17,12 +17,12 @@ set(ELUCIDO_SOURCE_FILES
         lights/DirectionalLight.cpp
         lights/PointLight.cpp
         objects/Object.cpp
-        objects/AABBox.cpp
+        accelerators/AABBox.cpp
         objects/Sphere.cpp
         objects/Triangle.cpp
         objects/TriangleMesh.cpp
-        acceleration/AccelerationStructure.cpp
-        acceleration/Grid.cpp
+        accelerators/AccelerationStructure.cpp
+        accelerators/Grid.cpp
         extra/ImagePlane.cpp
         extra/Ray.cpp
         extra/Scene.cpp)
@@ -37,12 +37,12 @@ set(ELUCIDO_HEADER_FILES
         lights/DirectionalLight.h
         lights/PointLight.h
         objects/Object.h
-        objects/AABBox.h
+        accelerators/AABBox.h
         objects/Sphere.h
         objects/Triangle.h
         objects/TriangleMesh.h
-        acceleration/AccelerationStructure.h
-        acceleration/Grid.h
+        accelerators/AccelerationStructure.h
+        accelerators/Grid.h
         extra/ImagePlane.h
         extra/Ray.h
         extra/Scene.h)

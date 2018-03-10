@@ -7,8 +7,8 @@
 #include <map>
 #include "glm/ext.hpp"
 
-#include "acceleration/AccelerationStructure.h"
-#include "acceleration/Grid.h"
+#include "accelerators/AccelerationStructure.h"
+#include "accelerators/Grid.h"
 #include "objects/Object.h"
 #include "objects/TriangleMesh.h"
 #include "lights/PointLight.h"
@@ -17,7 +17,6 @@
 #include "objects/Sphere.h"
 #include "lights/DirectionalLight.h"
 #include "cameras/OrthographicCamera.h"
-#include "acceleration/AccelerationStructure.h"
 #include "extra/Scene.h"
 #include "extra/Utilities.h"
 
@@ -1848,7 +1847,7 @@ void spheres_grid() {
   /// rendering
 
 
-  // Turn on/off acceleration structure.
+  // Turn on/off accelerators structure.
   camera->use_acceleration(true);
 
   // measure rendering time
@@ -1920,7 +1919,7 @@ void triangles_grid() {
   objects.push_back(&cube);
 
   /// render scene
-  // Turn on/off acceleration structure.
+  // Turn on/off accelerators structure.
   camera->use_acceleration(true, 1);
 
   // measure rendering time
@@ -1955,17 +1954,6 @@ void triangles_grid() {
 }
 
 int main(int argc, char **argv) {
-
-  auto dl_dir = glm::vec4(0, 0, 1, 0);
-  auto *dl = new DirectionalLight();
-  dl->d = dl_dir;
-
-  auto rv = glm::vec3(0, 1, 0);
-  auto mat = glm::rotate(glm::mat4(1), glm::radians(90.f), rv);
-  mat = glm::inverse(mat);
-  dl->apply_camera_transformation(mat);
-
-  std::cout << "Transformed point: " << glm::to_string(dl->d) << std::endl;
 
 //  if (argc != 2) {
 //    std::cout << "Usage: " << argv[0] << " <scene file>" << std::endl;

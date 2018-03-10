@@ -16,8 +16,8 @@
 #include "../objects/Object.h"
 #include "../extra/ImagePlane.h"
 #include "../lights/Light.h"
-#include "../acceleration/AccelerationStructure.h"
-#include "../acceleration/Grid.h"
+#include "../accelerators/AccelerationStructure.h"
+#include "../accelerators/Grid.h"
 
 class Camera {
 
@@ -28,8 +28,8 @@ class Camera {
   glm::vec4 eye;        // eye / camera position
   glm::vec4 lookat;     // the point at which the camera looks
   AABBox scene_bb;      // bounding box for the scene
-  bool use_as;          // Use an acceleration structure.
-  float_t grid_alpha;   // Alpha parameter of the grid acceleration structure.
+  bool use_as;          // Use an accelerators structure.
+  float_t grid_alpha;   // Alpha parameter of the grid accelerators structure.
  private:
   glm::mat4 vm;         // Camera's view matrix.
 

@@ -287,7 +287,7 @@ const std::map<std::string, ImagePlaneProperty> IMAGE_PLANE_PROPERTIES_MAP = {
     {"number_samples",  number_samples}
 };
 
-// Available acceleration structure properties +
+// Available accelerators structure properties +
 // corresponding mappings.
 enum AccelerationStructureProperties {
   alpha,
@@ -300,7 +300,7 @@ const std::map<std::string, AccelerationStructureProperties> AC_PROPERTIES_MAP =
     {"type",            as_type}
 };
 
-// Available acceleration structure types + 
+// Available accelerators structure types +
 // corresponding mappings.
 enum AccelerationStructureType {
   not_set_act,

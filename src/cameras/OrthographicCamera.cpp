@@ -27,7 +27,7 @@ render_info OrthographicCamera::render_scene(const std::vector<Object *> &object
   extend_scene_bb(objects);
 
   if (use_as) {
-    // Initialize the acceleration structure.
+    // Initialize the accelerators structure.
     as = new Grid(scene_bb, objects);
     grid_info i;
 
@@ -90,11 +90,11 @@ render_info OrthographicCamera::render_scene(const std::vector<Object *> &object
 
           if (use_as) {
             // cast a ray into the scene and get the color value for it
-            // with acceleration structure
+            // with accelerators structure
             pc += cast_ray(ray, lights, objects, 0, as, ri);
           } else {
             // cast a ray into the scene and get the color value for it
-            // without acceleration structure
+            // without accelerators structure
             pc += cast_ray(ray, lights, objects, 0, ri);
           }
         }

@@ -22,7 +22,7 @@
 #include <cstdint>
 
 #include "../extra/Ray.h"
-#include "AABBox.h"
+#include "../accelerators/AABBox.h"
 #include "../extra/Utilities.h"
 
 class Object {

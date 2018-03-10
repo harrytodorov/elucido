@@ -7,6 +7,8 @@
 
 #include "../src/extra/Utilities.h"
 
+// TODO: Replace hardcoded file paths!
+
 //==============================================================================
 TEST(SceneParser, checkForInvalidFile) {
   std::string filename =
