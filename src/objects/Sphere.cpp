@@ -76,6 +76,11 @@ void Sphere::rotate(const float_t &angle_of_rotation,
 //=============================================================================
 void Sphere::scale(const float_t &scaling_factor,
                    const Axis &axes_of_scale) {
+  if (axes_of_scale != XYZ) {
+    std::cout << "Implicit sphere supports only uniform scaling (XYZ)!"
+              << std::endl;
+    return;
+  }
   set_radius(r * scaling_factor);
 }
 
@@ -87,7 +92,7 @@ void Sphere::set_radius(const float_t &r) {
 }
 
 //=============================================================================
-void Sphere::set_center_p(const glm::vec4 &p) {
+void Sphere::set_center(const glm::vec4 &p) {
   this->c = p;
   reshape_bb();
 }

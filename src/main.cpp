@@ -562,7 +562,7 @@ void spheres() {
     sp.x = srxyp(eng);
     sp.y = srxyp(eng);
     sp.z = srzp(eng);
-    (*s).set_center_p(sp);
+    (*s).set_center(sp);
 
     // randomly choose and assign sphere's radius
     sr = srr(eng);
@@ -1955,19 +1955,18 @@ void triangles_grid() {
 }
 
 int main(int argc, char **argv) {
-  auto pl_pos = glm::vec4(0, 0, 2, 1);
 
-  auto tv = glm::vec3(0, 0, 3);
-  auto mat = glm::translate(glm::mat4(1), tv);
+  auto dl_dir = glm::vec4(0, 0, 1, 0);
+  auto *dl = new DirectionalLight();
+  dl->d = dl_dir;
 
-  tv.z = 0.f;
-  tv.y = 1.f;
-  auto rm = glm::rotate(mat, glm::radians(90.f), tv);
-
+  auto rv = glm::vec3(0, 1, 0);
+  auto mat = glm::rotate(glm::mat4(1), glm::radians(90.f), rv);
   mat = glm::inverse(mat);
-  std::cout << "Inversed transformation matrix: " << glm::to_string(mat) << std::endl;
-  pl_pos = mat * pl_pos;
-  std::cout << "Transformed point: " << glm::to_string(pl_pos) << std::endl;
+  dl->apply_camera_transformation(mat);
+
+  std::cout << "Transformed point: " << glm::to_string(dl->d) << std::endl;
+
 //  if (argc != 2) {
 //    std::cout << "Usage: " << argv[0] << " <scene file>" << std::endl;
 //    exit(1);

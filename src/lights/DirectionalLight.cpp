@@ -1,6 +1,7 @@
 // Copyright 2017, University of Freiburg.
 // Author: Haralambi Todorov <harrytodorov@gmail.com>
 
+#include <glm/ext.hpp>
 #include "DirectionalLight.h"
 
 void DirectionalLight::illuminate(const glm::vec4 &hit_point, glm::vec4 &light_dir, glm::vec3 &light_intensity,
@@ -11,7 +12,7 @@ void DirectionalLight::illuminate(const glm::vec4 &hit_point, glm::vec4 &light_d
 }
 
 void DirectionalLight::apply_camera_transformation(const glm::mat4 &ivm) {
-    d = ivm * d;
+  d = ivm * d;
 }
 
 void DirectionalLight::translate(const float_t &translation, const Axis &axes_of_translation) {
@@ -20,18 +21,15 @@ void DirectionalLight::translate(const float_t &translation, const Axis &axes_of
 }
 
 void DirectionalLight::rotate(const float_t &angle_of_rotation, const Axis &axes_of_rotation) {
-    glm::vec3 rv = create_transformation_vector(axes_of_rotation,
-                                                1);
-
-    glm::mat4 rm = glm::rotate(glm::mat4(1),
-                               glm::radians(angle_of_rotation),
-                               rv);
+    auto rv = create_transformation_vector(axes_of_rotation,
+                                           1);
+    auto rm = glm::rotate(glm::mat4(1), glm::radians(angle_of_rotation), rv);
     mt = rm * mt;
 }
 
 void DirectionalLight::apply_transformations() {
-    d = glm::transpose(glm::inverse(mt)) * d;
+  d = mt * d;
 
-    // Reset the model transform matrix.
-    mt = glm::mat4(1);
+  // Reset the model transform matrix.
+  mt = glm::mat4(1);
 }

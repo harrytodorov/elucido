@@ -63,7 +63,9 @@ class Sphere : public Object {
 // Function declarations
 //=============================================================================
   void set_radius(const float_t &r);
-  void set_center_p(const glm::vec4 &p);
+  void set_center(const glm::vec4 &p);
+  inline glm::vec4 center() { return this->c; }
+  inline float_t radius() { return this->r; }
   bool intersect(const Ray &r, isect_info &i) const;
   virtual void get_surface_properties(isect_info &i) const;
   void apply_camera_transformation(const glm::mat4 &ivm);
@@ -73,7 +75,6 @@ class Sphere : public Object {
   void rotate(const float_t &angle_of_rotation,
               const Axis &axes_of_rotation);
   void scale(const float_t &scaling_factor, const Axis &axes_of_scale);
-
 
  private:
   inline void reshape_bb() {

@@ -356,24 +356,16 @@ glm::vec3 Camera::cast_ray(const Ray &ray,
 
 //=============================================================================
 void Camera::rotate(const float_t &rot_angle, const Axis &axes_of_rotation) {
-  glm::vec3 rv = create_transformation_vector(axes_of_rotation, 1);
-
-  glm::mat4 rm = glm::rotate(glm::mat4(1), glm::radians(rot_angle), rv);
-
+  auto rv = create_transformation_vector(axes_of_rotation, 1);
+  auto rm = glm::rotate(glm::mat4(1), glm::radians(rot_angle), rv);
   vm = rm * vm;
-
-  // update the transpose of the inverse of the camera's transformation matrix
-  tictm = glm::transpose(glm::inverse(rm)) * tictm;
 }
 
 //=============================================================================
 void Camera::translate(const float_t &translation,
                        const Axis &axes_of_translation) {
-  glm::vec3 tv = create_transformation_vector(axes_of_translation, translation);
-
-  glm::mat4 tm = glm::translate(glm::mat4(1), tv);
-
-  // assign the translation matrix to the camera's transformation matrix
+  auto tv = create_transformation_vector(axes_of_translation, translation);
+  auto tm = glm::translate(glm::mat4(1), tv);
   vm = tm * vm;
 }
 
