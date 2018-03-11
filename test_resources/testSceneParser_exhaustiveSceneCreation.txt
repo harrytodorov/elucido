@@ -74,7 +74,7 @@ set object triangle1 vertices p1,p2,p3
 set object triangle1 material phong_basic
 transform object triangle1 translate X 1
 transform object triangle1 rotate Y 15
-transform object triangle1 scale Z 5
+transform object triangle1 scale uniform 5
 
 # Create a triangle mesh, set its properties and
 # position it on the scene

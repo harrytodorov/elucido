@@ -833,8 +833,7 @@ void apply_rotation(const Axis &axis,
                     const float_t &rotation_angle,
                     glm::mat4 &model_transform) {
   // Rotations could be applied only on a single axis.
-  if (axis == uniform)
-    return;
+  if (axis == uniform) return;
   auto rv = create_transformation_vector(axis,
                                          1);
   auto rm = glm::rotate(glm::mat4(1), glm::radians(rotation_angle), rv);
@@ -850,9 +849,12 @@ void apply_translation(const Axis &axis,
   model_transform = tm * model_transform;
 }
 
+//=============================================================================
 void apply_scale(const Axis &axis,
                  const float_t &scale_amount,
                  glm::mat4 &model_transform) {
+  // Scale could be applied only uniformly.
+  if (axis != uniform) return;
   glm::vec3 sv = create_transformation_vector(axis, scale_amount);
   glm::mat4 sm = glm::scale(glm::mat4(1), sv);
   model_transform = sm * model_transform;

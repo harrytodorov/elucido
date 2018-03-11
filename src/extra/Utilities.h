@@ -657,5 +657,4 @@ void apply_scale(const Axis &axis,
 
 //------------------------------------------------------------------------------
 
-
 #endif //ELUCIDO_UTILITIES_H

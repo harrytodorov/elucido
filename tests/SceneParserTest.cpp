@@ -532,7 +532,7 @@ TEST(SceneParser, exhaustiveSceneCreation) {
   EXPECT_FLOAT_EQ(t_trans[1].amount, 15.f);
 
   EXPECT_EQ(t_trans[2].type, scale);
-  EXPECT_EQ(t_trans[2].axis, Z);
+  EXPECT_EQ(t_trans[2].axis, uniform);
   EXPECT_FLOAT_EQ(t_trans[2].amount, 5.f);
 
   // LIGHTS

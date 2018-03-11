@@ -25,9 +25,7 @@ class Triangle : public Object {
       v0(-1, -1, 0, 1),
       v1(1, -1, 0, 1),
       v2(0, 1, 0, 1) {
-    n = glm::normalize(glm::vec4(glm::cross(glm::vec3(v1) - glm::vec3(v0),
-                                            glm::vec3(v2) - glm::vec3(v0)),
-                                 0));
+    create_normal();
     reshape_bb();
     ot = triangle;
   }
@@ -38,9 +36,7 @@ class Triangle : public Object {
       v0(-1, -1, 0, 1),
       v1(1, -1, 0, 1),
       v2(0, 1, 0, 1) {
-    n = glm::normalize(glm::vec4(glm::cross(glm::vec3(v1) - glm::vec3(v0),
-                                            glm::vec3(v2) - glm::vec3(v0)),
-                                 0));
+    create_normal();
     reshape_bb();
     ot = triangle;
   }
@@ -53,6 +49,7 @@ class Triangle : public Object {
       v0(vec0),
       v1(vec1),
       v2(vec2) {
+    create_normal();
     reshape_bb();
     ot = triangle;
   }
@@ -66,9 +63,7 @@ class Triangle : public Object {
       v0(vec0),
       v1(vec1),
       v2(vec2) {
-    n = glm::normalize(glm::vec4(glm::cross(glm::vec3(v1) - glm::vec3(v0),
-                                            glm::vec3(v2) - glm::vec3(v0)),
-                                 0));
+    create_normal();
     reshape_bb();
     ot = triangle;
   }
@@ -91,6 +86,7 @@ class Triangle : public Object {
   void get_surface_properties(isect_info &i) const;
   void apply_camera_transformation(const glm::mat4 &ivm);
   void apply_transformations();
+  void create_normal();
 
  private:
   inline void reshape_bb() {

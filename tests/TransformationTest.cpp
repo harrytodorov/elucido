@@ -7,6 +7,7 @@
 #include "../src/lights/PointLight.h"
 #include "../src/lights/DirectionalLight.h"
 #include "../src/objects/Sphere.h"
+#include "../src/objects/Triangle.h"
 
 //==============================================================================
 TEST(PointLight, translation) {
@@ -532,3 +533,205 @@ TEST(Sphere, cameraTransformationTranslationAndRotation) {
   EXPECT_NEAR(s->center().w,  1.f, float_err);
   EXPECT_FLOAT_EQ(s->radius(), 1.f);
 }
+
+//==============================================================================
+TEST(Triangle, translation) {
+  auto float_err = 0.00001f;
+
+  auto v0 = glm::vec4(-1, -1, 0, 1);
+  auto v1 = glm::vec4( 1, -1, 0, 1);
+  auto v2 = glm::vec4( 0,  1, 0, 1);
+  auto *t = new Triangle(v0, v1, v2);
+
+  t->translate(2.f, Z);
+  t->apply_transformations();
+
+  EXPECT_NEAR(t->v0.x, -1.f, float_err);
+  EXPECT_NEAR(t->v0.y, -1.f, float_err);
+  EXPECT_NEAR(t->v0.z,  2.f, float_err);
+  EXPECT_NEAR(t->v0.w,  1.f, float_err);
+
+  EXPECT_NEAR(t->v1.x,  1.f, float_err);
+  EXPECT_NEAR(t->v1.y, -1.f, float_err);
+  EXPECT_NEAR(t->v1.z,  2.f, float_err);
+  EXPECT_NEAR(t->v1.w,  1.f, float_err);
+
+  EXPECT_NEAR(t->v2.x,  0.f, float_err);
+  EXPECT_NEAR(t->v2.y,  1.f, float_err);
+  EXPECT_NEAR(t->v2.z,  2.f, float_err);
+  EXPECT_NEAR(t->v2.w,  1.f, float_err);
+
+  EXPECT_NEAR(t->n.x,  0.f, float_err);
+  EXPECT_NEAR(t->n.y,  0.f, float_err);
+  EXPECT_NEAR(t->n.z,  1.f, float_err);
+  EXPECT_NEAR(t->n.w,  0.f, float_err);
+}
+
+//==============================================================================
+TEST(Triangle, successiveTranslation) {
+  auto float_err = 0.00001f;
+
+  auto v0 = glm::vec4(-1, -1, 0, 1);
+  auto v1 = glm::vec4( 1, -1, 0, 1);
+  auto v2 = glm::vec4( 0,  1, 0, 1);
+  auto *t = new Triangle(v0, v1, v2);
+
+  t->translate(2.f, Z);
+  t->translate(2.f, Y);
+  t->apply_transformations();
+
+  EXPECT_NEAR(t->v0.x, -1.f, float_err);
+  EXPECT_NEAR(t->v0.y,  1.f, float_err);
+  EXPECT_NEAR(t->v0.z,  2.f, float_err);
+  EXPECT_NEAR(t->v0.w,  1.f, float_err);
+
+  EXPECT_NEAR(t->v1.x,  1.f, float_err);
+  EXPECT_NEAR(t->v1.y,  1.f, float_err);
+  EXPECT_NEAR(t->v1.z,  2.f, float_err);
+  EXPECT_NEAR(t->v1.w,  1.f, float_err);
+
+  EXPECT_NEAR(t->v2.x,  0.f, float_err);
+  EXPECT_NEAR(t->v2.y,  3.f, float_err);
+  EXPECT_NEAR(t->v2.z,  2.f, float_err);
+  EXPECT_NEAR(t->v2.w,  1.f, float_err);
+
+  EXPECT_NEAR(t->n.x,  0.f, float_err);
+  EXPECT_NEAR(t->n.y,  0.f, float_err);
+  EXPECT_NEAR(t->n.z,  1.f, float_err);
+  EXPECT_NEAR(t->n.w,  0.f, float_err);
+}
+
+//==============================================================================
+TEST(Triangle, rotation) {
+  auto float_err = 0.00001f;
+
+  auto v0 = glm::vec4(-1, -1, 0, 1);
+  auto v1 = glm::vec4( 1, -1, 0, 1);
+  auto v2 = glm::vec4( 0,  1, 0, 1);
+  auto *t = new Triangle(v0, v1, v2);
+
+  t->rotate(90.f, X);
+  t->apply_transformations();
+
+  EXPECT_NEAR(t->v0.x, -1.f, float_err);
+  EXPECT_NEAR(t->v0.y,  0.f, float_err);
+  EXPECT_NEAR(t->v0.z, -1.f, float_err);
+  EXPECT_NEAR(t->v0.w,  1.f, float_err);
+
+  EXPECT_NEAR(t->v1.x,  1.f, float_err);
+  EXPECT_NEAR(t->v1.y,  0.f, float_err);
+  EXPECT_NEAR(t->v1.z, -1.f, float_err);
+  EXPECT_NEAR(t->v1.w,  1.f, float_err);
+
+  EXPECT_NEAR(t->v2.x,  0.f, float_err);
+  EXPECT_NEAR(t->v2.y,  0.f, float_err);
+  EXPECT_NEAR(t->v2.z,  1.f, float_err);
+  EXPECT_NEAR(t->v2.w,  1.f, float_err);
+
+  EXPECT_NEAR(t->n.x,   0.f, float_err);
+  EXPECT_NEAR(t->n.y,  -1.f, float_err);
+  EXPECT_NEAR(t->n.z,   0.f, float_err);
+  EXPECT_NEAR(t->n.w,   0.f, float_err);
+}
+
+//==============================================================================
+TEST(Triangle, successiveRotation) {
+  auto float_err = 0.00001f;
+
+  auto v0 = glm::vec4(-1, -1, 0, 1);
+  auto v1 = glm::vec4( 1, -1, 0, 1);
+  auto v2 = glm::vec4( 0,  1, 0, 1);
+  auto *t = new Triangle(v0, v1, v2);
+
+  t->rotate(90.f, X);
+  t->rotate(-90.f, Z);
+  t->apply_transformations();
+
+  EXPECT_NEAR(t->v0.x,  0.f, float_err);
+  EXPECT_NEAR(t->v0.y,  1.f, float_err);
+  EXPECT_NEAR(t->v0.z, -1.f, float_err);
+  EXPECT_NEAR(t->v0.w,  1.f, float_err);
+
+  EXPECT_NEAR(t->v1.x,  0.f, float_err);
+  EXPECT_NEAR(t->v1.y, -1.f, float_err);
+  EXPECT_NEAR(t->v1.z, -1.f, float_err);
+  EXPECT_NEAR(t->v1.w,  1.f, float_err);
+
+  EXPECT_NEAR(t->v2.x,  0.f, float_err);
+  EXPECT_NEAR(t->v2.y,  0.f, float_err);
+  EXPECT_NEAR(t->v2.z,  1.f, float_err);
+  EXPECT_NEAR(t->v2.w,  1.f, float_err);
+
+  EXPECT_NEAR(t->n.x,  -1.f, float_err);
+  EXPECT_NEAR(t->n.y,   0.f, float_err);
+  EXPECT_NEAR(t->n.z,   0.f, float_err);
+  EXPECT_NEAR(t->n.w,   0.f, float_err);
+}
+
+//==============================================================================
+TEST(Triangle, scale) {
+  auto float_err = 0.00001f;
+
+  auto v0 = glm::vec4(-1, -1, 0, 1);
+  auto v1 = glm::vec4( 1, -1, 0, 1);
+  auto v2 = glm::vec4( 0,  1, 0, 1);
+  auto *t = new Triangle(v0, v1, v2);
+
+  t->scale(2.f, uniform);
+  t->apply_transformations();
+
+  EXPECT_NEAR(t->v0.x, -2.f, float_err);
+  EXPECT_NEAR(t->v0.y, -2.f, float_err);
+  EXPECT_NEAR(t->v0.z,  0.f, float_err);
+  EXPECT_NEAR(t->v0.w,  1.f, float_err);
+
+  EXPECT_NEAR(t->v1.x,  2.f, float_err);
+  EXPECT_NEAR(t->v1.y, -2.f, float_err);
+  EXPECT_NEAR(t->v1.z,  0.f, float_err);
+  EXPECT_NEAR(t->v1.w,  1.f, float_err);
+
+  EXPECT_NEAR(t->v2.x,  0.f, float_err);
+  EXPECT_NEAR(t->v2.y,  2.f, float_err);
+  EXPECT_NEAR(t->v2.z,  0.f, float_err);
+  EXPECT_NEAR(t->v2.w,  1.f, float_err);
+
+  EXPECT_NEAR(t->n.x,   0.f, float_err);
+  EXPECT_NEAR(t->n.y,   0.f, float_err);
+  EXPECT_NEAR(t->n.z,   1.f, float_err);
+  EXPECT_NEAR(t->n.w,   0.f, float_err);
+}
+
+//==============================================================================
+TEST(Triangle, successiveScale) {
+  auto float_err = 0.00001f;
+
+  auto v0 = glm::vec4(-1, -1, 0, 1);
+  auto v1 = glm::vec4( 1, -1, 0, 1);
+  auto v2 = glm::vec4( 0,  1, 0, 1);
+  auto *t = new Triangle(v0, v1, v2);
+
+  t->scale(2.f, uniform);
+  t->scale(0.25f, uniform);
+  t->apply_transformations();
+
+  EXPECT_NEAR(t->v0.x, -0.5f, float_err);
+  EXPECT_NEAR(t->v0.y, -0.5f, float_err);
+  EXPECT_NEAR(t->v0.z,  0.f, float_err);
+  EXPECT_NEAR(t->v0.w,  1.f, float_err);
+
+  EXPECT_NEAR(t->v1.x,  0.5f, float_err);
+  EXPECT_NEAR(t->v1.y, -0.5f, float_err);
+  EXPECT_NEAR(t->v1.z,  0.f, float_err);
+  EXPECT_NEAR(t->v1.w,  1.f, float_err);
+
+  EXPECT_NEAR(t->v2.x,  0.f, float_err);
+  EXPECT_NEAR(t->v2.y,  0.5f, float_err);
+  EXPECT_NEAR(t->v2.z,  0.f, float_err);
+  EXPECT_NEAR(t->v2.w,  1.f, float_err);
+
+  EXPECT_NEAR(t->n.x,   0.f, float_err);
+  EXPECT_NEAR(t->n.y,   0.f, float_err);
+  EXPECT_NEAR(t->n.z,   1.f, float_err);
+  EXPECT_NEAR(t->n.w,   0.f, float_err);
+}
+

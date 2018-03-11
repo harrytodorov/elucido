@@ -82,7 +82,17 @@ void Triangle::apply_transformations() {
   reshape_bb();
 
   n = glm::transpose(glm::inverse(mt)) * n;
+  // Reset normal's w component to 0.
+  n.w = 0.f;
+  // Renormalize.
+  n = glm::normalize(n);
 
   // Reset model transform matrix.
   mt = glm::mat4(1);
+}
+
+void Triangle::create_normal() {
+  n = glm::normalize(glm::vec4(glm::cross(glm::vec3(v1) - glm::vec3(v0),
+                                          glm::vec3(v2) - glm::vec3(v0)),
+                               0));
 }
