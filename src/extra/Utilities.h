@@ -14,6 +14,10 @@
 #include <string>
 #include <vector>
 
+#include <glm/geometric.hpp>
+#include <glm/vec3.hpp>
+#include <glm/mat4x4.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include "glm/gtc/epsilon.hpp"
 
 class Object;
@@ -355,19 +359,14 @@ enum Axis {
   X,
   Y,
   Z,
-  XY,
-  XZ,
   YZ,
-  XYZ
+  uniform
 };
 const std::map<std::string, Axis> AXES_MAP = {
     {"X",   X},
     {"Y",   Y},
     {"Z",   Z},
-    {"XY",  XY},
-    {"XZ",  XZ},
-    {"YZ",  YZ},
-    {"XYZ", XYZ}
+    {"uniform", uniform}
 };
 
 enum RayType {
@@ -592,10 +591,6 @@ struct material {
 //------------------------------------------------------------------------------
 
 /**
- * TODO: clean-up code, where possible
- * TODO: make code, a bit more readable; comment+spacing
- * TODO: look at CameraProperty and CameraSetProperties; why?
- *
  * Reads a text file following given protocol (see Report) and extracts
  * scene descriptions(s) from it.
  * @param filename: The text file containing scene description(s).
@@ -622,6 +617,44 @@ read_scene_from_file(const std::string &f);
  */
 glm::vec3 create_transformation_vector(const Axis &transformation_axes,
                                        const float_t &transformation_amount);
+
+/**
+ * Apply a rotation around a given axis by an angle on the model transform
+ * matrix.
+ * @param axis:             Axis around which it would be rotated.
+ * @param rotation_angle:   The angle of the rotation.
+ * @param model_transform:  The model transform matrix onto which the
+ *                          rotation would be applied.
+ */
+void apply_rotation(const Axis &axis,
+                    const float_t &rotation_angle,
+                    glm::mat4 &model_transform);
+
+/**
+ * Apply a translation around a given axis by a translation amount on the
+ * model transform matrix.
+ * @param axis:                 Axis in which the translation would be
+ *                              applied.
+ * @param translation_amount:   The amount of the translation.
+ * @param model_transform:      The model transform matrix onto which the
+ *                              translation would be applied.
+ */
+void apply_translation(const Axis &axis,
+                       const float_t &translation_amount,
+                       glm::mat4 &model_transform);
+
+/**
+ * Apply scaling on a given axis by a scale amount on the model transform
+ * matrix.
+ * @param axis:             Axis in which the scale would be applied.
+ * @param scale_amount:     The amount of the scale.
+ * @param model_transform:  The model transform matrix onto which the scale
+ *                          would be applied.
+ */
+void apply_scale(const Axis &axis,
+                 const float_t &scale_amount,
+                 glm::mat4 &model_transform);
+
 //------------------------------------------------------------------------------
 
 

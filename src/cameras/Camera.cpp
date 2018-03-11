@@ -355,18 +355,14 @@ glm::vec3 Camera::cast_ray(const Ray &ray,
 }
 
 //=============================================================================
-void Camera::rotate(const float_t &rot_angle, const Axis &axes_of_rotation) {
-  auto rv = create_transformation_vector(axes_of_rotation, 1);
-  auto rm = glm::rotate(glm::mat4(1), glm::radians(rot_angle), rv);
-  vm = rm * vm;
+void Camera::rotate(const float_t &rot_angle, const Axis &rotation_axis) {
+  apply_rotation(rotation_axis, rot_angle, vm);
 }
 
 //=============================================================================
 void Camera::translate(const float_t &translation,
-                       const Axis &axes_of_translation) {
-  auto tv = create_transformation_vector(axes_of_translation, translation);
-  auto tm = glm::translate(glm::mat4(1), tv);
-  vm = tm * vm;
+                       const Axis &translation_axis) {
+  apply_translation(translation_axis, translation, vm);
 }
 
 //=============================================================================

@@ -290,30 +290,6 @@ void TriangleMesh::apply_transformations() {
 }
 
 //=============================================================================
-void TriangleMesh::translate(const float_t &translation,
-                             const Axis &axes_of_translation) {
-  glm::vec3 tv = create_transformation_vector(axes_of_translation, translation);
-  glm::mat4 tm = glm::translate(glm::mat4(1), tv);
-  mt = tm * mt;
-}
-
-//=============================================================================
-void TriangleMesh::rotate(const float_t &angle_of_rotation,
-                          const Axis &axes_of_rotation) {
-  glm::vec3 rv = create_transformation_vector(axes_of_rotation, 1);
-  glm::mat4 rm = glm::rotate(glm::mat4(1), glm::radians(angle_of_rotation), rv);
-  mt = rm * mt;
-}
-
-//=============================================================================
-void TriangleMesh::scale(const float_t &scaling_factor,
-                         const Axis &axes_of_scale) {
-  glm::vec3 sv = create_transformation_vector(axes_of_scale, scaling_factor);
-  glm::mat4 sm = glm::scale(glm::mat4(1), sv);
-  mt = sm * mt;
-}
-
-//=============================================================================
 TriangleMesh::TriangleMesh(const TriangleMesh &tm) : Object(tm) {
   this->va = tm.va;
   this->vna = tm.vna;

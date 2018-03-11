@@ -65,11 +65,6 @@ class TriangleMesh : public Object {
   void get_surface_properties(isect_info &i) const;
   void apply_camera_transformation(const glm::mat4 &ctm);
   void apply_transformations();
-  void translate(const float_t &translation,
-                 const Axis &axes_of_translation);
-  void rotate(const float_t &angle_of_rotation,
-              const Axis &axes_of_rotation);
-  void scale(const float_t &scaling_factor, const Axis &axes_of_scale);
   loading_info load_mesh(const char *f);
   const AABBox* getBoundingBoxForTriangle(const uint32_t &ti) const;
 };

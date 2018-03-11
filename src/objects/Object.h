@@ -62,13 +62,12 @@ class Object {
   virtual void get_surface_properties(isect_info &i) const = 0;
   virtual void apply_camera_transformation(const glm::mat4 &ctm) = 0;
   virtual void apply_transformations() = 0;
-  virtual void translate(const float_t &translation,
-                         const Axis &axes_of_translation) = 0;
-  virtual void rotate(const float_t &angle_of_rotation,
-                      const Axis &axes_of_rotation) = 0;
-  virtual void scale(const float_t &scaling_factor,
-                     const Axis &axes_of_scale) = 0;
-
+  void translate(const float_t &translation,
+                 const Axis &translation_axis);
+  void rotate(const float_t &angle_of_rotation,
+              const Axis &rotation_axis);
+  void scale(const float_t &scaling_factor,
+             const Axis &scale_axis);
  protected:
   glm::mat4 mt;
 };

@@ -31,9 +31,8 @@ void PointLight::apply_camera_transformation(const glm::mat4 &ivm) {
 
 //=============================================================================
 void PointLight::translate(const float_t &translation,
-                           const Axis &axes_of_translation) {
-  glm::vec3 tv = create_transformation_vector(axes_of_translation, translation);
-  mt = glm::translate(mt, tv);
+                           const Axis &translation_axis) {
+  apply_translation(translation_axis, translation, mt);
 }
 
 //=============================================================================

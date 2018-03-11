@@ -43,7 +43,7 @@ class DirectionalLight : public Light {
   void translate(const float_t &translation,
                  const Axis &axes_of_translation);
   void rotate(const float_t &angle_of_rotation,
-              const Axis &axes_of_rotation);
+              const Axis &rotation_axis);
 };
 
 #endif //ELUCIDO_DIRECTIONALLIGHT_H

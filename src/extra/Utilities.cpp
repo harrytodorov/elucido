@@ -819,23 +819,41 @@ glm::vec3 create_transformation_vector(const Axis &transformation_axes,
     case Axis::Z :
       tv.z = transformation_amount;
       return tv;
-    case Axis::XY :
-      tv.x = transformation_amount;
-      tv.y = transformation_amount;
-      return tv;
-    case Axis::XZ :
-      tv.x = transformation_amount;
-      tv.z = transformation_amount;
-      return tv;
-    case Axis::YZ :
-      tv.y = transformation_amount;
-      tv.z = transformation_amount;
-      return tv;
-    case Axis::XYZ :
+    case Axis::uniform :
       tv = glm::vec3(transformation_amount);
       return tv;
     default:
       std::cout << "You're using an undefined axis of scale." << std::endl;
       return glm::vec3(1);
   }
+}
+
+//=============================================================================
+void apply_rotation(const Axis &axis,
+                    const float_t &rotation_angle,
+                    glm::mat4 &model_transform) {
+  // Rotations could be applied only on a single axis.
+  if (axis == uniform)
+    return;
+  auto rv = create_transformation_vector(axis,
+                                         1);
+  auto rm = glm::rotate(glm::mat4(1), glm::radians(rotation_angle), rv);
+  model_transform = rm * model_transform;
+}
+
+//=============================================================================
+void apply_translation(const Axis &axis,
+                       const float_t &translation_amount,
+                       glm::mat4 &model_transform) {
+  auto tv = create_transformation_vector(axis, translation_amount);
+  auto tm = glm::translate(glm::mat4(1), tv);
+  model_transform = tm * model_transform;
+}
+
+void apply_scale(const Axis &axis,
+                 const float_t &scale_amount,
+                 glm::mat4 &model_transform) {
+  glm::vec3 sv = create_transformation_vector(axis, scale_amount);
+  glm::mat4 sm = glm::scale(glm::mat4(1), sv);
+  model_transform = sm * model_transform;
 }

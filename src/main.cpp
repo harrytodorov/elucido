@@ -137,7 +137,7 @@ void render_cornell_scene() {
   std::cout << std::endl;
 
   teapot.rotate(-60.f, Axis::Y);
-  teapot.scale(1.7f, Axis::XYZ);
+  teapot.scale(1.7f, Axis::uniform);
   teapot.translate(-7.f, Axis::Z);
   teapot.translate(2.3f, Axis::X);
   teapot.apply_transformations();
@@ -352,7 +352,7 @@ void render_simple_refl_scene() {
   std::cout << "# of faces in the mesh                : " << li.nf << std::endl;
   std::cout << std::endl;
 
-  teapot.scale(1.3f, Axis::XYZ);
+  teapot.scale(1.3f, Axis::uniform);
   teapot.rotate(-135.f, Axis::Y);
   teapot.translate(-0.3f, Axis::Y);
   teapot.translate(-1.5f, Axis::Z);
@@ -465,7 +465,7 @@ void test_refraction_scene() {
   std::cout << "# of faces in the mesh                : " << li.nf << std::endl;
   std::cout << std::endl;
 
-  cube.scale(0.5f, Axis::XYZ);
+  cube.scale(0.5f, Axis::uniform);
   cube.translate(-3.f, Axis::Z);
   cube.apply_transformations();
 //    objects.push_back(&cube);
@@ -689,7 +689,7 @@ void boxes() {
     (*obj_copy).translate(orzp(eng), Axis::Z);
 
     // randomly choose cube's scale
-    (*obj_copy).scale(ors(eng), Axis::XYZ);
+    (*obj_copy).scale(ors(eng), Axis::uniform);
 
     // apply transformations for the cube
     (*obj_copy).apply_transformations();
@@ -887,7 +887,7 @@ void triangles() {
   for (uint32_t i = 0; i < notr; i++) {
     t = new Triangle();
     // scale triangle randomly
-    (*t).scale(trs(eng), Axis::XYZ);
+    (*t).scale(trs(eng), Axis::uniform);
     // place triangle randomly
     rot = trr(eng);
     (rot >= 30.f) ? (*t).rotate(rot, Axis::X) : ((rot <= 15.f) ? (*t).rotate(rot, Axis::Z)
@@ -1036,7 +1036,7 @@ void triangle_meshes() {
 
     tm = new TriangleMesh(monkey);
     // scale monkey randomly
-    (*tm).scale(tms(eng), Axis::XYZ);
+    (*tm).scale(tms(eng), Axis::uniform);
     // place monkey randomly
     rot = tmr(eng);
     (rot >= 30.f) ? (*tm).rotate(rot, Axis::X) : ((rot <= 15.f) ? (*tm).rotate(rot, Axis::Z)
@@ -1059,7 +1059,7 @@ void triangle_meshes() {
 
     tm = new TriangleMesh(teapot);
     // scale teapot randomly
-    (*tm).scale(tms(eng), Axis::XYZ);
+    (*tm).scale(tms(eng), Axis::uniform);
     // place teapot randomly
     rot = tmr(eng);
     (rot >= 30.f) ? (*tm).rotate(rot, Axis::X) : ((rot <= 15.f) ? (*tm).rotate(rot, Axis::Z)
@@ -1271,7 +1271,7 @@ void monkey() {
   std::cout << "# of faces in the mesh                : " << li.nf << std::endl;
   std::cout << std::endl;
 
-  monkey.scale(0.8f, Axis::XYZ);
+  monkey.scale(0.8f, Axis::uniform);
   monkey.rotate(-13.f, Axis::X);
   monkey.translate(-2.f, Axis::Z);
   monkey.translate(-0.3f, Axis::Y);
@@ -1379,7 +1379,7 @@ void teapot() {
   std::cout << "# of faces in the mesh                : " << li.nf << std::endl;
   std::cout << std::endl;
 
-  teapot.scale(0.9f, Axis::XYZ);
+  teapot.scale(0.9f, Axis::uniform);
   teapot.translate(-1.7f, Axis::Z);
   teapot.translate(-0.5f, Axis::Y);
   teapot.apply_transformations();

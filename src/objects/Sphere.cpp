@@ -60,14 +60,6 @@ void Sphere::apply_camera_transformation(const glm::mat4 &ivm) {
 }
 
 //=============================================================================
-void Sphere::translate(const float_t &translation,
-                       const Axis &axes_of_translation) {
-  glm::vec3 tv = create_transformation_vector(axes_of_translation, translation);
-  glm::mat4 tm = glm::translate(glm::mat4(1), tv);
-  mt = tm * mt;
-}
-
-//=============================================================================
 void Sphere::rotate(const float_t &angle_of_rotation,
                     const Axis &axes_of_rotation) {
   // Rotation does not effect implicit sphere.
@@ -76,8 +68,8 @@ void Sphere::rotate(const float_t &angle_of_rotation,
 //=============================================================================
 void Sphere::scale(const float_t &scaling_factor,
                    const Axis &axes_of_scale) {
-  if (axes_of_scale != XYZ) {
-    std::cout << "Implicit sphere supports only uniform scaling (XYZ)!"
+  if (axes_of_scale != uniform) {
+    std::cout << "Implicit sphere supports only uniform scaling (uniform)!"
               << std::endl;
     return;
   }

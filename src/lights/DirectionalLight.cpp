@@ -20,11 +20,8 @@ void DirectionalLight::translate(const float_t &translation, const Axis &axes_of
   // The translation doesn't effect directions.
 }
 
-void DirectionalLight::rotate(const float_t &angle_of_rotation, const Axis &axes_of_rotation) {
-    auto rv = create_transformation_vector(axes_of_rotation,
-                                           1);
-    auto rm = glm::rotate(glm::mat4(1), glm::radians(angle_of_rotation), rv);
-    mt = rm * mt;
+void DirectionalLight::rotate(const float_t &angle_of_rotation, const Axis &rotation_axis) {
+  apply_rotation(rotation_axis, angle_of_rotation, mt);
 }
 
 void DirectionalLight::apply_transformations() {

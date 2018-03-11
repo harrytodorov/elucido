@@ -75,31 +75,6 @@ void Triangle::apply_camera_transformation(const glm::mat4 &ivm) {
 }
 
 //=============================================================================
-void Triangle::translate(const float_t &translation,
-                         const Axis &axes_of_translation) {
-  glm::vec3 tv = create_transformation_vector(axes_of_translation, translation);
-  glm::mat4 tm = glm::translate(glm::mat4(1), tv);
-  mt = tm * mt;
-}
-
-//=============================================================================
-void Triangle::rotate(const float_t &angle_of_rotation,
-                      const Axis &axes_of_rotation) {
-  glm::vec3 rv = create_transformation_vector(axes_of_rotation, 1);
-  glm::mat4 rm = glm::rotate(glm::mat4(1), glm::radians(angle_of_rotation), rv);
-  mt = rm * mt;
-}
-
-//=============================================================================
-void Triangle::scale(const float_t &scaling_factor,
-                     const Axis &axes_of_scale) {
-  glm::vec3 sv = create_transformation_vector(axes_of_scale, scaling_factor);
-  glm::mat4 sm = glm::scale(glm::mat4(1), sv);
-  mt = sm * mt;
-
-}
-
-//=============================================================================
 void Triangle::apply_transformations() {
   v0 = mt * v0;
   v1 = mt * v1;

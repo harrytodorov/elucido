@@ -39,7 +39,7 @@ class PointLight : public Light {
   void apply_camera_transformation(const glm::mat4 &ivm);
   void apply_transformations();
   void translate(const float_t &translation,
-                 const Axis &axes_of_translation);
+                 const Axis &translation_axis);
   void rotate(const float_t &angle_of_rotation,
               const Axis &axes_of_rotation);
 };

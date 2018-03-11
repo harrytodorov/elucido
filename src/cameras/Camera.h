@@ -71,8 +71,8 @@ Camera(const glm::vec4 &p, const glm::vec4 &d, const bool &as) :
 // Function declarations, inline functions
 //=============================================================================
   void translate(const float_t &translation,
-                 const Axis &axes_of_translation);
-  void rotate(const float_t &rot_angle, const Axis &axes_of_rotation);
+                 const Axis &translation_axis);
+  void rotate(const float_t &rot_angle, const Axis &rotation_axis);
   glm::vec4 refract(const glm::vec4 &incident_direction,
                     const glm::vec4 &surface_normal,
                     const float_t &ior);

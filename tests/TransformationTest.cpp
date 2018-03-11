@@ -14,7 +14,7 @@ TEST(PointLight, translation) {
   auto *pl = new PointLight();
   pl->p = pl_pos;
 
-  pl->translate(3, XYZ);
+  pl->translate(3, uniform);
   pl->apply_transformations();
 
   EXPECT_FLOAT_EQ(pl->p.x, 3.f);
@@ -29,8 +29,9 @@ TEST(PointLight, successiveTranslation) {
   auto *pl = new PointLight();
   pl->p = pl_pos;
 
-  pl->translate(3, XYZ);
-  pl->translate(2, XY);
+  pl->translate(3, uniform);
+  pl->translate(2, X);
+  pl->translate(2, Y);
   pl->apply_transformations();
 
   EXPECT_FLOAT_EQ(pl->p.x, 5.f);
@@ -60,9 +61,10 @@ TEST(PointLight, translationAndRotation) {
   auto *pl = new PointLight();
   pl->p = pl_pos;
 
-  pl->translate(3, XYZ);
+  pl->translate(3, uniform);
   pl->rotate(90, Y);
-  pl->translate(2, XY);
+  pl->translate(2, X);
+  pl->translate(2, Y);
   pl->apply_transformations();
 
   EXPECT_FLOAT_EQ(pl->p.x, 5.f);
@@ -155,7 +157,7 @@ TEST(DirectionalLight, translation) {
   auto *dl = new DirectionalLight();
   dl->d = dl_dir;
 
-  dl->translate(3.f, XYZ);
+  dl->translate(3.f, uniform);
   dl->apply_transformations();
 
   EXPECT_NEAR(dl->d.x, 1.f, float_err);
@@ -208,7 +210,7 @@ TEST(DirectionalLight, translationAndRotation) {
   dl->d = dl_dir;
 
   dl->rotate(90.f, Y);
-  dl->translate(3, XYZ);
+  dl->translate(3, uniform);
   dl->apply_transformations();
 
   EXPECT_NEAR(dl->d.x,  0.f, float_err);
@@ -310,7 +312,7 @@ TEST(Sphere, translation) {
   s->set_center(s_center);
   s->set_radius(s_rad);
 
-  s->translate(3.f, XYZ);
+  s->translate(3.f, uniform);
   s->apply_transformations();
 
   EXPECT_NEAR(s->center().x, 3.f, float_err);
@@ -330,8 +332,9 @@ TEST(Sphere, successiveTranslation) {
   s->set_center(s_center);
   s->set_radius(s_rad);
 
-  s->translate(3.f, XYZ);
-  s->translate(2.f, YZ);
+  s->translate(3.f, uniform);
+  s->translate(2.f, Y);
+  s->translate(2.f, Z);
   s->apply_transformations();
 
   EXPECT_NEAR(s->center().x, 3.f, float_err);
@@ -371,7 +374,8 @@ TEST(Sphere, scaleNotUniform) {
   s->set_center(s_center);
   s->set_radius(s_rad);
 
-  s->scale(3.f, XY);
+  s->scale(3.f, X);
+  s->scale(3.f, Y);
   s->apply_transformations();
 
   EXPECT_NEAR(s->center().x, 0.f, float_err);
@@ -391,7 +395,7 @@ TEST(Sphere, scaleUniform) {
   s->set_center(s_center);
   s->set_radius(s_rad);
 
-  s->scale(3.f, XYZ);
+  s->scale(3.f, uniform);
   s->apply_transformations();
 
   EXPECT_NEAR(s->center().x, 0.f, float_err);
@@ -411,8 +415,9 @@ TEST(Sphere, TranslationAndscaleUniform) {
   s->set_center(s_center);
   s->set_radius(s_rad);
 
-  s->scale(3.f, XYZ);
-  s->translate(4.f, XZ);
+  s->scale(3.f, uniform);
+  s->translate(4.f, X);
+  s->translate(4.f, Z);
   s->apply_transformations();
 
   EXPECT_NEAR(s->center().x, 4.f, float_err);
