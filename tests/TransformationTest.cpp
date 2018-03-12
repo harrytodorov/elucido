@@ -735,3 +735,194 @@ TEST(Triangle, successiveScale) {
   EXPECT_NEAR(t->n.w,   0.f, float_err);
 }
 
+//==============================================================================
+TEST(Triangle, translationRotationAndScale) {
+  auto float_err = 0.00001f;
+
+  auto v0 = glm::vec4(-1, -1, 0, 1);
+  auto v1 = glm::vec4( 1, -1, 0, 1);
+  auto v2 = glm::vec4( 0,  1, 0, 1);
+  auto *t = new Triangle(v0, v1, v2);
+
+  t->scale(2.f, uniform);
+  t->rotate(90.f, X);
+  t->translate(2.f, Y);
+  t->apply_transformations();
+
+  EXPECT_NEAR(t->v0.x, -2.f, float_err);
+  EXPECT_NEAR(t->v0.y,  2.f, float_err);
+  EXPECT_NEAR(t->v0.z, -2.f, float_err);
+  EXPECT_NEAR(t->v0.w,  1.f, float_err);
+
+  EXPECT_NEAR(t->v1.x,  2.f, float_err);
+  EXPECT_NEAR(t->v1.y,  2.f, float_err);
+  EXPECT_NEAR(t->v1.z, -2.f, float_err);
+  EXPECT_NEAR(t->v1.w,  1.f, float_err);
+
+  EXPECT_NEAR(t->v2.x,  0.f, float_err);
+  EXPECT_NEAR(t->v2.y,  2.f, float_err);
+  EXPECT_NEAR(t->v2.z,  2.f, float_err);
+  EXPECT_NEAR(t->v2.w,  1.f, float_err);
+
+  EXPECT_NEAR(t->n.x,   0.f, float_err);
+  EXPECT_NEAR(t->n.y,  -1.f, float_err);
+  EXPECT_NEAR(t->n.z,   0.f, float_err);
+  EXPECT_NEAR(t->n.w,   0.f, float_err);
+}
+
+//==============================================================================
+TEST(Triangle, cameraTransformationTranslation) {
+  auto float_err = 0.00001f;
+
+  auto v0 = glm::vec4(-1, -1, 0, 1);
+  auto v1 = glm::vec4( 1, -1, 0, 1);
+  auto v2 = glm::vec4( 0,  1, 0, 1);
+  auto *t = new Triangle(v0, v1, v2);
+
+  glm::mat4 mat(1);
+
+  auto tv = glm::vec3(0, 0, 2.f);
+  auto tm = glm::translate(glm::mat4(1), tv);
+  mat = tm * mat;
+
+  mat = glm::inverse(mat);
+  t->apply_camera_transformation(mat);
+
+  EXPECT_NEAR(t->v0.x, -1.f, float_err);
+  EXPECT_NEAR(t->v0.y, -1.f, float_err);
+  EXPECT_NEAR(t->v0.z, -2.f, float_err);
+  EXPECT_NEAR(t->v0.w,  1.f, float_err);
+
+  EXPECT_NEAR(t->v1.x,  1.f, float_err);
+  EXPECT_NEAR(t->v1.y, -1.f, float_err);
+  EXPECT_NEAR(t->v1.z, -2.f, float_err);
+  EXPECT_NEAR(t->v1.w,  1.f, float_err);
+
+  EXPECT_NEAR(t->v2.x,  0.f, float_err);
+  EXPECT_NEAR(t->v2.y,  1.f, float_err);
+  EXPECT_NEAR(t->v2.z, -2.f, float_err);
+  EXPECT_NEAR(t->v2.w,  1.f, float_err);
+
+  EXPECT_NEAR(t->n.x,   0.f, float_err);
+  EXPECT_NEAR(t->n.y,   0.f, float_err);
+  EXPECT_NEAR(t->n.z,   1.f, float_err);
+  EXPECT_NEAR(t->n.w,   0.f, float_err);
+}
+
+//==============================================================================
+TEST(Triangle, cameraTransformationIdentity) {
+  auto float_err = 0.00001f;
+
+  auto v0 = glm::vec4(-1, -1, 0, 1);
+  auto v1 = glm::vec4( 1, -1, 0, 1);
+  auto v2 = glm::vec4( 0,  1, 0, 1);
+  auto *t = new Triangle(v0, v1, v2);
+
+  auto mat = glm::mat4(1);
+
+  mat = glm::inverse(mat);
+  t->apply_camera_transformation(mat);
+
+  EXPECT_NEAR(t->v0.x, -1.f, float_err);
+  EXPECT_NEAR(t->v0.y, -1.f, float_err);
+  EXPECT_NEAR(t->v0.z,  0.f, float_err);
+  EXPECT_NEAR(t->v0.w,  1.f, float_err);
+
+  EXPECT_NEAR(t->v1.x,  1.f, float_err);
+  EXPECT_NEAR(t->v1.y, -1.f, float_err);
+  EXPECT_NEAR(t->v1.z,  0.f, float_err);
+  EXPECT_NEAR(t->v1.w,  1.f, float_err);
+
+  EXPECT_NEAR(t->v2.x,  0.f, float_err);
+  EXPECT_NEAR(t->v2.y,  1.f, float_err);
+  EXPECT_NEAR(t->v2.z,  0.f, float_err);
+  EXPECT_NEAR(t->v2.w,  1.f, float_err);
+
+  EXPECT_NEAR(t->n.x,   0.f, float_err);
+  EXPECT_NEAR(t->n.y,   0.f, float_err);
+  EXPECT_NEAR(t->n.z,   1.f, float_err);
+  EXPECT_NEAR(t->n.w,   0.f, float_err);
+}
+
+//==============================================================================
+TEST(Triangle, cameraTransformationRotation) {
+  auto float_err = 0.00001f;
+
+  auto v0 = glm::vec4(-1, -1, -2, 1);
+  auto v1 = glm::vec4( 1, -1, -2, 1);
+  auto v2 = glm::vec4( 0,  1, -2, 1);
+  auto *t = new Triangle(v0, v1, v2);
+
+  auto mat = glm::mat4(1);
+
+  auto rv = glm::vec3(0, 1, 0);
+  auto rm = glm::rotate(glm::mat4(1), glm::radians(90.f), rv);
+  mat = rm * mat;
+
+  mat = glm::inverse(mat);
+  t->apply_camera_transformation(mat);
+
+  EXPECT_NEAR(t->v0.x,  2.f, float_err);
+  EXPECT_NEAR(t->v0.y, -1.f, float_err);
+  EXPECT_NEAR(t->v0.z, -1.f, float_err);
+  EXPECT_NEAR(t->v0.w,  1.f, float_err);
+
+  EXPECT_NEAR(t->v1.x,  2.f, float_err);
+  EXPECT_NEAR(t->v1.y, -1.f, float_err);
+  EXPECT_NEAR(t->v1.z,  1.f, float_err);
+  EXPECT_NEAR(t->v1.w,  1.f, float_err);
+
+  EXPECT_NEAR(t->v2.x,  2.f, float_err);
+  EXPECT_NEAR(t->v2.y,  1.f, float_err);
+  EXPECT_NEAR(t->v2.z,  0.f, float_err);
+  EXPECT_NEAR(t->v2.w,  1.f, float_err);
+
+  EXPECT_NEAR(t->n.x,  -1.f, float_err);
+  EXPECT_NEAR(t->n.y,   0.f, float_err);
+  EXPECT_NEAR(t->n.z,   0.f, float_err);
+  EXPECT_NEAR(t->n.w,   0.f, float_err);
+}
+
+//==============================================================================
+TEST(Triangle, cameraTransformationTranslationAndRotation) {
+  auto float_err = 0.0001f;
+
+  auto v0 = glm::vec4(-1, -1, 0, 1);
+  auto v1 = glm::vec4( 1, -1, 0, 1);
+  auto v2 = glm::vec4( 0,  1, 0, 1);
+  auto *t = new Triangle(v0, v1, v2);
+
+  auto mat = glm::mat4(1);
+
+  auto v = glm::vec3(0, 1, 0);
+  auto rm = glm::rotate(glm::mat4(1), glm::radians(90.f), v);
+  mat = rm * mat;
+  
+  v.y = 0.f;
+  v.z = 2.f;
+  auto tm = glm::translate(glm::mat4(1), v);
+  mat = tm * mat;
+  
+  mat = glm::inverse(mat);
+  t->apply_camera_transformation(mat);
+
+  EXPECT_NEAR(t->v0.x,  2.f, float_err);
+  EXPECT_NEAR(t->v0.y, -1.f, float_err);
+  EXPECT_NEAR(t->v0.z, -1.f, float_err);
+  EXPECT_NEAR(t->v0.w,  1.f, float_err);
+
+  EXPECT_NEAR(t->v1.x,  2.f, float_err);
+  EXPECT_NEAR(t->v1.y, -1.f, float_err);
+  EXPECT_NEAR(t->v1.z,  1.f, float_err);
+  EXPECT_NEAR(t->v1.w,  1.f, float_err);
+
+  EXPECT_NEAR(t->v2.x,  2.f, float_err);
+  EXPECT_NEAR(t->v2.y,  1.f, float_err);
+  EXPECT_NEAR(t->v2.z,  0.f, float_err);
+  EXPECT_NEAR(t->v2.w,  1.f, float_err);
+
+  EXPECT_NEAR(t->n.x,  -1.f, float_err);
+  EXPECT_NEAR(t->n.y,   0.f, float_err);
+  EXPECT_NEAR(t->n.z,   0.f, float_err);
+  EXPECT_NEAR(t->n.w,   0.f, float_err);
+}

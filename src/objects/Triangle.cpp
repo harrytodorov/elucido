@@ -72,6 +72,10 @@ void Triangle::apply_camera_transformation(const glm::mat4 &ivm) {
   reshape_bb();
 
   n = glm::transpose(glm::inverse(ivm)) * n;
+  // Reset normal's w component to 0.
+  n.w = 0.f;
+  // Renormalize.
+  n = glm::normalize(n);
 }
 
 //=============================================================================

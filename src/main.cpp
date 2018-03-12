@@ -1955,6 +1955,34 @@ void triangles_grid() {
 
 int main(int argc, char **argv) {
 
+  auto v0 = glm::vec4(-1, -1, 0, 1);
+  auto v1 = glm::vec4( 1, -1, 0, 1);
+  auto v2 = glm::vec4( 0,  1, 0, 1);
+  auto *t = new Triangle(v0, v1, v2);
+
+  auto mat = glm::mat4(1);
+
+  auto v = glm::vec3(0, 0, 2);
+  auto tm = glm::translate(glm::mat4(1), v);
+  mat = tm * mat;
+  std::cout << "After translation: " << glm::to_string(mat) << std::endl;
+
+  v.z = 0;
+  v.y = 1;
+  auto rm = glm::rotate(glm::mat4(1), glm::radians(90.f), v);
+  mat = rm * mat;
+  std::cout << "After rotation: " << glm::to_string(mat) << std::endl;
+
+  mat = glm::inverse(mat);
+  std::cout << "Inverse: " << glm::to_string(mat) << std::endl;
+  t->apply_camera_transformation(mat);
+  std::cout << "Transformed vertices:: " << std::endl
+            << "v0: " << glm::to_string(t->v0) << std::endl
+            << "v1: " << glm::to_string(t->v1) << std::endl
+            << "v2: " << glm::to_string(t->v2) << std::endl
+            << "n:  " << glm::to_string(t->n)  << std::endl
+            << std::endl;
+
 //  if (argc != 2) {
 //    std::cout << "Usage: " << argv[0] << " <scene file>" << std::endl;
 //    exit(1);

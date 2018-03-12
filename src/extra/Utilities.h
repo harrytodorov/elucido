@@ -27,18 +27,14 @@ const float_t infinity = std::numeric_limits<float_t>::max();   // infinity valu
 
 const glm::vec3 red(1.f, 0, 0);                                 // red color
 const glm::vec3 green(0, 1.f, 0);                               // green color
-const glm::vec3 blue(0, 0, 1.f);                                // blue color
 const glm::vec3 white(1);                                       // white color
 const glm::vec3 black(0);                                       // black color
-const glm::vec3 sienna(0.627f, 0.321f, 0.176f);                 // sienna color
 const glm::vec3 bluish(0.357f, 0.439f, 0.569f);                 // bluish color
 const glm::vec3 deadgold(0.647f, 0.604f, 0.486f);
 const glm::vec3 violet(0.573f, 0.384f, 0.757f);
 const glm::vec3 orangish(0.929f, 0.615f, 0.306f);
 const glm::vec3 whitish(0.780f, 0.812f, 0.867f);
 const glm::vec3 lightslategray(0.467f, 0.533f, 0.6f);
-const glm::vec3 greyish(0.65f);
-const glm::vec3 skyblue(0.258f, 0.674f, 0.831f);
 const glm::vec3 pink(1.f,105.f/255,180.f/255);
 const glm::vec3 gold(1.f, 0.843f, 0.f);
 const glm::vec3 rabit_color(0.847f, 0.105f, 0.376f);
@@ -351,7 +347,7 @@ enum TransformationType {
 const std::map<std::string, TransformationType> TRANSFORMATION_TYPES_MAP = {
     {"translate", translation},
     {"rotate",    rotation},
-    {"scale",       scale}
+    {"scale",     scale}
 };
 
 // Available transformation axes + corresponding mappings.
