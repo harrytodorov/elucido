@@ -62,10 +62,8 @@ Camera(const glm::vec4 &p, const glm::vec4 &d, const bool &as) :
     use_as(as),
     scene_bb() {}
 
-
-  //=============================================================================
+  virtual
   ~Camera() = default;
-
 
 //=============================================================================
 // Function declarations, inline functions
@@ -73,6 +71,22 @@ Camera(const glm::vec4 &p, const glm::vec4 &d, const bool &as) :
   void translate(const float_t &translation,
                  const Axis &translation_axis);
   void rotate(const float_t &rot_angle, const Axis &rotation_axis);
+  void apply_inverse_view_transform(const std::vector<Object *> &objects,
+                                    const std::vector<Light *> &lights);
+  void reverse_inverse_view_transform(const std::vector<Object *> &objects,
+                                      const std::vector<Light *> &lights);
+  void extend_scene_bb(const std::vector<Object *> &objects);
+  virtual Ray get_ray(const uint32_t &pixel_x,
+                        const uint32_t &pixel_y,
+                        const float_t &sample_x,
+                        const float_t &sample_y,
+                        const uint32_t &width,
+                        const uint32_t &height) = 0;
+
+  virtual render_info render_scene(const std::vector<Object *> &objects,
+                                   const std::vector<Light *> &lights,
+                                   ImagePlane &ip) = 0;
+
   glm::vec4 refract(const glm::vec4 &incident_direction,
                     const glm::vec4 &surface_normal,
                     const float_t &ior);
@@ -91,24 +105,16 @@ Camera(const glm::vec4 &p, const glm::vec4 &d, const bool &as) :
                      const uint32_t &depth,
                      const AccelerationStructure *structure,
                      render_info &ri);
-  virtual render_info render_scene(const std::vector<Object *> &objects,
-                                   const std::vector<Light *> &lights,
-                                   ImagePlane &ip) = 0;
 
   inline void use_acceleration(const bool &as, const float_t &ga = 3) {
     this->use_as = as;
     this->grid_alpha = ga;
   }
+
   inline glm::vec4 reflect(const glm::vec4 &incident_direction,
                            const glm::vec4 &surface_normal) {
     return incident_direction
         - 2.f * glm::dot(incident_direction, surface_normal) * surface_normal;
   };
- protected:
-  void apply_inverse_view_transform(const std::vector<Object *> &objects,
-                                    const std::vector<Light *> &lights);
-  void reverse_inverse_view_transform(const std::vector<Object *> &objects,
-                                      const std::vector<Light *> &lights);
-  void extend_scene_bb(const std::vector<Object *> &objects);
 };
 #endif //ELUCIDO_CAMERA_H

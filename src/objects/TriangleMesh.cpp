@@ -45,8 +45,7 @@ loading_info TriangleMesh::load_mesh(const char *f) {
 
       // in case we have a vertex normal
     } else if (type == vertex_normal) {
-      float_t vnx, vny,
-          vnz;          // x, y and z components of the vertex normal
+      float_t vnx, vny, vnz;
       tokens >> vnx >> vny >> vnz;
 
       // add vertex normal to temporary vertex normal array
@@ -54,16 +53,14 @@ loading_info TriangleMesh::load_mesh(const char *f) {
 
       // in case we have a face
     } else if (type == face) {
-      std::string fp;                 // temporary holder for face information
-      std::string d = "/";            // d: d
-      std::string vd,
-          cv;             // vd: vertex dummy, used to store information for the extracted vertex,
-      // vertex normal or vertex texture
-      // cv: current vertex
+      std::string fp;
+      std::string d = "/";
+      std::string vd, // vd: vertex dummy, used to store information for the extracted vertex,
+                  cv; // cv: current vertex
       std::vector<uint32_t> vertex_index, vertexnormal_index;
       uint32_t nv(0);                 // number of vertices in the face
 
-      // extract  information
+      // extract information
       while (tokens >> fp) {
         // extract vertex index information
         cv = fp;
@@ -230,8 +227,7 @@ void TriangleMesh::get_surface_properties(isect_info &i) const {
     v = i.v;
     w = 1.f - u - v;
 
-    // normalize the vertex normal, we shouldn't need this, but just for safety
-    i.ipn = glm::normalize(w * vn0 + u * vn1 + v * vn2);
+    i.ipn = w * vn0 + u * vn1 + v * vn2;
   } else {
     glm::vec4 v0, v1, v2;
 
@@ -261,6 +257,10 @@ void TriangleMesh::apply_camera_transformation(const glm::mat4 &ctm) {
   for (auto &_ti : vna) {
     vn = _ti;
     vn = glm::transpose(glm::inverse(ctm)) * vn;
+    // Reset normal's w component to 0.
+    vn.w = 0.f;
+    // Renormalize.
+    vn = glm::normalize(vn);
     _ti = vn;
   }
 }
@@ -282,6 +282,10 @@ void TriangleMesh::apply_transformations() {
   for (auto &_ti : vna) {
     vn = _ti;
     vn = glm::transpose(glm::inverse(mt)) * vn;
+    // Reset normal's w component to 0.
+    vn.w = 0.f;
+    // Renormalize.
+    vn = glm::normalize(vn);
     _ti = vn;
   }
 
@@ -303,7 +307,7 @@ TriangleMesh::TriangleMesh(const TriangleMesh &tm) : Object(tm) {
 
 //=============================================================================
 const AABBox* TriangleMesh::getBoundingBoxForTriangle(const uint32_t &ti) const {
-  AABBox *box = new AABBox();
+  auto *box = new AABBox();
   glm::vec4 v0, v1, v2;
   // get the vertices for the current triangle
   v0 = va[via[3 * ti] - 1];

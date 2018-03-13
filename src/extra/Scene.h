@@ -34,6 +34,8 @@ class Scene {
 // Function declarations
 //=============================================================================
   bool load_scene(const scene_description &description);
+  void extend_scene_bb();
+  void render_image();
 
 //=============================================================================
 // Data members
@@ -45,6 +47,7 @@ class Scene {
   std::unique_ptr<ImagePlane> image_plane;
   std::unique_ptr<Camera> camera;
   std::unique_ptr<AccelerationStructure> acceleration_structure;
+  std::unique_ptr<AABBox> scene_bb;
 };
 
 #endif //ELUCIDO_ALL_SCENE_H

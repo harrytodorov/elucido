@@ -20,7 +20,7 @@ class Ray {
   glm::vec4 d;          // the direction of the ray
   glm::vec4 id;         // the inverse of the ray direction,
                         // needed to optimize AABB calculation
-  uint32_t s[3];        // the sign of the ray direction,
+  uint32_t s[3]{};      // the sign of the ray direction,
                         // needed to optimize AABB calculation
  public:
   RayType rt{primary};  // the type of the casted ray
@@ -28,22 +28,7 @@ class Ray {
 //=============================================================================
 // Constructors & destructors
 //=============================================================================
-  Ray() : o(0, 0, 0, 1), d(0, 0, -1, 0) {
-    id = 1.f / d;
-    s[0] = (uint32_t) (id.x < 0);
-    s[1] = (uint32_t) (id.y < 0);
-    s[2] = (uint32_t) (id.z < 0);
-  }
-
-//=============================================================================
-  Ray(const glm::vec4 &o, const glm::vec4 &d) : o(o), d(d) {
-    id = 1.f / d;
-    s[0] = (uint32_t) (id.x < 0);
-    s[1] = (uint32_t) (id.y < 0);
-    s[2] = (uint32_t) (id.z < 0);
-  }
-
-//=============================================================================
+  Ray() {}
   ~Ray() = default;
 
 //=============================================================================

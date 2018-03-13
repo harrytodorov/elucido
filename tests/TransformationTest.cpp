@@ -8,6 +8,7 @@
 #include "../src/lights/DirectionalLight.h"
 #include "../src/objects/Sphere.h"
 #include "../src/objects/Triangle.h"
+#include "../src/objects/TriangleMesh.h"
 
 //==============================================================================
 TEST(PointLight, translation) {
@@ -376,7 +377,6 @@ TEST(Sphere, scaleNotUniform) {
   s->set_radius(s_rad);
 
   s->scale(3.f, X);
-  s->scale(3.f, Y);
   s->apply_transformations();
 
   EXPECT_NEAR(s->center().x, 0.f, float_err);
@@ -897,12 +897,12 @@ TEST(Triangle, cameraTransformationTranslationAndRotation) {
   auto v = glm::vec3(0, 1, 0);
   auto rm = glm::rotate(glm::mat4(1), glm::radians(90.f), v);
   mat = rm * mat;
-  
+
   v.y = 0.f;
   v.z = 2.f;
   auto tm = glm::translate(glm::mat4(1), v);
   mat = tm * mat;
-  
+
   mat = glm::inverse(mat);
   t->apply_camera_transformation(mat);
 
@@ -926,3 +926,777 @@ TEST(Triangle, cameraTransformationTranslationAndRotation) {
   EXPECT_NEAR(t->n.z,   0.f, float_err);
   EXPECT_NEAR(t->n.w,   0.f, float_err);
 }
+
+//==============================================================================
+TEST(TriangleMesh, translation) {
+  auto float_err = 0.0001f;
+
+  auto obj_file = "/Users/harry/dev/elucido/object_files/cube.obj";
+  auto *tm = new TriangleMesh(obj_file);
+
+  tm->translate(2.f, uniform);
+  tm->apply_transformations();
+
+  // Vertex 1
+  EXPECT_NEAR(tm->va[0].x, 3, float_err);
+  EXPECT_NEAR(tm->va[0].y, 1, float_err);
+  EXPECT_NEAR(tm->va[0].z, 1, float_err);
+  EXPECT_NEAR(tm->va[0].w, 1, float_err);
+
+  // Vertex 2
+  EXPECT_NEAR(tm->va[1].x, 3, float_err);
+  EXPECT_NEAR(tm->va[1].y, 1, float_err);
+  EXPECT_NEAR(tm->va[1].z, 3, float_err);
+  EXPECT_NEAR(tm->va[1].w, 1, float_err);
+
+  // Vertex 3
+  EXPECT_NEAR(tm->va[2].x, 1, float_err);
+  EXPECT_NEAR(tm->va[2].y, 1, float_err);
+  EXPECT_NEAR(tm->va[2].z, 3, float_err);
+  EXPECT_NEAR(tm->va[2].w, 1, float_err);
+
+  // Vertex 4
+  EXPECT_NEAR(tm->va[3].x, 1, float_err);
+  EXPECT_NEAR(tm->va[3].y, 1, float_err);
+  EXPECT_NEAR(tm->va[3].z, 1, float_err);
+  EXPECT_NEAR(tm->va[3].w, 1, float_err);
+
+  // Vertex 5
+  EXPECT_NEAR(tm->va[4].x, 3, float_err);
+  EXPECT_NEAR(tm->va[4].y, 3, float_err);
+  EXPECT_NEAR(tm->va[4].z, 1, float_err);
+  EXPECT_NEAR(tm->va[4].w, 1, float_err);
+
+  // Vertex 6
+  EXPECT_NEAR(tm->va[5].x, 3, float_err);
+  EXPECT_NEAR(tm->va[5].y, 3, float_err);
+  EXPECT_NEAR(tm->va[5].z, 3, float_err);
+  EXPECT_NEAR(tm->va[5].w, 1, float_err);
+
+  // Vertex 7
+  EXPECT_NEAR(tm->va[6].x, 1, float_err);
+  EXPECT_NEAR(tm->va[6].y, 3, float_err);
+  EXPECT_NEAR(tm->va[6].z, 3, float_err);
+  EXPECT_NEAR(tm->va[6].w, 1, float_err);
+
+  // Vertex 8
+  EXPECT_NEAR(tm->va[7].x, 1, float_err);
+  EXPECT_NEAR(tm->va[7].y, 3, float_err);
+  EXPECT_NEAR(tm->va[7].z, 1, float_err);
+  EXPECT_NEAR(tm->va[7].w, 1, float_err);
+
+  // Vertex normal 1
+  EXPECT_NEAR(tm->vna[0].x,  0, float_err);
+  EXPECT_NEAR(tm->vna[0].y,  0, float_err);
+  EXPECT_NEAR(tm->vna[0].z, -1, float_err);
+  EXPECT_NEAR(tm->vna[0].w,  0, float_err);
+
+  // Vertex normal 2
+  EXPECT_NEAR(tm->vna[1].x, -1, float_err);
+  EXPECT_NEAR(tm->vna[1].y,  0, float_err);
+  EXPECT_NEAR(tm->vna[1].z,  0, float_err);
+  EXPECT_NEAR(tm->vna[1].w,  0, float_err);
+
+  // Vertex normal 3
+  EXPECT_NEAR(tm->vna[2].x,  0, float_err);
+  EXPECT_NEAR(tm->vna[2].y,  0, float_err);
+  EXPECT_NEAR(tm->vna[2].z,  1, float_err);
+  EXPECT_NEAR(tm->vna[2].w,  0, float_err);
+
+  // Vertex normal 4
+  EXPECT_NEAR(tm->vna[3].x,  0, float_err);
+  EXPECT_NEAR(tm->vna[3].y,  0, float_err);
+  EXPECT_NEAR(tm->vna[3].z,  1, float_err);
+  EXPECT_NEAR(tm->vna[3].w,  0, float_err);
+
+  // Vertex normal 5
+  EXPECT_NEAR(tm->vna[4].x,  1, float_err);
+  EXPECT_NEAR(tm->vna[4].y,  0, float_err);
+  EXPECT_NEAR(tm->vna[4].z,  0, float_err);
+  EXPECT_NEAR(tm->vna[4].w,  0, float_err);
+
+  // Vertex normal 6
+  EXPECT_NEAR(tm->vna[5].x,  1, float_err);
+  EXPECT_NEAR(tm->vna[5].y,  0, float_err);
+  EXPECT_NEAR(tm->vna[5].z,  0, float_err);
+  EXPECT_NEAR(tm->vna[5].w,  0, float_err);
+
+  // Vertex normal 7
+  EXPECT_NEAR(tm->vna[6].x,  0, float_err);
+  EXPECT_NEAR(tm->vna[6].y,  1, float_err);
+  EXPECT_NEAR(tm->vna[6].z,  0, float_err);
+  EXPECT_NEAR(tm->vna[6].w,  0, float_err);
+
+  // Vertex normal 8
+  EXPECT_NEAR(tm->vna[7].x,  0, float_err);
+  EXPECT_NEAR(tm->vna[7].y, -1, float_err);
+  EXPECT_NEAR(tm->vna[7].z,  0, float_err);
+  EXPECT_NEAR(tm->vna[7].w,  0, float_err);
+}
+
+//==============================================================================
+TEST(TriangleMesh, scale) {
+  auto float_err = 0.0001f;
+
+  auto obj_file = "/Users/harry/dev/elucido/object_files/cube.obj";
+  auto *tm = new TriangleMesh(obj_file);
+
+  tm->scale(2.f, uniform);
+  tm->apply_transformations();
+
+  // Vertex 1
+  EXPECT_NEAR(tm->va[0].x,  2, float_err);
+  EXPECT_NEAR(tm->va[0].y, -2, float_err);
+  EXPECT_NEAR(tm->va[0].z, -2, float_err);
+  EXPECT_NEAR(tm->va[0].w,  1, float_err);
+
+  // Vertex 2
+  EXPECT_NEAR(tm->va[1].x,  2, float_err);
+  EXPECT_NEAR(tm->va[1].y, -2, float_err);
+  EXPECT_NEAR(tm->va[1].z,  2, float_err);
+  EXPECT_NEAR(tm->va[1].w,  1, float_err);
+
+  // Vertex 3
+  EXPECT_NEAR(tm->va[2].x, -2, float_err);
+  EXPECT_NEAR(tm->va[2].y, -2, float_err);
+  EXPECT_NEAR(tm->va[2].z,  2, float_err);
+  EXPECT_NEAR(tm->va[2].w,  1, float_err);
+
+  // Vertex 4
+  EXPECT_NEAR(tm->va[3].x, -2, float_err);
+  EXPECT_NEAR(tm->va[3].y, -2, float_err);
+  EXPECT_NEAR(tm->va[3].z, -2, float_err);
+  EXPECT_NEAR(tm->va[3].w,  1, float_err);
+
+  // Vertex 5
+  EXPECT_NEAR(tm->va[4].x,  2, float_err);
+  EXPECT_NEAR(tm->va[4].y,  2, float_err);
+  EXPECT_NEAR(tm->va[4].z, -2, float_err);
+  EXPECT_NEAR(tm->va[4].w,  1, float_err);
+
+  // Vertex 6
+  EXPECT_NEAR(tm->va[5].x,  2, float_err);
+  EXPECT_NEAR(tm->va[5].y,  2, float_err);
+  EXPECT_NEAR(tm->va[5].z,  2, float_err);
+  EXPECT_NEAR(tm->va[5].w,  1, float_err);
+
+  // Vertex 7
+  EXPECT_NEAR(tm->va[6].x, -2, float_err);
+  EXPECT_NEAR(tm->va[6].y,  2, float_err);
+  EXPECT_NEAR(tm->va[6].z,  2, float_err);
+  EXPECT_NEAR(tm->va[6].w,  1, float_err);
+
+  // Vertex 8
+  EXPECT_NEAR(tm->va[7].x, -2, float_err);
+  EXPECT_NEAR(tm->va[7].y,  2, float_err);
+  EXPECT_NEAR(tm->va[7].z, -2, float_err);
+  EXPECT_NEAR(tm->va[7].w,  1, float_err);
+
+  // Vertex normal 1
+  EXPECT_NEAR(tm->vna[0].x,  0, float_err);
+  EXPECT_NEAR(tm->vna[0].y,  0, float_err);
+  EXPECT_NEAR(tm->vna[0].z, -1, float_err);
+  EXPECT_NEAR(tm->vna[0].w,  0, float_err);
+
+  // Vertex normal 2
+  EXPECT_NEAR(tm->vna[1].x, -1, float_err);
+  EXPECT_NEAR(tm->vna[1].y,  0, float_err);
+  EXPECT_NEAR(tm->vna[1].z,  0, float_err);
+  EXPECT_NEAR(tm->vna[1].w,  0, float_err);
+
+  // Vertex normal 3
+  EXPECT_NEAR(tm->vna[2].x,  0, float_err);
+  EXPECT_NEAR(tm->vna[2].y,  0, float_err);
+  EXPECT_NEAR(tm->vna[2].z,  1, float_err);
+  EXPECT_NEAR(tm->vna[2].w,  0, float_err);
+
+  // Vertex normal 4
+  EXPECT_NEAR(tm->vna[3].x,  0, float_err);
+  EXPECT_NEAR(tm->vna[3].y,  0, float_err);
+  EXPECT_NEAR(tm->vna[3].z,  1, float_err);
+  EXPECT_NEAR(tm->vna[3].w,  0, float_err);
+
+  // Vertex normal 5
+  EXPECT_NEAR(tm->vna[4].x,  1, float_err);
+  EXPECT_NEAR(tm->vna[4].y,  0, float_err);
+  EXPECT_NEAR(tm->vna[4].z,  0, float_err);
+  EXPECT_NEAR(tm->vna[4].w,  0, float_err);
+
+  // Vertex normal 6
+  EXPECT_NEAR(tm->vna[5].x,  1, float_err);
+  EXPECT_NEAR(tm->vna[5].y,  0, float_err);
+  EXPECT_NEAR(tm->vna[5].z,  0, float_err);
+  EXPECT_NEAR(tm->vna[5].w,  0, float_err);
+
+  // Vertex normal 7
+  EXPECT_NEAR(tm->vna[6].x,  0, float_err);
+  EXPECT_NEAR(tm->vna[6].y,  1, float_err);
+  EXPECT_NEAR(tm->vna[6].z,  0, float_err);
+  EXPECT_NEAR(tm->vna[6].w,  0, float_err);
+
+  // Vertex normal 8
+  EXPECT_NEAR(tm->vna[7].x,  0, float_err);
+  EXPECT_NEAR(tm->vna[7].y, -1, float_err);
+  EXPECT_NEAR(tm->vna[7].z,  0, float_err);
+  EXPECT_NEAR(tm->vna[7].w,  0, float_err);
+}
+
+//==============================================================================
+TEST(TriangleMesh, rotation) {
+  auto float_err = 0.0001f;
+
+  auto obj_file = "/Users/harry/dev/elucido/object_files/cube.obj";
+  auto *tm = new TriangleMesh(obj_file);
+
+  tm->rotate(-90.f, Y);
+  tm->apply_transformations();
+
+  // Vertex 1
+  EXPECT_NEAR(tm->va[0].x,  1, float_err);
+  EXPECT_NEAR(tm->va[0].y, -1, float_err);
+  EXPECT_NEAR(tm->va[0].z,  1, float_err);
+  EXPECT_NEAR(tm->va[0].w,  1, float_err);
+
+  // Vertex 2
+  EXPECT_NEAR(tm->va[1].x, -1, float_err);
+  EXPECT_NEAR(tm->va[1].y, -1, float_err);
+  EXPECT_NEAR(tm->va[1].z,  1, float_err);
+  EXPECT_NEAR(tm->va[1].w,  1, float_err);
+
+  // Vertex 3
+  EXPECT_NEAR(tm->va[2].x, -1, float_err);
+  EXPECT_NEAR(tm->va[2].y, -1, float_err);
+  EXPECT_NEAR(tm->va[2].z, -1, float_err);
+  EXPECT_NEAR(tm->va[2].w,  1, float_err);
+
+  // Vertex 4
+  EXPECT_NEAR(tm->va[3].x,  1, float_err);
+  EXPECT_NEAR(tm->va[3].y, -1, float_err);
+  EXPECT_NEAR(tm->va[3].z, -1, float_err);
+  EXPECT_NEAR(tm->va[3].w,  1, float_err);
+
+  // Vertex 5
+  EXPECT_NEAR(tm->va[4].x,  1, float_err);
+  EXPECT_NEAR(tm->va[4].y,  1, float_err);
+  EXPECT_NEAR(tm->va[4].z,  1, float_err);
+  EXPECT_NEAR(tm->va[4].w,  1, float_err);
+
+  // Vertex 6
+  EXPECT_NEAR(tm->va[5].x, -1, float_err);
+  EXPECT_NEAR(tm->va[5].y,  1, float_err);
+  EXPECT_NEAR(tm->va[5].z,  1, float_err);
+  EXPECT_NEAR(tm->va[5].w,  1, float_err);
+
+  // Vertex 7
+  EXPECT_NEAR(tm->va[6].x, -1, float_err);
+  EXPECT_NEAR(tm->va[6].y,  1, float_err);
+  EXPECT_NEAR(tm->va[6].z, -1, float_err);
+  EXPECT_NEAR(tm->va[6].w,  1, float_err);
+
+  // Vertex 8
+  EXPECT_NEAR(tm->va[7].x,  1, float_err);
+  EXPECT_NEAR(tm->va[7].y,  1, float_err);
+  EXPECT_NEAR(tm->va[7].z, -1, float_err);
+  EXPECT_NEAR(tm->va[7].w,  1, float_err);
+
+  // Vertex normal 1
+  EXPECT_NEAR(tm->vna[0].x,  1, float_err);
+  EXPECT_NEAR(tm->vna[0].y,  0, float_err);
+  EXPECT_NEAR(tm->vna[0].z,  0, float_err);
+  EXPECT_NEAR(tm->vna[0].w,  0, float_err);
+
+  // Vertex normal 2
+  EXPECT_NEAR(tm->vna[1].x,  0, float_err);
+  EXPECT_NEAR(tm->vna[1].y,  0, float_err);
+  EXPECT_NEAR(tm->vna[1].z, -1, float_err);
+  EXPECT_NEAR(tm->vna[1].w,  0, float_err);
+
+  // Vertex normal 3
+  EXPECT_NEAR(tm->vna[2].x, -1, float_err);
+  EXPECT_NEAR(tm->vna[2].y,  0, float_err);
+  EXPECT_NEAR(tm->vna[2].z,  0, float_err);
+  EXPECT_NEAR(tm->vna[2].w,  0, float_err);
+
+  // Vertex normal 4
+  EXPECT_NEAR(tm->vna[3].x, -1, float_err);
+  EXPECT_NEAR(tm->vna[3].y,  0, float_err);
+  EXPECT_NEAR(tm->vna[3].z,  0, float_err);
+  EXPECT_NEAR(tm->vna[3].w,  0, float_err);
+
+  // Vertex normal 5
+  EXPECT_NEAR(tm->vna[4].x,  0, float_err);
+  EXPECT_NEAR(tm->vna[4].y,  0, float_err);
+  EXPECT_NEAR(tm->vna[4].z,  1, float_err);
+  EXPECT_NEAR(tm->vna[4].w,  0, float_err);
+
+  // Vertex normal 6
+  EXPECT_NEAR(tm->vna[5].x,  0, float_err);
+  EXPECT_NEAR(tm->vna[5].y,  0, float_err);
+  EXPECT_NEAR(tm->vna[5].z,  1, float_err);
+  EXPECT_NEAR(tm->vna[5].w,  0, float_err);
+
+  // Vertex normal 7
+  EXPECT_NEAR(tm->vna[6].x,  0, float_err);
+  EXPECT_NEAR(tm->vna[6].y,  1, float_err);
+  EXPECT_NEAR(tm->vna[6].z,  0, float_err);
+  EXPECT_NEAR(tm->vna[6].w,  0, float_err);
+
+  // Vertex normal 8
+  EXPECT_NEAR(tm->vna[7].x,  0, float_err);
+  EXPECT_NEAR(tm->vna[7].y, -1, float_err);
+  EXPECT_NEAR(tm->vna[7].z,  0, float_err);
+  EXPECT_NEAR(tm->vna[7].w,  0, float_err);
+}
+
+//==============================================================================
+TEST(TriangleMesh, cameraTransformationIdentity) {
+  auto float_err = 0.0001f;
+
+  auto obj_file = "/Users/harry/dev/elucido/object_files/cube.obj";
+  auto *tm = new TriangleMesh(obj_file);
+
+  auto mat = glm::mat4(1);
+
+  mat = glm::inverse(mat);
+  tm->apply_camera_transformation(mat);
+
+  // Vertex 1
+  EXPECT_NEAR(tm->va[0].x,  1, float_err);
+  EXPECT_NEAR(tm->va[0].y, -1, float_err);
+  EXPECT_NEAR(tm->va[0].z, -1, float_err);
+  EXPECT_NEAR(tm->va[0].w,  1, float_err);
+
+  // Vertex 2
+  EXPECT_NEAR(tm->va[1].x,  1, float_err);
+  EXPECT_NEAR(tm->va[1].y, -1, float_err);
+  EXPECT_NEAR(tm->va[1].z,  1, float_err);
+  EXPECT_NEAR(tm->va[1].w,  1, float_err);
+
+  // Vertex 3
+  EXPECT_NEAR(tm->va[2].x, -1, float_err);
+  EXPECT_NEAR(tm->va[2].y, -1, float_err);
+  EXPECT_NEAR(tm->va[2].z,  1, float_err);
+  EXPECT_NEAR(tm->va[2].w,  1, float_err);
+
+  // Vertex 4
+  EXPECT_NEAR(tm->va[3].x, -1, float_err);
+  EXPECT_NEAR(tm->va[3].y, -1, float_err);
+  EXPECT_NEAR(tm->va[3].z, -1, float_err);
+  EXPECT_NEAR(tm->va[3].w,  1, float_err);
+
+  // Vertex 5
+  EXPECT_NEAR(tm->va[4].x,  1, float_err);
+  EXPECT_NEAR(tm->va[4].y,  1, float_err);
+  EXPECT_NEAR(tm->va[4].z, -1, float_err);
+  EXPECT_NEAR(tm->va[4].w,  1, float_err);
+
+  // Vertex 6
+  EXPECT_NEAR(tm->va[5].x,  1, float_err);
+  EXPECT_NEAR(tm->va[5].y,  1, float_err);
+  EXPECT_NEAR(tm->va[5].z,  1, float_err);
+  EXPECT_NEAR(tm->va[5].w,  1, float_err);
+
+  // Vertex 7
+  EXPECT_NEAR(tm->va[6].x, -1, float_err);
+  EXPECT_NEAR(tm->va[6].y,  1, float_err);
+  EXPECT_NEAR(tm->va[6].z,  1, float_err);
+  EXPECT_NEAR(tm->va[6].w,  1, float_err);
+
+  // Vertex 8
+  EXPECT_NEAR(tm->va[7].x, -1, float_err);
+  EXPECT_NEAR(tm->va[7].y,  1, float_err);
+  EXPECT_NEAR(tm->va[7].z, -1, float_err);
+  EXPECT_NEAR(tm->va[7].w,  1, float_err);
+
+  // Vertex normal 1
+  EXPECT_NEAR(tm->vna[0].x,  0, float_err);
+  EXPECT_NEAR(tm->vna[0].y,  0, float_err);
+  EXPECT_NEAR(tm->vna[0].z, -1, float_err);
+  EXPECT_NEAR(tm->vna[0].w,  0, float_err);
+
+  // Vertex normal 2
+  EXPECT_NEAR(tm->vna[1].x, -1, float_err);
+  EXPECT_NEAR(tm->vna[1].y,  0, float_err);
+  EXPECT_NEAR(tm->vna[1].z,  0, float_err);
+  EXPECT_NEAR(tm->vna[1].w,  0, float_err);
+
+  // Vertex normal 3
+  EXPECT_NEAR(tm->vna[2].x,  0, float_err);
+  EXPECT_NEAR(tm->vna[2].y,  0, float_err);
+  EXPECT_NEAR(tm->vna[2].z,  1, float_err);
+  EXPECT_NEAR(tm->vna[2].w,  0, float_err);
+
+  // Vertex normal 4
+  EXPECT_NEAR(tm->vna[3].x,  0, float_err);
+  EXPECT_NEAR(tm->vna[3].y,  0, float_err);
+  EXPECT_NEAR(tm->vna[3].z,  1, float_err);
+  EXPECT_NEAR(tm->vna[3].w,  0, float_err);
+
+  // Vertex normal 5
+  EXPECT_NEAR(tm->vna[4].x,  1, float_err);
+  EXPECT_NEAR(tm->vna[4].y,  0, float_err);
+  EXPECT_NEAR(tm->vna[4].z,  0, float_err);
+  EXPECT_NEAR(tm->vna[4].w,  0, float_err);
+
+  // Vertex normal 6
+  EXPECT_NEAR(tm->vna[5].x,  1, float_err);
+  EXPECT_NEAR(tm->vna[5].y,  0, float_err);
+  EXPECT_NEAR(tm->vna[5].z,  0, float_err);
+  EXPECT_NEAR(tm->vna[5].w,  0, float_err);
+
+  // Vertex normal 7
+  EXPECT_NEAR(tm->vna[6].x,  0, float_err);
+  EXPECT_NEAR(tm->vna[6].y,  1, float_err);
+  EXPECT_NEAR(tm->vna[6].z,  0, float_err);
+  EXPECT_NEAR(tm->vna[6].w,  0, float_err);
+
+  // Vertex normal 8
+  EXPECT_NEAR(tm->vna[7].x,  0, float_err);
+  EXPECT_NEAR(tm->vna[7].y, -1, float_err);
+  EXPECT_NEAR(tm->vna[7].z,  0, float_err);
+  EXPECT_NEAR(tm->vna[7].w,  0, float_err);
+}
+
+//==============================================================================
+TEST(TriangleMesh, cameraTransformationTranslation) {
+  auto float_err = 0.0001f;
+
+  auto obj_file = "/Users/harry/dev/elucido/object_files/cube.obj";
+  auto *tm = new TriangleMesh(obj_file);
+
+  auto mat = glm::mat4(1);
+
+  auto tv = glm::vec3(-2);
+  auto m = glm::translate(glm::mat4(1), tv);
+  mat = m * mat;
+
+  mat = glm::inverse(mat);
+  tm->apply_camera_transformation(mat);
+
+  // Vertex 1
+  EXPECT_NEAR(tm->va[0].x, 3, float_err);
+  EXPECT_NEAR(tm->va[0].y, 1, float_err);
+  EXPECT_NEAR(tm->va[0].z, 1, float_err);
+  EXPECT_NEAR(tm->va[0].w, 1, float_err);
+
+  // Vertex 2
+  EXPECT_NEAR(tm->va[1].x, 3, float_err);
+  EXPECT_NEAR(tm->va[1].y, 1, float_err);
+  EXPECT_NEAR(tm->va[1].z, 3, float_err);
+  EXPECT_NEAR(tm->va[1].w, 1, float_err);
+
+  // Vertex 3
+  EXPECT_NEAR(tm->va[2].x, 1, float_err);
+  EXPECT_NEAR(tm->va[2].y, 1, float_err);
+  EXPECT_NEAR(tm->va[2].z, 3, float_err);
+  EXPECT_NEAR(tm->va[2].w, 1, float_err);
+
+  // Vertex 4
+  EXPECT_NEAR(tm->va[3].x, 1, float_err);
+  EXPECT_NEAR(tm->va[3].y, 1, float_err);
+  EXPECT_NEAR(tm->va[3].z, 1, float_err);
+  EXPECT_NEAR(tm->va[3].w, 1, float_err);
+
+  // Vertex 5
+  EXPECT_NEAR(tm->va[4].x, 3, float_err);
+  EXPECT_NEAR(tm->va[4].y, 3, float_err);
+  EXPECT_NEAR(tm->va[4].z, 1, float_err);
+  EXPECT_NEAR(tm->va[4].w, 1, float_err);
+
+  // Vertex 6
+  EXPECT_NEAR(tm->va[5].x, 3, float_err);
+  EXPECT_NEAR(tm->va[5].y, 3, float_err);
+  EXPECT_NEAR(tm->va[5].z, 3, float_err);
+  EXPECT_NEAR(tm->va[5].w, 1, float_err);
+
+  // Vertex 7
+  EXPECT_NEAR(tm->va[6].x, 1, float_err);
+  EXPECT_NEAR(tm->va[6].y, 3, float_err);
+  EXPECT_NEAR(tm->va[6].z, 3, float_err);
+  EXPECT_NEAR(tm->va[6].w, 1, float_err);
+
+  // Vertex 8
+  EXPECT_NEAR(tm->va[7].x, 1, float_err);
+  EXPECT_NEAR(tm->va[7].y, 3, float_err);
+  EXPECT_NEAR(tm->va[7].z, 1, float_err);
+  EXPECT_NEAR(tm->va[7].w, 1, float_err);
+
+  // Vertex normal 1
+  EXPECT_NEAR(tm->vna[0].x,  0, float_err);
+  EXPECT_NEAR(tm->vna[0].y,  0, float_err);
+  EXPECT_NEAR(tm->vna[0].z, -1, float_err);
+  EXPECT_NEAR(tm->vna[0].w,  0, float_err);
+
+  // Vertex normal 2
+  EXPECT_NEAR(tm->vna[1].x, -1, float_err);
+  EXPECT_NEAR(tm->vna[1].y,  0, float_err);
+  EXPECT_NEAR(tm->vna[1].z,  0, float_err);
+  EXPECT_NEAR(tm->vna[1].w,  0, float_err);
+
+  // Vertex normal 3
+  EXPECT_NEAR(tm->vna[2].x,  0, float_err);
+  EXPECT_NEAR(tm->vna[2].y,  0, float_err);
+  EXPECT_NEAR(tm->vna[2].z,  1, float_err);
+  EXPECT_NEAR(tm->vna[2].w,  0, float_err);
+
+  // Vertex normal 4
+  EXPECT_NEAR(tm->vna[3].x,  0, float_err);
+  EXPECT_NEAR(tm->vna[3].y,  0, float_err);
+  EXPECT_NEAR(tm->vna[3].z,  1, float_err);
+  EXPECT_NEAR(tm->vna[3].w,  0, float_err);
+
+  // Vertex normal 5
+  EXPECT_NEAR(tm->vna[4].x,  1, float_err);
+  EXPECT_NEAR(tm->vna[4].y,  0, float_err);
+  EXPECT_NEAR(tm->vna[4].z,  0, float_err);
+  EXPECT_NEAR(tm->vna[4].w,  0, float_err);
+
+  // Vertex normal 6
+  EXPECT_NEAR(tm->vna[5].x,  1, float_err);
+  EXPECT_NEAR(tm->vna[5].y,  0, float_err);
+  EXPECT_NEAR(tm->vna[5].z,  0, float_err);
+  EXPECT_NEAR(tm->vna[5].w,  0, float_err);
+
+  // Vertex normal 7
+  EXPECT_NEAR(tm->vna[6].x,  0, float_err);
+  EXPECT_NEAR(tm->vna[6].y,  1, float_err);
+  EXPECT_NEAR(tm->vna[6].z,  0, float_err);
+  EXPECT_NEAR(tm->vna[6].w,  0, float_err);
+
+  // Vertex normal 8
+  EXPECT_NEAR(tm->vna[7].x,  0, float_err);
+  EXPECT_NEAR(tm->vna[7].y, -1, float_err);
+  EXPECT_NEAR(tm->vna[7].z,  0, float_err);
+  EXPECT_NEAR(tm->vna[7].w,  0, float_err);
+}
+
+//==============================================================================
+TEST(TriangleMesh, cameraTransformationRotation) {
+  auto float_err = 0.0001f;
+
+  auto obj_file = "/Users/harry/dev/elucido/object_files/cube.obj";
+  auto *tm = new TriangleMesh(obj_file);
+
+  auto mat = glm::mat4(1);
+
+  auto rv = glm::vec3(0, 1, 0);
+  auto rm = glm::rotate(glm::mat4(1), glm::radians(90.f), rv);
+  mat = rm * mat;
+
+  mat = glm::inverse(mat);
+  tm->apply_camera_transformation(mat);
+
+  // Vertex 1
+  EXPECT_NEAR(tm->va[0].x,  1, float_err);
+  EXPECT_NEAR(tm->va[0].y, -1, float_err);
+  EXPECT_NEAR(tm->va[0].z,  1, float_err);
+  EXPECT_NEAR(tm->va[0].w,  1, float_err);
+
+  // Vertex 2
+  EXPECT_NEAR(tm->va[1].x, -1, float_err);
+  EXPECT_NEAR(tm->va[1].y, -1, float_err);
+  EXPECT_NEAR(tm->va[1].z,  1, float_err);
+  EXPECT_NEAR(tm->va[1].w,  1, float_err);
+
+  // Vertex 3
+  EXPECT_NEAR(tm->va[2].x, -1, float_err);
+  EXPECT_NEAR(tm->va[2].y, -1, float_err);
+  EXPECT_NEAR(tm->va[2].z, -1, float_err);
+  EXPECT_NEAR(tm->va[2].w,  1, float_err);
+
+  // Vertex 4
+  EXPECT_NEAR(tm->va[3].x,  1, float_err);
+  EXPECT_NEAR(tm->va[3].y, -1, float_err);
+  EXPECT_NEAR(tm->va[3].z, -1, float_err);
+  EXPECT_NEAR(tm->va[3].w,  1, float_err);
+
+  // Vertex 5
+  EXPECT_NEAR(tm->va[4].x,  1, float_err);
+  EXPECT_NEAR(tm->va[4].y,  1, float_err);
+  EXPECT_NEAR(tm->va[4].z,  1, float_err);
+  EXPECT_NEAR(tm->va[4].w,  1, float_err);
+
+  // Vertex 6
+  EXPECT_NEAR(tm->va[5].x, -1, float_err);
+  EXPECT_NEAR(tm->va[5].y,  1, float_err);
+  EXPECT_NEAR(tm->va[5].z,  1, float_err);
+  EXPECT_NEAR(tm->va[5].w,  1, float_err);
+
+  // Vertex 7
+  EXPECT_NEAR(tm->va[6].x, -1, float_err);
+  EXPECT_NEAR(tm->va[6].y,  1, float_err);
+  EXPECT_NEAR(tm->va[6].z, -1, float_err);
+  EXPECT_NEAR(tm->va[6].w,  1, float_err);
+
+  // Vertex 8
+  EXPECT_NEAR(tm->va[7].x,  1, float_err);
+  EXPECT_NEAR(tm->va[7].y,  1, float_err);
+  EXPECT_NEAR(tm->va[7].z, -1, float_err);
+  EXPECT_NEAR(tm->va[7].w,  1, float_err);
+
+  // Vertex normal 1
+  EXPECT_NEAR(tm->vna[0].x,  1, float_err);
+  EXPECT_NEAR(tm->vna[0].y,  0, float_err);
+  EXPECT_NEAR(tm->vna[0].z,  0, float_err);
+  EXPECT_NEAR(tm->vna[0].w,  0, float_err);
+
+  // Vertex normal 2
+  EXPECT_NEAR(tm->vna[1].x,  0, float_err);
+  EXPECT_NEAR(tm->vna[1].y,  0, float_err);
+  EXPECT_NEAR(tm->vna[1].z, -1, float_err);
+  EXPECT_NEAR(tm->vna[1].w,  0, float_err);
+
+  // Vertex normal 3
+  EXPECT_NEAR(tm->vna[2].x, -1, float_err);
+  EXPECT_NEAR(tm->vna[2].y,  0, float_err);
+  EXPECT_NEAR(tm->vna[2].z,  0, float_err);
+  EXPECT_NEAR(tm->vna[2].w,  0, float_err);
+
+  // Vertex normal 4
+  EXPECT_NEAR(tm->vna[3].x, -1, float_err);
+  EXPECT_NEAR(tm->vna[3].y,  0, float_err);
+  EXPECT_NEAR(tm->vna[3].z,  0, float_err);
+  EXPECT_NEAR(tm->vna[3].w,  0, float_err);
+
+  // Vertex normal 5
+  EXPECT_NEAR(tm->vna[4].x,  0, float_err);
+  EXPECT_NEAR(tm->vna[4].y,  0, float_err);
+  EXPECT_NEAR(tm->vna[4].z,  1, float_err);
+  EXPECT_NEAR(tm->vna[4].w,  0, float_err);
+
+  // Vertex normal 6
+  EXPECT_NEAR(tm->vna[5].x,  0, float_err);
+  EXPECT_NEAR(tm->vna[5].y,  0, float_err);
+  EXPECT_NEAR(tm->vna[5].z,  1, float_err);
+  EXPECT_NEAR(tm->vna[5].w,  0, float_err);
+
+  // Vertex normal 7
+  EXPECT_NEAR(tm->vna[6].x,  0, float_err);
+  EXPECT_NEAR(tm->vna[6].y,  1, float_err);
+  EXPECT_NEAR(tm->vna[6].z,  0, float_err);
+  EXPECT_NEAR(tm->vna[6].w,  0, float_err);
+
+  // Vertex normal 8
+  EXPECT_NEAR(tm->vna[7].x,  0, float_err);
+  EXPECT_NEAR(tm->vna[7].y, -1, float_err);
+  EXPECT_NEAR(tm->vna[7].z,  0, float_err);
+  EXPECT_NEAR(tm->vna[7].w,  0, float_err);
+}
+
+//==============================================================================
+TEST(TriangleMesh, cameraTransformationTranslationAndRotation) {
+  auto float_err = 0.0001f;
+
+  auto obj_file = "/Users/harry/dev/elucido/object_files/cube.obj";
+  auto *tm = new TriangleMesh(obj_file);
+
+  auto mat = glm::mat4(1);
+
+  auto v = glm::vec3(0, 1, 0);
+  auto rm = glm::rotate(glm::mat4(1), glm::radians(90.f), v);
+  mat = rm * mat;
+
+  v.x = -1.f; v.y = -1; v.z = -1.f;
+  auto m = glm::translate(glm::mat4(1), v);
+  mat = m * mat;
+
+  mat = glm::inverse(mat);
+  tm->apply_camera_transformation(mat);
+
+  // Vertex 1
+  EXPECT_NEAR(tm->va[0].x,  0, float_err);
+  EXPECT_NEAR(tm->va[0].y,  0, float_err);
+  EXPECT_NEAR(tm->va[0].z,  2, float_err);
+  EXPECT_NEAR(tm->va[0].w,  1, float_err);
+
+  // Vertex 2
+  EXPECT_NEAR(tm->va[1].x, -2, float_err);
+  EXPECT_NEAR(tm->va[1].y,  0, float_err);
+  EXPECT_NEAR(tm->va[1].z,  2, float_err);
+  EXPECT_NEAR(tm->va[1].w,  1, float_err);
+
+  // Vertex 3
+  EXPECT_NEAR(tm->va[2].x, -2, float_err);
+  EXPECT_NEAR(tm->va[2].y,  0, float_err);
+  EXPECT_NEAR(tm->va[2].z,  0, float_err);
+  EXPECT_NEAR(tm->va[2].w,  1, float_err);
+
+  // Vertex 4
+  EXPECT_NEAR(tm->va[3].x,  0, float_err);
+  EXPECT_NEAR(tm->va[3].y,  0, float_err);
+  EXPECT_NEAR(tm->va[3].z,  0, float_err);
+  EXPECT_NEAR(tm->va[3].w,  1, float_err);
+
+  // Vertex 5
+  EXPECT_NEAR(tm->va[4].x,  0, float_err);
+  EXPECT_NEAR(tm->va[4].y,  2, float_err);
+  EXPECT_NEAR(tm->va[4].z,  2, float_err);
+  EXPECT_NEAR(tm->va[4].w,  1, float_err);
+
+  // Vertex 6
+  EXPECT_NEAR(tm->va[5].x, -2, float_err);
+  EXPECT_NEAR(tm->va[5].y,  2, float_err);
+  EXPECT_NEAR(tm->va[5].z,  2, float_err);
+  EXPECT_NEAR(tm->va[5].w,  1, float_err);
+
+  // Vertex 7
+  EXPECT_NEAR(tm->va[6].x, -2, float_err);
+  EXPECT_NEAR(tm->va[6].y,  2, float_err);
+  EXPECT_NEAR(tm->va[6].z,  0, float_err);
+  EXPECT_NEAR(tm->va[6].w,  1, float_err);
+
+  // Vertex 8
+  EXPECT_NEAR(tm->va[7].x,  0, float_err);
+  EXPECT_NEAR(tm->va[7].y,  2, float_err);
+  EXPECT_NEAR(tm->va[7].z,  0, float_err);
+  EXPECT_NEAR(tm->va[7].w,  1, float_err);
+
+  // Vertex normal 1
+  EXPECT_NEAR(tm->vna[0].x,  1, float_err);
+  EXPECT_NEAR(tm->vna[0].y,  0, float_err);
+  EXPECT_NEAR(tm->vna[0].z,  0, float_err);
+  EXPECT_NEAR(tm->vna[0].w,  0, float_err);
+
+  // Vertex normal 2
+  EXPECT_NEAR(tm->vna[1].x,  0, float_err);
+  EXPECT_NEAR(tm->vna[1].y,  0, float_err);
+  EXPECT_NEAR(tm->vna[1].z, -1, float_err);
+  EXPECT_NEAR(tm->vna[1].w,  0, float_err);
+
+  // Vertex normal 3
+  EXPECT_NEAR(tm->vna[2].x, -1, float_err);
+  EXPECT_NEAR(tm->vna[2].y,  0, float_err);
+  EXPECT_NEAR(tm->vna[2].z,  0, float_err);
+  EXPECT_NEAR(tm->vna[2].w,  0, float_err);
+
+  // Vertex normal 4
+  EXPECT_NEAR(tm->vna[3].x, -1, float_err);
+  EXPECT_NEAR(tm->vna[3].y,  0, float_err);
+  EXPECT_NEAR(tm->vna[3].z,  0, float_err);
+  EXPECT_NEAR(tm->vna[3].w,  0, float_err);
+
+  // Vertex normal 5
+  EXPECT_NEAR(tm->vna[4].x,  0, float_err);
+  EXPECT_NEAR(tm->vna[4].y,  0, float_err);
+  EXPECT_NEAR(tm->vna[4].z,  1, float_err);
+  EXPECT_NEAR(tm->vna[4].w,  0, float_err);
+
+  // Vertex normal 6
+  EXPECT_NEAR(tm->vna[5].x,  0, float_err);
+  EXPECT_NEAR(tm->vna[5].y,  0, float_err);
+  EXPECT_NEAR(tm->vna[5].z,  1, float_err);
+  EXPECT_NEAR(tm->vna[5].w,  0, float_err);
+
+  // Vertex normal 7
+  EXPECT_NEAR(tm->vna[6].x,  0, float_err);
+  EXPECT_NEAR(tm->vna[6].y,  1, float_err);
+  EXPECT_NEAR(tm->vna[6].z,  0, float_err);
+  EXPECT_NEAR(tm->vna[6].w,  0, float_err);
+
+  // Vertex normal 8
+  EXPECT_NEAR(tm->vna[7].x,  0, float_err);
+  EXPECT_NEAR(tm->vna[7].y, -1, float_err);
+  EXPECT_NEAR(tm->vna[7].z,  0, float_err);
+  EXPECT_NEAR(tm->vna[7].w,  0, float_err);
+}
+

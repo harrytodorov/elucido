@@ -46,7 +46,7 @@ class AABBox {
   }
   bool intersect(const Ray &r);
   bool intersect(const Ray &r, float_t &tBox) const;
-  AABBox &extend_by(const glm::vec4 &p);
+  void extend_by(const glm::vec4 &p);
 };
 
 #endif //ELUCIDO_BBOX_H

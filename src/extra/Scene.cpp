@@ -31,3 +31,14 @@ bool Scene::load_scene(const scene_description &description) {
   }
   return false;
 }
+
+void Scene::extend_scene_bb() {
+  for (auto const &object : objects) {
+    scene_bb->extend_by(object.second->bb.bounds[0]);
+    scene_bb->extend_by(object.second->bb.bounds[1]);
+  }
+}
+
+void Scene::render_image() {
+
+}

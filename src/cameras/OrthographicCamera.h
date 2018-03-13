@@ -20,9 +20,8 @@ class OrthographicCamera : public Camera {
 //=============================================================================
  public:
   OrthographicCamera() = default;
-
-//=============================================================================
-  explicit OrthographicCamera(const float_t &z) : zf(z) {}
+  OrthographicCamera(const float_t &z) : zf(z) {}
+  ~OrthographicCamera() = default;
 
 //=============================================================================
 // Function declarations, inline functions
@@ -30,6 +29,12 @@ class OrthographicCamera : public Camera {
   render_info render_scene(const std::vector<Object *> &objects,
                            const std::vector<Light *> &lights,
                            ImagePlane &ip);
+  Ray get_ray(const uint32_t &pixel_x,
+                const uint32_t &pixel_y,
+                const float_t &sample_x,
+                const float_t &sample_y,
+                const uint32_t &width,
+                const uint32_t &height);
   inline void set_zoom_factor(const float_t &z) {
     this->zf = z;
   }

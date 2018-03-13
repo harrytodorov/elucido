@@ -124,3 +124,24 @@ render_info PerspectiveCamera::render_scene(const std::vector<Object *> &objects
 
   return ri;
 }
+
+Ray PerspectiveCamera::get_ray(const uint32_t &pixel_x,
+                               const uint32_t &pixel_y,
+                               const float_t &sample_x,
+                               const float_t &sample_y,
+                               const uint32_t &width,
+                               const uint32_t &height) {
+  auto ar = (width * 1.f) / height;
+  auto sf = glm::tan(glm::radians(fov * 0.5f));
+  auto x  = 2.f * ((pixel_x + sample_x) / width) * ar * sf;
+  auto y  = (1.f - 2.f * ((pixel_y + sample_y) / height)) * sf;
+  auto cp = glm::vec4(x, y, lookat.z, 1.f);
+  auto d  = glm::normalize(cp - eye);
+
+  Ray r;
+  r.rt = primary;
+  r.set_orig(eye);
+  r.set_dir(d);
+
+  return r;
+}

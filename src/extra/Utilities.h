@@ -582,6 +582,16 @@ struct material {
   float_t         ior{1.00029f};  // index of refraction
 };
 
+struct ip_sample {
+  glm::vec2 position;
+  glm::vec3 radiance;
+  bool      evaluated;
+  ip_sample() :
+      position(0),
+      radiance(0),
+      evaluated(false) {}
+};
+
 //------------------------------------------------------------------------------
 // FUNCTION DEFINITIONS
 //------------------------------------------------------------------------------

@@ -18,9 +18,8 @@ class PerspectiveCamera : public Camera {
 //=============================================================================
  public:
   PerspectiveCamera() = default;
-
-//=============================================================================
-  explicit PerspectiveCamera(const float_t &f) : fov(f) {}
+  PerspectiveCamera(const float_t &f) : fov(f) {}
+  ~PerspectiveCamera() = default;
 
 //=============================================================================
 // Function declarations, inline functions
@@ -28,6 +27,12 @@ class PerspectiveCamera : public Camera {
   render_info render_scene(const std::vector<Object *> &objects,
                            const std::vector<Light *> &lights,
                            ImagePlane &ip);
+  Ray get_ray(const uint32_t &pixel_x,
+                const uint32_t &pixel_y,
+                const float_t &sample_x,
+                const float_t &sample_y,
+                const uint32_t &width,
+                const uint32_t &height);
   inline void set_fov(const float_t &f) {
     this->fov = f;
   }

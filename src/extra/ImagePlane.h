@@ -19,7 +19,7 @@ class ImagePlane {
   uint32_t hres;       // horizontal image resolution
   uint32_t vres;       // vertical image resolution
   uint32_t ns;         // number of samples per pixel
-  glm::vec3 *fb;        // frame buffer
+  glm::vec3 *fb;       // frame buffer
 
 //=============================================================================
 // Constructors & destructors
@@ -29,7 +29,7 @@ class ImagePlane {
   ImagePlane(const uint32_t &ip_x, const uint32_t &ip_y) {
     hres = ip_x;
     vres = ip_y;
-    fb = new glm::vec3[ip_x * ip_y];
+    fb = new glm::vec3[ip_x*ip_y];
   }
 
 //=============================================================================
