@@ -19,10 +19,11 @@
  */
 uint32_t find_nearest_perfect_sqr(const uint32_t &n);
 
-// Sampling strategies.
 /**
- * Appends n (number_of_samples) 2D positions in the range [0, 1) to the
- * provided sample_positions vector.
+ * Appends n (number_of_samples) 2D random sample positions in the range
+ * [0, 1)x[0,1) to the provided sample_positions vector.
+ * The standard C++ "minstd_rand" random number generator is used to generate
+ * uniformly distributed real (float_t) numbers.
  * All elements of the vector are cleared before.
  * @param number_of_samples:    Number of samples to be generated.
  * @param sample_positions:     Vector of sampled positions to which the
@@ -32,15 +33,37 @@ void generate_random_samples(const uint32_t &number_of_samples,
                              std::vector<glm::vec2> &sample_positions);
 
 /**
- *
- * @param number_of_samples
- * @param sample_positions
+ * Appends floor(sqrt(n))^2 2D stratified jittered sample positions to
+ * the provided sample_positions vector.
+ * Sample positions are within the unit square [0,1)x[0,1).
+ * @param number_of_samples:    Number of samples to be generated.
+ * @param sample_positions:     Vector of sampled positions to which the newly
+ *                              generated samples would be appended.
  */
 void generate_half_jittered_samples(const uint32_t &number_of_samples,
                                     std::vector<glm::vec2> &sample_positions);
 
+/**
+ * Appends n (number_of_samples) n-Rook (shuffled along x-direction) 2D sample
+ * positions to the provided sample_positions vector.
+ * Sample positions are within the unit square [0,1)x[0,1).
+ * @param number_of_samples:    Number of samples to be generated.
+ * @param sample_positions:     Vector of sample positions to which the newly
+ *                              generated samples would be appended.
+ */
 void generate_nrooks_samples(const uint32_t &number_of_samples,
                              std::vector<glm::vec2> &sample_positions);
+
+/**
+ * Appends floor(sqrt(n))^2 2D multi-jittered sample positions to the
+ * provided sample_positions vector.
+ * Sample positions are within the unit square [0,1)x[0,1).
+ * @param number_of_samples:    Number of samples to be generated.
+ * @param sample_positions:     Vector of sample positions to which the
+ *                              newly generated samples would be appended.
+ */
+void generate_multi_jittered_samples(const uint32_t &number_of_samples,
+                                     std::vector<glm::vec2> &sample_positions);
 
 // Filtering strategies.
 glm::vec3 box_filter(const std::vector<std::shared_ptr<ip_sample>> &samples);
