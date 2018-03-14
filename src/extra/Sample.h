@@ -66,10 +66,12 @@ void generate_multi_jittered_samples(const uint32_t &number_of_samples,
                                      std::vector<glm::vec2> &sample_positions);
 
 /**
- * Calculate the weighted radiance for a given set of samples (radiance and
- * position) using the Box filter over the defined (extent).
+ * Calculate the weighted radiance for a given pixel and a set of samples
+ * (radiance and position) using the Box filter over the defined (extent).
+ *
  * pixel_radiance = 1/num_samples * sum_samples(sample.radiance)
  *  ~ for samples within the given extent.
+ *
  * @param samples:  Vector containing a set of evaluated samples.
  * @param x:        The pixel's x position.
  * @param y:        The pixel's y position.
@@ -81,15 +83,46 @@ glm::vec3 box_filter(const std::vector<ip_sample> &samples,
                      const uint32_t &y,
                      const float_t &extent);
 
+/**
+ * Calculate the weighted radiance for a given pixel and a set of samples
+ * (radiance and position) using the Triangle filter over the defined (extent).
+ *
+ * pixel_radiance = 1/sum_samples(sample.weight) *  sample.weight *
+ *                                                  sum_samples(sample.radiance)
+ *  ~ for samples within the given extent.
+ *
+ * @param samples:  Vector containing a set of evaluated samples.
+ * @param x:        The pixel's x position.
+ * @param y:        The pixel's y position.
+ * @param extent:   The extent of the Triangle filter.
+ * @return:         The weighted radiance at the pixel.
+ */
 glm::vec3 triangle_filter(const std::vector<ip_sample> &samples,
                           const uint32_t &x,
                           const uint32_t &y,
                           const float_t &extent);
 
+/**
+ * Calculate the weighted radiance for a given pixel and a set of samples
+ * (radiance and position) using the Gaussian filter over the defined extent.
+ *
+ * pixel_radiance = 1/sum_samples(sample.weight) *  sample.weight *
+ *                                                  sum_samples(sample.radiance)
+ *  ~ for samples within the given extent.
+ *
+ * @param samples:  Vector containing a set of evaluated samples.
+ * @param x:        The pixel's x position.
+ * @param y:        The pixel's y position.
+ * @param extent:   The extent of the Gaussian filter.
+ * @param alpha:    The alpha parameter of the Gaussian filter.
+ * @return:         The weighted radiance at the pixel.
+ */
 glm::vec3 gaussian_filter(const std::vector<ip_sample> &samples,
                           const uint32_t &x,
                           const uint32_t &y,
-                          const float_t &extent);
+                          const float_t &extent,
+                          const float_t &alpha);
+
 glm::vec3 mitchell_filter(const std::vector<ip_sample> &samples,
                           const uint32_t &x,
                           const uint32_t &y,

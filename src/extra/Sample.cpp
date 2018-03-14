@@ -11,6 +11,13 @@ uint32_t find_nearest_perfect_sqr(const uint32_t &n) {
 }
 
 //==============================================================================
+float_t gaussian(const float_t &d,
+                 const float_t &exp_width,
+                 const float_t &alpha) {
+  return glm::max(0.f, glm::exp(-alpha * d*d) - exp_width);
+}
+
+//==============================================================================
 void generate_random_samples(const uint32_t &number_of_samples,
                              std::vector<glm::vec2> &sample_positions) {
   std::random_device rd;
@@ -104,13 +111,13 @@ glm::vec3 box_filter(const std::vector<ip_sample> &samples,
   float_t weighted_sum    = 0.f;
   auto shifted_x          = x + 0.5f;
   auto shifted_y          = y + 0.5f;
-  auto split_extent       = extent / 2.f;
+  auto width              = extent / 2.f;
 
   for (auto const &sample : samples) {
     auto diff_x = glm::abs(sample.position.x - shifted_x);
     auto diff_y = glm::abs(sample.position.y - shifted_y);
 
-    if (diff_x <= split_extent && diff_y <= split_extent) {
+    if (diff_x <= width && diff_y <= width) {
       weighted_radiance += sample.radiance;
       weighted_sum      += 1.f;
     }
@@ -128,16 +135,17 @@ glm::vec3 triangle_filter(const std::vector<ip_sample> &samples,
   float_t weights_sum = 0.f;
   auto shifted_x      = x + 0.5f;
   auto shifted_y      = y + 0.5f;
-  auto split_extent   = extent / 2.f;
+  auto width          = extent / 2.f;
 
   for (auto const &sample : samples) {
     auto diff_x = glm::abs(sample.position.x - shifted_x);
     auto diff_y = glm::abs(sample.position.y - shifted_y);
 
-    if (diff_x <= split_extent && diff_y <= split_extent) {
+    if (diff_x <= width && diff_y <= width) {
       auto weight_x = extent - 2*diff_x;
       auto weight_y = extent - 2*diff_y;
-      auto weight = weight_x*weight_y;
+      auto weight   = weight_x*weight_y;
+
       weighted_radiance += weight*sample.radiance;
       weights_sum += weight;
     }
@@ -150,7 +158,29 @@ glm::vec3 triangle_filter(const std::vector<ip_sample> &samples,
 glm::vec3 gaussian_filter(const std::vector<ip_sample> &samples,
                           const uint32_t &x,
                           const uint32_t &y,
-                          const float_t &extent) {
-  auto filtered_radiance = glm::vec3(0);
+                          const float_t &extent,
+                          const float_t &alpha) {
+  auto weighted_radiance = glm::vec3(0);
+  float_t weights_sum = 0.f;
+  auto shifted_x      = x + 0.5f;
+  auto shifted_y      = y + 0.5f;
+  auto width          = extent / 2.f;
 
+  // This value sets the value of the gaussian to 0, when
+  // it's outside the extent.
+  auto exp_width = glm::exp(-alpha * width*width);
+
+  for (auto const &sample : samples) {
+    auto diff_x = glm::abs(sample.position.x - shifted_x);
+    auto diff_y = glm::abs(sample.position.y - shifted_y);
+
+    auto weight_x = gaussian(diff_x, exp_width, alpha);
+    auto weight_y = gaussian(diff_y, exp_width, alpha);
+    auto weight   = weight_x*weight_y;
+
+    weighted_radiance += weight*sample.radiance;
+    weights_sum       += weight;
+  }
+
+  return weighted_radiance / weights_sum;
 }
