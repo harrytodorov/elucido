@@ -2,7 +2,9 @@
 // Author: Haralambi Todorov <harrytodorov@gmail.com>
 
 #include <gtest/gtest.h>
+#include <memory>
 #include <glm/vec2.hpp>
+#include "glm/ext.hpp"    // glm::to_string
 
 #include "../src/extra/Sample.h"
 
@@ -90,4 +92,51 @@ TEST(Sample, MultiJittered) {
     EXPECT_TRUE((sample.x >= 0.f) && (sample.x <= 1.f));
     EXPECT_TRUE((sample.y >= 0.f) && (sample.y <= 1.f));
   }
+}
+
+//==============================================================================
+TEST(Filter, Box) {
+  ip_sample s1(glm::vec3(0.8f), glm::vec2(1.5f,  5.5f));
+  ip_sample s2(glm::vec3(0.7f), glm::vec2(1.25f, 5.75f));
+  ip_sample s3(glm::vec3(1.f),  glm::vec2(1.75f, 5.75f));
+  ip_sample s4(glm::vec3(0.9f), glm::vec2(1.25f, 5.25f));
+  ip_sample s5(glm::vec3(1.f),  glm::vec2(1.5f,  6.05f));
+
+  std::vector<ip_sample> samples;
+  samples.push_back(s1);
+  samples.push_back(s2);
+  samples.push_back(s3);
+  samples.push_back(s4);
+  samples.push_back(s5);
+
+  float_t extent = 1.f;
+  uint32_t x(1), y(5);
+  glm::vec3 radiance = box_filter(samples, x, y, extent);
+  EXPECT_FLOAT_EQ(radiance.x, 0.85);
+  EXPECT_FLOAT_EQ(radiance.y, 0.85);
+  EXPECT_FLOAT_EQ(radiance.z, 0.85);
+}
+
+//==============================================================================
+TEST(Filter, Triangle) {
+  auto float_err = 0.001;
+  ip_sample s1(glm::vec3(0.8f), glm::vec2(1.5f,  5.5f));
+  ip_sample s2(glm::vec3(0.7f), glm::vec2(1.25f, 5.75f));
+  ip_sample s3(glm::vec3(1.f),  glm::vec2(1.75f, 5.75f));
+  ip_sample s4(glm::vec3(0.9f), glm::vec2(1.25f, 5.25f));
+  ip_sample s5(glm::vec3(1.f),  glm::vec2(1.5f,  6.05f));
+
+  std::vector<ip_sample> samples;
+  samples.push_back(s1);
+  samples.push_back(s2);
+  samples.push_back(s3);
+  samples.push_back(s4);
+  samples.push_back(s5);
+
+  float_t extent = 1.f;
+  uint32_t x(1), y(5);
+  glm::vec3 radiance = triangle_filter(samples, x, y, extent);
+  EXPECT_NEAR(radiance.x, 0.8285, float_err);
+  EXPECT_NEAR(radiance.y, 0.8285, float_err);
+  EXPECT_NEAR(radiance.z, 0.8285, float_err);
 }

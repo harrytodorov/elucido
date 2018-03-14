@@ -467,12 +467,3 @@ void Camera::extend_scene_bb(const std::vector<Object *> &objects) {
     scene_bb.extend_by(object->bb.bounds[1]);
   }
 }
-
-Ray Camera::get_ray(const uint32_t &pixel_x,
-                    const uint32_t &pixel_y,
-                    const float_t &sample_x,
-                    const float_t &sample_y,
-                    const uint32_t &width,
-                    const uint32_t &height) {
-  return Ray();
-}

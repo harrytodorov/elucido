@@ -65,10 +65,37 @@ void generate_nrooks_samples(const uint32_t &number_of_samples,
 void generate_multi_jittered_samples(const uint32_t &number_of_samples,
                                      std::vector<glm::vec2> &sample_positions);
 
-// Filtering strategies.
-glm::vec3 box_filter(const std::vector<std::shared_ptr<ip_sample>> &samples);
-glm::vec3 gaussian_filter(const std::vector<std::shared_ptr<ip_sample>> &samples);
-glm::vec3 tent_filter(const std::vector<std::shared_ptr<ip_sample>> &samples);
-glm::vec3 cubic_spline_filter(const std::vector<std::shared_ptr<ip_sample>> &samples);
+/**
+ * Calculate the weighted radiance for a given set of samples (radiance and
+ * position) using the Box filter over the defined (extent).
+ * pixel_radiance = 1/num_samples * sum_samples(sample.radiance)
+ *  ~ for samples within the given extent.
+ * @param samples:  Vector containing a set of evaluated samples.
+ * @param x:        The pixel's x position.
+ * @param y:        The pixel's y position.
+ * @param extent:   The extent of the Box filter.
+ * @return:         The weighted radiance at the pixel.
+ */
+glm::vec3 box_filter(const std::vector<ip_sample> &samples,
+                     const uint32_t &x,
+                     const uint32_t &y,
+                     const float_t &extent);
 
+glm::vec3 triangle_filter(const std::vector<ip_sample> &samples,
+                          const uint32_t &x,
+                          const uint32_t &y,
+                          const float_t &extent);
+
+glm::vec3 gaussian_filter(const std::vector<ip_sample> &samples,
+                          const uint32_t &x,
+                          const uint32_t &y,
+                          const float_t &extent);
+glm::vec3 mitchell_filter(const std::vector<ip_sample> &samples,
+                          const uint32_t &x,
+                          const uint32_t &y,
+                          const float_t &extent);
+glm::vec3 sinc_filter(const std::vector<ip_sample> &samples,
+                      const uint32_t &x,
+                      const uint32_t &y,
+                      const float_t &extent);
 #endif //ELUCIDO_SAMPLE_H

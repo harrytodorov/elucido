@@ -590,6 +590,15 @@ struct ip_sample {
       position(0),
       radiance(0),
       evaluated(false) {}
+  ip_sample(const glm::vec3 &_radiance) :
+      position(0),
+      radiance(_radiance),
+      evaluated(true) {}
+  ip_sample(const glm::vec3 &_radiance,
+            const glm::vec2 &_position) :
+      position(_position),
+      radiance(_radiance),
+      evaluated(true) {}
 };
 
 //------------------------------------------------------------------------------

@@ -19,6 +19,7 @@
 #include "cameras/OrthographicCamera.h"
 #include "extra/Scene.h"
 #include "extra/Utilities.h"
+#include "extra/Sample.h"
 
 void render_cornell_scene() {
   std::vector<Object *> objects;
@@ -1090,7 +1091,7 @@ void triangle_meshes() {
   lights.push_back(&l2);
 
   /// render scene
-
+  camera->use_acceleration(true);
   // measure rendering time
   std::cout << "Start rendering..." << std::endl;
   auto start_rendering = std::chrono::high_resolution_clock::now();
@@ -1248,7 +1249,6 @@ void monkey() {
   t2.apply_transformations();
   objects.push_back(&t2);
 
-
   // load monkey
   sprintf(fn, "../../object_files/monkey.obj");
   TriangleMesh monkey(mm, true);
@@ -1286,7 +1286,7 @@ void monkey() {
   lights.push_back(&pl1);
 
   /// render scene
-
+  camera->use_acceleration(true);
   // measure rendering time
   std::cout << "Start rendering..." << std::endl;
   auto start_rendering = std::chrono::high_resolution_clock::now();
@@ -1633,6 +1633,7 @@ void dragon() {
   std::vector<Object *> objects;
   std::vector<Light *> lights;
   Camera *camera = new PerspectiveCamera();
+  camera->use_acceleration(true);
   ImagePlane ip = ImagePlane(1280, 720);
   ip.ns = 3;
   char fn[100];
@@ -1758,7 +1759,7 @@ void dragon() {
             << std::endl;
   std::cout << "ratio (isect tests / isect)           : "
             << (1.f * ri.nrpt) / ri.nroi << std::endl;
-  ip.save_to_png("dragon_scene_bg_flag_full_size_01.png");
+  ip.save_to_png("dragon_scene_bg_flag_full_size_02.png");
 }
 
 void spheres_grid() {
@@ -1839,13 +1840,12 @@ void spheres_grid() {
   objects.push_back(&(*s24));
 
 
-//  /// camera transformations
+  /// camera transformations
   camera->rotate(-30.f, Axis::X);
   camera->translate(2.5, Axis::Y);
   camera->translate(0.5f, Axis::Z);
 
   /// rendering
-
 
   // Turn on/off accelerators structure.
   camera->use_acceleration(true);
@@ -1893,7 +1893,7 @@ void triangles_grid() {
   /// Light set-up.
   glm::vec4 lp1(0.5f, 1.5f, 0.f, 1);
 
-  PointLight l1(lp1, white, 50);
+  PointLight l1(lp1, white, 75);
   lights.push_back(&l1);
 
   /// Material set-up.
@@ -1910,11 +1910,12 @@ void triangles_grid() {
   /// Object set-up.
   // Load cube.
   sprintf(fn, "../../object_files/cube.obj");
-  TriangleMesh cube(f, false);
+  TriangleMesh cube(mm, false);
   li = cube.load_mesh(fn);
-  cube.translate(-2, Axis::Z);
+  cube.rotate(15.f, X);
+  cube.rotate(45.f, Y);
+  cube.translate(-5, Axis::Z);
   cube.translate(-1, Axis::Y);
-//  cube.translate(1.5f, Axis::X);
   cube.apply_transformations();
   objects.push_back(&cube);
 
@@ -1954,35 +1955,26 @@ void triangles_grid() {
 }
 
 int main(int argc, char **argv) {
+  uint32_t n = 10;
+  std::vector<glm::vec2> samples;
+  generate_random_samples(n, samples);
+  auto pixel = glm::vec2(12);
 
-  auto v0 = glm::vec4(-1, -1, 0, 1);
-  auto v1 = glm::vec4( 1, -1, 0, 1);
-  auto v2 = glm::vec4( 0,  1, 0, 1);
-  auto *t = new Triangle(v0, v1, v2);
+  std::vector<std::shared_ptr<ip_sample>> ip_samples;
 
-  auto mat = glm::mat4(1);
-
-  auto v = glm::vec3(0, 0, 2);
-  auto tm = glm::translate(glm::mat4(1), v);
-  mat = tm * mat;
-  std::cout << "After translation: " << glm::to_string(mat) << std::endl;
-
-  v.z = 0;
-  v.y = 1;
-  auto rm = glm::rotate(glm::mat4(1), glm::radians(90.f), v);
-  mat = rm * mat;
-  std::cout << "After rotation: " << glm::to_string(mat) << std::endl;
-
-  mat = glm::inverse(mat);
-  std::cout << "Inverse: " << glm::to_string(mat) << std::endl;
-  t->apply_camera_transformation(mat);
-  std::cout << "Transformed vertices:: " << std::endl
-            << "v0: " << glm::to_string(t->v0) << std::endl
-            << "v1: " << glm::to_string(t->v1) << std::endl
-            << "v2: " << glm::to_string(t->v2) << std::endl
-            << "n:  " << glm::to_string(t->n)  << std::endl
-            << std::endl;
-
+  for (auto const &sample : samples) {
+    auto s = ip_sample(glm::vec3(1), 1.7f*sample + pixel);
+    auto s_ptr = std::make_shared<ip_sample>(s);
+    ip_samples.push_back(s_ptr);
+  }
+  auto radiance = triangle_filter(ip_samples,
+                                  12,
+                                  12,
+                                  <#initializer#>);
+  std::cout << "Radiance::" << std::endl
+            << "X: " << radiance.x << std::endl
+            << "Y: " << radiance.y << std::endl
+            << "Z: " << radiance.z << std::endl << std::endl;
 //  if (argc != 2) {
 //    std::cout << "Usage: " << argv[0] << " <scene file>" << std::endl;
 //    exit(1);

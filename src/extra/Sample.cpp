@@ -94,3 +94,63 @@ void generate_multi_jittered_samples(const uint32_t &number_of_samples,
     }
   }
 }
+
+//==============================================================================
+glm::vec3 box_filter(const std::vector<ip_sample> &samples,
+                     const uint32_t &x,
+                     const uint32_t &y,
+                     const float_t &extent) {
+  auto weighted_radiance  = glm::vec3(0);
+  float_t weighted_sum    = 0.f;
+  auto shifted_x          = x + 0.5f;
+  auto shifted_y          = y + 0.5f;
+  auto split_extent       = extent / 2.f;
+
+  for (auto const &sample : samples) {
+    auto diff_x = glm::abs(sample.position.x - shifted_x);
+    auto diff_y = glm::abs(sample.position.y - shifted_y);
+
+    if (diff_x <= split_extent && diff_y <= split_extent) {
+      weighted_radiance += sample.radiance;
+      weighted_sum      += 1.f;
+    }
+  }
+
+  return weighted_radiance / weighted_sum;
+}
+
+//==============================================================================
+glm::vec3 triangle_filter(const std::vector<ip_sample> &samples,
+                          const uint32_t &x,
+                          const uint32_t &y,
+                          const float_t &extent) {
+  auto weighted_radiance = glm::vec3(0);
+  float_t weights_sum = 0.f;
+  auto shifted_x      = x + 0.5f;
+  auto shifted_y      = y + 0.5f;
+  auto split_extent   = extent / 2.f;
+
+  for (auto const &sample : samples) {
+    auto diff_x = glm::abs(sample.position.x - shifted_x);
+    auto diff_y = glm::abs(sample.position.y - shifted_y);
+
+    if (diff_x <= split_extent && diff_y <= split_extent) {
+      auto weight_x = extent - 2*diff_x;
+      auto weight_y = extent - 2*diff_y;
+      auto weight = weight_x*weight_y;
+      weighted_radiance += weight*sample.radiance;
+      weights_sum += weight;
+    }
+  }
+
+  return weighted_radiance / weights_sum;
+}
+
+//==============================================================================
+glm::vec3 gaussian_filter(const std::vector<ip_sample> &samples,
+                          const uint32_t &x,
+                          const uint32_t &y,
+                          const float_t &extent) {
+  auto filtered_radiance = glm::vec3(0);
+
+}
