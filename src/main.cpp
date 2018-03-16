@@ -1955,26 +1955,7 @@ void triangles_grid() {
 }
 
 int main(int argc, char **argv) {
-  uint32_t n = 10;
-  std::vector<glm::vec2> samples;
-  generate_random_samples(n, samples);
-  auto pixel = glm::vec2(12);
-
-  std::vector<std::shared_ptr<ip_sample>> ip_samples;
-
-  for (auto const &sample : samples) {
-    auto s = ip_sample(glm::vec3(1), 1.7f*sample + pixel);
-    auto s_ptr = std::make_shared<ip_sample>(s);
-    ip_samples.push_back(s_ptr);
-  }
-  auto radiance = triangle_filter(ip_samples,
-                                  12,
-                                  12,
-                                  <#initializer#>);
-  std::cout << "Radiance::" << std::endl
-            << "X: " << radiance.x << std::endl
-            << "Y: " << radiance.y << std::endl
-            << "Z: " << radiance.z << std::endl << std::endl;
+  
 //  if (argc != 2) {
 //    std::cout << "Usage: " << argv[0] << " <scene file>" << std::endl;
 //    exit(1);

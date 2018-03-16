@@ -12,6 +12,14 @@ class PerspectiveCamera : public Camera {
   PerspectiveCamera(const float_t &f) : fov(f) {
     sf = glm::tan(glm::radians(fov * 0.5f));
   }
+  PerspectiveCamera(const float_t &f,
+                    const uint32_t &_iw,
+                    const uint32_t &_ih) :
+      Camera(_iw, _ih),
+      fov(f)
+      {
+        sf = glm::tan(glm::radians(fov * 0.5f));
+      }
   ~PerspectiveCamera() = default;
 
   render_info render_scene(const std::vector<Object *> &objects,

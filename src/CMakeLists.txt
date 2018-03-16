@@ -26,7 +26,8 @@ set(ELUCIDO_SOURCE_FILES
         extra/ImagePlane.cpp
         extra/Ray.cpp
         extra/Scene.cpp
-        extra/Sample.cpp)
+        extra/Sample.cpp
+        extra/Renderer.cpp)
 
 # Set header files
 set(ELUCIDO_HEADER_FILES
@@ -47,7 +48,8 @@ set(ELUCIDO_HEADER_FILES
         extra/ImagePlane.h
         extra/Ray.h
         extra/Scene.h
-        extra/Sample.h)
+        extra/Sample.h
+        extra/Renderer.h)
 
 # Create executable
 add_executable(elucido main.cpp ${ELUCIDO_SOURCE_FILES})
