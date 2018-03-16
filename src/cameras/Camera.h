@@ -20,54 +20,49 @@
 #include "../accelerators/Grid.h"
 
 class Camera {
-
-//=============================================================================
-// Data members
-//=============================================================================
- protected:
-  glm::vec4 eye;        // eye / camera position
-  glm::vec4 lookat;     // the point at which the camera looks
-  AABBox scene_bb;      // bounding box for the scene
-  bool use_as;          // Use an accelerators structure.
-  float_t grid_alpha;   // Alpha parameter of the grid accelerators structure.
- private:
-  glm::mat4 vm;         // Camera's view matrix.
-
-//=============================================================================
-// Constructors & destructors
-//=============================================================================
-// - default camera position is at (0, 0, 0) in world space
-// - default camera direction is the negative z-axis (0, 0, -1)
  public:
   Camera() :
       eye(0, 0, 0, 1),
       lookat(0, 0, -1, 1),
       vm(1),
       use_as(true),
-      scene_bb() {}
-
-//=============================================================================
+      iw(480),
+      ih(640),
+      scene_bb() {
+    ar = (iw * 1.f) / ih;
+  }
   Camera(const glm::vec4 &p, const glm::vec4 &d) :
       eye(p),
       lookat(d),
       vm(1),
       use_as(true),
-      scene_bb() {}
-
-//=============================================================================
-Camera(const glm::vec4 &p, const glm::vec4 &d, const bool &as) :
+      iw(480),
+      ih(640),
+      scene_bb() {
+    ar = (iw * 1.f) / ih;
+  }
+  Camera(const glm::vec4 &p, const glm::vec4 &d, const bool &as) :
     eye(p),
     lookat(d),
     vm(1),
     use_as(as),
-    scene_bb() {}
+    iw(480),
+    ih(640),
+    scene_bb() {
+    ar = (iw * 1.f) / ih;
+  }
+  Camera(const uint32_t &iw, const uint32_t &ih) :
+      eye(0, 0, 0, 1),
+      lookat(0, 0, -1, 1),
+      vm(1),
+      use_as(true),
+      iw(iw),
+      ih(ih),
+      scene_bb() {
+    ar = (iw * 1.f) / ih;
+  }
+  virtual ~Camera() = default;
 
-  virtual
-  ~Camera() = default;
-
-//=============================================================================
-// Function declarations, inline functions
-//=============================================================================
   void translate(const float_t &translation,
                  const Axis &translation_axis);
   void rotate(const float_t &rot_angle, const Axis &rotation_axis);
@@ -79,9 +74,7 @@ Camera(const glm::vec4 &p, const glm::vec4 &d, const bool &as) :
   virtual Ray get_ray(const uint32_t &pixel_x,
                         const uint32_t &pixel_y,
                         const float_t &sample_x,
-                        const float_t &sample_y,
-                        const uint32_t &width,
-                        const uint32_t &height) = 0;
+                        const float_t &sample_y) = 0;
 
   virtual render_info render_scene(const std::vector<Object *> &objects,
                                    const std::vector<Light *> &lights,
@@ -116,5 +109,16 @@ Camera(const glm::vec4 &p, const glm::vec4 &d, const bool &as) :
     return incident_direction
         - 2.f * glm::dot(incident_direction, surface_normal) * surface_normal;
   };
+
+ protected:
+  glm::vec4 eye;
+  glm::vec4 lookat;
+  uint32_t  iw;         // Image's height.
+  uint32_t  ih;         // Image's width.
+  float_t   ar;         // Aspect ratio [ width / height ]
+  AABBox    scene_bb;
+  bool      use_as;
+  float_t   grid_alpha;
+  glm::mat4 vm;
 };
 #endif //ELUCIDO_CAMERA_H
