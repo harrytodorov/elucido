@@ -14,6 +14,7 @@
 #include "../accelerators/AccelerationStructure.h"
 
 class Renderer {
+ public:
   explicit Renderer(const std::shared_ptr<AccelerationStructure> _ac,
                     const std::shared_ptr<AABBox> _sbb,
                     std::vector<std::shared_ptr<Object>> _objects,
@@ -41,6 +42,7 @@ class Renderer {
   bool in_shadow(const isect_info &ii,
                  const glm::vec4 &direction,
                  const float_t &light_distance);
+
   /**
    * Calculate the amount of Lambertian.
    *    Lambertian = dot(normal, light_direction)
@@ -49,8 +51,20 @@ class Renderer {
    *                            of the intersection point to a light source.
    * @return:                   The amount of Lambertian reflection.
    */
-  inline float_t labertian_amount(const glm::vec4 &normal,
-                                  const glm::vec3 &light_direction);
+  float_t labertian_amount(const glm::vec4 &normal,
+                           const glm::vec4 &light_direction);
+
+  /**
+   * Reflects the vector "to_reflect" about the normal.
+   * @param normal:     Normal about which the vector would be reflected.
+   * @param to_reflect: Vector to be reflected. It is assumed, that the vector
+   *                    is pointing away from the surface.
+   * @return:           The reflected vector pointing away from the surface.
+   *                    If the vector "to_reflect" is a normal vector, the
+   *                    reflected vector is also normalized by construction.
+   */
+  glm::vec4 reflect(const glm::vec4 &normal,
+                    const glm::vec4 &to_reflect);
 
  protected:
   render_info                             ri;
