@@ -29,5 +29,3 @@ glm::vec4 Renderer::reflect(const glm::vec4 &normal,
   float_t la = labertian_amount(normal, to_reflect);
   return 2.f*la*normal - to_reflect;
 }
-
-

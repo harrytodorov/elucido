@@ -3,7 +3,7 @@
 
 #include "TriangleMesh.h"
 
-//=============================================================================
+//==============================================================================
 loading_info TriangleMesh::load_mesh(const char *f) {
   std::string type;               // type of the object read on the current line
   std::string line;               // one line of the file
@@ -121,7 +121,7 @@ loading_info TriangleMesh::load_mesh(const char *f) {
   return ret;
 }
 
-//=============================================================================
+//==============================================================================
 bool TriangleMesh::triangle_intersect(const Ray &r,
                                       const glm::vec4 &v0,
                                       const glm::vec4 &v1,
@@ -166,7 +166,7 @@ bool TriangleMesh::triangle_intersect(const Ray &r,
   return t > kEpsilon;
 }
 
-//=============================================================================
+//==============================================================================
 bool TriangleMesh::intersect(const Ray &r,
                              const uint32_t &ti,
                              isect_info &i) const {
@@ -193,7 +193,7 @@ bool TriangleMesh::intersect(const Ray &r,
   return intersected;
 }
 
-//=============================================================================
+//==============================================================================
 bool TriangleMesh::intersect(const Ray &r, isect_info &i) const {
   glm::vec4 v0, v1, v2;
   bool intersected{false};
@@ -210,7 +210,7 @@ bool TriangleMesh::intersect(const Ray &r, isect_info &i) const {
   return intersected;
 }
 
-//=============================================================================
+//==============================================================================
 void TriangleMesh::get_surface_properties(isect_info &i) const {
 
   if (in) {
@@ -242,7 +242,7 @@ void TriangleMesh::get_surface_properties(isect_info &i) const {
   }
 }
 
-//=============================================================================
+//==============================================================================
 void TriangleMesh::apply_camera_transformation(const glm::mat4 &ctm) {
   glm::vec4 v, vn;
   bb.reset();
@@ -265,7 +265,7 @@ void TriangleMesh::apply_camera_transformation(const glm::mat4 &ctm) {
   }
 }
 
-//=============================================================================
+//==============================================================================
 void TriangleMesh::apply_transformations() {
   glm::vec4 v, vn;
   bb.reset();
@@ -293,7 +293,7 @@ void TriangleMesh::apply_transformations() {
   mt = glm::mat4(1);
 }
 
-//=============================================================================
+//==============================================================================
 TriangleMesh::TriangleMesh(const TriangleMesh &tm) : Object(tm) {
   this->va = tm.va;
   this->vna = tm.vna;
@@ -305,7 +305,7 @@ TriangleMesh::TriangleMesh(const TriangleMesh &tm) : Object(tm) {
   this->ot = tm.ot;
 }
 
-//=============================================================================
+//==============================================================================
 const AABBox* TriangleMesh::getBoundingBoxForTriangle(const uint32_t &ti) const {
   auto *box = new AABBox();
   glm::vec4 v0, v1, v2;

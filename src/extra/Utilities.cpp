@@ -3,7 +3,7 @@
 
 #include "Utilities.h"
 
-//=============================================================================
+//==============================================================================
 transformation_description create_transformation_desc(
     const std::string &transformation_type,
     const std::string &axes,
@@ -15,7 +15,7 @@ transformation_description create_transformation_desc(
   return td;
 }
 
-//=============================================================================
+//==============================================================================
 bool set_camera_property(
     const std::string &name,
     const std::string &property,
@@ -57,7 +57,7 @@ bool set_camera_property(
   return true;
 }
 
-//=============================================================================
+//==============================================================================
 std::vector<std::string> split_string(
     const std::string &string,
     const char &delim) {
@@ -70,7 +70,7 @@ std::vector<std::string> split_string(
   return values;
 }
 
-//=============================================================================
+//==============================================================================
 bool set_color_property(const std::string &property_value,
                         const std::string &name,
                         std::map<std::string, color_description> &colors) {
@@ -93,7 +93,7 @@ bool set_color_property(const std::string &property_value,
   return true;
 }
 
-//=============================================================================
+//==============================================================================
 bool set_vector_property(const std::string &property_value,
                          const std::string &name,
                          std::map<std::string, vector_description> &vectors) {
@@ -107,7 +107,7 @@ bool set_vector_property(const std::string &property_value,
   return true;
 }
 
-//=============================================================================
+//==============================================================================
 bool set_material_property(const std::string &property,
                            const std::string &property_value,
                            const std::string &name,
@@ -134,7 +134,7 @@ bool set_material_property(const std::string &property,
   return true;
 }
 
-//=============================================================================
+//==============================================================================
 bool set_light_property(const std::string &property,
                         const std::string &property_value,
                         const std::string &name,
@@ -172,7 +172,7 @@ bool set_light_property(const std::string &property,
   return true;
 }
 
-//=============================================================================
+//==============================================================================
 bool set_object_property(const std::string &property,
                          const std::string &property_value,
                          const std::string &name,
@@ -245,7 +245,7 @@ bool set_object_property(const std::string &property,
   return true;
 }
 
-//=============================================================================
+//==============================================================================
 bool set_image_plane_property(const std::string &property,
                               const std::string &property_value,
                               const std::string &name,
@@ -283,7 +283,7 @@ bool set_image_plane_property(const std::string &property,
   return true;
 }
 
-//=============================================================================
+//==============================================================================
 bool set_accel_str_property(const std::string &property,
                             const std::string &property_value,
                             const std::string &name,
@@ -309,7 +309,7 @@ bool set_accel_str_property(const std::string &property,
   return true;
 }
 
-//=============================================================================
+//==============================================================================
 bool set_animation_property(const std::string &property,
                             const std::string &property_value,
                             const std::string &name,
@@ -322,7 +322,7 @@ bool set_animation_property(const std::string &property,
   return true;
 }
 
-//=============================================================================
+//==============================================================================
 std::pair<std::pair<SceneParserStatusCodes, size_t>,
           std::vector<scene_description>>
         read_scene_from_file(const std::string &filename) {
@@ -804,7 +804,7 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
   return {{success, line_number}, result_scenes};
 }
 
-//=============================================================================
+//==============================================================================
 glm::vec3 create_transformation_vector(const Axis &transformation_axes,
                                        const float_t &transformation_amount) {
   glm::vec3 tv(0);
@@ -828,7 +828,7 @@ glm::vec3 create_transformation_vector(const Axis &transformation_axes,
   }
 }
 
-//=============================================================================
+//==============================================================================
 void apply_rotation(const Axis &axis,
                     const float_t &rotation_angle,
                     glm::mat4 &model_transform) {
@@ -840,7 +840,7 @@ void apply_rotation(const Axis &axis,
   model_transform = rm * model_transform;
 }
 
-//=============================================================================
+//==============================================================================
 void apply_translation(const Axis &axis,
                        const float_t &translation_amount,
                        glm::mat4 &model_transform) {
@@ -849,7 +849,7 @@ void apply_translation(const Axis &axis,
   model_transform = tm * model_transform;
 }
 
-//=============================================================================
+//==============================================================================
 void apply_scale(const Axis &axis,
                  const float_t &scale_amount,
                  glm::mat4 &model_transform) {

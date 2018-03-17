@@ -539,7 +539,7 @@ void spheres() {
   std::uniform_real_distribution<float_t>
       srr(0.1f, 1.f);     // define range for sphere's radius
   std::uniform_real_distribution<float_t>
-      cr(0.f, 1.f);       // define range for color values
+      cr(0.f, 1.f);       // define range for col values
   char fn[100];
 
   /// materials set-up
@@ -568,7 +568,7 @@ void spheres() {
     sr = srr(eng);
     (*s).set_radius(sr);
 
-    // randomly choose and assign color
+    // randomly choose and assign col
     r = cr(eng);
     g = cr(eng);
     b = cr(eng);
@@ -646,7 +646,7 @@ void boxes() {
   std::uniform_real_distribution<float_t>
       ors(1.f, 1.5f);     // define range for object's scale
   std::uniform_real_distribution<float_t>
-      orc(0.f, 1.f);      // define range for color values
+      orc(0.f, 1.f);      // define range for col values
 
   /// materials set-up
   material cm;
@@ -695,7 +695,7 @@ void boxes() {
     // apply transformations for the cube
     (*obj_copy).apply_transformations();
 
-    // randomly choose color
+    // randomly choose col
     r = orc(eng);
     g = orc(eng);
     b = orc(eng);
@@ -809,7 +809,7 @@ void test_scene() {
   /// illuminate the scene
   glm::vec4 lp1(-3.f, 0, 0, 1);
   PointLight l1(lp1, 50.f);
-  l1.color = orangish;
+  l1.set_color(orangish);
 
   lights.push_back(&l1);
 
@@ -870,7 +870,7 @@ void triangles() {
   std::uniform_real_distribution<float_t>
       trs(0.3f, 1.f);     // define range for triangle's scale
   std::uniform_real_distribution<float_t>
-      cr(0.f, 1.f);       // define range for color values
+      cr(0.f, 1.f);       // define range for col values
   char fn[100];
 
   /// materials set-up
@@ -897,7 +897,7 @@ void triangles() {
     (*t).translate(trxyp(eng), Axis::X);
     (*t).translate(trxyp(eng), Axis::Y);
 
-    // randomly choose and assign color
+    // randomly choose and assign col
     r = cr(eng);
     g = cr(eng);
     b = cr(eng);
@@ -975,7 +975,7 @@ void triangle_meshes() {
   std::uniform_real_distribution<float_t>
       tms(0.7f, 1.4f);     // define range for mesh's scale
   std::uniform_real_distribution<float_t>
-      cr(0.f, 1.f);       // define range for color values
+      cr(0.f, 1.f);       // define range for col values
   char fn[100];
 
   /// materials set-up
@@ -1046,7 +1046,7 @@ void triangle_meshes() {
     (*tm).translate(tmzp(eng), Axis::Z);
     (*tm).translate(tmxyp(eng), Axis::X);
     (*tm).translate(tmxyp(eng), Axis::Y);
-    // randomly choose and assign color
+    // randomly choose and assign col
     r = cr(eng);
     g = cr(eng);
     b = cr(eng);
@@ -1069,7 +1069,7 @@ void triangle_meshes() {
     (*tm).translate(tmzp(eng), Axis::Z);
     (*tm).translate(tmxyp(eng), Axis::X);
     (*tm).translate(tmxyp(eng), Axis::Y);
-    // randomly choose and assign color
+    // randomly choose and assign col
     r = cr(eng);
     g = cr(eng);
     b = cr(eng);

@@ -4,7 +4,7 @@
 #include "Ray.h"
 #include "../objects/TriangleMesh.h"
 
-//=============================================================================
+//==============================================================================
 bool Ray::trace(const std::vector<Object *> &objects,
                 isect_info &ii,
                 render_info &ri) const {
@@ -60,7 +60,7 @@ bool Ray::trace(const std::vector<Object *> &objects,
   return (ii.ho != nullptr);
 }
 
-//=============================================================================
+//==============================================================================
 void Ray::set_dir(const glm::vec4 &_d) {
   this->d = _d;
   id = 1.f / d;

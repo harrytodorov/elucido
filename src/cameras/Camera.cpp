@@ -3,16 +3,16 @@
 
 #include "Camera.h"
 
-//=============================================================================
+//==============================================================================
 glm::vec3 Camera::cast_ray(const Ray &ray,
                            const std::vector<Light *> &lights,
                            const std::vector<Object *> &objects,
                            const uint32_t &depth,
                            render_info &ri) {
-  // if we've reached the bottom of the recursion tree, we return the background color
+  // if we've reached the bottom of the recursion tree, we return the background col
   if (depth > max_depth) return bgc;
 
-  // hit color
+  // hit col
   glm::vec3 hc(bgc);
 
   // intersection information
@@ -31,7 +31,7 @@ glm::vec3 Camera::cast_ray(const Ray &ray,
     // material of the intersected object
     material mat = ii.ho->om;
 
-    // if we have an intersection we set the background color to 0 for all components; black
+    // if we have an intersection we set the background col to 0 for all components; black
     hc = black;
 
     // for materials with Phong Illumination model
@@ -45,12 +45,11 @@ glm::vec3 Camera::cast_ray(const Ray &ray,
 
       // iterate through all light sources and calculate specular and defuse components
       for (auto &light : lights) {
-        glm::vec4 light_direction(0);
-        glm::vec3 light_intensity(0);
-        float_t light_dist = infinity;
-        float_t visibility(1.f);
+        glm::vec4 light_direction = light->get_direction(ii.ip);
+        float_t light_distance = light->get_distance(ii.ip);
+        glm::vec3 light_intensity = light->color() * light->get_intensity(light_distance);
 
-        light->illuminate(ii.ip, light_direction, light_intensity, light_dist);
+        float_t visibility(1.f);
 
         // compute if the surface point is in shadow
         shadow_ray.rt = shadow;
@@ -60,31 +59,31 @@ glm::vec3 Camera::cast_ray(const Ray &ray,
         shadow_ray.set_orig(ii.ip + ii.ipn * bias);
 
         // for the direction of the shadow ray we take the opposite of the light direction
-        shadow_ray.set_dir(-light_direction);
+        shadow_ray.set_dir(light_direction);
 
         // ignore self-shadows; those would be handled correctly later
         if (shadow_ray.trace(objects, dummy, ri)
-            && dummy.tn < light_dist & dummy.ho != ii.ho) {
+            && dummy.tn < light_distance & dummy.ho != ii.ho) {
           visibility = 0.f;
           continue;
         }
 
         // dot product based on Lambert's cosine law for Lambertian reflectance;
-        lamb_refl = glm::dot(ii.ipn, -light_direction);
+        lamb_refl = glm::dot(ii.ipn, light_direction);
 
         // calculate diffuse component
         diffuse = mat.c * light_intensity * glm::max(0.f, lamb_refl);
 
         // calculate specular component
         glm::vec4 light_reflection =
-            glm::normalize(2.f * lamb_refl * ii.ipn + light_direction);
+            glm::normalize(2.f * lamb_refl * ii.ipn - light_direction);
         float_t
             max_lf_vd = glm::max(0.f, glm::dot(light_reflection, -ray.dir()));
         float_t pow_max_se = glm::pow(max_lf_vd, mat.se);
 
         specular = light_intensity * pow_max_se;
 
-        // add ambient, diffuse and specular to the the hit color
+        // add ambient, diffuse and specular to the the hit col
         hc += visibility
             * (mat.ac * mat.c + mat.dc * diffuse + mat.sc * specular);
       }
@@ -107,18 +106,17 @@ glm::vec3 Camera::cast_ray(const Ray &ray,
 
       // iterate through all light sources and calculate specular
       for (auto &light : lights) {
-        glm::vec4 light_direction(0);
-        glm::vec3 light_intensity(0);
-        float_t light_dist = infinity, lamb_refl(0);
-
-        light->illuminate(ii.ip, light_direction, light_intensity, light_dist);
+        glm::vec4 light_direction = light->get_direction(ii.ip);
+        float_t light_distance = light->get_distance(ii.ip);
+        glm::vec3 light_intensity = light->color() * light->get_intensity(light_distance);
+        float_t lamb_refl(0);
 
         // dot product based on Lambert's cosine law for Lambertian reflectance;
-        lamb_refl = glm::dot(ii.ipn, -light_direction);
+        lamb_refl = glm::dot(ii.ipn, light_direction);
 
         // calculate specular component
         glm::vec4 light_reflection =
-            glm::normalize(2.f * lamb_refl * ii.ipn + light_direction);
+            glm::normalize(2.f * lamb_refl * ii.ipn - light_direction);
         float_t
             max_lf_vd = glm::max(0.f, glm::dot(light_reflection, -ray.dir()));
         float_t pow_max_se = glm::pow(max_lf_vd, mat.se);
@@ -129,7 +127,7 @@ glm::vec3 Camera::cast_ray(const Ray &ray,
       // add specular highlight to the material
       hc += mat.sc * specular;
 
-      // add color to the reflective material
+      // add col to the reflective material
       hc = hc * mat.c;
     }
 
@@ -168,7 +166,7 @@ glm::vec3 Camera::cast_ray(const Ray &ray,
 
       reflection_col = cast_ray(rr, lights, objects, depth + 1, ri);
 
-      // mix reflection & refraction according to Fresnel + add color of the object
+      // mix reflection & refraction according to Fresnel + add col of the object
       hc +=
           (reflectance * reflection_col + (1.f - reflectance) * refraction_col)
               * mat.c;
@@ -178,7 +176,7 @@ glm::vec3 Camera::cast_ray(const Ray &ray,
   return hc;
 }
 
-//=============================================================================
+//==============================================================================
 glm::vec3 Camera::cast_ray(const Ray &ray,
                    const std::vector<Light *> &lights,
                    const std::vector<Object *> &objects,
@@ -205,7 +203,7 @@ glm::vec3 Camera::cast_ray(const Ray &ray,
     // material of the intersected object
     material mat = ii.ho->om;
 
-    // if we have an intersection we set the background color to 0 for all components; black
+    // if we have an intersection we set the background col to 0 for all components; black
     hc = black;
 
     // for materials with Phong Illumination model
@@ -219,12 +217,10 @@ glm::vec3 Camera::cast_ray(const Ray &ray,
 
       // iterate through all light sources and calculate specular and defuse components
       for (auto &light : lights) {
-        glm::vec4 light_direction(0);
-        glm::vec3 light_intensity(0);
-        float_t light_dist = infinity;
+        glm::vec4 light_direction = light->get_direction(ii.ip);
+        float_t light_distance = light->get_distance(ii.ip);
+        glm::vec3 light_intensity = light->color() * light->get_intensity(light_distance);
         float_t visibility(1.f);
-
-        light->illuminate(ii.ip, light_direction, light_intensity, light_dist);
 
         // compute if the surface point is in shadow
         shadow_ray.rt = shadow;
@@ -234,31 +230,31 @@ glm::vec3 Camera::cast_ray(const Ray &ray,
         shadow_ray.set_orig(ii.ip + ii.ipn * bias);
 
         // for the direction of the shadow ray we take the opposite of the light direction
-        shadow_ray.set_dir(-light_direction);
+        shadow_ray.set_dir(light_direction);
 
         // ignore self-shadows; those would be handled correctly later
         if (structure->intersect(shadow_ray, dummy) &&
-            dummy.tn < light_dist & dummy.ho != ii.ho) {
+            dummy.tn < light_distance & dummy.ho != ii.ho) {
           visibility = 0.f;
           continue;
         }
 
         // dot product based on Lambert's cosine law for Lambertian reflectance;
-        lamb_refl = glm::dot(ii.ipn, -light_direction);
+        lamb_refl = glm::dot(ii.ipn, light_direction);
 
         // calculate diffuse component
         diffuse = mat.c * light_intensity * glm::max(0.f, lamb_refl);
 
         // calculate specular component
         glm::vec4 light_reflection =
-            glm::normalize(2.f * lamb_refl * ii.ipn + light_direction);
+            glm::normalize(2.f * lamb_refl * ii.ipn - light_direction);
         float_t
             max_lf_vd = glm::max(0.f, glm::dot(light_reflection, -ray.dir()));
         float_t pow_max_se = glm::pow(max_lf_vd, mat.se);
 
         specular = light_intensity * pow_max_se;
 
-        // add ambient, diffuse and specular to the the hit color
+        // add ambient, diffuse and specular to the the hit col
         hc += visibility
             * (mat.ac * mat.c + mat.dc * diffuse + mat.sc * specular);
       }
@@ -281,18 +277,17 @@ glm::vec3 Camera::cast_ray(const Ray &ray,
 
       // iterate through all light sources and calculate specular
       for (auto &light : lights) {
-        glm::vec4 light_direction(0);
-        glm::vec3 light_intensity(0);
-        float_t light_dist = infinity, lamb_refl(0);
-
-        light->illuminate(ii.ip, light_direction, light_intensity, light_dist);
+        glm::vec4 light_direction = light->get_direction(ii.ip);
+        float_t light_distance = light->get_distance(ii.ip);
+        glm::vec3 light_intensity = light->color() * light->get_intensity(light_distance);
+        float_t lamb_refl(0);
 
         // dot product based on Lambert's cosine law for Lambertian reflectance;
-        lamb_refl = glm::dot(ii.ipn, -light_direction);
+        lamb_refl = glm::dot(ii.ipn, light_direction);
 
         // calculate specular component
         glm::vec4 light_reflection =
-            glm::normalize(2.f * lamb_refl * ii.ipn + light_direction);
+            glm::normalize(2.f * lamb_refl * ii.ipn - light_direction);
         float_t
             max_lf_vd = glm::max(0.f, glm::dot(light_reflection, -ray.dir()));
         float_t pow_max_se = glm::pow(max_lf_vd, mat.se);
@@ -303,7 +298,7 @@ glm::vec3 Camera::cast_ray(const Ray &ray,
       // add specular highlight to the material
       hc += mat.sc * specular;
 
-      // add color to the reflective material
+      // add col to the reflective material
       hc = hc * mat.c;
     }
 
@@ -342,7 +337,7 @@ glm::vec3 Camera::cast_ray(const Ray &ray,
 
       reflection_col = cast_ray(rr, lights, objects, depth + 1, structure, ri);
 
-      // mix reflection & refraction according to Fresnel + add color of the object
+      // mix reflection & refraction according to Fresnel + add col of the object
       hc +=
           (reflectance * reflection_col + (1.f - reflectance) * refraction_col)
               * mat.c;
@@ -352,18 +347,18 @@ glm::vec3 Camera::cast_ray(const Ray &ray,
   return hc;
 }
 
-//=============================================================================
+//==============================================================================
 void Camera::rotate(const float_t &rot_angle, const Axis &rotation_axis) {
   apply_rotation(rotation_axis, rot_angle, vm);
 }
 
-//=============================================================================
+//==============================================================================
 void Camera::translate(const float_t &translation,
                        const Axis &translation_axis) {
   apply_translation(translation_axis, translation, vm);
 }
 
-//=============================================================================
+//==============================================================================
 void Camera::apply_inverse_view_transform(const std::vector<Object *> &objects,
                                           const std::vector<Light *> &lights) {
   glm::mat4 ivm = glm::inverse(vm);
@@ -375,7 +370,7 @@ void Camera::apply_inverse_view_transform(const std::vector<Object *> &objects,
   }
 }
 
-//=============================================================================
+//==============================================================================
 void Camera::reverse_inverse_view_transform(const std::vector<Object *> &objects,
                                             const std::vector<Light *> &lights) {
   for (auto &object : objects) {
@@ -386,7 +381,7 @@ void Camera::reverse_inverse_view_transform(const std::vector<Object *> &objects
   }
 }
 
-//=============================================================================
+//==============================================================================
 glm::vec4 Camera::refract(const glm::vec4 &incident_direction,
                           const glm::vec4 &surface_normal,
                           const float_t &ior) {
@@ -420,7 +415,7 @@ glm::vec4 Camera::refract(const glm::vec4 &incident_direction,
       iorr * incident_direction + sn * (iorr * cosi - cost));
 }
 
-//=============================================================================
+//==============================================================================
 void Camera::compute_fresnel(const glm::vec4 &incident_direction,
                              const glm::vec4 &surface_normal,
                              const float_t &ior,
@@ -460,7 +455,7 @@ void Camera::compute_fresnel(const glm::vec4 &incident_direction,
   }
 }
 
-//=============================================================================
+//==============================================================================
 void Camera::extend_scene_bb(const std::vector<Object *> &objects) {
   for (auto &object : objects) {
     scene_bb.extend_by(object->bb.bounds[0]);

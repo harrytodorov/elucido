@@ -7,37 +7,22 @@
 #include "Light.h"
 
 class DirectionalLight : public Light {
-
-//=============================================================================
-// Data members
-//=============================================================================
  public:
   glm::vec4 d{glm::vec4(0, 0, -1, 0)};
 
-//=============================================================================
-// Constructors & destructors
-//=============================================================================
   DirectionalLight() = default;
-
-//=============================================================================
   DirectionalLight(const glm::vec4 &d, const float_t &i)
       : Light(i), d(glm::normalize(d)) {}
-
-//=============================================================================
   DirectionalLight(const glm::vec4 &d, const glm::vec3 &c, const float_t &i)
       : Light(c, i), d(glm::normalize(d)) {}
-
-//=============================================================================
   ~DirectionalLight() = default;
 
+  glm::vec4 get_direction(const glm::vec4 &surface_point);
+  float_t   get_distance(const glm::vec4 &surface_point);
 
-//=============================================================================
-// Function declarations
-//=============================================================================
-  void illuminate(const glm::vec4 &hit_point,
-                  glm::vec4 &light_dir,
-                  glm::vec3 &light_intensity,
-                  float_t &distance);
+  glm::vec4 direction() { return d; }
+  void      set_direction(const glm::vec4 &_d) { d = _d; }
+
   void apply_camera_transformation(const glm::mat4 &ivm);
   void apply_transformations();
   void translate(const float_t &translation,

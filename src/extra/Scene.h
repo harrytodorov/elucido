@@ -15,10 +15,6 @@
 #include "../cameras/Camera.h"
 
 class Scene {
-
-//=============================================================================
-// Constructors & destructors
-//=============================================================================
  public:
   Scene() :
       name({}),
@@ -30,24 +26,18 @@ class Scene {
       {};
   ~Scene() = default;
 
-//=============================================================================
-// Function declarations
-//=============================================================================
   bool load_scene(const scene_description &description);
   void extend_scene_bb();
   void render_image();
 
-//=============================================================================
-// Data members
-//=============================================================================
  private:
   std::string name;
-  std::map<std::string, Object *> objects;
-  std::map<std::string, Light *> lights;
+  std::map<std::string, std::shared_ptr<Object>> objects;
+  std::map<std::string, std::shared_ptr<Light>> lights;
   std::unique_ptr<ImagePlane> image_plane;
   std::unique_ptr<Camera> camera;
-  std::unique_ptr<AccelerationStructure> acceleration_structure;
-  std::unique_ptr<AABBox> scene_bb;
+  std::shared_ptr<AccelerationStructure> acceleration_structure;
+  std::shared_ptr<AABBox> scene_bb;
 };
 
 #endif //ELUCIDO_ALL_SCENE_H

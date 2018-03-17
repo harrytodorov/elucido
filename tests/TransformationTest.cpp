@@ -14,54 +14,54 @@
 TEST(PointLight, translation) {
   auto pl_pos = glm::vec4(0, 0, 0, 1);
   auto *pl = new PointLight();
-  pl->p = pl_pos;
+  pl->set_position(pl_pos);
 
   pl->translate(3, uniform);
   pl->apply_transformations();
 
-  EXPECT_FLOAT_EQ(pl->p.x, 3.f);
-  EXPECT_FLOAT_EQ(pl->p.y, 3.f);
-  EXPECT_FLOAT_EQ(pl->p.z, 3.f);
-  EXPECT_FLOAT_EQ(pl->p.w, 1.f);
+  EXPECT_FLOAT_EQ(pl->position().x, 3.f);
+  EXPECT_FLOAT_EQ(pl->position().y, 3.f);
+  EXPECT_FLOAT_EQ(pl->position().z, 3.f);
+  EXPECT_FLOAT_EQ(pl->position().w, 1.f);
 }
 
 //==============================================================================
 TEST(PointLight, successiveTranslation) {
   auto pl_pos = glm::vec4(0, 0, 0, 1);
   auto *pl = new PointLight();
-  pl->p = pl_pos;
+  pl->set_position(pl_pos);
 
   pl->translate(3, uniform);
   pl->translate(2, X);
   pl->translate(2, Y);
   pl->apply_transformations();
 
-  EXPECT_FLOAT_EQ(pl->p.x, 5.f);
-  EXPECT_FLOAT_EQ(pl->p.y, 5.f);
-  EXPECT_FLOAT_EQ(pl->p.z, 3.f);
-  EXPECT_FLOAT_EQ(pl->p.w, 1.f);
+  EXPECT_FLOAT_EQ(pl->position().x, 5.f);
+  EXPECT_FLOAT_EQ(pl->position().y, 5.f);
+  EXPECT_FLOAT_EQ(pl->position().z, 3.f);
+  EXPECT_FLOAT_EQ(pl->position().w, 1.f);
 }
 
 //==============================================================================
 TEST(PointLight, rotation) {
   auto pl_pos = glm::vec4(0, 0, 0, 1);
   auto *pl = new PointLight();
-  pl->p = pl_pos;
+  pl->set_position(pl_pos);
 
   pl->rotate(90, Y);
   pl->apply_transformations();
 
-  EXPECT_FLOAT_EQ(pl->p.x, 0.f);
-  EXPECT_FLOAT_EQ(pl->p.y, 0.f);
-  EXPECT_FLOAT_EQ(pl->p.z, 0.f);
-  EXPECT_FLOAT_EQ(pl->p.w, 1.f);
+  EXPECT_FLOAT_EQ(pl->position().x, 0.f);
+  EXPECT_FLOAT_EQ(pl->position().y, 0.f);
+  EXPECT_FLOAT_EQ(pl->position().z, 0.f);
+  EXPECT_FLOAT_EQ(pl->position().w, 1.f);
 }
 
 //==============================================================================
 TEST(PointLight, translationAndRotation) {
   auto pl_pos = glm::vec4(0, 0, 0, 1);
   auto *pl = new PointLight();
-  pl->p = pl_pos;
+  pl->set_position(pl_pos);
 
   pl->translate(3, uniform);
   pl->rotate(90, Y);
@@ -69,43 +69,43 @@ TEST(PointLight, translationAndRotation) {
   pl->translate(2, Y);
   pl->apply_transformations();
 
-  EXPECT_FLOAT_EQ(pl->p.x, 5.f);
-  EXPECT_FLOAT_EQ(pl->p.y, 5.f);
-  EXPECT_FLOAT_EQ(pl->p.z, 3.f);
-  EXPECT_FLOAT_EQ(pl->p.w, 1.f);
+  EXPECT_FLOAT_EQ(pl->position().x, 5.f);
+  EXPECT_FLOAT_EQ(pl->position().y, 5.f);
+  EXPECT_FLOAT_EQ(pl->position().z, 3.f);
+  EXPECT_FLOAT_EQ(pl->position().w, 1.f);
 }
 
 //==============================================================================
 TEST(PointLight, cameraTransformationIdentity) {
   auto pl_pos = glm::vec4(1, 1, -1, 1);
   auto pl = new PointLight();
-  pl->p = pl_pos;
+  pl->set_position(pl_pos);
 
   glm::mat4 im(1);
   im = glm::inverse(im);
   pl->apply_camera_transformation(im);
 
-  EXPECT_FLOAT_EQ(pl->p.x,  1.f);
-  EXPECT_FLOAT_EQ(pl->p.y,  1.f);
-  EXPECT_FLOAT_EQ(pl->p.z, -1.f);
-  EXPECT_FLOAT_EQ(pl->p.w,  1.f);
+  EXPECT_FLOAT_EQ(pl->position().x,  1.f);
+  EXPECT_FLOAT_EQ(pl->position().y,  1.f);
+  EXPECT_FLOAT_EQ(pl->position().z, -1.f);
+  EXPECT_FLOAT_EQ(pl->position().w,  1.f);
 }
 
 //==============================================================================
 TEST(PointLight, cameraTransformationTranslation) {
   auto pl_pos = glm::vec4(0, 0, 1, 1);
   auto *pl = new PointLight();
-  pl->p = pl_pos;
+  pl->set_position(pl_pos);
 
   glm::vec3 tv(0, 0, 3);
   glm::mat4 tm = glm::translate(glm::mat4(1), tv);
   tm = glm::inverse(tm);
   pl->apply_camera_transformation(tm);
 
-  EXPECT_FLOAT_EQ(pl->p.x,  0.f);
-  EXPECT_FLOAT_EQ(pl->p.y,  0.f);
-  EXPECT_FLOAT_EQ(pl->p.z, -2.f);
-  EXPECT_FLOAT_EQ(pl->p.w,  1.f);
+  EXPECT_FLOAT_EQ(pl->position().x,  0.f);
+  EXPECT_FLOAT_EQ(pl->position().y,  0.f);
+  EXPECT_FLOAT_EQ(pl->position().z, -2.f);
+  EXPECT_FLOAT_EQ(pl->position().w,  1.f);
 }
 
 //==============================================================================
@@ -114,17 +114,17 @@ TEST(PointLight, cameraTransformationRotation) {
 
   auto pl_pos = glm::vec4(0, 0, 1, 1);
   auto *pl = new PointLight();
-  pl->p = pl_pos;
+  pl->set_position(pl_pos);
 
   auto rv = glm::vec3(0, 1, 0);
   auto rm = glm::rotate(glm::mat4(1), glm::radians(90.f), rv);
   rm = glm::inverse(rm);
   pl->apply_camera_transformation(rm);
 
-  EXPECT_NEAR(pl->p.x, -1.f, float_err);
-  EXPECT_NEAR(pl->p.y,  0.f, float_err);
-  EXPECT_NEAR(pl->p.z,  0.f, float_err);
-  EXPECT_NEAR(pl->p.w,  1.f, float_err);
+  EXPECT_NEAR(pl->position().x, -1.f, float_err);
+  EXPECT_NEAR(pl->position().y,  0.f, float_err);
+  EXPECT_NEAR(pl->position().z,  0.f, float_err);
+  EXPECT_NEAR(pl->position().w,  1.f, float_err);
 }
 
 //==============================================================================
@@ -133,7 +133,7 @@ TEST(PointLight, cameraTransformationTranslationAndRotation) {
 
   auto pl_pos = glm::vec4(0, 0, 2, 1);
   auto *pl = new PointLight();
-  pl->p = pl_pos;
+  pl->set_position(pl_pos);
 
   auto tv = glm::vec3(0, 0, 3);
   auto mat = glm::translate(glm::mat4(1), tv);
@@ -145,10 +145,10 @@ TEST(PointLight, cameraTransformationTranslationAndRotation) {
   rm = glm::inverse(rm);
   pl->apply_camera_transformation(rm);
 
-  EXPECT_NEAR(pl->p.x, 1.f, float_err);
-  EXPECT_NEAR(pl->p.y, 0.f, float_err);
-  EXPECT_NEAR(pl->p.z, 0.f, float_err);
-  EXPECT_NEAR(pl->p.w, 1.f, float_err);
+  EXPECT_NEAR(pl->position().x, 1.f, float_err);
+  EXPECT_NEAR(pl->position().y, 0.f, float_err);
+  EXPECT_NEAR(pl->position().z, 0.f, float_err);
+  EXPECT_NEAR(pl->position().w, 1.f, float_err);
 }
 
 //==============================================================================
@@ -157,15 +157,15 @@ TEST(DirectionalLight, translation) {
 
   auto dl_dir = glm::vec4(1, 0, 0, 0);
   auto *dl = new DirectionalLight();
-  dl->d = dl_dir;
+  dl->set_direction(dl_dir);
 
   dl->translate(3.f, uniform);
   dl->apply_transformations();
 
-  EXPECT_NEAR(dl->d.x, 1.f, float_err);
-  EXPECT_NEAR(dl->d.y, 0.f, float_err);
-  EXPECT_NEAR(dl->d.z, 0.f, float_err);
-  EXPECT_NEAR(dl->d.w, 0.f, float_err);
+  EXPECT_NEAR(dl->direction().x, 1.f, float_err);
+  EXPECT_NEAR(dl->direction().y, 0.f, float_err);
+  EXPECT_NEAR(dl->direction().z, 0.f, float_err);
+  EXPECT_NEAR(dl->direction().w, 0.f, float_err);
 }
 
 //==============================================================================
@@ -174,15 +174,15 @@ TEST(DirectionalLight, rotation) {
 
   auto dl_dir = glm::vec4(1, 0, 0, 0);
   auto *dl = new DirectionalLight();
-  dl->d = dl_dir;
+  dl->set_direction(dl_dir);
 
   dl->rotate(-90.f, Y);
   dl->apply_transformations();
 
-  EXPECT_NEAR(dl->d.x, 0.f, float_err);
-  EXPECT_NEAR(dl->d.y, 0.f, float_err);
-  EXPECT_NEAR(dl->d.z, 1.f, float_err);
-  EXPECT_NEAR(dl->d.w, 0.f, float_err);
+  EXPECT_NEAR(dl->direction().x, 0.f, float_err);
+  EXPECT_NEAR(dl->direction().y, 0.f, float_err);
+  EXPECT_NEAR(dl->direction().z, 1.f, float_err);
+  EXPECT_NEAR(dl->direction().w, 0.f, float_err);
 }
 
 //==============================================================================
@@ -191,16 +191,16 @@ TEST(DirectionalLight, successiveRotation) {
 
   auto dl_dir = glm::vec4(1, 0, 0, 0);
   auto *dl = new DirectionalLight();
-  dl->d = dl_dir;
+  dl->set_direction(dl_dir);
 
   dl->rotate(-90.f, Y);
   dl->rotate( 90.f, X);
   dl->apply_transformations();
 
-  EXPECT_NEAR(dl->d.x,  0.f, float_err);
-  EXPECT_NEAR(dl->d.y, -1.f, float_err);
-  EXPECT_NEAR(dl->d.z,  0.f, float_err);
-  EXPECT_NEAR(dl->d.w,  0.f, float_err);
+  EXPECT_NEAR(dl->direction().x,  0.f, float_err);
+  EXPECT_NEAR(dl->direction().y, -1.f, float_err);
+  EXPECT_NEAR(dl->direction().z,  0.f, float_err);
+  EXPECT_NEAR(dl->direction().w,  0.f, float_err);
 }
 
 //==============================================================================
@@ -209,16 +209,16 @@ TEST(DirectionalLight, translationAndRotation) {
 
   auto dl_dir = glm::vec4(1, 0, 0, 0);
   auto *dl = new DirectionalLight();
-  dl->d = dl_dir;
+  dl->set_direction(dl_dir);
 
   dl->rotate(90.f, Y);
   dl->translate(3, uniform);
   dl->apply_transformations();
 
-  EXPECT_NEAR(dl->d.x,  0.f, float_err);
-  EXPECT_NEAR(dl->d.y,  0.f, float_err);
-  EXPECT_NEAR(dl->d.z, -1.f, float_err);
-  EXPECT_NEAR(dl->d.w,  0.f, float_err);
+  EXPECT_NEAR(dl->direction().x,  0.f, float_err);
+  EXPECT_NEAR(dl->direction().y,  0.f, float_err);
+  EXPECT_NEAR(dl->direction().z, -1.f, float_err);
+  EXPECT_NEAR(dl->direction().w,  0.f, float_err);
 }
 
 //==============================================================================
@@ -227,16 +227,16 @@ TEST(DirectionalLight, cameraTransforamtionIdentity) {
 
   auto dl_dir = glm::vec4(1, 0, 0, 0);
   auto *dl = new DirectionalLight();
-  dl->d = dl_dir;
+  dl->set_direction(dl_dir);
 
   glm::mat4 im(1);
   im = glm::inverse(im);
   dl->apply_camera_transformation(im);
 
-  EXPECT_NEAR(dl->d.x, 1.f, float_err);
-  EXPECT_NEAR(dl->d.y, 0.f, float_err);
-  EXPECT_NEAR(dl->d.z, 0.f, float_err);
-  EXPECT_NEAR(dl->d.w, 0.f, float_err);
+  EXPECT_NEAR(dl->direction().x, 1.f, float_err);
+  EXPECT_NEAR(dl->direction().y, 0.f, float_err);
+  EXPECT_NEAR(dl->direction().z, 0.f, float_err);
+  EXPECT_NEAR(dl->direction().w, 0.f, float_err);
 }
 
 //==============================================================================
@@ -245,17 +245,17 @@ TEST(DirectionalLight, cameraTransforamtionTranslation) {
 
   auto dl_dir = glm::vec4(1, 0, 0, 0);
   auto *dl = new DirectionalLight();
-  dl->d = dl_dir;
+  dl->set_direction(dl_dir);
 
   auto tv = glm::vec3(3);
   auto mat = glm::translate(glm::mat4(1), tv);
   mat = glm::inverse(mat);
   dl->apply_camera_transformation(mat);
 
-  EXPECT_NEAR(dl->d.x, 1.f, float_err);
-  EXPECT_NEAR(dl->d.y, 0.f, float_err);
-  EXPECT_NEAR(dl->d.z, 0.f, float_err);
-  EXPECT_NEAR(dl->d.w, 0.f, float_err);
+  EXPECT_NEAR(dl->direction().x, 1.f, float_err);
+  EXPECT_NEAR(dl->direction().y, 0.f, float_err);
+  EXPECT_NEAR(dl->direction().z, 0.f, float_err);
+  EXPECT_NEAR(dl->direction().w, 0.f, float_err);
 }
 
 //==============================================================================
@@ -264,17 +264,17 @@ TEST(DirectionalLight, cameraTransforamtionRotation) {
 
   auto dl_dir = glm::vec4(0, 0, 1, 0);
   auto *dl = new DirectionalLight();
-  dl->d = dl_dir;
+  dl->set_direction(dl_dir);
 
   auto rv = glm::vec3(0, 1, 0);
   auto mat = glm::rotate(glm::mat4(1), glm::radians(90.f), rv);
   mat = glm::inverse(mat);
   dl->apply_camera_transformation(mat);
 
-  EXPECT_NEAR(dl->d.x, -1.f, float_err);
-  EXPECT_NEAR(dl->d.y,  0.f, float_err);
-  EXPECT_NEAR(dl->d.z,  0.f, float_err);
-  EXPECT_NEAR(dl->d.w,  0.f, float_err);
+  EXPECT_NEAR(dl->direction().x, -1.f, float_err);
+  EXPECT_NEAR(dl->direction().y,  0.f, float_err);
+  EXPECT_NEAR(dl->direction().z,  0.f, float_err);
+  EXPECT_NEAR(dl->direction().w,  0.f, float_err);
 }
 
 //==============================================================================
@@ -283,7 +283,7 @@ TEST(DirectionalLight, cameraTransforamtionTranslationAndRotation) {
 
   auto dl_dir = glm::vec4(0, 0, 1, 0);
   auto *dl = new DirectionalLight();
-  dl->d = dl_dir;
+  dl->set_direction(dl_dir);
 
   glm::mat4 mat(1);
 
@@ -298,10 +298,10 @@ TEST(DirectionalLight, cameraTransforamtionTranslationAndRotation) {
   mat = glm::inverse(mat);
   dl->apply_camera_transformation(mat);
 
-  EXPECT_NEAR(dl->d.x, -1.f, float_err);
-  EXPECT_NEAR(dl->d.y,  0.f, float_err);
-  EXPECT_NEAR(dl->d.z,  0.f, float_err);
-  EXPECT_NEAR(dl->d.w,  0.f, float_err);
+  EXPECT_NEAR(dl->direction().x, -1.f, float_err);
+  EXPECT_NEAR(dl->direction().y,  0.f, float_err);
+  EXPECT_NEAR(dl->direction().z,  0.f, float_err);
+  EXPECT_NEAR(dl->direction().w,  0.f, float_err);
 }
 
 //==============================================================================

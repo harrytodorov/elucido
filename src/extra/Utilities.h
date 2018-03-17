@@ -25,11 +25,11 @@ class Object;
 const float_t kEpsilon = glm::epsilon<float_t>();               // epsilon value; used to deal with some edge cases
 const float_t infinity = std::numeric_limits<float_t>::max();   // infinity value
 
-const glm::vec3 red(1.f, 0, 0);                                 // red color
-const glm::vec3 green(0, 1.f, 0);                               // green color
-const glm::vec3 white(1);                                       // white color
-const glm::vec3 black(0);                                       // black color
-const glm::vec3 bluish(0.357f, 0.439f, 0.569f);                 // bluish color
+const glm::vec3 red(1.f, 0, 0);                                 // red col
+const glm::vec3 green(0, 1.f, 0);                               // green col
+const glm::vec3 white(1);                                       // white col
+const glm::vec3 black(0);                                       // black col
+const glm::vec3 bluish(0.357f, 0.439f, 0.569f);                 // bluish col
 const glm::vec3 deadgold(0.647f, 0.604f, 0.486f);
 const glm::vec3 violet(0.573f, 0.384f, 0.757f);
 const glm::vec3 orangish(0.929f, 0.615f, 0.306f);
@@ -43,7 +43,7 @@ const glm::vec3 bg_green(0.230f, 0.656f, 0.320f);               // Bulgaria's
 
 const float_t bias = 0.0001;            // shadow bias is used for avoiding self-shadows
 const uint32_t max_depth = 5;           // maximum depth of recursion
-const glm::vec3 bgc(lightslategray);    // background color
+const glm::vec3 bgc(lightslategray);    // background col
 
 const std::string vertex("v");
 const std::string vertex_normal("vn");
@@ -113,7 +113,7 @@ enum SceneThings {
 };
 const std::map<std::string, SceneThings> AVAILABLE_THINGS = {
     {"camera",                  camera_d},
-    {"color",                   color_d},
+    {"col",                   color_d},
     {"vector",                  vector_d},
     {"material",                material_d},
     {"light",                   light_d},
@@ -189,7 +189,7 @@ const std::map<std::string, MaterialProperty> MATERIAL_PROPERTIES_MAP = {
     {"spec_exp",    spec_exp},
     {"refl_ind",    refl_ind},
     {"ior",         ior},
-    {"color",       mat_color},
+    {"col",       mat_color},
     {"type",        mat_type}
 };
 
@@ -219,7 +219,7 @@ const std::map<std::string, LightProperty> LIGHT_PROPERTIES_MAP = {
     {"position",  position},
     {"direction", direction},
     {"intensity", intensity},
-    {"color",     light_color},
+    {"col",     light_color},
     {"type",      light_type}
 };
 
@@ -572,7 +572,7 @@ struct grid_info {
 };
 
 struct material {
-  glm::vec3       c{white};       // material's color
+  glm::vec3       c{white};       // material's col
   MaterialType    mt{pm};         // material's type (see MaterialType enum)
   float_t         ac{0.2f};       // ambient constant
   float_t         dc{0.8f};       // diffuse constant

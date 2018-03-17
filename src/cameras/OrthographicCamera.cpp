@@ -3,7 +3,7 @@
 
 #include "OrthographicCamera.h"
 
-//=============================================================================
+//==============================================================================
 render_info OrthographicCamera::render_scene(const std::vector<Object *> &objects,
                                              const std::vector<Light *> &lights,
                                              ImagePlane &ip) {
@@ -11,7 +11,7 @@ render_info OrthographicCamera::render_scene(const std::vector<Object *> &object
   float_t curr_y;
   float_t ar;                                     // image plane's aspect ratio
   Ray ray;
-  glm::vec3 pc;                                     // pixel color
+  glm::vec3 pc;                                     // pixel col
   render_info ri;                                     // rendering information
   std::random_device
       rd;                                     // obtain a random number from hardware
@@ -67,7 +67,7 @@ render_info OrthographicCamera::render_scene(const std::vector<Object *> &object
   for (int r = 0; r < ip.vres; r++) {
     for (int c = 0; c < ip.hres; c++) {
 
-      // set color for pixel black before collecting color at sample points
+      // set col for pixel black before collecting col at sample points
       pc = black;
 
       // use half-jittered sampling to reduce aliasing artifacts
@@ -89,11 +89,11 @@ render_info OrthographicCamera::render_scene(const std::vector<Object *> &object
           ray.set_orig(glm::vec4(curr_x, curr_y, 0.f, 1.f));
 
           if (use_as) {
-            // cast a ray into the scene and get the color value for it
+            // cast a ray into the scene and get the col value for it
             // with accelerators structure
             pc += cast_ray(ray, lights, objects, 0, as, ri);
           } else {
-            // cast a ray into the scene and get the color value for it
+            // cast a ray into the scene and get the col value for it
             // without accelerators structure
             pc += cast_ray(ray, lights, objects, 0, ri);
           }

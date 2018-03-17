@@ -477,7 +477,7 @@ TEST(SceneParser, exhaustiveSceneCreation) {
   EXPECT_FLOAT_EQ(m_prop[spec_exp], 1.5f);
   EXPECT_FLOAT_EQ(m_prop[spec_const], 0.15f);
 
-  // Material color; Color green.
+  // Material col; Color green.
   auto col_g = obj_s1[0].material->color;
   EXPECT_STREQ(col_g->name.c_str(), "green");
   EXPECT_EQ(col_g->r, 0);

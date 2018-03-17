@@ -4,7 +4,7 @@
 #include "AABBox.h"
 #include "../extra/Ray.h"
 
-//=============================================================================
+//==============================================================================
 void AABBox::extend_by(const glm::vec4 &p) {
   // check min bound
   if (p.x < bounds[0].x) bounds[0].x = p.x;
@@ -17,7 +17,7 @@ void AABBox::extend_by(const glm::vec4 &p) {
   if (p.z > bounds[1].z) bounds[1].z = p.z;
 }
 
-//=============================================================================
+//==============================================================================
 bool AABBox::intersect(const Ray &r) {
   float_t tmin, tmax, tymin, tymax, tzmin, tzmax;
 
@@ -42,7 +42,7 @@ bool AABBox::intersect(const Ray &r) {
   return !((tmin > tzmax) || (tzmin > tmax));
 }
 
-//=============================================================================
+//==============================================================================
 bool AABBox::intersect(const Ray &r, float_t &tBox) const {
   float_t tmin, tmax, tymin, tymax, tzmin, tzmax;
 

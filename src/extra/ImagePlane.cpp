@@ -4,7 +4,7 @@
 #include "ImagePlane.h"
 #include <glm/exponential.hpp>
 
-//=============================================================================
+//==============================================================================
 void ImagePlane::save_to_ppm(const char *fn) {
   // Save result to a PPM image
   std::ofstream ri(fn, std::ios::out | std::ios::binary);
@@ -18,13 +18,13 @@ void ImagePlane::save_to_ppm(const char *fn) {
   ri.close();
 }
 
-//=============================================================================
+//==============================================================================
 void ImagePlane::save_to_png(const char *fn) {
   png::image<png::rgb_pixel> ri(hres, vres);
 
   for (size_t y = 0; y < vres; ++y) {
     for (size_t x = 0; x < hres; ++x) {
-      // color at current pixel in the framebuffer
+      // col at current pixel in the framebuffer
       glm::vec3 cacp = fb[y * hres + x];
 
       // convert float value of pixel in a png::byte [0, 255]
@@ -32,7 +32,7 @@ void ImagePlane::save_to_png(const char *fn) {
       auto g = (unsigned char) (255 * encode_gamma(cacp.g));
       auto b = (unsigned char) (255 * encode_gamma(cacp.b));
 
-      // assign color values to image
+      // assign col values to image
       ri[y][x] = png::rgb_pixel(r, g, b);
     }
   }
@@ -41,7 +41,7 @@ void ImagePlane::save_to_png(const char *fn) {
   ri.write(fn);
 }
 
-//=============================================================================
+//==============================================================================
 float_t ImagePlane::encode_gamma(const float_t &c) {
   if (c <= 0.0031308f) return 12.92f * c;
   return 1.055f * glm::pow(c, 0.4166667f) - 0.055f;

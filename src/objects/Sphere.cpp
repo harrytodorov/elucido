@@ -3,7 +3,7 @@
 
 #include "Sphere.h"
 
-//=============================================================================
+//==============================================================================
 bool Sphere::intersect(const Ray &r, isect_info &i) const {
   // variable to hold distance between ray's origin and intersection point(s)
   float_t t;
@@ -46,26 +46,26 @@ bool Sphere::intersect(const Ray &r, isect_info &i) const {
   return true;
 }
 
-//=============================================================================
+//==============================================================================
 void Sphere::get_surface_properties(isect_info &i) const {
   // the sphere's normal is the normalized vector between the hit point and
   // the sphere's center
   i.ipn = glm::normalize(i.ip - c);
 }
 
-//=============================================================================
+//==============================================================================
 void Sphere::apply_camera_transformation(const glm::mat4 &ivm) {
   c = ivm * c;
   reshape_bb();
 }
 
-//=============================================================================
+//==============================================================================
 void Sphere::rotate(const float_t &angle_of_rotation,
                     const Axis &axes_of_rotation) {
   // Rotation does not effect implicit sphere.
 }
 
-//=============================================================================
+//==============================================================================
 void Sphere::scale(const float_t &scaling_factor,
                    const Axis &axes_of_scale) {
   if (axes_of_scale != uniform) {
@@ -76,20 +76,20 @@ void Sphere::scale(const float_t &scaling_factor,
   set_radius(r * scaling_factor);
 }
 
-//=============================================================================
+//==============================================================================
 void Sphere::set_radius(const float_t &r) {
   this->r = r;
   this->r2 = powf(r, 2.f);
   reshape_bb();
 }
 
-//=============================================================================
+//==============================================================================
 void Sphere::set_center(const glm::vec4 &p) {
   this->c = p;
   reshape_bb();
 }
 
-//=============================================================================
+//==============================================================================
 void Sphere::apply_transformations() {
   c = mt * c;
   reshape_bb();

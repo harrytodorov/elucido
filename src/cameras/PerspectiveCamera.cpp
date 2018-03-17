@@ -3,7 +3,7 @@
 
 #include "PerspectiveCamera.h"
 
-//=============================================================================
+//==============================================================================
 render_info PerspectiveCamera::render_scene(const std::vector<Object *> &objects,
                                             const std::vector<Light *> &lights,
                                             ImagePlane &ip) {
@@ -13,7 +13,7 @@ render_info PerspectiveCamera::render_scene(const std::vector<Object *> &objects
   float_t
       sf;                                     // scaling factor obtained by the tan(fov/2)
   Ray ray;
-  glm::vec3 pc;                                     // pixel color
+  glm::vec3 pc;                                     // pixel col
   glm::vec4 cp;
   render_info ri;                                     // rendering information
   std::random_device
@@ -73,7 +73,7 @@ render_info PerspectiveCamera::render_scene(const std::vector<Object *> &objects
   for (int r = 0; r < ip.vres; r++) {
     for (int c = 0; c < ip.hres; c++) {
 
-      // set color for pixel black before collecting color at sample points
+      // set col for pixel black before collecting col at sample points
       pc = black;
 
       // use half-jittered sampling to reduce aliasing artifacts
@@ -97,11 +97,11 @@ render_info PerspectiveCamera::render_scene(const std::vector<Object *> &objects
           ray.set_dir(glm::normalize(cp - eye));
 
           if (use_as) {
-            // cast a ray into the scene and get the color value for it
+            // cast a ray into the scene and get the col value for it
             // with accelerators structure
             pc += cast_ray(ray, lights, objects, 0, as, ri);
           } else {
-            // cast a ray into the scene and get the color value for it
+            // cast a ray into the scene and get the col value for it
             // without accelerators structure
             pc += cast_ray(ray, lights, objects, 0, ri);
           }

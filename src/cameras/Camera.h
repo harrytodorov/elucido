@@ -99,6 +99,7 @@ class Camera {
                      const AccelerationStructure *structure,
                      render_info &ri);
 
+
   inline void use_acceleration(const bool &as, const float_t &ga = 3) {
     this->use_as = as;
     this->grid_alpha = ga;

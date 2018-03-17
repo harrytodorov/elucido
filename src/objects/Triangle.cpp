@@ -3,7 +3,7 @@
 
 #include "Triangle.h"
 
-//=============================================================================
+//==============================================================================
 bool Triangle::intersect(const Ray &r, isect_info &i) const {
 
   // check if ray is parallel to triangle; compute the dot product
@@ -59,12 +59,12 @@ bool Triangle::intersect(const Ray &r, isect_info &i) const {
   return true;
 }
 
-//=============================================================================
+//==============================================================================
 void Triangle::get_surface_properties(isect_info &i) const {
   i.ipn = n;
 }
 
-//=============================================================================
+//==============================================================================
 void Triangle::apply_camera_transformation(const glm::mat4 &ivm) {
   v0 = ivm * v0;
   v1 = ivm * v1;
@@ -78,7 +78,7 @@ void Triangle::apply_camera_transformation(const glm::mat4 &ivm) {
   n = glm::normalize(n);
 }
 
-//=============================================================================
+//==============================================================================
 void Triangle::apply_transformations() {
   v0 = mt * v0;
   v1 = mt * v1;
