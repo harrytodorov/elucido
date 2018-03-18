@@ -12,7 +12,8 @@ set(ELUCIDO_TEST_SOURCE_FILES
         TransformationTest.cpp
         SampleTest.cpp
         CameraTest.cpp
-        RendererTest.cpp)
+        RendererTest.cpp
+        LightTest.cpp)
 
 # Create tests executable
 add_executable(elucido_test TestMain.cpp ${ELUCIDO_TEST_SOURCE_FILES})

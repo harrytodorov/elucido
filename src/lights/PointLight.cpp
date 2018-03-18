@@ -1,6 +1,8 @@
 // Copyright 2017, University of Freiburg.
 // Author: Haralambi Todorov <harrytodorov@gmail.com>
 
+#include <glm/glm.hpp>
+
 #include "PointLight.h"
 
 //==============================================================================
@@ -41,7 +43,7 @@ glm::vec4 PointLight::get_direction(const glm::vec4 &surface_point) {
 //==============================================================================
 float_t PointLight::get_distance(const glm::vec4 &surface_point) {
   auto distance_vector = p - surface_point;
-  auto distance = glm::dot(distance_vector, distance_vector);
+  auto distance = glm::length(distance_vector);
   return static_cast<float_t>(distance);
 }
 
