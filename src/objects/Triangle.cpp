@@ -60,6 +60,11 @@ bool Triangle::intersect(const Ray &r, isect_info &i) const {
 }
 
 //==============================================================================
+bool Triangle::shadow_intersect(const Ray &r) const {
+  return false;
+}
+
+//==============================================================================
 void Triangle::get_surface_properties(isect_info &i) const {
   i.ipn = n;
 }

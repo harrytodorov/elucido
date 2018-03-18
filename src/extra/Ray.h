@@ -32,10 +32,10 @@ class Ray {
   inline const uint32_t *sign() const { return this->s; }
 
  protected:
-  glm::vec4 o;          // the origin point of the ray
-  glm::vec4 d;          // the direction of the ray
-  glm::vec4 id;         // the inverse of the ray direction,
-  uint32_t s[3]{};      // the sign of the ray direction,
+  glm::vec4 o{0.f};                   // the origin point of the ray
+  glm::vec4 d{0.f,  0.f, -1.f, 0.f};  // the direction of the ray
+  glm::vec4 id{0.f, 0.f,  1.f, 0.f};; // the inverse of the ray direction,
+  uint32_t s[3]{};                    // the sign of the ray direction,
 };
 
 #endif //ELUCIDO_RAY_H

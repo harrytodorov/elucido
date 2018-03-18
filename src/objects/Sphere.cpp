@@ -40,16 +40,14 @@ bool Sphere::intersect(const Ray &r, isect_info &i) const {
 
   i.tn = t;
   i.ip = r.orig() + t * r.dir();
-  i.ti = static_cast<uint32_t>(-1);
+  i.ipn = glm::normalize(i.ip - c);
 
   return true;
 }
 
 //==============================================================================
-void Sphere::get_surface_properties(isect_info &i) const {
-  // the sphere's normal is the normalized vector between the hit point and
-  // the sphere's center
-  i.ipn = glm::normalize(i.ip - c);
+bool Sphere::shadow_intersect(const Ray &r) const {
+  return false;
 }
 
 //==============================================================================

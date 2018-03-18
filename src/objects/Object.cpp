@@ -28,3 +28,6 @@ void Object::scale(const float_t &scaling_factor,
                    const Axis &scale_axis) {
   apply_scale(scale_axis, scaling_factor, mt);
 }
+void Object::get_surface_properties(isect_info &i) const {
+  // TODO: To be removed.
+}

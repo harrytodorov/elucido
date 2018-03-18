@@ -1954,8 +1954,8 @@
 //}
 
 int main(int argc, char **argv) {
-  auto s = new Sphere();
-  std::cout << "Center: " << glm::to_string(s->center()) << std::endl;
+  auto ii = isect_info();
+  
 //  if (argc != 2) {
 //    std::cout << "Usage: " << argv[0] << " <scene file>" << std::endl;
 //    exit(1);

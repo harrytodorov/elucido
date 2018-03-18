@@ -55,6 +55,7 @@ class TriangleMesh : public Object {
 //==============================================================================
   bool intersect(const Ray &r, isect_info &i) const;
   bool intersect(const Ray &r, const uint32_t &ti, isect_info &i) const;
+  bool shadow_intersect(const Ray &r) const;
   bool triangle_intersect(const Ray &r,
                           const glm::vec4 &v0,
                           const glm::vec4 &v1,

@@ -167,6 +167,11 @@ bool TriangleMesh::triangle_intersect(const Ray &r,
 }
 
 //==============================================================================
+bool TriangleMesh::shadow_intersect(const Ray &r) const {
+  return false;
+}
+
+//==============================================================================
 bool TriangleMesh::intersect(const Ray &r,
                              const uint32_t &ti,
                              isect_info &i) const {
