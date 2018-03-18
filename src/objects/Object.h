@@ -27,37 +27,26 @@
 
 class Object {
  public:
-//==============================================================================
-// Data members
-//==============================================================================
-  material om;
-  AABBox bb;
-  ObjectType ot;
-
-
-//==============================================================================
-// Constructors & destructors
-//==============================================================================
   Object() : om(material()),
              mt(glm::mat4(1)),
              bb(AABBox()),
              ot(not_set_ot) {}
-
-//==============================================================================
   Object(const material &m) : om(m),
                               mt(glm::mat4(1)),
                               bb(AABBox()),
                               ot(not_set_ot) {}
-
-//==============================================================================
   Object(const Object &o);
-
-//==============================================================================
   virtual ~Object() {}
 
-//==============================================================================
-// Function declarations
-//==============================================================================
+  inline material const& material() const { return this->om; }
+  inline void            set_material(const struct material &_m) { om = _m; }
+
+  inline AABBox const& bounding_box() const { return this->bb; }
+  inline void          set_bounding_box(const AABBox &_bb) { bb = _bb; }
+
+  inline ObjectType const& object_type() const { return this->ot; }
+  inline void              set_object_type(const ObjectType &_ot) { ot = _ot; }
+
   virtual bool intersect(const Ray &r, isect_info &i) const = 0;
   virtual void get_surface_properties(isect_info &i) const = 0;
   virtual void apply_camera_transformation(const glm::mat4 &ctm) = 0;
@@ -69,7 +58,10 @@ class Object {
   void scale(const float_t &scaling_factor,
              const Axis &scale_axis);
  protected:
-  glm::mat4 mt;
+  struct material   om;
+  AABBox            bb;
+  ObjectType        ot;
+  glm::mat4         mt;
 };
 
 #endif //ELUCIDO_OBJECT_H

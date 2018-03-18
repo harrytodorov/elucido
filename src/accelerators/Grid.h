@@ -21,7 +21,7 @@ struct Cell {
       if (primitive.intersect(r, co) && co.tn < i.tn) {
         i = co;
         i.ho = primitive.obj_pointer;
-        if (i.ho->ot == triangle_mesh) {
+        if (i.ho->object_type() == triangle_mesh) {
           i.ti = primitive.tri_ind;
         }
       }

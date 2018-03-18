@@ -76,40 +76,46 @@ class Camera {
                         const float_t &sample_x,
                         const float_t &sample_y) = 0;
 
+  // TODO: Following functions should be removed from the Camera.
+  // Goes to Scene as render image.
   virtual render_info render_scene(const std::vector<Object *> &objects,
                                    const std::vector<Light *> &lights,
                                    ImagePlane &ip) = 0;
 
+  // Goes to Renderer.
   glm::vec4 refract(const glm::vec4 &incident_direction,
                     const glm::vec4 &surface_normal,
                     const float_t &ior);
+  // Goes to Renderer.
   void compute_fresnel(const glm::vec4 &incident_direction,
                        const glm::vec4 &surface_normal,
                        const float_t &ior,
                        float_t &reflectance);
+  // Goes to Renderer.
   glm::vec3 cast_ray(const Ray &ray,
                      const std::vector<Light *> &lights,
                      const std::vector<Object *> &objects,
                      const uint32_t &depth,
                      render_info &ri);
+  // There is only one version of the function in the Renderer.
   glm::vec3 cast_ray(const Ray &ray,
                      const std::vector<Light *> &lights,
                      const std::vector<Object *> &objects,
                      const uint32_t &depth,
                      const AccelerationStructure *structure,
                      render_info &ri);
-
-
+  // Just pass a nullptr, when no Acceleration structure is defined.
   inline void use_acceleration(const bool &as, const float_t &ga = 3) {
     this->use_as = as;
     this->grid_alpha = ga;
   }
-
+  // Already implemented in the Renderer.
   inline glm::vec4 reflect(const glm::vec4 &incident_direction,
                            const glm::vec4 &surface_normal) {
     return incident_direction
         - 2.f * glm::dot(incident_direction, surface_normal) * surface_normal;
   };
+
 
  protected:
   glm::vec4 eye;
@@ -117,9 +123,10 @@ class Camera {
   uint32_t  iw;         // Image's height.
   uint32_t  ih;         // Image's width.
   float_t   ar;         // Aspect ratio [ width / height ]
-  AABBox    scene_bb;
-  bool      use_as;
-  float_t   grid_alpha;
   glm::mat4 vm;
+  AABBox    scene_bb;   // TODO: Remove
+  bool      use_as;     // TODO: Remove
+  float_t   grid_alpha; // TODO: Remove
+
 };
 #endif //ELUCIDO_CAMERA_H

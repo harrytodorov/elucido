@@ -34,8 +34,8 @@ bool Scene::load_scene(const scene_description &description) {
 
 void Scene::extend_scene_bb() {
   for (auto const &object : objects) {
-    scene_bb->extend_by(object.second->bb.bounds[0]);
-    scene_bb->extend_by(object.second->bb.bounds[1]);
+    scene_bb->extend_by(object.second->bounding_box().bounds[0]);
+    scene_bb->extend_by(object.second->bounding_box().bounds[1]);
   }
 }
 

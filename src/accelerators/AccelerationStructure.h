@@ -14,7 +14,7 @@ struct Primitive {
     tri_ind = ti;
   }
   bool intersect(const Ray &r, isect_info &ii) {
-    if (obj_pointer->ot == triangle_mesh) {
+    if (obj_pointer->object_type() == triangle_mesh) {
       return static_cast<const TriangleMesh*>(obj_pointer)->intersect(r,
                                                                       tri_ind,
                                                                       ii);
@@ -22,11 +22,11 @@ struct Primitive {
     return obj_pointer->intersect(r, ii);
   }
   const AABBox* getBB() {
-    if (obj_pointer->ot == triangle_mesh) {
+    if (obj_pointer->object_type() == triangle_mesh) {
       return static_cast<const TriangleMesh*>(obj_pointer)->
           getBoundingBoxForTriangle(tri_ind);
     }
-    return &(obj_pointer->bb);
+    return &(obj_pointer->bounding_box());
   }
 
   const Object *obj_pointer;

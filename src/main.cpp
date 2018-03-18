@@ -575,7 +575,7 @@ void spheres() {
 
     sm.c = glm::vec3(r, g, b);
 
-    (*s).om = sm;
+    (*s).set_material(sm);
 
     // add sphere in the scene
     objects.push_back(&(*s));
@@ -702,7 +702,7 @@ void boxes() {
 
     cm.c = glm::vec3(r, g, b);
 
-    (*obj_copy).om = cm;
+    (*obj_copy).set_material(cm);
 
     // add cube in the scene
     objects.push_back(&(*obj_copy));
@@ -902,7 +902,7 @@ void triangles() {
     g = cr(eng);
     b = cr(eng);
     tm.c = glm::vec3(r, g, b);
-    (*t).om = tm;
+    (*t).set_material(tm);
 
     // add triangle in the scene
     (*t).apply_transformations();
@@ -1051,7 +1051,7 @@ void triangle_meshes() {
     g = cr(eng);
     b = cr(eng);
     mm.c = glm::vec3(r, g, b);
-    (*tm).om = mm;
+    (*tm).set_material(mm);
     // add monkey in the scene
     (*tm).apply_transformations();
     objects.push_back(&(*tm));
@@ -1074,7 +1074,7 @@ void triangle_meshes() {
     g = cr(eng);
     b = cr(eng);
     mm.c = glm::vec3(r, g, b);
-    (*tm).om = mm;
+    (*tm).set_material(mm);
     // add teapot in the scene
     (*tm).apply_transformations();
     objects.push_back(&(*tm));
@@ -1583,8 +1583,8 @@ void grid_tests() {
   objects.emplace_back(t);
 
   for (auto object : objects) {
-    box.extend_by(object->bb.bounds[0]);
-    box.extend_by(object->bb.bounds[1]);
+    box.extend_by(object->bounding_box().bounds[0]);
+    box.extend_by(object->bounding_box().bounds[1]);
   }
 
   std::cout << "Grid's bounding box min extent: (" << box.bounds[0].x << ", " <<
@@ -1723,11 +1723,11 @@ void dragon() {
   camera->translate(-4.f, Axis::Z);
   camera->translate(2.5f, Axis::Y);
 
-  std::cout << "Dragons bounding box min: (" << dragon.bb.bounds[0].x << ", " <<
-            dragon.bb.bounds[0].y << ", " << dragon.bb.bounds[0].z << ")" <<
+  std::cout << "Dragons bounding box min: (" << dragon.bounding_box().bounds[0].x << ", " <<
+            dragon.bounding_box().bounds[0].y << ", " << dragon.bounding_box().bounds[0].z << ")" <<
             std::endl;
-  std::cout << "Dragons bounding box max: (" << dragon.bb.bounds[1].x << ", "
-            << dragon.bb.bounds[1].y << ", " << dragon.bb.bounds[1].z << ")" <<
+  std::cout << "Dragons bounding box max: (" << dragon.bounding_box().bounds[1].x << ", "
+            << dragon.bounding_box().bounds[1].y << ", " << dragon.bounding_box().bounds[1].z << ")" <<
             std::endl << std::endl;
 
   /// rendering

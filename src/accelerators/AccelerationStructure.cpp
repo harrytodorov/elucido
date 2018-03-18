@@ -8,7 +8,7 @@ std::vector<Primitive> AccelerationStructure::convertToPrimitive(
   std::vector<Primitive> result;
 
   // If the object is not a triangle mesh, it's already a primitive.
-  if (obj.ot != triangle_mesh) {
+  if (obj.object_type() != triangle_mesh) {
     result.emplace_back(obj, 0);
     return result;
   }

@@ -10,13 +10,15 @@ void DirectionalLight::apply_camera_transformation(const glm::mat4 &ivm) {
 }
 
 //==============================================================================
-void DirectionalLight::translate(const float_t &translation, const Axis &axes_of_translation) {
+void DirectionalLight::translate(const float_t &translation,
+                                 const Axis &axes_of_translation) {
   // One can ignore translating a directional light source.
   // The translation doesn't effect directions.
 }
 
 //==============================================================================
-void DirectionalLight::rotate(const float_t &angle_of_rotation, const Axis &rotation_axis) {
+void DirectionalLight::rotate(const float_t &angle_of_rotation,
+                              const Axis &rotation_axis) {
   apply_rotation(rotation_axis, angle_of_rotation, mt);
 }
 

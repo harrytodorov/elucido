@@ -31,7 +31,7 @@ class Triangle : public Object {
   }
 
 //==============================================================================
-  Triangle(const material &m) :
+  Triangle(const struct material &m) :
       Object(m),
       v0(-1, -1, 0, 1),
       v1(1, -1, 0, 1),
@@ -58,7 +58,7 @@ class Triangle : public Object {
   Triangle(const glm::vec4 &vec0,
            const glm::vec4 &vec1,
            const glm::vec4 &vec2,
-           const material &m) :
+           const struct material &m) :
       Object(m),
       v0(vec0),
       v1(vec1),

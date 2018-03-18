@@ -28,12 +28,12 @@ class TriangleMesh : public Object {
   }
 
 //==============================================================================
-  TriangleMesh(const material &m, const bool &in) : Object(m), in(in) {
+  TriangleMesh(const struct material &m, const bool &in) : Object(m), in(in) {
     ot = triangle_mesh;
   }
 
 //==============================================================================
-  explicit TriangleMesh(const material &m) : Object(m) {
+  explicit TriangleMesh(const struct material &m) : Object(m) {
     ot = triangle_mesh;
   }
 

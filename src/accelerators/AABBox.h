@@ -44,7 +44,7 @@ class AABBox {
   inline glm::vec4 getDiagonal() {
     return glm::abs(glm::vec4(bounds[1] - bounds[0]));
   }
-  bool intersect(const Ray &r);
+  bool intersect(const Ray &r) const;
   bool intersect(const Ray &r, float_t &tBox) const;
   void extend_by(const glm::vec4 &p);
 };

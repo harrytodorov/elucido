@@ -30,12 +30,12 @@ bool Ray::trace(const std::vector<Object *> &objects,
     // first intersect with object's bounding box
     // we only intersect triangulated meshes with their bounding boxes,
     // because tests for spheres and triangles are already cheap enough
-    if (object->ot == triangle_mesh && !object->bb.intersect(*this))
+    if (object->object_type() == triangle_mesh && !object->bounding_box().intersect(*this))
       continue;
 
     // for a triangulated mesh, the number of ray-primitive intersections
     // is equal to the number of triangles in the mesh
-    if (object->ot == triangle_mesh)
+    if (object->object_type() == triangle_mesh)
       // increment the number of ray-primitive tests; object itself
       __sync_fetch_and_add(&ri.nrpt,
                            dynamic_cast<TriangleMesh *>(object)->nt);

@@ -16,10 +16,10 @@ class PointLight : public Light {
 
   glm::vec4 get_direction(const glm::vec4 &surface_point);
   float_t   get_distance(const glm::vec4 &surface_point);
-  float_t get_intensity(const float_t &distance);
+  float_t   get_intensity(const float_t &distance);
 
   inline glm::vec4 position() const { return p; }
-  inline void set_position(const glm::vec4 &_p) { p = _p; }
+  inline void      set_position(const glm::vec4 &_p) { p = _p; }
 
   void apply_camera_transformation(const glm::mat4 &ivm);
   void apply_transformations();

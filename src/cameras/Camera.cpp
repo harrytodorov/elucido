@@ -29,7 +29,7 @@ glm::vec3 Camera::cast_ray(const Ray &ray,
     ii.ho->get_surface_properties(ii);
 
     // material of the intersected object
-    material mat = ii.ho->om;
+    material mat = ii.ho->material();
 
     // if we have an intersection we set the background col to 0 for all components; black
     hc = black;
@@ -201,7 +201,7 @@ glm::vec3 Camera::cast_ray(const Ray &ray,
     ii.ho->get_surface_properties(ii);
 
     // material of the intersected object
-    material mat = ii.ho->om;
+    material mat = ii.ho->material();
 
     // if we have an intersection we set the background col to 0 for all components; black
     hc = black;
@@ -458,7 +458,7 @@ void Camera::compute_fresnel(const glm::vec4 &incident_direction,
 //==============================================================================
 void Camera::extend_scene_bb(const std::vector<Object *> &objects) {
   for (auto &object : objects) {
-    scene_bb.extend_by(object->bb.bounds[0]);
-    scene_bb.extend_by(object->bb.bounds[1]);
+    scene_bb.extend_by(object->bounding_box().bounds[0]);
+    scene_bb.extend_by(object->bounding_box().bounds[1]);
   }
 }

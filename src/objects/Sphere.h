@@ -25,7 +25,7 @@ class Sphere : public Object {
   }
 
 //==============================================================================
-  Sphere(const material &m) : Object(m), r(1.0), c(0, 0, 0, 1) {
+  Sphere(const struct material &m) : Object(m), r(1.0), c(0, 0, 0, 1) {
     r2 = 1.f;
     reshape_bb();
     ot = sphere;
@@ -39,7 +39,7 @@ class Sphere : public Object {
   }
 
 //==============================================================================
-  Sphere(const glm::vec4 &c, const float_t &r, const material &m) : Object(m),
+  Sphere(const glm::vec4 &c, const float_t &r, const struct material &m) : Object(m),
                                                                     r(r),
                                                                     c(c) {
     r2 = glm::pow(r, 2.f);

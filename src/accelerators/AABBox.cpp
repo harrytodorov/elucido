@@ -18,7 +18,7 @@ void AABBox::extend_by(const glm::vec4 &p) {
 }
 
 //==============================================================================
-bool AABBox::intersect(const Ray &r) {
+bool AABBox::intersect(const Ray &r) const {
   float_t tmin, tmax, tymin, tymax, tzmin, tzmax;
 
   tmin = (bounds[r.sign()[0]].x - r.orig().x) * r.inv_dir().x;

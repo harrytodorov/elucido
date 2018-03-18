@@ -24,7 +24,7 @@ class Light {
   Light(const float_t &i) : i(i) {}
   virtual ~Light() = default;
 
-  inline glm::vec3 color() { return c; }
+  inline glm::vec3 color() const { return this->c; }
   inline void      set_color(const glm::vec3 &_c) { c = glm::normalize(_c); }
   inline void      set_intensity(const float_t &_i) { i = _i; }
 
@@ -54,6 +54,7 @@ class Light {
    * @return:           The computed intensity at the surface point.
    */
   virtual float_t get_intensity(const float_t &distance);
+
 
   virtual void translate(const float_t &translation,
                          const Axis &axes_of_translation) = 0;
