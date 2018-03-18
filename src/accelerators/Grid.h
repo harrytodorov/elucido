@@ -5,6 +5,8 @@
 #define ELUCIDO_ALL_GRID_H
 
 #include <vector>
+#include <memory>
+
 #include "AccelerationStructure.h"
 #include "../objects/Object.h"
 
@@ -20,7 +22,7 @@ struct Cell {
 
       if (primitive.intersect(r, co) && co.tn < i.tn) {
         i = co;
-        i.ho = primitive.obj_pointer;
+        i.ho = primitive.obj;
         if (i.ho->object_type() == triangle_mesh) {
           i.ti = primitive.tri_ind;
         }
@@ -34,7 +36,7 @@ struct Cell {
 class Grid : public AccelerationStructure {
  public:
   Grid(const AABBox &box,
-       const std::vector<Object *> &objects) :
+       const std::vector<std::shared_ptr<Object>> &objects) :
       AccelerationStructure(box, objects), cells(NULL) {}
   ~Grid() {
     for (size_t i = 0; i < resolution[0] * resolution[1] * resolution[2]; i++) {

@@ -16,12 +16,14 @@
 
 class Light {
  public:
-  Light() :
-      c(glm::vec3(1, 1, 1)),
-      i(1.f)
-      {}
-  Light(const glm::vec3 &c, const float_t &i) : c(c), i(i) {}
-  Light(const float_t &i) : i(i) {}
+  Light() {}
+  Light(const glm::vec3 &c, const float_t &i) :
+      c(c),
+      i(i)
+  {}
+  Light(const float_t &i) :
+      i(i)
+  {}
   virtual ~Light() = default;
 
   inline glm::vec3 color() const { return this->c; }
@@ -64,9 +66,9 @@ class Light {
   virtual void apply_transformations() = 0;
 
  protected:
-  glm::mat4 mt;
-  glm::vec3 c{white};
-  float_t   i{10.0};
+  glm::vec3 c{1.f};   // Color.
+  float_t   i{1.f};   // Intensity.
+  glm::mat4 mt{};     // Model transform matrix.
 };
 
 #endif //ELUCIDO_LIGHT_H

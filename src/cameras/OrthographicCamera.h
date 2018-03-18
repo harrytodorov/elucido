@@ -17,8 +17,8 @@ class OrthographicCamera : public Camera {
     zf(z) {}
   ~OrthographicCamera() = default;
 
-  render_info render_scene(const std::vector<Object *> &objects,
-                           const std::vector<Light *> &lights,
+  render_info render_scene(const std::vector<std::shared_ptr<Object>> &objects,
+                           const std::vector<std::shared_ptr<Light>> &lights,
                            ImagePlane &ip);
   Ray get_ray(const uint32_t &pixel_x,
                 const uint32_t &pixel_y,

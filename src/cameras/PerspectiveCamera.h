@@ -22,8 +22,8 @@ class PerspectiveCamera : public Camera {
       }
   ~PerspectiveCamera() = default;
 
-  render_info render_scene(const std::vector<Object *> &objects,
-                           const std::vector<Light *> &lights,
+  render_info render_scene(const std::vector<std::shared_ptr<Object>> &objects,
+                           const std::vector<std::shared_ptr<Light>> &lights,
                            ImagePlane &ip);
 
   Ray get_ray(const uint32_t &pixel_x,

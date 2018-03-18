@@ -66,11 +66,10 @@ class Camera {
   void translate(const float_t &translation,
                  const Axis &translation_axis);
   void rotate(const float_t &rot_angle, const Axis &rotation_axis);
-  void apply_inverse_view_transform(const std::vector<Object *> &objects,
-                                    const std::vector<Light *> &lights);
-  void reverse_inverse_view_transform(const std::vector<Object *> &objects,
-                                      const std::vector<Light *> &lights);
-  void extend_scene_bb(const std::vector<Object *> &objects);
+  void apply_inverse_view_transform(const std::vector<std::shared_ptr<Object>> &objects,
+                                    const std::vector<std::shared_ptr<Light>> &lights);
+  void reverse_inverse_view_transform(const std::vector<std::shared_ptr<Object>> &objects,
+                                      const std::vector<std::shared_ptr<Light>> &lights);
   virtual Ray get_ray(const uint32_t &pixel_x,
                         const uint32_t &pixel_y,
                         const float_t &sample_x,
@@ -78,8 +77,8 @@ class Camera {
 
   // TODO: Following functions should be removed from the Camera.
   // Goes to Scene as render image.
-  virtual render_info render_scene(const std::vector<Object *> &objects,
-                                   const std::vector<Light *> &lights,
+  virtual render_info render_scene(const std::vector<std::shared_ptr<Object>> &objects,
+                                   const std::vector<std::shared_ptr<Light>> &lights,
                                    ImagePlane &ip) = 0;
 
   // Goes to Renderer.
@@ -93,14 +92,14 @@ class Camera {
                        float_t &reflectance);
   // Goes to Renderer.
   glm::vec3 cast_ray(const Ray &ray,
-                     const std::vector<Light *> &lights,
-                     const std::vector<Object *> &objects,
+                     const std::vector<std::shared_ptr<Light>> &lights,
+                     const std::vector<std::shared_ptr<Object>> &objects,
                      const uint32_t &depth,
                      render_info &ri);
   // There is only one version of the function in the Renderer.
   glm::vec3 cast_ray(const Ray &ray,
-                     const std::vector<Light *> &lights,
-                     const std::vector<Object *> &objects,
+                     const std::vector<std::shared_ptr<Light>> &lights,
+                     const std::vector<std::shared_ptr<Object>> &objects,
                      const uint32_t &depth,
                      const AccelerationStructure *structure,
                      render_info &ri);
@@ -115,6 +114,8 @@ class Camera {
     return incident_direction
         - 2.f * glm::dot(incident_direction, surface_normal) * surface_normal;
   };
+  // Goes to Scene.
+  void extend_scene_bb(const std::vector<std::shared_ptr<Object>> &objects);
 
 
  protected:

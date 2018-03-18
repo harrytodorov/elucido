@@ -9,9 +9,14 @@
 class PointLight : public Light {
  public:
   PointLight() = default;
-  PointLight(const glm::vec4 &p, const float_t &i) : Light(i), p(p) {}
-  PointLight(const glm::vec4 &p, const glm::vec3 &c, const float_t &i)
-      : Light(c, i), p(p) {}
+  PointLight(const glm::vec4 &p, const float_t &i) :
+      Light(i),
+      p(p)
+  {}
+  PointLight(const glm::vec4 &p, const glm::vec3 &c, const float_t &i) :
+      Light(c, i),
+      p(p)
+  {}
   ~PointLight() = default;
 
   glm::vec4 get_direction(const glm::vec4 &surface_point);
@@ -27,8 +32,9 @@ class PointLight : public Light {
                  const Axis &translation_axis);
   void rotate(const float_t &angle_of_rotation,
               const Axis &axes_of_rotation);
+
  protected:
-  glm::vec4 p{glm::vec4(0, 0, 0, 1)};
+  glm::vec4 p{0.f, 0.f, 0.f, 1.f};  // Position.
 };
 
 #endif //ELUCIDO_POINTLIGHT_H

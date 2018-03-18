@@ -4,8 +4,8 @@
 #include "OrthographicCamera.h"
 
 //==============================================================================
-render_info OrthographicCamera::render_scene(const std::vector<Object *> &objects,
-                                             const std::vector<Light *> &lights,
+render_info OrthographicCamera::render_scene(const std::vector<std::shared_ptr<Object>> &objects,
+                                             const std::vector<std::shared_ptr<Light>> &lights,
                                              ImagePlane &ip) {
   float_t curr_x;
   float_t curr_y;

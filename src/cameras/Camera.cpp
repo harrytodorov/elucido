@@ -5,8 +5,8 @@
 
 //==============================================================================
 glm::vec3 Camera::cast_ray(const Ray &ray,
-                           const std::vector<Light *> &lights,
-                           const std::vector<Object *> &objects,
+                           const std::vector<std::shared_ptr<Light>> &lights,
+                           const std::vector<std::shared_ptr<Object>> &objects,
                            const uint32_t &depth,
                            render_info &ri) {
   // if we've reached the bottom of the recursion tree, we return the background col
@@ -178,8 +178,8 @@ glm::vec3 Camera::cast_ray(const Ray &ray,
 
 //==============================================================================
 glm::vec3 Camera::cast_ray(const Ray &ray,
-                   const std::vector<Light *> &lights,
-                   const std::vector<Object *> &objects,
+                           const std::vector<std::shared_ptr<Light>> &lights,
+                           const std::vector<std::shared_ptr<Object>> &objects,
                    const uint32_t &depth,
                    const AccelerationStructure *structure,
                    render_info &ri) {
@@ -359,24 +359,24 @@ void Camera::translate(const float_t &translation,
 }
 
 //==============================================================================
-void Camera::apply_inverse_view_transform(const std::vector<Object *> &objects,
-                                          const std::vector<Light *> &lights) {
+void Camera::apply_inverse_view_transform(const std::vector<std::shared_ptr<Object>> &objects,
+                                          const std::vector<std::shared_ptr<Light>> &lights) {
   glm::mat4 ivm = glm::inverse(vm);
-  for (auto &object : objects) {
+  for (auto const &object : objects) {
     object->apply_camera_transformation(ivm);
   }
-  for (auto &light : lights) {
+  for (auto const &light : lights) {
     light->apply_camera_transformation(ivm);
   }
 }
 
 //==============================================================================
-void Camera::reverse_inverse_view_transform(const std::vector<Object *> &objects,
-                                            const std::vector<Light *> &lights) {
-  for (auto &object : objects) {
+void Camera::reverse_inverse_view_transform(const std::vector<std::shared_ptr<Object>> &objects,
+                                            const std::vector<std::shared_ptr<Light>> &lights) {
+  for (auto const &object : objects) {
     object->apply_camera_transformation(vm);
   }
-  for (auto &light : lights) {
+  for (auto const &light : lights) {
     light->apply_camera_transformation(vm);
   }
 }
@@ -456,7 +456,7 @@ void Camera::compute_fresnel(const glm::vec4 &incident_direction,
 }
 
 //==============================================================================
-void Camera::extend_scene_bb(const std::vector<Object *> &objects) {
+void Camera::extend_scene_bb(const std::vector<std::shared_ptr<Object>> &objects) {
   for (auto &object : objects) {
     scene_bb.extend_by(object->bounding_box().bounds[0]);
     scene_bb.extend_by(object->bounding_box().bounds[1]);

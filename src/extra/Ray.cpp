@@ -5,7 +5,7 @@
 #include "../objects/TriangleMesh.h"
 
 //==============================================================================
-bool Ray::trace(const std::vector<Object *> &objects,
+bool Ray::trace(const std::vector<std::shared_ptr<Object>> &objects,
                 isect_info &ii,
                 render_info &ri) const {
   ii = isect_info();
@@ -38,7 +38,7 @@ bool Ray::trace(const std::vector<Object *> &objects,
     if (object->object_type() == triangle_mesh)
       // increment the number of ray-primitive tests; object itself
       __sync_fetch_and_add(&ri.nrpt,
-                           dynamic_cast<TriangleMesh *>(object)->nt);
+                           std::static_pointer_cast<TriangleMesh>(object)->nt);
     else
       // increment the number of ray-primitive tests; object itself
       __sync_fetch_and_add(&ri.nrpt, 1);

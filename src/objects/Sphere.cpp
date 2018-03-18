@@ -5,43 +5,42 @@
 
 //==============================================================================
 bool Sphere::intersect(const Ray &r, isect_info &i) const {
-  // variable to hold distance between ray's origin and intersection point(s)
   float_t t;
 
-  // compute the vector l, between the sphere's center c and the ray's origin o
+  // Compute the distance vector between the
+  // sphere's center and the ray's origin.
   glm::vec4 l = c - r.orig();
 
-  // compute the projection of l, s, on the ray's direction (d)
+  // Compute the projection of l onto the ray's direction.
   float_t s = glm::dot(l, r.dir());
 
-  // compute the squared length of the vector l, l2
+  // Compute the |l|^2.
   float_t l2 = glm::dot(l, l);
 
-  // if the l2 > r2 (origin of the ray is outside the sphere) and
-  // s < 0, the projection of l on d is less than 0 (the ray's origin is behind
-  // the sphere), we can reject that there is an intersection between the ray and
-  // the sphere
+  // If the l2 > r2 (origin of the ray is outside the sphere) and
+  // s < 0 (the ray's origin is behind the sphere), one can reject
+  // that there is an intersection between the ray and the sphere.
   if (s < 0 && l2 > r2) return false;
 
-  // compute the side m2, of a right triangle formed by s, l and m
-  // using the Pythagorean theorem: m2 = l2 - s2
+  // Compute m^2, a side of a right triangle formed by s, l and m
+  // using the Pythagorean theorem:
+  // m^2 = l^2 - s^2
   float_t m2 = l2 - s * s;
 
-  // if m2 > r2, the ray definitely misses the sphere
+  // If m^2 > r^2, ray misses the sphere.
   if (m2 > r2) return false;
 
-  // find the side, q, of the right triangle formed by r (sphere's radius),
-  // m and q: q2 = r2 - m2; we want q, set_orig q = sqrt(r2 - m2)
+  // Find the side, q, of a right triangle formed by r,m and q:
+  // q^2 = r^2 - m^2
   float_t q = sqrtf(r2 - m2);
 
-  // find the smallest intersection point
+  // Find the smallest intersection point
   if (l2 > r2) t = s - q;
   else t = s + q;
 
-  // tests passed; assign variables
   i.tn = t;
   i.ip = r.orig() + t * r.dir();
-  i.ti = (uint32_t) -1;
+  i.ti = static_cast<uint32_t>(-1);
 
   return true;
 }

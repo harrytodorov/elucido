@@ -555,13 +555,22 @@ struct render_info {
 };
 
 struct isect_info {
-  glm::vec4       ip{glm::vec4(infinity)};    // intersection point
-  glm::vec4       ipn{glm::vec4(0)};          // normal at the intersection point
-  float_t         tn{infinity};               // nearest distance from the ray's origin to the intersection point
-  float_t         u{infinity};                // barycentric coordinate u: Area_ACP / Area_ABC
-  float_t         v{infinity};                // barycentric coordinate v: Area_ABP / Area_ABC
-  uint32_t        ti{(uint32_t) -1};          // index of the triangle in a triangulated mesh
-  const Object    *ho = nullptr;              // pointer to the object hit by the ray
+  glm::vec4               ip;   // Intersection point.
+  glm::vec4               ipn;  // Normal at the intersection point.
+  float_t                 tn;   // Nearest distance from the ray's origin to
+                                // the intersection point.
+  float_t                 u;    // Barycentric coordinate u of a triangle.
+  float_t                 v;    // Barycentric coordinate v of a triangle.
+  uint32_t                ti;   // Index of the triangle in a triangulated mesh.
+  std::shared_ptr<Object> ho;   // Pointer to the object hit by a ray.
+  isect_info() :
+      ip{infinity},
+      ipn{0},
+      tn{infinity},
+      u{infinity},
+      v{infinity},
+      ti{},
+      ho{nullptr} {}
 };
 
 struct grid_info {
@@ -587,18 +596,18 @@ struct ip_sample {
   glm::vec3 radiance;
   bool      evaluated;
   ip_sample() :
-      position(0),
-      radiance(0),
-      evaluated(false) {}
+      position{0},
+      radiance{0},
+      evaluated{false} {}
   ip_sample(const glm::vec3 &_radiance) :
-      position(0),
-      radiance(_radiance),
-      evaluated(true) {}
+      position{0},
+      radiance{_radiance},
+      evaluated{true} {}
   ip_sample(const glm::vec3 &_radiance,
             const glm::vec2 &_position) :
-      position(_position),
-      radiance(_radiance),
-      evaluated(true) {}
+      position{_position},
+      radiance{_radiance},
+      evaluated{true} {}
 };
 
 //------------------------------------------------------------------------------

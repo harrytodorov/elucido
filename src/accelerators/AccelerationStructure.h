@@ -9,38 +9,35 @@
 
 struct Primitive {
   Primitive() {}
-  Primitive(const Object &obj, const size_t ti) {
-    obj_pointer = &obj;
+  Primitive(const std::shared_ptr<Object> &_obj, const uint32_t &ti) {
+    obj = _obj;
     tri_ind = ti;
   }
   bool intersect(const Ray &r, isect_info &ii) {
-    if (obj_pointer->object_type() == triangle_mesh) {
-      return static_cast<const TriangleMesh*>(obj_pointer)->intersect(r,
-                                                                      tri_ind,
-                                                                      ii);
+    if (obj->object_type() == triangle_mesh) {
+      return std::static_pointer_cast<TriangleMesh>(obj)->intersect(r, tri_ind, ii);
     }
-    return obj_pointer->intersect(r, ii);
+    return obj->intersect(r, ii);
   }
   const AABBox* getBB() {
-    if (obj_pointer->object_type() == triangle_mesh) {
-      return static_cast<const TriangleMesh*>(obj_pointer)->
-          getBoundingBoxForTriangle(tri_ind);
+    if (obj->object_type() == triangle_mesh) {
+      return std::static_pointer_cast<TriangleMesh>(obj)->getBoundingBoxForTriangle(tri_ind);
     }
-    return &(obj_pointer->bounding_box());
+    return &(obj->bounding_box());
   }
 
-  const Object *obj_pointer;
-  size_t tri_ind;
+  std::shared_ptr<Object> obj;
+  uint32_t                tri_ind;
 };
 
 class AccelerationStructure {
  public:
   AccelerationStructure(const AABBox &box,
-                        const std::vector<Object *> &objects) :
+                        const std::vector<std::shared_ptr<Object>> &objects) :
   bbox(box) {
-    for (auto object : objects) {
+    for (auto const &object : objects) {
       // TODO: Precalculate number of primitive during scene construction.
-      std::vector<Primitive> toPrimitive = convertToPrimitive(*object);
+      std::vector<Primitive> toPrimitive = convertToPrimitive(object);
       // Reserve space.
       primitives.reserve(primitives.size() + toPrimitive.size());
       primitives.insert(primitives.end(),
@@ -49,7 +46,7 @@ class AccelerationStructure {
     }
   }
 
-  std::vector<Primitive> convertToPrimitive(const Object &obj);
+  std::vector<Primitive> convertToPrimitive(const std::shared_ptr<Object> &obj);
   virtual bool intersect(const Ray &r, isect_info &i) const = 0;
   AABBox bbox;
   std::vector<Primitive> primitives;

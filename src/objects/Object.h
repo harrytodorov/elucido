@@ -27,14 +27,18 @@
 
 class Object {
  public:
-  Object() : om(material()),
-             mt(glm::mat4(1)),
-             bb(AABBox()),
-             ot(not_set_ot) {}
-  Object(const material &m) : om(m),
-                              mt(glm::mat4(1)),
-                              bb(AABBox()),
-                              ot(not_set_ot) {}
+  Object() :
+      om(),
+      mt(),
+      bb(),
+      ot(not_set_ot)
+  {}
+  Object(const material &m) :
+      om(m),
+      mt(),
+      bb(),
+      ot(not_set_ot)
+  {}
   Object(const Object &o);
   virtual ~Object() {}
 
@@ -51,17 +55,17 @@ class Object {
   virtual void get_surface_properties(isect_info &i) const = 0;
   virtual void apply_camera_transformation(const glm::mat4 &ctm) = 0;
   virtual void apply_transformations() = 0;
-  void translate(const float_t &translation,
+  virtual void translate(const float_t &translation,
                  const Axis &translation_axis);
-  void rotate(const float_t &angle_of_rotation,
+  virtual void rotate(const float_t &angle_of_rotation,
               const Axis &rotation_axis);
-  void scale(const float_t &scaling_factor,
+  virtual void scale(const float_t &scaling_factor,
              const Axis &scale_axis);
  protected:
-  struct material   om;
-  AABBox            bb;
-  ObjectType        ot;
-  glm::mat4         mt;
+  struct material   om{}; // Material.
+  AABBox            bb{}; // Bounding box.
+  ObjectType        ot{}; // Type.
+  glm::mat4         mt{}; // Model transform matrix.
 };
 
 #endif //ELUCIDO_OBJECT_H
