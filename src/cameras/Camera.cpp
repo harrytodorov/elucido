@@ -63,7 +63,7 @@ glm::vec3 Camera::cast_ray(const Ray &ray,
 
         // ignore self-shadows; those would be handled correctly later
         if (shadow_ray.trace(objects, dummy, ri)
-            && dummy.tn < light_distance & dummy.ho != ii.ho) {
+            && dummy.tn < light_distance && dummy.ho != ii.ho) {
           visibility = 0.f;
           continue;
         }
@@ -234,7 +234,7 @@ glm::vec3 Camera::cast_ray(const Ray &ray,
 
         // ignore self-shadows; those would be handled correctly later
         if (structure->intersect(shadow_ray, dummy) &&
-            dummy.tn < light_distance & dummy.ho != ii.ho) {
+            dummy.tn < light_distance && dummy.ho != ii.ho) {
           visibility = 0.f;
           continue;
         }

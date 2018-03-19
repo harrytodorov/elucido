@@ -3,6 +3,7 @@
 
 #include "Light.h"
 
+//==============================================================================
 float_t Light::get_intensity(const float_t &distance) {
   return i;
 }

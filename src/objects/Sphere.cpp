@@ -47,7 +47,31 @@ bool Sphere::intersect(const Ray &r, isect_info &i) const {
 
 //==============================================================================
 bool Sphere::shadow_intersect(const Ray &r) const {
-  return false;
+  // Compute the distance vector between the
+  // sphere's center and the ray's origin.
+  glm::vec4 l = c - r.orig();
+
+  // Compute the |l|^2.
+  float_t l2 = glm::dot(l, l);
+
+  // Ray's origin is inside the sphere.
+  if (l2 < r2) return true;
+
+  // Compute the projection of l onto the ray's direction.
+  float_t s = glm::dot(l, r.dir());
+
+  // If the l2 > r2 (origin of the ray is outside the sphere) and
+  // s < 0 (the ray's origin is behind the sphere), one can reject
+  // that there is an intersection between the ray and the sphere.
+  if (s < 0 && l2 > r2) return false;
+
+  // Compute m^2, a side of a right triangle formed by s, l and m
+  // using the Pythagorean theorem:
+  // m^2 = l^2 - s^2
+  float_t m2 = l2 - s * s;
+
+  // If m^2 > r^2, ray misses the sphere.
+  return r2 >= m2;
 }
 
 //==============================================================================

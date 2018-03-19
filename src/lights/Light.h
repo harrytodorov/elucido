@@ -15,6 +15,9 @@
 #include "../extra/Utilities.h"
 
 class Light {
+//==============================================================================
+// Constructors & destructors
+//==============================================================================
  public:
   Light() {}
   Light(const glm::vec3 &c, const float_t &i) :
@@ -24,8 +27,12 @@ class Light {
   Light(const float_t &i) :
       i(i)
   {}
+
   virtual ~Light() = default;
 
+//==============================================================================
+// Function declarations
+//==============================================================================
   inline glm::vec3 color() const { return this->c; }
   inline void      set_color(const glm::vec3 &_c) { c = glm::normalize(_c); }
   inline void      set_intensity(const float_t &_i) { i = _i; }
@@ -57,7 +64,6 @@ class Light {
    */
   virtual float_t get_intensity(const float_t &distance);
 
-
   virtual void translate(const float_t &translation,
                          const Axis &axes_of_translation) = 0;
   virtual void rotate(const float_t &angle_of_rotation,
@@ -65,6 +71,9 @@ class Light {
   virtual void apply_camera_transformation(const glm::mat4 &ivm) = 0;
   virtual void apply_transformations() = 0;
 
+//==============================================================================
+// Data members
+//==============================================================================
  protected:
   glm::vec3 c{1.f};   // Color.
   float_t   i{1.f};   // Intensity.

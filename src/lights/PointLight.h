@@ -7,6 +7,9 @@
 #include "Light.h"
 
 class PointLight : public Light {
+//==============================================================================
+// Constructors & destructors
+//==============================================================================
  public:
   PointLight() = default;
   PointLight(const glm::vec4 &p, const float_t &i) :
@@ -17,8 +20,12 @@ class PointLight : public Light {
       Light(c, i),
       p(p)
   {}
+
   ~PointLight() = default;
 
+//==============================================================================
+// Function declarations
+//==============================================================================
   glm::vec4 get_direction(const glm::vec4 &surface_point);
   float_t   get_distance(const glm::vec4 &surface_point);
   float_t   get_intensity(const float_t &distance);
@@ -33,6 +40,9 @@ class PointLight : public Light {
   void rotate(const float_t &angle_of_rotation,
               const Axis &axes_of_rotation);
 
+//==============================================================================
+// Data members
+//==============================================================================
  protected:
   glm::vec4 p{0.f, 0.f, 0.f, 1.f};  // Position.
 };

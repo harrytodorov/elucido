@@ -7,6 +7,9 @@
 #include "Light.h"
 
 class DirectionalLight : public Light {
+//==============================================================================
+// Constructors & destructors
+//==============================================================================
  public:
   DirectionalLight() = default;
   DirectionalLight(const glm::vec4 &d, const float_t &i) :
@@ -17,8 +20,12 @@ class DirectionalLight : public Light {
       : Light(c, i),
         d(glm::normalize(d))
   {}
+
   ~DirectionalLight() = default;
 
+//==============================================================================
+// Function declarations
+//==============================================================================
   glm::vec4 get_direction(const glm::vec4 &surface_point);
   float_t   get_distance(const glm::vec4 &surface_point);
 
@@ -32,6 +39,9 @@ class DirectionalLight : public Light {
   void rotate(const float_t &angle_of_rotation,
               const Axis &rotation_axis);
 
+//==============================================================================
+// Data members
+//==============================================================================
  protected:
   glm::vec4 d{0.f};  // Direction.
 };
