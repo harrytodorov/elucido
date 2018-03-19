@@ -546,25 +546,25 @@ TEST(Triangle, translation) {
   t->translate(2.f, Z);
   t->apply_transformations();
 
-  EXPECT_NEAR(t->v0.x, -1.f, float_err);
-  EXPECT_NEAR(t->v0.y, -1.f, float_err);
-  EXPECT_NEAR(t->v0.z,  2.f, float_err);
-  EXPECT_NEAR(t->v0.w,  1.f, float_err);
+  EXPECT_NEAR(t->vert0().x, -1.f, float_err);
+  EXPECT_NEAR(t->vert0().y, -1.f, float_err);
+  EXPECT_NEAR(t->vert0().z,  2.f, float_err);
+  EXPECT_NEAR(t->vert0().w,  1.f, float_err);
 
-  EXPECT_NEAR(t->v1.x,  1.f, float_err);
-  EXPECT_NEAR(t->v1.y, -1.f, float_err);
-  EXPECT_NEAR(t->v1.z,  2.f, float_err);
-  EXPECT_NEAR(t->v1.w,  1.f, float_err);
+  EXPECT_NEAR(t->vert1().x,  1.f, float_err);
+  EXPECT_NEAR(t->vert1().y, -1.f, float_err);
+  EXPECT_NEAR(t->vert1().z,  2.f, float_err);
+  EXPECT_NEAR(t->vert1().w,  1.f, float_err);
 
-  EXPECT_NEAR(t->v2.x,  0.f, float_err);
-  EXPECT_NEAR(t->v2.y,  1.f, float_err);
-  EXPECT_NEAR(t->v2.z,  2.f, float_err);
-  EXPECT_NEAR(t->v2.w,  1.f, float_err);
+  EXPECT_NEAR(t->vert2().x,  0.f, float_err);
+  EXPECT_NEAR(t->vert2().y,  1.f, float_err);
+  EXPECT_NEAR(t->vert2().z,  2.f, float_err);
+  EXPECT_NEAR(t->vert2().w,  1.f, float_err);
 
-  EXPECT_NEAR(t->n.x,  0.f, float_err);
-  EXPECT_NEAR(t->n.y,  0.f, float_err);
-  EXPECT_NEAR(t->n.z,  1.f, float_err);
-  EXPECT_NEAR(t->n.w,  0.f, float_err);
+  EXPECT_NEAR(t->normal().x,  0.f, float_err);
+  EXPECT_NEAR(t->normal().y,  0.f, float_err);
+  EXPECT_NEAR(t->normal().z,  1.f, float_err);
+  EXPECT_NEAR(t->normal().w,  0.f, float_err);
 }
 
 //==============================================================================
@@ -580,25 +580,25 @@ TEST(Triangle, successiveTranslation) {
   t->translate(2.f, Y);
   t->apply_transformations();
 
-  EXPECT_NEAR(t->v0.x, -1.f, float_err);
-  EXPECT_NEAR(t->v0.y,  1.f, float_err);
-  EXPECT_NEAR(t->v0.z,  2.f, float_err);
-  EXPECT_NEAR(t->v0.w,  1.f, float_err);
+  EXPECT_NEAR(t->vert0().x, -1.f, float_err);
+  EXPECT_NEAR(t->vert0().y,  1.f, float_err);
+  EXPECT_NEAR(t->vert0().z,  2.f, float_err);
+  EXPECT_NEAR(t->vert0().w,  1.f, float_err);
 
-  EXPECT_NEAR(t->v1.x,  1.f, float_err);
-  EXPECT_NEAR(t->v1.y,  1.f, float_err);
-  EXPECT_NEAR(t->v1.z,  2.f, float_err);
-  EXPECT_NEAR(t->v1.w,  1.f, float_err);
+  EXPECT_NEAR(t->vert1().x,  1.f, float_err);
+  EXPECT_NEAR(t->vert1().y,  1.f, float_err);
+  EXPECT_NEAR(t->vert1().z,  2.f, float_err);
+  EXPECT_NEAR(t->vert1().w,  1.f, float_err);
 
-  EXPECT_NEAR(t->v2.x,  0.f, float_err);
-  EXPECT_NEAR(t->v2.y,  3.f, float_err);
-  EXPECT_NEAR(t->v2.z,  2.f, float_err);
-  EXPECT_NEAR(t->v2.w,  1.f, float_err);
+  EXPECT_NEAR(t->vert2().x,  0.f, float_err);
+  EXPECT_NEAR(t->vert2().y,  3.f, float_err);
+  EXPECT_NEAR(t->vert2().z,  2.f, float_err);
+  EXPECT_NEAR(t->vert2().w,  1.f, float_err);
 
-  EXPECT_NEAR(t->n.x,  0.f, float_err);
-  EXPECT_NEAR(t->n.y,  0.f, float_err);
-  EXPECT_NEAR(t->n.z,  1.f, float_err);
-  EXPECT_NEAR(t->n.w,  0.f, float_err);
+  EXPECT_NEAR(t->normal().x,  0.f, float_err);
+  EXPECT_NEAR(t->normal().y,  0.f, float_err);
+  EXPECT_NEAR(t->normal().z,  1.f, float_err);
+  EXPECT_NEAR(t->normal().w,  0.f, float_err);
 }
 
 //==============================================================================
@@ -613,25 +613,25 @@ TEST(Triangle, rotation) {
   t->rotate(90.f, X);
   t->apply_transformations();
 
-  EXPECT_NEAR(t->v0.x, -1.f, float_err);
-  EXPECT_NEAR(t->v0.y,  0.f, float_err);
-  EXPECT_NEAR(t->v0.z, -1.f, float_err);
-  EXPECT_NEAR(t->v0.w,  1.f, float_err);
+  EXPECT_NEAR(t->vert0().x, -1.f, float_err);
+  EXPECT_NEAR(t->vert0().y,  0.f, float_err);
+  EXPECT_NEAR(t->vert0().z, -1.f, float_err);
+  EXPECT_NEAR(t->vert0().w,  1.f, float_err);
 
-  EXPECT_NEAR(t->v1.x,  1.f, float_err);
-  EXPECT_NEAR(t->v1.y,  0.f, float_err);
-  EXPECT_NEAR(t->v1.z, -1.f, float_err);
-  EXPECT_NEAR(t->v1.w,  1.f, float_err);
+  EXPECT_NEAR(t->vert1().x,  1.f, float_err);
+  EXPECT_NEAR(t->vert1().y,  0.f, float_err);
+  EXPECT_NEAR(t->vert1().z, -1.f, float_err);
+  EXPECT_NEAR(t->vert1().w,  1.f, float_err);
 
-  EXPECT_NEAR(t->v2.x,  0.f, float_err);
-  EXPECT_NEAR(t->v2.y,  0.f, float_err);
-  EXPECT_NEAR(t->v2.z,  1.f, float_err);
-  EXPECT_NEAR(t->v2.w,  1.f, float_err);
+  EXPECT_NEAR(t->vert2().x,  0.f, float_err);
+  EXPECT_NEAR(t->vert2().y,  0.f, float_err);
+  EXPECT_NEAR(t->vert2().z,  1.f, float_err);
+  EXPECT_NEAR(t->vert2().w,  1.f, float_err);
 
-  EXPECT_NEAR(t->n.x,   0.f, float_err);
-  EXPECT_NEAR(t->n.y,  -1.f, float_err);
-  EXPECT_NEAR(t->n.z,   0.f, float_err);
-  EXPECT_NEAR(t->n.w,   0.f, float_err);
+  EXPECT_NEAR(t->normal().x,   0.f, float_err);
+  EXPECT_NEAR(t->normal().y,  -1.f, float_err);
+  EXPECT_NEAR(t->normal().z,   0.f, float_err);
+  EXPECT_NEAR(t->normal().w,   0.f, float_err);
 }
 
 //==============================================================================
@@ -647,25 +647,25 @@ TEST(Triangle, successiveRotation) {
   t->rotate(-90.f, Z);
   t->apply_transformations();
 
-  EXPECT_NEAR(t->v0.x,  0.f, float_err);
-  EXPECT_NEAR(t->v0.y,  1.f, float_err);
-  EXPECT_NEAR(t->v0.z, -1.f, float_err);
-  EXPECT_NEAR(t->v0.w,  1.f, float_err);
+  EXPECT_NEAR(t->vert0().x,  0.f, float_err);
+  EXPECT_NEAR(t->vert0().y,  1.f, float_err);
+  EXPECT_NEAR(t->vert0().z, -1.f, float_err);
+  EXPECT_NEAR(t->vert0().w,  1.f, float_err);
 
-  EXPECT_NEAR(t->v1.x,  0.f, float_err);
-  EXPECT_NEAR(t->v1.y, -1.f, float_err);
-  EXPECT_NEAR(t->v1.z, -1.f, float_err);
-  EXPECT_NEAR(t->v1.w,  1.f, float_err);
+  EXPECT_NEAR(t->vert1().x,  0.f, float_err);
+  EXPECT_NEAR(t->vert1().y, -1.f, float_err);
+  EXPECT_NEAR(t->vert1().z, -1.f, float_err);
+  EXPECT_NEAR(t->vert1().w,  1.f, float_err);
 
-  EXPECT_NEAR(t->v2.x,  0.f, float_err);
-  EXPECT_NEAR(t->v2.y,  0.f, float_err);
-  EXPECT_NEAR(t->v2.z,  1.f, float_err);
-  EXPECT_NEAR(t->v2.w,  1.f, float_err);
+  EXPECT_NEAR(t->vert2().x,  0.f, float_err);
+  EXPECT_NEAR(t->vert2().y,  0.f, float_err);
+  EXPECT_NEAR(t->vert2().z,  1.f, float_err);
+  EXPECT_NEAR(t->vert2().w,  1.f, float_err);
 
-  EXPECT_NEAR(t->n.x,  -1.f, float_err);
-  EXPECT_NEAR(t->n.y,   0.f, float_err);
-  EXPECT_NEAR(t->n.z,   0.f, float_err);
-  EXPECT_NEAR(t->n.w,   0.f, float_err);
+  EXPECT_NEAR(t->normal().x,  -1.f, float_err);
+  EXPECT_NEAR(t->normal().y,   0.f, float_err);
+  EXPECT_NEAR(t->normal().z,   0.f, float_err);
+  EXPECT_NEAR(t->normal().w,   0.f, float_err);
 }
 
 //==============================================================================
@@ -680,25 +680,25 @@ TEST(Triangle, scale) {
   t->scale(2.f, uniform);
   t->apply_transformations();
 
-  EXPECT_NEAR(t->v0.x, -2.f, float_err);
-  EXPECT_NEAR(t->v0.y, -2.f, float_err);
-  EXPECT_NEAR(t->v0.z,  0.f, float_err);
-  EXPECT_NEAR(t->v0.w,  1.f, float_err);
+  EXPECT_NEAR(t->vert0().x, -2.f, float_err);
+  EXPECT_NEAR(t->vert0().y, -2.f, float_err);
+  EXPECT_NEAR(t->vert0().z,  0.f, float_err);
+  EXPECT_NEAR(t->vert0().w,  1.f, float_err);
 
-  EXPECT_NEAR(t->v1.x,  2.f, float_err);
-  EXPECT_NEAR(t->v1.y, -2.f, float_err);
-  EXPECT_NEAR(t->v1.z,  0.f, float_err);
-  EXPECT_NEAR(t->v1.w,  1.f, float_err);
+  EXPECT_NEAR(t->vert1().x,  2.f, float_err);
+  EXPECT_NEAR(t->vert1().y, -2.f, float_err);
+  EXPECT_NEAR(t->vert1().z,  0.f, float_err);
+  EXPECT_NEAR(t->vert1().w,  1.f, float_err);
 
-  EXPECT_NEAR(t->v2.x,  0.f, float_err);
-  EXPECT_NEAR(t->v2.y,  2.f, float_err);
-  EXPECT_NEAR(t->v2.z,  0.f, float_err);
-  EXPECT_NEAR(t->v2.w,  1.f, float_err);
+  EXPECT_NEAR(t->vert2().x,  0.f, float_err);
+  EXPECT_NEAR(t->vert2().y,  2.f, float_err);
+  EXPECT_NEAR(t->vert2().z,  0.f, float_err);
+  EXPECT_NEAR(t->vert2().w,  1.f, float_err);
 
-  EXPECT_NEAR(t->n.x,   0.f, float_err);
-  EXPECT_NEAR(t->n.y,   0.f, float_err);
-  EXPECT_NEAR(t->n.z,   1.f, float_err);
-  EXPECT_NEAR(t->n.w,   0.f, float_err);
+  EXPECT_NEAR(t->normal().x,   0.f, float_err);
+  EXPECT_NEAR(t->normal().y,   0.f, float_err);
+  EXPECT_NEAR(t->normal().z,   1.f, float_err);
+  EXPECT_NEAR(t->normal().w,   0.f, float_err);
 }
 
 //==============================================================================
@@ -714,25 +714,25 @@ TEST(Triangle, successiveScale) {
   t->scale(0.25f, uniform);
   t->apply_transformations();
 
-  EXPECT_NEAR(t->v0.x, -0.5f, float_err);
-  EXPECT_NEAR(t->v0.y, -0.5f, float_err);
-  EXPECT_NEAR(t->v0.z,  0.f, float_err);
-  EXPECT_NEAR(t->v0.w,  1.f, float_err);
+  EXPECT_NEAR(t->vert0().x, -0.5f, float_err);
+  EXPECT_NEAR(t->vert0().y, -0.5f, float_err);
+  EXPECT_NEAR(t->vert0().z,  0.f, float_err);
+  EXPECT_NEAR(t->vert0().w,  1.f, float_err);
 
-  EXPECT_NEAR(t->v1.x,  0.5f, float_err);
-  EXPECT_NEAR(t->v1.y, -0.5f, float_err);
-  EXPECT_NEAR(t->v1.z,  0.f, float_err);
-  EXPECT_NEAR(t->v1.w,  1.f, float_err);
+  EXPECT_NEAR(t->vert1().x,  0.5f, float_err);
+  EXPECT_NEAR(t->vert1().y, -0.5f, float_err);
+  EXPECT_NEAR(t->vert1().z,  0.f, float_err);
+  EXPECT_NEAR(t->vert1().w,  1.f, float_err);
 
-  EXPECT_NEAR(t->v2.x,  0.f, float_err);
-  EXPECT_NEAR(t->v2.y,  0.5f, float_err);
-  EXPECT_NEAR(t->v2.z,  0.f, float_err);
-  EXPECT_NEAR(t->v2.w,  1.f, float_err);
+  EXPECT_NEAR(t->vert2().x,  0.f, float_err);
+  EXPECT_NEAR(t->vert2().y,  0.5f, float_err);
+  EXPECT_NEAR(t->vert2().z,  0.f, float_err);
+  EXPECT_NEAR(t->vert2().w,  1.f, float_err);
 
-  EXPECT_NEAR(t->n.x,   0.f, float_err);
-  EXPECT_NEAR(t->n.y,   0.f, float_err);
-  EXPECT_NEAR(t->n.z,   1.f, float_err);
-  EXPECT_NEAR(t->n.w,   0.f, float_err);
+  EXPECT_NEAR(t->normal().x,   0.f, float_err);
+  EXPECT_NEAR(t->normal().y,   0.f, float_err);
+  EXPECT_NEAR(t->normal().z,   1.f, float_err);
+  EXPECT_NEAR(t->normal().w,   0.f, float_err);
 }
 
 //==============================================================================
@@ -749,25 +749,25 @@ TEST(Triangle, translationRotationAndScale) {
   t->translate(2.f, Y);
   t->apply_transformations();
 
-  EXPECT_NEAR(t->v0.x, -2.f, float_err);
-  EXPECT_NEAR(t->v0.y,  2.f, float_err);
-  EXPECT_NEAR(t->v0.z, -2.f, float_err);
-  EXPECT_NEAR(t->v0.w,  1.f, float_err);
+  EXPECT_NEAR(t->vert0().x, -2.f, float_err);
+  EXPECT_NEAR(t->vert0().y,  2.f, float_err);
+  EXPECT_NEAR(t->vert0().z, -2.f, float_err);
+  EXPECT_NEAR(t->vert0().w,  1.f, float_err);
 
-  EXPECT_NEAR(t->v1.x,  2.f, float_err);
-  EXPECT_NEAR(t->v1.y,  2.f, float_err);
-  EXPECT_NEAR(t->v1.z, -2.f, float_err);
-  EXPECT_NEAR(t->v1.w,  1.f, float_err);
+  EXPECT_NEAR(t->vert1().x,  2.f, float_err);
+  EXPECT_NEAR(t->vert1().y,  2.f, float_err);
+  EXPECT_NEAR(t->vert1().z, -2.f, float_err);
+  EXPECT_NEAR(t->vert1().w,  1.f, float_err);
 
-  EXPECT_NEAR(t->v2.x,  0.f, float_err);
-  EXPECT_NEAR(t->v2.y,  2.f, float_err);
-  EXPECT_NEAR(t->v2.z,  2.f, float_err);
-  EXPECT_NEAR(t->v2.w,  1.f, float_err);
+  EXPECT_NEAR(t->vert2().x,  0.f, float_err);
+  EXPECT_NEAR(t->vert2().y,  2.f, float_err);
+  EXPECT_NEAR(t->vert2().z,  2.f, float_err);
+  EXPECT_NEAR(t->vert2().w,  1.f, float_err);
 
-  EXPECT_NEAR(t->n.x,   0.f, float_err);
-  EXPECT_NEAR(t->n.y,  -1.f, float_err);
-  EXPECT_NEAR(t->n.z,   0.f, float_err);
-  EXPECT_NEAR(t->n.w,   0.f, float_err);
+  EXPECT_NEAR(t->normal().x,   0.f, float_err);
+  EXPECT_NEAR(t->normal().y,  -1.f, float_err);
+  EXPECT_NEAR(t->normal().z,   0.f, float_err);
+  EXPECT_NEAR(t->normal().w,   0.f, float_err);
 }
 
 //==============================================================================
@@ -788,25 +788,25 @@ TEST(Triangle, cameraTransformationTranslation) {
   mat = glm::inverse(mat);
   t->apply_camera_transformation(mat);
 
-  EXPECT_NEAR(t->v0.x, -1.f, float_err);
-  EXPECT_NEAR(t->v0.y, -1.f, float_err);
-  EXPECT_NEAR(t->v0.z, -2.f, float_err);
-  EXPECT_NEAR(t->v0.w,  1.f, float_err);
+  EXPECT_NEAR(t->vert0().x, -1.f, float_err);
+  EXPECT_NEAR(t->vert0().y, -1.f, float_err);
+  EXPECT_NEAR(t->vert0().z, -2.f, float_err);
+  EXPECT_NEAR(t->vert0().w,  1.f, float_err);
 
-  EXPECT_NEAR(t->v1.x,  1.f, float_err);
-  EXPECT_NEAR(t->v1.y, -1.f, float_err);
-  EXPECT_NEAR(t->v1.z, -2.f, float_err);
-  EXPECT_NEAR(t->v1.w,  1.f, float_err);
+  EXPECT_NEAR(t->vert1().x,  1.f, float_err);
+  EXPECT_NEAR(t->vert1().y, -1.f, float_err);
+  EXPECT_NEAR(t->vert1().z, -2.f, float_err);
+  EXPECT_NEAR(t->vert1().w,  1.f, float_err);
 
-  EXPECT_NEAR(t->v2.x,  0.f, float_err);
-  EXPECT_NEAR(t->v2.y,  1.f, float_err);
-  EXPECT_NEAR(t->v2.z, -2.f, float_err);
-  EXPECT_NEAR(t->v2.w,  1.f, float_err);
+  EXPECT_NEAR(t->vert2().x,  0.f, float_err);
+  EXPECT_NEAR(t->vert2().y,  1.f, float_err);
+  EXPECT_NEAR(t->vert2().z, -2.f, float_err);
+  EXPECT_NEAR(t->vert2().w,  1.f, float_err);
 
-  EXPECT_NEAR(t->n.x,   0.f, float_err);
-  EXPECT_NEAR(t->n.y,   0.f, float_err);
-  EXPECT_NEAR(t->n.z,   1.f, float_err);
-  EXPECT_NEAR(t->n.w,   0.f, float_err);
+  EXPECT_NEAR(t->normal().x,   0.f, float_err);
+  EXPECT_NEAR(t->normal().y,   0.f, float_err);
+  EXPECT_NEAR(t->normal().z,   1.f, float_err);
+  EXPECT_NEAR(t->normal().w,   0.f, float_err);
 }
 
 //==============================================================================
@@ -823,25 +823,25 @@ TEST(Triangle, cameraTransformationIdentity) {
   mat = glm::inverse(mat);
   t->apply_camera_transformation(mat);
 
-  EXPECT_NEAR(t->v0.x, -1.f, float_err);
-  EXPECT_NEAR(t->v0.y, -1.f, float_err);
-  EXPECT_NEAR(t->v0.z,  0.f, float_err);
-  EXPECT_NEAR(t->v0.w,  1.f, float_err);
+  EXPECT_NEAR(t->vert0().x, -1.f, float_err);
+  EXPECT_NEAR(t->vert0().y, -1.f, float_err);
+  EXPECT_NEAR(t->vert0().z,  0.f, float_err);
+  EXPECT_NEAR(t->vert0().w,  1.f, float_err);
 
-  EXPECT_NEAR(t->v1.x,  1.f, float_err);
-  EXPECT_NEAR(t->v1.y, -1.f, float_err);
-  EXPECT_NEAR(t->v1.z,  0.f, float_err);
-  EXPECT_NEAR(t->v1.w,  1.f, float_err);
+  EXPECT_NEAR(t->vert1().x,  1.f, float_err);
+  EXPECT_NEAR(t->vert1().y, -1.f, float_err);
+  EXPECT_NEAR(t->vert1().z,  0.f, float_err);
+  EXPECT_NEAR(t->vert1().w,  1.f, float_err);
 
-  EXPECT_NEAR(t->v2.x,  0.f, float_err);
-  EXPECT_NEAR(t->v2.y,  1.f, float_err);
-  EXPECT_NEAR(t->v2.z,  0.f, float_err);
-  EXPECT_NEAR(t->v2.w,  1.f, float_err);
+  EXPECT_NEAR(t->vert2().x,  0.f, float_err);
+  EXPECT_NEAR(t->vert2().y,  1.f, float_err);
+  EXPECT_NEAR(t->vert2().z,  0.f, float_err);
+  EXPECT_NEAR(t->vert2().w,  1.f, float_err);
 
-  EXPECT_NEAR(t->n.x,   0.f, float_err);
-  EXPECT_NEAR(t->n.y,   0.f, float_err);
-  EXPECT_NEAR(t->n.z,   1.f, float_err);
-  EXPECT_NEAR(t->n.w,   0.f, float_err);
+  EXPECT_NEAR(t->normal().x,   0.f, float_err);
+  EXPECT_NEAR(t->normal().y,   0.f, float_err);
+  EXPECT_NEAR(t->normal().z,   1.f, float_err);
+  EXPECT_NEAR(t->normal().w,   0.f, float_err);
 }
 
 //==============================================================================
@@ -862,25 +862,25 @@ TEST(Triangle, cameraTransformationRotation) {
   mat = glm::inverse(mat);
   t->apply_camera_transformation(mat);
 
-  EXPECT_NEAR(t->v0.x,  2.f, float_err);
-  EXPECT_NEAR(t->v0.y, -1.f, float_err);
-  EXPECT_NEAR(t->v0.z, -1.f, float_err);
-  EXPECT_NEAR(t->v0.w,  1.f, float_err);
+  EXPECT_NEAR(t->vert0().x,  2.f, float_err);
+  EXPECT_NEAR(t->vert0().y, -1.f, float_err);
+  EXPECT_NEAR(t->vert0().z, -1.f, float_err);
+  EXPECT_NEAR(t->vert0().w,  1.f, float_err);
 
-  EXPECT_NEAR(t->v1.x,  2.f, float_err);
-  EXPECT_NEAR(t->v1.y, -1.f, float_err);
-  EXPECT_NEAR(t->v1.z,  1.f, float_err);
-  EXPECT_NEAR(t->v1.w,  1.f, float_err);
+  EXPECT_NEAR(t->vert1().x,  2.f, float_err);
+  EXPECT_NEAR(t->vert1().y, -1.f, float_err);
+  EXPECT_NEAR(t->vert1().z,  1.f, float_err);
+  EXPECT_NEAR(t->vert1().w,  1.f, float_err);
 
-  EXPECT_NEAR(t->v2.x,  2.f, float_err);
-  EXPECT_NEAR(t->v2.y,  1.f, float_err);
-  EXPECT_NEAR(t->v2.z,  0.f, float_err);
-  EXPECT_NEAR(t->v2.w,  1.f, float_err);
+  EXPECT_NEAR(t->vert2().x,  2.f, float_err);
+  EXPECT_NEAR(t->vert2().y,  1.f, float_err);
+  EXPECT_NEAR(t->vert2().z,  0.f, float_err);
+  EXPECT_NEAR(t->vert2().w,  1.f, float_err);
 
-  EXPECT_NEAR(t->n.x,  -1.f, float_err);
-  EXPECT_NEAR(t->n.y,   0.f, float_err);
-  EXPECT_NEAR(t->n.z,   0.f, float_err);
-  EXPECT_NEAR(t->n.w,   0.f, float_err);
+  EXPECT_NEAR(t->normal().x,  -1.f, float_err);
+  EXPECT_NEAR(t->normal().y,   0.f, float_err);
+  EXPECT_NEAR(t->normal().z,   0.f, float_err);
+  EXPECT_NEAR(t->normal().w,   0.f, float_err);
 }
 
 //==============================================================================
@@ -906,25 +906,25 @@ TEST(Triangle, cameraTransformationTranslationAndRotation) {
   mat = glm::inverse(mat);
   t->apply_camera_transformation(mat);
 
-  EXPECT_NEAR(t->v0.x,  2.f, float_err);
-  EXPECT_NEAR(t->v0.y, -1.f, float_err);
-  EXPECT_NEAR(t->v0.z, -1.f, float_err);
-  EXPECT_NEAR(t->v0.w,  1.f, float_err);
+  EXPECT_NEAR(t->vert0().x,  2.f, float_err);
+  EXPECT_NEAR(t->vert0().y, -1.f, float_err);
+  EXPECT_NEAR(t->vert0().z, -1.f, float_err);
+  EXPECT_NEAR(t->vert0().w,  1.f, float_err);
 
-  EXPECT_NEAR(t->v1.x,  2.f, float_err);
-  EXPECT_NEAR(t->v1.y, -1.f, float_err);
-  EXPECT_NEAR(t->v1.z,  1.f, float_err);
-  EXPECT_NEAR(t->v1.w,  1.f, float_err);
+  EXPECT_NEAR(t->vert1().x,  2.f, float_err);
+  EXPECT_NEAR(t->vert1().y, -1.f, float_err);
+  EXPECT_NEAR(t->vert1().z,  1.f, float_err);
+  EXPECT_NEAR(t->vert1().w,  1.f, float_err);
 
-  EXPECT_NEAR(t->v2.x,  2.f, float_err);
-  EXPECT_NEAR(t->v2.y,  1.f, float_err);
-  EXPECT_NEAR(t->v2.z,  0.f, float_err);
-  EXPECT_NEAR(t->v2.w,  1.f, float_err);
+  EXPECT_NEAR(t->vert2().x,  2.f, float_err);
+  EXPECT_NEAR(t->vert2().y,  1.f, float_err);
+  EXPECT_NEAR(t->vert2().z,  0.f, float_err);
+  EXPECT_NEAR(t->vert2().w,  1.f, float_err);
 
-  EXPECT_NEAR(t->n.x,  -1.f, float_err);
-  EXPECT_NEAR(t->n.y,   0.f, float_err);
-  EXPECT_NEAR(t->n.z,   0.f, float_err);
-  EXPECT_NEAR(t->n.w,   0.f, float_err);
+  EXPECT_NEAR(t->normal().x,  -1.f, float_err);
+  EXPECT_NEAR(t->normal().y,   0.f, float_err);
+  EXPECT_NEAR(t->normal().z,   0.f, float_err);
+  EXPECT_NEAR(t->normal().w,   0.f, float_err);
 }
 
 //==============================================================================

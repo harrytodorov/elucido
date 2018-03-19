@@ -4,28 +4,14 @@
 #ifndef ELUCIDO_OBJECT_H
 #define ELUCIDO_OBJECT_H
 
-#include <glm/detail/type_vec.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/vec3.hpp>
-#include <glm/mat4x4.hpp>
-#include <glm/geometric.hpp>
-#include <glm/glm.hpp>
-#include <glm/vec4.hpp>
-
-#include <cstdio>
-#include <cmath>
-#include <string>
-#include <fstream>
-#include <iostream>
-#include <sstream>
-#include <vector>
-#include <cstdint>
-
 #include "../extra/Ray.h"
 #include "../accelerators/AABBox.h"
 #include "../extra/Utilities.h"
 
 class Object {
+//==============================================================================
+// Constructors & destructors
+//==============================================================================
  public:
   Object() :
       om(),
@@ -40,8 +26,12 @@ class Object {
       ot(not_set_ot)
   {}
   Object(const Object &o);
+
   virtual ~Object() {}
 
+//==============================================================================
+// Function declarations
+//==============================================================================
   inline material const& material() const { return this->om; }
   inline void            set_material(const struct material &_m) { om = _m; }
 
@@ -63,6 +53,10 @@ class Object {
               const Axis &rotation_axis);
   virtual void scale(const float_t &scaling_factor,
              const Axis &scale_axis);
+
+//==============================================================================
+// Data members
+//==============================================================================
  protected:
   struct material   om{}; // Material.
   AABBox            bb{}; // Bounding box.

@@ -7,6 +7,9 @@
 #include "Object.h"
 
 class Sphere : public Object {
+//==============================================================================
+// Constructors & destructors
+//==============================================================================
  public:
   Sphere() :
       Object() {
@@ -18,7 +21,7 @@ class Sphere : public Object {
       Object(),
       r(r),
       c(c) {
-    r2 = powf(r, 2.f);
+    r2 = r*r;
     reshape_bb();
     ot = sphere;
   }
@@ -26,7 +29,7 @@ class Sphere : public Object {
       Object(m),
       r(r),
       c(c) {
-    r2 = glm::pow(r, 2.f);
+    r2 = r*r;
     reshape_bb();
     ot = sphere;
   }
@@ -34,11 +37,15 @@ class Sphere : public Object {
       Object(s) {
     this->r = s.r;
     this->c = s.c;
-    this->r2 = glm::pow(r, 2.f);
+    this->r2 = r*r;
     ot = sphere;
   }
+
   ~Sphere() {}
 
+//==============================================================================
+// Function declarations
+//==============================================================================
   inline float_t& radius() { return this->r; }
   void            set_radius(const float_t &r);
 
@@ -61,6 +68,9 @@ class Sphere : public Object {
     bb.extend_by(glm::vec4(c.x + r, c.y + r, c.z + r, 1));
   }
 
+//==============================================================================
+// Data members
+//==============================================================================
  protected:
   float_t   r{1.f};                     // Radius.
   float_t   r2{};                       // Radius^2.

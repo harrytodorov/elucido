@@ -100,8 +100,20 @@ void Triangle::apply_transformations() {
   mt = glm::mat4(1);
 }
 
-void Triangle::create_normal() {
-  n = glm::normalize(glm::vec4(glm::cross(glm::vec3(v1) - glm::vec3(v0),
-                                          glm::vec3(v2) - glm::vec3(v0)),
-                               0));
+//==============================================================================
+void Triangle::calculate_normal() {
+  auto c = glm::cross(glm::vec3(v1) - glm::vec3(v0),
+                      glm::vec3(v2) - glm::vec3(v0));
+  n = glm::normalize(glm::vec4(c.x, c.y, c.z, 0.f));
+}
+
+//==============================================================================
+void Triangle::reshape_bb() {
+  // we don't want the bounding box to maintain its old shape
+  bb.reset();
+
+  // extend bb of triangle
+  bb.extend_by(v0);
+  bb.extend_by(v1);
+  bb.extend_by(v2);
 }

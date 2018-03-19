@@ -7,41 +7,28 @@
 #include "Object.h"
 
 class Triangle : public Object {
- public:
-//==============================================================================
-// Data members
-//==============================================================================
-// Vertices have to be defined in counterclockwise direction,
-// starting from vertex v0 going to v2 otherwise strange
-// artefacts could occur
-  glm::vec4 v0, v1, v2;       // vertices of the triangle
-  glm::vec4 n;                // n of the triangle
-
 //==============================================================================
 // Constructors & Destructors
 //==============================================================================
+ public:
   Triangle() :
       Object(),
       v0(-1, -1, 0, 1),
       v1(1, -1, 0, 1),
       v2(0, 1, 0, 1) {
-    create_normal();
+    calculate_normal();
     reshape_bb();
     ot = triangle;
   }
-
-//==============================================================================
   Triangle(const struct material &m) :
       Object(m),
       v0(-1, -1, 0, 1),
       v1(1, -1, 0, 1),
       v2(0, 1, 0, 1) {
-    create_normal();
+    calculate_normal();
     reshape_bb();
     ot = triangle;
   }
-
-//==============================================================================
   Triangle(const glm::vec4 &vec0,
            const glm::vec4 &vec1,
            const glm::vec4 &vec2) :
@@ -49,12 +36,10 @@ class Triangle : public Object {
       v0(vec0),
       v1(vec1),
       v2(vec2) {
-    create_normal();
+    calculate_normal();
     reshape_bb();
     ot = triangle;
   }
-
-//==============================================================================
   Triangle(const glm::vec4 &vec0,
            const glm::vec4 &vec1,
            const glm::vec4 &vec2,
@@ -63,12 +48,10 @@ class Triangle : public Object {
       v0(vec0),
       v1(vec1),
       v2(vec2) {
-    create_normal();
+    calculate_normal();
     reshape_bb();
     ot = triangle;
   }
-
-//==============================================================================
   Triangle(const Triangle &t) : Object(t) {
     this->v0 = t.v0;
     this->v1 = t.v1;
@@ -76,30 +59,40 @@ class Triangle : public Object {
     this->n = t.n;
   }
 
-//==============================================================================
   ~Triangle() {}
 
 //==============================================================================
 // Function declarations
 //==============================================================================
+  inline glm::vec4 vert0() const { return this->v0; }
+  inline glm::vec4 vert1() const { return this->v1; }
+  inline glm::vec4 vert2() const { return this->v2; }
+  inline void      set_vertices(const glm::vec4 &_v0,
+                                const glm::vec4 &_v1,
+                                const glm::vec4 &_v2) {
+    this->v0 = _v0;
+    this->v1 = _v1;
+    this->v2 = _v2;
+    calculate_normal();
+  }
+
+  inline glm::vec4 normal() const { return this->n; }
+
   bool intersect(const Ray &r, isect_info &i) const;
   bool shadow_intersect(const Ray &r) const;
 
   void get_surface_properties(isect_info &i) const;
   void apply_camera_transformation(const glm::mat4 &ivm);
   void apply_transformations();
-  void create_normal();
+  void calculate_normal();
+  void reshape_bb();
 
- private:
-  inline void reshape_bb() {
-    // we don't want the bounding box to maintain its old shape
-    bb.reset();
-
-    // extend bb of triangle
-    bb.extend_by(v0);
-    bb.extend_by(v1);
-    bb.extend_by(v2);
-  }
+//==============================================================================
+// Data members
+//==============================================================================
+ protected:
+  glm::vec4 v0, v1, v2;       // Vertices.
+  glm::vec4 n;                // Normal.
 };
 
 #endif //ELUCIDO_TRIANGLE_H

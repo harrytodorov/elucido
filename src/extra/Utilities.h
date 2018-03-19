@@ -5,7 +5,6 @@
 #define ELUCIDO_UTILITIES_H
 
 #include <iostream>
-#include <cstdlib>
 #include <memory>
 #include <fstream>
 #include <sstream>
@@ -13,12 +12,14 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <cstdint>
+#include <random>
 
-#include <glm/geometric.hpp>
 #include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
 #include <glm/mat4x4.hpp>
+#include <glm/gtc/epsilon.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include "glm/gtc/epsilon.hpp"
 
 class Object;
 

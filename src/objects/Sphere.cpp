@@ -100,7 +100,7 @@ void Sphere::scale(const float_t &scaling_factor,
 //==============================================================================
 void Sphere::set_radius(const float_t &r) {
   this->r = r;
-  this->r2 = powf(r, 2.f);
+  this->r2 = r*r;
   reshape_bb();
 }
 

@@ -1,8 +1,9 @@
 // Copyright 2017, University of Freiburg.
 // Author: Haralambi Todorov <harrytodorov@gmail.com>
 
-#include "ImagePlane.h"
 #include <glm/exponential.hpp>
+
+#include "ImagePlane.h"
 
 //==============================================================================
 void ImagePlane::save_to_ppm(const char *fn) {
