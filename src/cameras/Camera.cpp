@@ -25,9 +25,6 @@ glm::vec3 Camera::cast_ray(const Ray &ray,
   // trace it through the scene
   if (scene_bb.intersect(ray) && ray.trace(objects, ii, ri)) {
 
-    // get the surface properties of the intersection
-    ii.ho->get_surface_properties(ii);
-
     // material of the intersected object
     material mat = ii.ho->material();
 
@@ -196,9 +193,6 @@ glm::vec3 Camera::cast_ray(const Ray &ray,
   // check if a ray intersects the scene's bounding box and if so
   // trace it through the scene
   if (structure->intersect(ray, ii)) {
-
-    // get the surface properties of the intersection
-    ii.ho->get_surface_properties(ii);
 
     // material of the intersected object
     material mat = ii.ho->material();

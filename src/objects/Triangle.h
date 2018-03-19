@@ -57,14 +57,35 @@ class Triangle : public Object {
 
   inline glm::vec4 normal() const { return this->n; }
 
+  /**
+   * One uses the Moeller-Trumbore ray/triangle intersection algorithm for
+   * double faced triangles.
+   * @param r:  The ray with which the triangle would be intersected.
+   * @param i:  A structure containing intersection information.
+   * @return:   True in case of an intersection, false otherwise.
+   *            In case the ray runs parallel to the surface of the
+   *            triangle, false is returned.
+   */
   bool intersect(const Ray &r, isect_info &i) const;
+
+  /**
+   * Same algorithm is used for the shadow intersection routine.
+   * @param r:  The ray with which the triangle would be intersected.
+   * @return:   True in case of an intersection, false otherwise.
+   *            In case the ray runs parallel to the surface of the
+   *            triangle, false is returned.
+   */
   bool shadow_intersect(const Ray &r) const;
 
-  void get_surface_properties(isect_info &i) const;
-  void apply_camera_transformation(const glm::mat4 &ivm);
-  void apply_transformations();
+  /**
+   * Calculates the normal of the triangle:
+   *  n = (v1 - v0) x (v2 - v0)
+   */
   void calculate_normal();
   void reshape_bb();
+
+  void apply_camera_transformation(const glm::mat4 &ivm);
+  void apply_transformations();
 
 //==============================================================================
 // Data members

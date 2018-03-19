@@ -243,6 +243,41 @@ TEST(Triangle, intersectPlanar) {
 }
 
 //==============================================================================
+TEST(Triangle, intersectBack) {
+  float_t float_err = 0.001;
+
+  Ray ray;
+  ray.set_orig({0.f, 0.f,  2.f, 1.f});
+  ray.set_dir( {0.f, 0.f, -1.f, 0.f});
+
+  auto v0 = glm::vec4(-1.f, -1.f, 0.f, 1.f);
+  auto v1 = glm::vec4( 1.f, -1.f, 0.f, 1.f);
+  auto v2 = glm::vec4( 0.f,  1.f, 0.f, 1.f);
+  // Normal = {0, 0, 1, 0}
+
+  Triangle t;
+  t.set_vertices(v0, v1, v2);
+  t.rotate(180.f, X);
+  t.apply_transformations();
+
+  auto ii = isect_info();
+  auto intersected = t.intersect(ray, ii);
+
+  EXPECT_TRUE(intersected);
+  EXPECT_NEAR(ii.tn, 2.f, float_err);
+
+  EXPECT_NEAR(ii.ip.x, 0.f, float_err);
+  EXPECT_NEAR(ii.ip.y, 0.f, float_err);
+  EXPECT_NEAR(ii.ip.z, 0.f, float_err);
+  EXPECT_NEAR(ii.ip.w, 1.f, float_err);
+
+  EXPECT_NEAR(ii.ipn.x,  0.f, float_err);
+  EXPECT_NEAR(ii.ipn.y,  0.f, float_err);
+  EXPECT_NEAR(ii.ipn.z, -1.f, float_err);
+  EXPECT_NEAR(ii.ipn.w,  0.f, float_err);
+}
+
+//==============================================================================
 TEST(Triangle, intersectParallel) {
   Ray ray;
   ray.set_orig({0.f,  2.f,  0.f, 1.f});
@@ -297,6 +332,29 @@ TEST(Triangle, shadowIntersectPlanar) {
 
   Triangle t;
   t.set_vertices(v0, v1, v2);
+
+  auto intersected = t.shadow_intersect(ray);
+
+  EXPECT_TRUE(intersected);
+}
+
+//==============================================================================
+TEST(Triangle, shadowIntersectBack) {
+  float_t float_err = 0.001;
+
+  Ray ray;
+  ray.set_orig({0.f, 0.f,  2.f, 1.f});
+  ray.set_dir( {0.f, 0.f, -1.f, 0.f});
+
+  auto v0 = glm::vec4(-1.f, -1.f, 0.f, 1.f);
+  auto v1 = glm::vec4( 1.f, -1.f, 0.f, 1.f);
+  auto v2 = glm::vec4( 0.f,  1.f, 0.f, 1.f);
+  // Normal = {0, 0, 1, 0}
+
+  Triangle t;
+  t.set_vertices(v0, v1, v2);
+  t.rotate(180.f, X);
+  t.apply_transformations();
 
   auto intersected = t.shadow_intersect(ray);
 

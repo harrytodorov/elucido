@@ -15,13 +15,15 @@ struct Primitive {
   }
   bool intersect(const Ray &r, isect_info &ii) {
     if (obj->object_type() == triangle_mesh) {
-      return std::static_pointer_cast<TriangleMesh>(obj)->intersect(r, tri_ind, ii);
+      return std::static_pointer_cast<TriangleMesh>(obj)->intersect_triangle(r,
+                                                                             tri_ind,
+                                                                             ii);
     }
     return obj->intersect(r, ii);
   }
   const AABBox* getBB() {
     if (obj->object_type() == triangle_mesh) {
-      return std::static_pointer_cast<TriangleMesh>(obj)->getBoundingBoxForTriangle(tri_ind);
+      return std::static_pointer_cast<TriangleMesh>(obj)->get_BB(tri_ind);
     }
     return &(obj->bounding_box());
   }

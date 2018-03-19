@@ -122,71 +122,35 @@ loading_info TriangleMesh::load_mesh(const char *f) {
 }
 
 //==============================================================================
-bool TriangleMesh::triangle_intersect(const Ray &r,
-                                      const glm::vec4 &v0,
-                                      const glm::vec4 &v1,
-                                      const glm::vec4 &v2,
-                                      float_t &t,
-                                      float_t &u,
-                                      float_t &v) const {
-  // define the two edges of the triangle AB and AC
-  glm::vec4 e0(v1 - v0), e1(v2 - v0), cv(r.orig() - v0);
-  glm::vec4 pv, qv;
-  float_t det, inv_det;
+bool TriangleMesh::intersect(const Ray &r, isect_info &i) const {
+  bool intersected{false};
 
-  // calculate the p vector from MT, used for calculating the determinant and u parameter
-  pv = glm::vec4(glm::cross(glm::vec3(r.dir()), glm::vec3(e1)), 0);
+  for (uint32_t _ti = 0; _ti < nt; _ti++) {
+    if (intersect_triangle(r, _ti, i)) {
+      intersected = true;
+    }
+  }
 
-  // calculate the determinant of the 1x3 matrix M
-  det = glm::dot(pv, e0);
+  // Compute the normal when there was an intersection.
+  if (intersected) compute_normal(i);
 
-  // if determinant is near 0, ray is parallel to the triangle
-  if (det < kEpsilon)
-    return false;
-
-  // calculate the inverse determinant
-  inv_det = 1.f / det;
-
-  // calculate u parameter and tests for its bounds
-  u = glm::dot(pv, cv) * inv_det;
-  if (u < 0.f || u > 1.f)
-    return false;
-
-  // calculate q vector from MT, used for calculating v parameter
-  qv = glm::vec4(glm::cross(glm::vec3(cv), glm::vec3(e0)), 0);
-
-  // calculate v parameter and tests for its bounds
-  v = glm::dot(qv, r.dir()) * inv_det;
-  if (v < 0.f || (v + u > 1.f))
-    return false;
-
-  // calculate t
-  t = glm::dot(qv, e1) * inv_det;
-
-  return t > kEpsilon;
+  return intersected;
 }
 
 //==============================================================================
-bool TriangleMesh::shadow_intersect(const Ray &r) const {
-  return false;
-}
-
-//==============================================================================
-bool TriangleMesh::intersect(const Ray &r,
-                             const uint32_t &ti,
-                             isect_info &i) const {
+bool TriangleMesh::intersect_triangle(const Ray &r,
+                                      const uint32_t &ti,
+                                      isect_info &i) const {
   glm::vec4 v0, v1, v2;
   bool intersected{false};
 
-  // get the vertex information for the triangle
   v0 = va[via[3 * ti] - 1];
   v1 = va[via[3 * ti + 1] - 1];
   v2 = va[via[3 * ti + 2] - 1];
 
   float_t tt{infinity}, u{0}, v{0};
 
-  // intersection tests
-  if (triangle_intersect(r, v0, v1, v2, tt, u, v) && tt < i.tn) {
+  if (intersection_routine(r, v0, v1, v2, tt, u, v) && tt < i.tn) {
     intersected = true;
     i.tn = tt;
     i.u = u;
@@ -199,35 +163,108 @@ bool TriangleMesh::intersect(const Ray &r,
 }
 
 //==============================================================================
-bool TriangleMesh::intersect(const Ray &r, isect_info &i) const {
-  glm::vec4 v0, v1, v2;
-  bool intersected{false};
+bool TriangleMesh::intersection_routine(const Ray &r,
+                                        const glm::vec4 &v0,
+                                        const glm::vec4 &v1,
+                                        const glm::vec4 &v2,
+                                        float_t &t,
+                                        float_t &u,
+                                        float_t &v) const {
 
-  // iterate through triangles in the mesh
-  for (uint32_t _ti = 0; _ti < nt; _ti++) {
+  auto edge1 = v1 - v0;
+  auto edge2 = v2 - v0;
 
-    // intersection tests
-    if (intersect(r, _ti, i)) {
-      intersected = true;
-    }
-  }
+  auto p = glm::vec4(glm::cross(glm::vec3(r.dir()), glm::vec3(edge2)), 0.f);
+  auto determinant = glm::dot(edge1, p);
 
-  return intersected;
+  if (determinant > -kEpsilon && determinant < kEpsilon)
+    return false;
+
+  auto inv_determinant = 1.f / determinant;
+
+  // Calculate distance vector from vertex 0 to the ray origin.
+  auto d = r.orig() - v0;
+
+  // Calculate Barycentric u-parameter.
+  u = static_cast<float_t>(glm::dot(d, p) * inv_determinant);
+
+  // Test if u-parameter is in the bounds [0,1].
+  if (u < 0.f || u > 1.f) return false;
+
+  auto q = glm::vec4(glm::cross(glm::vec3(d), glm::vec3(edge1)), 0.f);
+
+  // Calculate Barycentric v-parameter.
+  v = static_cast<float_t>(glm::dot(r.dir(), q) * inv_determinant);
+
+  // Test if v-parameter is in the bounds [0,1].
+  if (v < 0.f || v > 1.f) return false;
+
+  // Calculate t.
+  t = static_cast<float_t>(glm::dot(edge2, q) * inv_determinant);
 }
 
 //==============================================================================
-void TriangleMesh::get_surface_properties(isect_info &i) const {
+bool TriangleMesh::shadow_intersect(const Ray &r) const {
+  for (uint32_t _ti = 0; _ti < nt; _ti++) {
+    glm::vec4 v0, v1, v2;
 
+    v0 = va[via[3 * _ti] - 1];
+    v1 = va[via[3 * _ti + 1] - 1];
+    v2 = va[via[3 * _ti + 2] - 1];
+    
+    if (shadow_intersection_routine(r, v0, v1, v2)) {
+      return true;
+    }
+  }
+  
+  return false;
+}
+
+//==============================================================================
+bool TriangleMesh::shadow_intersection_routine(const Ray &r,
+                                               const glm::vec4 &v0,
+                                               const glm::vec4 &v1,
+                                               const glm::vec4 &v2) const {
+  auto edge1 = v1 - v0;
+  auto edge2 = v2 - v0;
+
+  auto p = glm::vec4(glm::cross(glm::vec3(r.dir()), glm::vec3(edge2)), 0.f);
+  auto determinant = glm::dot(edge1, p);
+
+  if (determinant > -kEpsilon && determinant < kEpsilon) return false;
+
+  auto inv_determinant = 1.f / determinant;
+
+  // Calculate distance vector from vertex 0 to the ray origin.
+  auto d = r.orig() - v0;
+
+  // Calculate Barycentric u-parameter.
+  auto u = glm::dot(d, p) * inv_determinant;
+
+  // Test if u-parameter is in the bounds [0,1].
+  if (u < 0.f || u > 1.f) return false;
+
+  auto q = glm::vec4(glm::cross(glm::vec3(d), glm::vec3(edge1)), 0.f);
+
+  // Calculate Barycentric v-parameter.
+  auto v = glm::dot(r.dir(), q) * inv_determinant;
+
+  // Test if v-parameter is in the bounds [0,1].
+  if (v < 0.f || v > 1.f) return false;
+
+  return true;
+}
+
+//==============================================================================
+void TriangleMesh::compute_normal(isect_info &i) const {
   if (in) {
     glm::vec4 vn0, vn1, vn2;
     float_t w, u, v;
 
-    // get the vertex normals for the current triangle
     vn0 = vna[vnia[3 * i.ti] - 1];
     vn1 = vna[vnia[3 * i.ti + 1] - 1];
     vn2 = vna[vnia[3 * i.ti + 2] - 1];
 
-    // assign the barycentric coordinates for the current triangle intersection point
     u = i.u;
     v = i.v;
     w = 1.f - u - v;
@@ -236,14 +273,14 @@ void TriangleMesh::get_surface_properties(isect_info &i) const {
   } else {
     glm::vec4 v0, v1, v2;
 
-    // get the vertices for the current triangle
     v0 = va[via[3 * i.ti] - 1];
     v1 = va[via[3 * i.ti + 1] - 1];
     v2 = va[via[3 * i.ti + 2] - 1];
 
-    i.ipn = glm::normalize(glm::vec4(glm::cross(glm::vec3(v1) - glm::vec3(v0),
-                                                glm::vec3(v2) - glm::vec3(v0)),
-                                     0));
+    auto c = glm::cross(glm::vec3(v1 - v0),
+                        glm::vec3(v2 - v0));
+
+    i.ipn = glm::normalize(glm::vec4(c.x, c.y, c.z, 0.f));
   }
 }
 
@@ -311,10 +348,10 @@ TriangleMesh::TriangleMesh(const TriangleMesh &tm) : Object(tm) {
 }
 
 //==============================================================================
-const AABBox* TriangleMesh::getBoundingBoxForTriangle(const uint32_t &ti) const {
+const AABBox* TriangleMesh::get_BB(const uint32_t &ti) const {
   auto *box = new AABBox();
+
   glm::vec4 v0, v1, v2;
-  // get the vertices for the current triangle
   v0 = va[via[3 * ti] - 1];
   v1 = va[via[3 * ti + 1] - 1];
   v2 = va[via[3 * ti + 2] - 1];

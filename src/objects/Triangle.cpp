@@ -80,11 +80,6 @@ bool Triangle::shadow_intersect(const Ray &r) const {
 }
 
 //==============================================================================
-void Triangle::get_surface_properties(isect_info &i) const {
-  i.ipn = n;
-}
-
-//==============================================================================
 void Triangle::apply_camera_transformation(const glm::mat4 &ivm) {
   v0 = ivm * v0;
   v1 = ivm * v1;
