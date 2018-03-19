@@ -6,62 +6,77 @@
 //==============================================================================
 bool Triangle::intersect(const Ray &r, isect_info &i) const {
 
-  // check if ray is parallel to triangle; compute the dot product
-  // of the triangle's normal and the ray direction
-  // if ray and triangle's normal are close to 0, they don't intersect
-  float_t nomal_ray_d_prod = glm::dot(n, r.dir());
-  if (fabs(nomal_ray_d_prod) < kEpsilon) return false;
+  auto edge1 = v1 - v0;
+  auto edge2 = v2 - v0;
 
-  // compute the dot product of the vector between one of the triangle's vertices and
-  // the ray's origin and the triangle's normal
-  float_t t_nominator = glm::dot(v0 - r.orig(), n);
+  auto p = glm::vec4(glm::cross(glm::vec3(r.dir()), glm::vec3(edge2)), 0.f);
+  auto determinant = glm::dot(edge1, p);
 
-  // compute the distance between the ray's origin and the hit point
-  // with the triangle
-  float_t t = t_nominator / nomal_ray_d_prod;
+  if (determinant > -kEpsilon && determinant < kEpsilon)
+    return false;
 
-  // if the computed distance is negative, the triangle is behind the ray's origin
-  if (t < kEpsilon) return false;
+  auto inv_determinant = 1.f / determinant;
 
-  // compute the possible intersection point
-  glm::vec4 ip = r.orig() + t * r.dir();
+  // Calculate distance vector from vertex 0 to the ray origin.
+  auto d = r.orig() - v0;
 
-  // check if the point is within the defined triangle
-  glm::vec4 perp_vec;
-  float_t d_prod;
+  // Calculate Barycentric u-parameter.
+  auto u = glm::dot(d, p) * inv_determinant;
 
-  // edge 0
-  glm::vec4 edge0(v1 - v0);
-  glm::vec4 vp0(ip - v0);
-  perp_vec = glm::vec4(glm::cross(glm::vec3(edge0), glm::vec3(vp0)), 0);
-  d_prod = glm::dot(n, perp_vec);
-  if (d_prod < 0) return false;
+  // Test if u-parameter is in the bounds [0,1].
+  if (u < 0.f || u > 1.f) return false;
 
-  // edge 1
-  glm::vec4 edge1(v2 - v1);
-  glm::vec4 vp1(ip - v1);
-  perp_vec = glm::vec4(glm::cross(glm::vec3(edge1), glm::vec3(vp1)), 0);
-  d_prod = glm::dot(n, perp_vec);
-  if (d_prod < 0) return false;
+  auto q = glm::vec4(glm::cross(glm::vec3(d), glm::vec3(edge1)), 0.f);
 
-  // edge 2
-  glm::vec4 edge2(v0 - v2);
-  glm::vec4 vp2(ip - v2);
-  perp_vec = glm::vec4(glm::cross(glm::vec3(edge2), glm::vec3(vp2)), 0);
-  d_prod = glm::dot(n, perp_vec);
-  if (d_prod < 0) return false;
+  // Calculate Barycentric v-parameter.
+  auto v = glm::dot(r.dir(), q) * inv_determinant;
 
-  // tests passed; assign variables
-  i.tn = t;
-  i.ip = ip;
-  i.ti = (uint32_t) -1;
+  // Test if v-parameter is in the bounds [0,1].
+  if (v < 0.f || v > 1.f) return false;
+
+  // Calculate t.
+  auto t = glm::dot(edge2, q) * inv_determinant;
+
+  i.tn  = static_cast<float_t>(t);
+  i.ip  = r.orig() + t*r.dir();
+  i.ipn = n;
+  i.u   = static_cast<float_t>(u);
+  i.v   = static_cast<float_t>(v);
 
   return true;
 }
 
 //==============================================================================
 bool Triangle::shadow_intersect(const Ray &r) const {
-  return false;
+  auto edge1 = v1 - v0;
+  auto edge2 = v2 - v0;
+
+  auto p = glm::vec4(glm::cross(glm::vec3(r.dir()), glm::vec3(edge2)), 0.f);
+  auto determinant = glm::dot(edge1, p);
+
+  if (determinant > -kEpsilon && determinant < kEpsilon)
+    return false;
+
+  auto inv_determinant = 1.f / determinant;
+
+  // Calculate distance vector from vertex 0 to the ray origin.
+  auto d = r.orig() - v0;
+
+  // Calculate Barycentric u-parameter.
+  auto u = glm::dot(d, p) * inv_determinant;
+
+  // Test if u-parameter is in the bounds [0,1].
+  if (u < 0.f || u > 1.f) return false;
+
+  auto q = glm::vec4(glm::cross(glm::vec3(d), glm::vec3(edge1)), 0.f);
+
+  // Calculate Barycentric v-parameter.
+  auto v = glm::dot(r.dir(), q) * inv_determinant;
+
+  // Test if v-parameter is in the bounds [0,1].
+  if (v < 0.f || v > 1.f) return false;
+
+  return true;
 }
 
 //==============================================================================
@@ -102,8 +117,13 @@ void Triangle::apply_transformations() {
 
 //==============================================================================
 void Triangle::calculate_normal() {
-  auto c = glm::cross(glm::vec3(v1) - glm::vec3(v0),
-                      glm::vec3(v2) - glm::vec3(v0));
+  auto a = glm::vec3(v1.x - v0.x,
+                     v1.y - v0.y,
+                     v1.z - v0.z);
+  auto b = glm::vec3(v2.x - v0.x,
+                     v2.y - v0.y,
+                     v2.z - v0.z);
+  auto c = glm::cross(a, b);
   n = glm::normalize(glm::vec4(c.x, c.y, c.z, 0.f));
 }
 

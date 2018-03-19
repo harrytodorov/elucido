@@ -5,6 +5,7 @@
 #include "glm/ext.hpp"    // glm::to_string
 
 #include "../src/objects/Sphere.h"
+#include "../src/objects/Triangle.h"
 
 //==============================================================================
 TEST(Sphere, basicInitialization) {
@@ -152,7 +153,6 @@ TEST(Sphere, shadowIntersectParallel) {
 
 //==============================================================================
 TEST(Sphere, shadowIntersectInside) {
-  float_t float_err = 0.001;
 
   Ray ray;
   ray.set_orig({-1.f,    0.f,    0.f, 1.f});
@@ -178,6 +178,165 @@ TEST(Sphere, shadowIntersectOutside) {
   s->set_center({5.f, 0.f, 0.f, 1.f});
 
   auto intersected = s->shadow_intersect(ray);
+
+  EXPECT_TRUE(!intersected);
+}
+
+//==============================================================================
+TEST(Triangle, basicInitialization) {
+  Triangle t;
+
+  EXPECT_EQ(t.object_type(), triangle);
+
+  EXPECT_FLOAT_EQ(t.vert0().x, -1.f);
+  EXPECT_FLOAT_EQ(t.vert0().y, -1.f);
+  EXPECT_FLOAT_EQ(t.vert0().z,  0.f);
+  EXPECT_FLOAT_EQ(t.vert0().w,  1.f);
+
+  EXPECT_FLOAT_EQ(t.vert1().x,  1.f);
+  EXPECT_FLOAT_EQ(t.vert1().y, -1.f);
+  EXPECT_FLOAT_EQ(t.vert1().z,  0.f);
+  EXPECT_FLOAT_EQ(t.vert1().w,  1.f);
+
+  EXPECT_FLOAT_EQ(t.vert2().x,  0.f);
+  EXPECT_FLOAT_EQ(t.vert2().y,  1.f);
+  EXPECT_FLOAT_EQ(t.vert2().z,  0.f);
+  EXPECT_FLOAT_EQ(t.vert2().w,  1.f);
+
+  EXPECT_FLOAT_EQ(t.normal().x, 0.f);
+  EXPECT_FLOAT_EQ(t.normal().y, 0.f);
+  EXPECT_FLOAT_EQ(t.normal().z, 1.f);
+  EXPECT_FLOAT_EQ(t.normal().w, 0.f);
+}
+
+//==============================================================================
+TEST(Triangle, intersectPlanar) {
+  float_t float_err = 0.001;
+
+  Ray ray;
+  ray.set_orig({0.f, 0.f,  2.f, 1.f});
+  ray.set_dir( {0.f, 0.f, -1.f, 0.f});
+
+  auto v0 = glm::vec4(-1.f, -1.f, 0.f, 1.f);
+  auto v1 = glm::vec4( 1.f, -1.f, 0.f, 1.f);
+  auto v2 = glm::vec4( 0.f,  1.f, 0.f, 1.f);
+  // Normal = {0, 0, 1, 0}
+
+  Triangle t;
+  t.set_vertices(v0, v1, v2);
+
+  auto ii = isect_info();
+  auto intersected = t.intersect(ray, ii);
+
+  EXPECT_TRUE(intersected);
+  EXPECT_NEAR(ii.tn, 2.f, float_err);
+
+  EXPECT_NEAR(ii.ip.x, 0.f, float_err);
+  EXPECT_NEAR(ii.ip.y, 0.f, float_err);
+  EXPECT_NEAR(ii.ip.z, 0.f, float_err);
+  EXPECT_NEAR(ii.ip.w, 1.f, float_err);
+
+  EXPECT_NEAR(ii.ipn.x, 0.f, float_err);
+  EXPECT_NEAR(ii.ipn.y, 0.f, float_err);
+  EXPECT_NEAR(ii.ipn.z, 1.f, float_err);
+  EXPECT_NEAR(ii.ipn.w, 0.f, float_err);
+}
+
+//==============================================================================
+TEST(Triangle, intersectParallel) {
+  Ray ray;
+  ray.set_orig({0.f,  2.f,  0.f, 1.f});
+  ray.set_dir( {0.f, -1.f,  0.f, 0.f});
+
+  auto v0 = glm::vec4(-1.f, -1.f, 0.f, 1.f);
+  auto v1 = glm::vec4( 1.f, -1.f, 0.f, 1.f);
+  auto v2 = glm::vec4( 0.f,  1.f, 0.f, 1.f);
+  // Normal = {0, 0, 1, 0}
+
+  Triangle t;
+  t.set_vertices(v0, v1, v2);
+
+  auto ii = isect_info();
+  auto intersected = t.intersect(ray, ii);
+
+  EXPECT_TRUE(!intersected);
+}
+
+//==============================================================================
+TEST(Triangle, intersectOutside) {
+  Ray ray;
+  ray.set_orig({-1.f,  0.f,  2.f, 1.f});
+  ray.set_dir( { 0.f,  0.f, -1.f, 0.f});
+
+  auto v0 = glm::vec4(-1.f, -1.f, 0.f, 1.f);
+  auto v1 = glm::vec4( 1.f, -1.f, 0.f, 1.f);
+  auto v2 = glm::vec4( 0.f,  1.f, 0.f, 1.f);
+  // Normal = {0, 0, 1, 0}
+
+  Triangle t;
+  t.set_vertices(v0, v1, v2);
+
+  auto ii = isect_info();
+  auto intersected = t.intersect(ray, ii);
+
+  EXPECT_TRUE(!intersected);
+}
+
+//==============================================================================
+TEST(Triangle, shadowIntersectPlanar) {
+  float_t float_err = 0.001;
+
+  Ray ray;
+  ray.set_orig({0.f, 0.f,  2.f, 1.f});
+  ray.set_dir( {0.f, 0.f, -1.f, 0.f});
+
+  auto v0 = glm::vec4(-1.f, -1.f, 0.f, 1.f);
+  auto v1 = glm::vec4( 1.f, -1.f, 0.f, 1.f);
+  auto v2 = glm::vec4( 0.f,  1.f, 0.f, 1.f);
+  // Normal = {0, 0, 1, 0}
+
+  Triangle t;
+  t.set_vertices(v0, v1, v2);
+
+  auto intersected = t.shadow_intersect(ray);
+
+  EXPECT_TRUE(intersected);
+}
+
+//==============================================================================
+TEST(Triangle, shadowIntersectParallel) {
+  Ray ray;
+  ray.set_orig({0.f,  2.f,  0.f, 1.f});
+  ray.set_dir( {0.f, -1.f,  0.f, 0.f});
+
+  auto v0 = glm::vec4(-1.f, -1.f, 0.f, 1.f);
+  auto v1 = glm::vec4( 1.f, -1.f, 0.f, 1.f);
+  auto v2 = glm::vec4( 0.f,  1.f, 0.f, 1.f);
+  // Normal = {0, 0, 1, 0}
+
+  Triangle t;
+  t.set_vertices(v0, v1, v2);
+
+  auto intersected = t.shadow_intersect(ray);
+
+  EXPECT_TRUE(!intersected);
+}
+
+//==============================================================================
+TEST(Triangle, shadowIntersectOutside) {
+  Ray ray;
+  ray.set_orig({-1.f,  0.f,  2.f, 1.f});
+  ray.set_dir( { 0.f,  0.f, -1.f, 0.f});
+
+  auto v0 = glm::vec4(-1.f, -1.f, 0.f, 1.f);
+  auto v1 = glm::vec4( 1.f, -1.f, 0.f, 1.f);
+  auto v2 = glm::vec4( 0.f,  1.f, 0.f, 1.f);
+  // Normal = {0, 0, 1, 0}
+
+  Triangle t;
+  t.set_vertices(v0, v1, v2);
+
+  auto intersected = t.shadow_intersect(ray);
 
   EXPECT_TRUE(!intersected);
 }

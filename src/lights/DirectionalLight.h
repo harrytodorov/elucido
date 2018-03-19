@@ -12,14 +12,6 @@ class DirectionalLight : public Light {
 //==============================================================================
  public:
   DirectionalLight() = default;
-  DirectionalLight(const glm::vec4 &d, const float_t &i) :
-      Light(i),
-      d(glm::normalize(d))
-  {}
-  DirectionalLight(const glm::vec4 &d, const glm::vec3 &c, const float_t &i)
-      : Light(c, i),
-        d(glm::normalize(d))
-  {}
 
   ~DirectionalLight() = default;
 
@@ -29,8 +21,8 @@ class DirectionalLight : public Light {
   glm::vec4 get_direction(const glm::vec4 &surface_point);
   float_t   get_distance(const glm::vec4 &surface_point);
 
-  glm::vec4 direction() { return d; }
-  void      set_direction(const glm::vec4 &_d) { d = _d; }
+  inline glm::vec4 direction() { return d; }
+  inline void      set_direction(const glm::vec4 &_d) { d = glm::normalize(_d); }
 
   void apply_camera_transformation(const glm::mat4 &ivm);
   void apply_transformations();

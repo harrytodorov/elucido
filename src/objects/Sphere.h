@@ -17,22 +17,6 @@ class Sphere : public Object {
     reshape_bb();
     ot = sphere;
   }
-  Sphere(const glm::vec4 &c, const float_t &r) :
-      Object(),
-      r(r),
-      c(c) {
-    r2 = r*r;
-    reshape_bb();
-    ot = sphere;
-  }
-  Sphere(const glm::vec4 &c, const float_t &r, const struct material &m) :
-      Object(m),
-      r(r),
-      c(c) {
-    r2 = r*r;
-    reshape_bb();
-    ot = sphere;
-  }
   Sphere(const Sphere &s) :
       Object(s) {
     this->r = s.r;

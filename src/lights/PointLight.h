@@ -12,14 +12,6 @@ class PointLight : public Light {
 //==============================================================================
  public:
   PointLight() = default;
-  PointLight(const glm::vec4 &p, const float_t &i) :
-      Light(i),
-      p(p)
-  {}
-  PointLight(const glm::vec4 &p, const glm::vec3 &c, const float_t &i) :
-      Light(c, i),
-      p(p)
-  {}
 
   ~PointLight() = default;
 

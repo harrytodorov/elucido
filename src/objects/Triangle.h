@@ -20,31 +20,10 @@ class Triangle : public Object {
     reshape_bb();
     ot = triangle;
   }
-  Triangle(const struct material &m) :
-      Object(m),
-      v0(-1, -1, 0, 1),
-      v1(1, -1, 0, 1),
-      v2(0, 1, 0, 1) {
-    calculate_normal();
-    reshape_bb();
-    ot = triangle;
-  }
   Triangle(const glm::vec4 &vec0,
            const glm::vec4 &vec1,
            const glm::vec4 &vec2) :
       Object(),
-      v0(vec0),
-      v1(vec1),
-      v2(vec2) {
-    calculate_normal();
-    reshape_bb();
-    ot = triangle;
-  }
-  Triangle(const glm::vec4 &vec0,
-           const glm::vec4 &vec1,
-           const glm::vec4 &vec2,
-           const struct material &m) :
-      Object(m),
       v0(vec0),
       v1(vec1),
       v2(vec2) {
