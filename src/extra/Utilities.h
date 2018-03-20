@@ -563,6 +563,7 @@ struct isect_info {
   float_t                 u;    // Barycentric coordinate u of a triangle.
   float_t                 v;    // Barycentric coordinate v of a triangle.
   uint32_t                ti;   // Index of the triangle in a triangulated mesh.
+  bool                    fp;   // Flip normal.
   std::shared_ptr<Object> ho;   // Pointer to the object hit by a ray.
   isect_info() :
       ip{infinity},
@@ -571,6 +572,7 @@ struct isect_info {
       u{infinity},
       v{infinity},
       ti{},
+      fp{false},
       ho{nullptr} {}
 };
 

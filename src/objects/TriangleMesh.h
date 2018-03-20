@@ -51,7 +51,8 @@ class TriangleMesh : public Object {
                             const glm::vec4 &v2,
                             float_t &t,
                             float_t &u,
-                            float_t &v) const;
+                            float_t &v,
+                            bool &flip_normal) const;
   bool intersect(const Ray &r, isect_info &i) const;
   bool intersect_triangle(const Ray &r,
                           const uint32_t &ti,

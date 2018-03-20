@@ -37,9 +37,12 @@ bool Triangle::intersect(const Ray &r, isect_info &i) const {
   // Calculate t.
   auto t = glm::dot(edge2, q) * inv_determinant;
 
+  float_t flip_normal = 1.f;
+  if (determinant < kEpsilon) flip_normal *= -1.f;
+
   i.tn  = static_cast<float_t>(t);
   i.ip  = r.orig() + t*r.dir();
-  i.ipn = n;
+  i.ipn = flip_normal * n;
   i.u   = static_cast<float_t>(u);
   i.v   = static_cast<float_t>(v);
 

@@ -273,7 +273,7 @@ TEST(Triangle, intersectBack) {
 
   EXPECT_NEAR(ii.ipn.x,  0.f, float_err);
   EXPECT_NEAR(ii.ipn.y,  0.f, float_err);
-  EXPECT_NEAR(ii.ipn.z, -1.f, float_err);
+  EXPECT_NEAR(ii.ipn.z,  1.f, float_err);
   EXPECT_NEAR(ii.ipn.w,  0.f, float_err);
 }
 

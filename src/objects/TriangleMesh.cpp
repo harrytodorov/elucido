@@ -149,14 +149,23 @@ bool TriangleMesh::intersect_triangle(const Ray &r,
   v2 = va[via[3 * ti + 2] - 1];
 
   float_t tt{infinity}, u{0}, v{0};
+  bool    flip_normal = false;
 
-  if (intersection_routine(r, v0, v1, v2, tt, u, v) && tt < i.tn) {
+  if (intersection_routine(r,
+                           v0,
+                           v1,
+                           v2,
+                           tt,
+                           u,
+                           v,
+                           flip_normal) && tt < i.tn) {
     intersected = true;
     i.tn = tt;
     i.u = u;
     i.v = v;
     i.ip = r.orig() + tt * r.dir();
     i.ti = ti;
+    i.fp = flip_normal;
   }
 
   return intersected;
@@ -169,7 +178,8 @@ bool TriangleMesh::intersection_routine(const Ray &r,
                                         const glm::vec4 &v2,
                                         float_t &t,
                                         float_t &u,
-                                        float_t &v) const {
+                                        float_t &v,
+                                        bool &flip_normal) const {
 
   auto edge1 = v1 - v0;
   auto edge2 = v2 - v0;
@@ -201,6 +211,10 @@ bool TriangleMesh::intersection_routine(const Ray &r,
 
   // Calculate t.
   t = static_cast<float_t>(glm::dot(edge2, q) * inv_determinant);
+
+  // If the determinant is less tha epsilon, normal direction
+  // should be flipped.
+  if (determinant < kEpsilon) flip_normal = true;
 }
 
 //==============================================================================
@@ -257,6 +271,7 @@ bool TriangleMesh::shadow_intersection_routine(const Ray &r,
 
 //==============================================================================
 void TriangleMesh::compute_normal(isect_info &i) const {
+
   if (in) {
     glm::vec4 vn0, vn1, vn2;
     float_t w, u, v;
@@ -282,6 +297,7 @@ void TriangleMesh::compute_normal(isect_info &i) const {
 
     i.ipn = glm::normalize(glm::vec4(c.x, c.y, c.z, 0.f));
   }
+  if (i.fp) i.ipn = -i.ipn;
 }
 
 //==============================================================================
