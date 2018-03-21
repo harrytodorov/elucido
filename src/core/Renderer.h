@@ -15,7 +15,7 @@
 
 class Renderer {
  public:
-  explicit Renderer(const std::shared_ptr<AccelerationStructure> _ac,
+  Renderer(const std::shared_ptr<AccelerationStructure> _ac,
                     const std::shared_ptr<AABBox> _sbb,
                     std::vector<std::shared_ptr<Object>> _objects,
                     std::vector<std::shared_ptr<Light>> _lights) :
@@ -29,6 +29,9 @@ class Renderer {
   glm::vec3 cast_ray(const Ray &ray, const uint32_t &depth);
 
   bool trace_ray(const Ray &r, isect_info &i);
+
+  glm::vec3 evaluate_phong(const isect_info &i,
+                             const glm::vec4 &ray_direction);
 
   /**
    * Calculate the amount of Lambertian.

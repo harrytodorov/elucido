@@ -17,10 +17,10 @@ class TriangleMesh : public Object {
   TriangleMesh(const struct material &m, const bool &in) : Object(m), in(in) {
     ot = triangle_mesh;
   }
-  explicit TriangleMesh(const struct material &m) : Object(m) {
+  TriangleMesh(const struct material &m) : Object(m) {
     ot = triangle_mesh;
   }
-  explicit TriangleMesh(const char *f) : Object() {
+  TriangleMesh(const char *f) : Object() {
     load_mesh(f);
     ot = triangle_mesh;
   }

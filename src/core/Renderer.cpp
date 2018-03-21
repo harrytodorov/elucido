@@ -23,52 +23,58 @@ glm::vec3 Renderer::cast_ray(const Ray &ray, const uint32_t &depth) {
   hr = glm::vec3(0);
   
   // Material of the intersected object.
-  material m = i.ho->material();
+  MaterialType mt = i.ho->material().mt;
 
   // Evaluate Phong.
-  if (m.mt == phong) {
-    glm::vec3 diffuse{0.f}, specular{0.f};
-    float_t labertian{0.f};
+  if (mt == phong) return evaluate_phong(i, ray.dir());
 
-    for (auto const &light : lights) {
-      glm::vec4 light_direction = light->get_direction(i.ip);
-      float_t light_distance    = light->get_distance(i.ip);
-      glm::vec3 light_intensity = (light->color() *
-                                  light->get_intensity(light_distance));
 
-      // Check if the intersection point is in shadow for the light
-      // source.
-      isect_info si;
+}
 
-      Ray shadow_ray;
-      shadow_ray.rt = shadow;
-      shadow_ray.set_orig(i.ip + bias * i.ipn);
-      shadow_ray.set_dir(light_direction);
+//==============================================================================
+glm::vec3 Renderer::evaluate_phong(const isect_info &i,
+                                   const glm::vec4 &ray_direction) {
+  material m = i.ho->material();
+  glm::vec3 diffuse{0.f}, specular{0.f};
+  float_t labertian{0.f};
 
-      auto in_shadow = trace_ray(shadow_ray, si);
-      if (in_shadow && si.tn < light_distance) continue;
+  for (auto const &light : lights) {
+    glm::vec4 light_direction = light->get_direction(i.ip);
+    float_t light_distance    = light->get_distance(i.ip);
+    glm::vec3 light_intensity = (light->color() *
+        light->get_intensity(light_distance));
 
-      labertian = labertian_amount(i.ipn, light_direction);
+    // Check if the intersection point is in shadow for the light
+    // source.
+    isect_info si;
 
-      // Increment diffuse component.
-      diffuse += light_intensity * glm::clamp(labertian, 0.f, 1.f);
+    Ray shadow_ray;
+    shadow_ray.rt = shadow;
+    shadow_ray.set_orig(i.ip + bias * i.ipn);
+    shadow_ray.set_dir(light_direction);
 
-      // Calculate specular component only, if the intersection point normal
-      // is oriented towards the light source.
-      if (labertian > 0.f) {
-        auto lightDir_reflection  = reflect(i.ipn, light_direction);
-        auto lr_vd_dot            = glm::dot(lightDir_reflection, -ray.dir());
-        auto specular_term        = glm::pow(lr_vd_dot, m.se);
+    auto in_shadow = trace_ray(shadow_ray, si);
+    if (in_shadow && si.tn < light_distance) continue;
 
-        // Increment specular component.
-        specular += light_intensity * specular_term;
-      }
+    labertian = labertian_amount(i.ipn, light_direction);
+
+    // Increment diffuse component.
+    diffuse += light_intensity * glm::clamp(labertian, 0.f, 1.f);
+
+    // Calculate specular component only, if the intersection point normal
+    // is oriented towards the light source.
+    if (labertian > 0.f) {
+      auto lightDir_reflection  = reflect(i.ipn, light_direction);
+      auto lr_vd_dot            = glm::dot(lightDir_reflection, -ray_direction);
+      auto specular_term        = glm::pow(lr_vd_dot, m.se);
+
+      // Increment specular component.
+      specular += light_intensity * specular_term;
     }
-
-    // Combine ambient, diffuse and specular component.
-    hr = m.ac * m.c + m.dc * m.c * diffuse + m.sc * specular;
-    return hr;
   }
+
+  // Combine ambient, diffuse and specular component.
+  return m.ac * m.c + m.dc * m.c * diffuse + m.sc * specular;
 }
 
 //==============================================================================
