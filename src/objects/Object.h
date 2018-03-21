@@ -4,9 +4,9 @@
 #ifndef ELUCIDO_OBJECT_H
 #define ELUCIDO_OBJECT_H
 
-#include "../extra/Ray.h"
+#include "../core/Ray.h"
 #include "../accelerators/AABBox.h"
-#include "../extra/Utilities.h"
+#include "../core/Utilities.h"
 
 class Object {
 //==============================================================================
@@ -42,7 +42,6 @@ class Object {
   inline void              set_object_type(const ObjectType &_ot) { ot = _ot; }
 
   virtual bool intersect(const Ray &r, isect_info &i) const = 0;
-  virtual bool shadow_intersect(const Ray &r) const = 0;
 
   virtual void apply_camera_transformation(const glm::mat4 &ctm) = 0;
   virtual void apply_transformations() = 0;

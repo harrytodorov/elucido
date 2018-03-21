@@ -5,7 +5,7 @@
 #include <glm/vec2.hpp>
 #include "glm/ext.hpp"    // glm::to_string
 
-#include "../src/extra/Sample.h"
+#include "../src/core/Sample.h"
 
 //==============================================================================
 TEST(Sample, nearestPerfectSquare) {

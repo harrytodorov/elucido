@@ -2,6 +2,7 @@
 // Author: Haralambi Todorov <harrytodorov@gmail.com>
 
 #include "Object.h"
+#include "../core/Common.h"
 
 //==============================================================================
 Object::Object(const Object &o) {

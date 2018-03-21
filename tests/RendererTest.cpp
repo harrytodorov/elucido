@@ -4,7 +4,7 @@
 #include <gtest/gtest.h>
 #include "glm/ext.hpp"    // glm::to_string
 
-#include "../src/extra/Renderer.h"
+#include "../src/core/Renderer.h"
 
 //==============================================================================
 TEST(Lambertian, testMutlipleDirections) {

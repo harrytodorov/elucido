@@ -31,48 +31,10 @@ class TriangleMesh : public Object {
 //==============================================================================
 // Function declarations
 //==============================================================================
-  /**
-   * One uses the Moeller-Trumbore ray/triangle intersection algorithm for
-   * double faced triangles.
-   * @param r:  The ray with which the triangle would be intersected.
-   * @param v0: Vertex 0.
-   * @param v1: Vertex 1.
-   * @param v2: Vertex 2.
-   * @param t:  Distance from the intersection point to the ray's origin.
-   * @param u:  Barycentric u-parameter.
-   * @param v:  Barycentric v-parameter.
-   * @return:   True in case of an intersection, false otherwise.
-   *            In case the ray runs parallel to the surface of the
-   *            triangle, false is returned.
-   */
-  bool intersection_routine(const Ray &r,
-                            const glm::vec4 &v0,
-                            const glm::vec4 &v1,
-                            const glm::vec4 &v2,
-                            float_t &t,
-                            float_t &u,
-                            float_t &v,
-                            bool &flip_normal) const;
   bool intersect(const Ray &r, isect_info &i) const;
   bool intersect_triangle(const Ray &r,
                           const uint32_t &ti,
                           isect_info &i) const;
-
-  /**
-   * Same algorithm is used for the shadow intersection routine.
-   * @param r:  The ray with which the triangle would be intersected.
-   * @param v0: Vertex 0.
-   * @param v1: Vertex 1.
-   * @param v2: Vertex 2.
-   * @return:   True in case of an intersection, false otherwise.
-   *            In case the ray runs parallel to the surface of the
-   *            triangle, false is returned.
-   */
-  bool shadow_intersection_routine(const Ray &r,
-                                     const glm::vec4 &v0,
-                                     const glm::vec4 &v1,
-                                     const glm::vec4 &v2) const;
-  bool shadow_intersect(const Ray &r) const;
 
   /**
    * Computes the normal for the intersection point defined in i.
@@ -84,7 +46,6 @@ class TriangleMesh : public Object {
 
   void apply_camera_transformation(const glm::mat4 &ctm);
   void apply_transformations();
-
 
 //==============================================================================
 // Data members

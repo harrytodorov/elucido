@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 
 #include "PointLight.h"
+#include "../core/Common.h"
 
 //==============================================================================
 void PointLight::apply_camera_transformation(const glm::mat4 &ivm) {

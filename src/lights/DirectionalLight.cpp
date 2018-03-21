@@ -1,8 +1,8 @@
 // Copyright 2017, University of Freiburg.
 // Author: Haralambi Todorov <harrytodorov@gmail.com>
 
-#include <glm/ext.hpp>
 #include "DirectionalLight.h"
+#include "../core/Common.h"
 
 //==============================================================================
 void DirectionalLight::apply_camera_transformation(const glm::mat4 &ivm) {

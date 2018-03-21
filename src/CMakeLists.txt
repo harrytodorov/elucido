@@ -9,47 +9,49 @@ set(CMAKE_CXX_STANDARD 11)
 
 # Set source files
 set(ELUCIDO_SOURCE_FILES
-        extra/Utilities.cpp
+        core/Utilities.cpp
+        core/ImagePlane.cpp
+        core/Sample.cpp
+        core/Ray.cpp
+        objects/Object.cpp
+        objects/Sphere.cpp
+        objects/Triangle.cpp
+        objects/TriangleMesh.cpp
+        accelerators/AABBox.cpp
+        accelerators/AccelerationStructure.cpp
+        accelerators/Grid.cpp
         cameras/Camera.cpp
         cameras/OrthographicCamera.cpp
         cameras/PerspectiveCamera.cpp
         lights/Light.cpp
         lights/DirectionalLight.cpp
         lights/PointLight.cpp
-        objects/Object.cpp
-        accelerators/AABBox.cpp
-        objects/Sphere.cpp
-        objects/Triangle.cpp
-        objects/TriangleMesh.cpp
-        accelerators/AccelerationStructure.cpp
-        accelerators/Grid.cpp
-        extra/ImagePlane.cpp
-        extra/Ray.cpp
-        extra/Scene.cpp
-        extra/Sample.cpp
-        extra/Renderer.cpp)
+        core/Common.cpp
+        core/Renderer.cpp
+        core/Scene.cpp)
 
 # Set header files
 set(ELUCIDO_HEADER_FILES
-        extra/Utilities.h
-        cameras/Camera.h
-        cameras/OrthographicCamera.h
-        cameras/PerspectiveCamera.h
-        lights/Light.h
-        lights/DirectionalLight.h
-        lights/PointLight.h
+        core/Utilities.h
+        core/ImagePlane.h
+        core/Sample.h
+        core/Ray.h
         objects/Object.h
-        accelerators/AABBox.h
         objects/Sphere.h
         objects/Triangle.h
         objects/TriangleMesh.h
+        accelerators/AABBox.h
         accelerators/AccelerationStructure.h
         accelerators/Grid.h
-        extra/ImagePlane.h
-        extra/Ray.h
-        extra/Scene.h
-        extra/Sample.h
-        extra/Renderer.h)
+        lights/Light.h
+        lights/DirectionalLight.h
+        lights/PointLight.h
+        cameras/Camera.h
+        cameras/OrthographicCamera.h
+        cameras/PerspectiveCamera.h
+        core/Common.h
+        core/Renderer.h
+        core/Scene.h)
 
 # Create executable
 add_executable(elucido main.cpp ${ELUCIDO_SOURCE_FILES})

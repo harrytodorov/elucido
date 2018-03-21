@@ -6,9 +6,11 @@
 
 #include <cstdint>
 #include <cmath>
+#include <memory>
 #include <fstream>
 #include <glm/vec3.hpp>
 #include <glm/common.hpp>
+
 #include "png++/png.hpp"
 
 class ImagePlane {
@@ -16,10 +18,11 @@ class ImagePlane {
 //==============================================================================
 // Data members
 //==============================================================================
-  uint32_t hres;       // horizontal image resolution
-  uint32_t vres;       // vertical image resolution
-  uint32_t ns;         // number of samples per pixel
-  glm::vec3 *fb;       // frame buffer
+  uint32_t hres;                  // Horizontal image resolution.
+  uint32_t vres;                  // Vertical image resolution.
+  glm::vec3 bc;                   // Background color.
+  uint32_t ns;                    // Number of samples per pixel.
+  std::shared_ptr<glm::vec3> fb;  // The frame buffer.
 
 //==============================================================================
 // Constructors & destructors
@@ -29,20 +32,17 @@ class ImagePlane {
   ImagePlane(const uint32_t &ip_x, const uint32_t &ip_y) {
     hres = ip_x;
     vres = ip_y;
-    fb = new glm::vec3[ip_x*ip_y];
+    fb = std::make_shared<glm::vec3>(hres*vres);
   }
-
-//==============================================================================
   ImagePlane() : ImagePlane(640, 480) {}
 
-//==============================================================================
   ~ImagePlane() = default;
 
 //==============================================================================
 // Function declarations
 //==============================================================================
-  void save_to_ppm(const char fn[50]);
-  void save_to_png(const char fn[50]);
+  void save_to_ppm(const std::string &fn);
+  void save_to_png(const std::string &fn);
  private:
   float_t encode_gamma(const float_t &c);
 };

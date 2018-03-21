@@ -37,7 +37,6 @@ class Sphere : public Object {
   void             set_center(const glm::vec4 &p);
 
   bool intersect(const Ray &r, isect_info &i) const;
-  bool shadow_intersect(const Ray &r) const;
 
   void apply_camera_transformation(const glm::mat4 &ivm);
   void apply_transformations();

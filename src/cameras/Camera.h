@@ -4,9 +4,8 @@
 #ifndef ELUCIDO_CAMERA_H
 #define ELUCIDO_CAMERA_H
 
-#include "../extra/Utilities.h"
-#include "../objects/Object.h"
-#include "../extra/ImagePlane.h"
+#include "../core/Utilities.h"
+#include "../core/ImagePlane.h"
 #include "../lights/Light.h"
 #include "../accelerators/AccelerationStructure.h"
 #include "../accelerators/Grid.h"
@@ -21,26 +20,6 @@ class Camera {
       iw(480),
       ih(640),
       scene_bb() {
-    ar = (iw * 1.f) / ih;
-  }
-  Camera(const glm::vec4 &p, const glm::vec4 &d) :
-      eye(p),
-      lookat(d),
-      vm(1),
-      use_as(true),
-      iw(480),
-      ih(640),
-      scene_bb() {
-    ar = (iw * 1.f) / ih;
-  }
-  Camera(const glm::vec4 &p, const glm::vec4 &d, const bool &as) :
-    eye(p),
-    lookat(d),
-    vm(1),
-    use_as(as),
-    iw(480),
-    ih(640),
-    scene_bb() {
     ar = (iw * 1.f) / ih;
   }
   Camera(const uint32_t &iw, const uint32_t &ih) :
@@ -82,19 +61,7 @@ class Camera {
                        const glm::vec4 &surface_normal,
                        const float_t &ior,
                        float_t &reflectance);
-  // Goes to Renderer.
-  glm::vec3 cast_ray(const Ray &ray,
-                     const std::vector<std::shared_ptr<Light>> &lights,
-                     const std::vector<std::shared_ptr<Object>> &objects,
-                     const uint32_t &depth,
-                     render_info &ri);
-  // There is only one version of the function in the Renderer.
-  glm::vec3 cast_ray(const Ray &ray,
-                     const std::vector<std::shared_ptr<Light>> &lights,
-                     const std::vector<std::shared_ptr<Object>> &objects,
-                     const uint32_t &depth,
-                     const AccelerationStructure *structure,
-                     render_info &ri);
+
   // Just pass a nullptr, when no Acceleration structure is defined.
   inline void use_acceleration(const bool &as, const float_t &ga = 3) {
     this->use_as = as;

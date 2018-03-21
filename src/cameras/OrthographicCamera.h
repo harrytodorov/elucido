@@ -9,12 +9,12 @@
 class OrthographicCamera : public Camera {
  public:
   OrthographicCamera() {}
-  OrthographicCamera(const float_t &z) : zf(z) {}
   OrthographicCamera(const float_t &z,
                      const uint32_t &_iw,
                      const uint32_t &_ih) :
-    Camera(_iw, _ih),
-    zf(z) {}
+      Camera(_iw, _ih),
+      zf(z) {}
+
   ~OrthographicCamera() = default;
 
   render_info render_scene(const std::vector<std::shared_ptr<Object>> &objects,

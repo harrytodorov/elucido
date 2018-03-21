@@ -26,21 +26,8 @@ class Object;
 const float_t kEpsilon = glm::epsilon<float_t>();               // epsilon value; used to deal with some edge cases
 const float_t infinity = std::numeric_limits<float_t>::max();   // infinity value
 
-const glm::vec3 red(1.f, 0, 0);                                 // red color
-const glm::vec3 green(0, 1.f, 0);                               // green color
 const glm::vec3 white(1);                                       // white color
-const glm::vec3 black(0);                                       // black color
-const glm::vec3 bluish(0.357f, 0.439f, 0.569f);                 // bluish color
-const glm::vec3 deadgold(0.647f, 0.604f, 0.486f);
-const glm::vec3 violet(0.573f, 0.384f, 0.757f);
-const glm::vec3 orangish(0.929f, 0.615f, 0.306f);
-const glm::vec3 whitish(0.780f, 0.812f, 0.867f);
 const glm::vec3 lightslategray(0.467f, 0.533f, 0.6f);
-const glm::vec3 pink(1.f,105.f/255,180.f/255);
-const glm::vec3 gold(1.f, 0.843f, 0.f);
-const glm::vec3 rabit_color(0.847f, 0.105f, 0.376f);
-const glm::vec3 bg_green(0.230f, 0.656f, 0.320f);               // Bulgaria's
-                                                                // green
 
 const float_t bias = 0.0001;            // shadow bias is used for avoiding self-shadows
 const uint32_t max_depth = 5;           // maximum depth of recursion
@@ -161,14 +148,14 @@ enum CameraProperty {
 // corresponding mappings for the parser.
 enum MaterialType {
   not_set_mt,
-  pm,     // Phong material
-  rm,     // Reflection matrial
-  rrm,    // Refractive material
+  phong,        // Phong material
+  reflective,   // Reflection matrial
+  refractive,   // Refractive material
 };
 const std::map<std::string, MaterialType> MATERIAL_TYPES_MAP = {
-    {"phong",       pm},
-    {"reflective",  rm},
-    {"refractive",  rrm}
+    {"phong",       phong},
+    {"reflective",  reflective},
+    {"refractive",  refractive}
 };
 
 // Available material properties +
@@ -585,7 +572,7 @@ struct grid_info {
 
 struct material {
   glm::vec3       c{white};       // material's color
-  MaterialType    mt{pm};         // material's type (see MaterialType enum)
+  MaterialType    mt{phong};         // material's type (see MaterialType enum)
   float_t         ac{0.2f};       // ambient constant
   float_t         dc{0.8f};       // diffuse constant
   float_t         sc{0.2f};       // specular constant
@@ -618,6 +605,7 @@ struct ip_sample {
 //------------------------------------------------------------------------------
 
 /**
+ * TODO: move to a parser class.
  * Reads a text file following given protocol (see Report) and extracts
  * scene descriptions(s) from it.
  * @param filename: The text file containing scene description(s).
@@ -632,55 +620,6 @@ struct ip_sample {
 std::pair<std::pair<SceneParserStatusCodes, size_t>,
           std::vector<scene_description>>
 read_scene_from_file(const std::string &f);
-
-/**
- * Create a transformation vector.
- * @param transformation_axes:   Axes along which a transformation would be
-  *                              applied.
- * @param transformation_amount: The amount to be transformed along these axes.
- * @return:                      The transformation vector.
- *                               In case an invalid axes of transformation is
- *                               provided, a vector of 1s is returned.
- */
-glm::vec3 create_transformation_vector(const Axis &transformation_axes,
-                                       const float_t &transformation_amount);
-
-/**
- * Apply a rotation around a given axis by an angle on the model transform
- * matrix.
- * @param axis:             Axis around which it would be rotated.
- * @param rotation_angle:   The angle of the rotation.
- * @param model_transform:  The model transform matrix onto which the
- *                          rotation would be applied.
- */
-void apply_rotation(const Axis &axis,
-                    const float_t &rotation_angle,
-                    glm::mat4 &model_transform);
-
-/**
- * Apply a translation around a given axis by a translation amount on the
- * model transform matrix.
- * @param axis:                 Axis in which the translation would be
- *                              applied.
- * @param translation_amount:   The amount of the translation.
- * @param model_transform:      The model transform matrix onto which the
- *                              translation would be applied.
- */
-void apply_translation(const Axis &axis,
-                       const float_t &translation_amount,
-                       glm::mat4 &model_transform);
-
-/**
- * Apply scaling on a given axis by a scale amount on the model transform
- * matrix.
- * @param axis:             Axis in which the scale would be applied.
- * @param scale_amount:     The amount of the scale.
- * @param model_transform:  The model transform matrix onto which the scale
- *                          would be applied.
- */
-void apply_scale(const Axis &axis,
-                 const float_t &scale_amount,
-                 glm::mat4 &model_transform);
 
 //------------------------------------------------------------------------------
 

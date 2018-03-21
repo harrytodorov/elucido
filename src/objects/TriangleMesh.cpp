@@ -3,6 +3,8 @@
 
 #include "TriangleMesh.h"
 
+#include "../core/Common.h"
+
 //==============================================================================
 loading_info TriangleMesh::load_mesh(const char *f) {
   std::string type;               // type of the object read on the current line
@@ -151,14 +153,7 @@ bool TriangleMesh::intersect_triangle(const Ray &r,
   float_t tt{infinity}, u{0}, v{0};
   bool    flip_normal = false;
 
-  if (intersection_routine(r,
-                           v0,
-                           v1,
-                           v2,
-                           tt,
-                           u,
-                           v,
-                           flip_normal) && tt < i.tn) {
+  if (triangle_intersect(r, v0, v1, v2, tt, u, v, flip_normal) && tt < i.tn) {
     intersected = true;
     i.tn = tt;
     i.u = u;
@@ -169,104 +164,6 @@ bool TriangleMesh::intersect_triangle(const Ray &r,
   }
 
   return intersected;
-}
-
-//==============================================================================
-bool TriangleMesh::intersection_routine(const Ray &r,
-                                        const glm::vec4 &v0,
-                                        const glm::vec4 &v1,
-                                        const glm::vec4 &v2,
-                                        float_t &t,
-                                        float_t &u,
-                                        float_t &v,
-                                        bool &flip_normal) const {
-
-  auto edge1 = v1 - v0;
-  auto edge2 = v2 - v0;
-
-  auto p = glm::vec4(glm::cross(glm::vec3(r.dir()), glm::vec3(edge2)), 0.f);
-  auto determinant = glm::dot(edge1, p);
-
-  if (determinant > -kEpsilon && determinant < kEpsilon)
-    return false;
-
-  auto inv_determinant = 1.f / determinant;
-
-  // Calculate distance vector from vertex 0 to the ray origin.
-  auto d = r.orig() - v0;
-
-  // Calculate Barycentric u-parameter.
-  u = static_cast<float_t>(glm::dot(d, p) * inv_determinant);
-
-  // Test if u-parameter is in the bounds [0,1].
-  if (u < 0.f || u > 1.f) return false;
-
-  auto q = glm::vec4(glm::cross(glm::vec3(d), glm::vec3(edge1)), 0.f);
-
-  // Calculate Barycentric v-parameter.
-  v = static_cast<float_t>(glm::dot(r.dir(), q) * inv_determinant);
-
-  // Test if v-parameter is in the bounds [0,1].
-  if (v < 0.f || v > 1.f) return false;
-
-  // Calculate t.
-  t = static_cast<float_t>(glm::dot(edge2, q) * inv_determinant);
-
-  // If the determinant is less tha epsilon, normal direction
-  // should be flipped.
-  if (determinant < kEpsilon) flip_normal = true;
-}
-
-//==============================================================================
-bool TriangleMesh::shadow_intersect(const Ray &r) const {
-  for (uint32_t _ti = 0; _ti < nt; _ti++) {
-    glm::vec4 v0, v1, v2;
-
-    v0 = va[via[3 * _ti] - 1];
-    v1 = va[via[3 * _ti + 1] - 1];
-    v2 = va[via[3 * _ti + 2] - 1];
-    
-    if (shadow_intersection_routine(r, v0, v1, v2)) {
-      return true;
-    }
-  }
-  
-  return false;
-}
-
-//==============================================================================
-bool TriangleMesh::shadow_intersection_routine(const Ray &r,
-                                               const glm::vec4 &v0,
-                                               const glm::vec4 &v1,
-                                               const glm::vec4 &v2) const {
-  auto edge1 = v1 - v0;
-  auto edge2 = v2 - v0;
-
-  auto p = glm::vec4(glm::cross(glm::vec3(r.dir()), glm::vec3(edge2)), 0.f);
-  auto determinant = glm::dot(edge1, p);
-
-  if (determinant > -kEpsilon && determinant < kEpsilon) return false;
-
-  auto inv_determinant = 1.f / determinant;
-
-  // Calculate distance vector from vertex 0 to the ray origin.
-  auto d = r.orig() - v0;
-
-  // Calculate Barycentric u-parameter.
-  auto u = glm::dot(d, p) * inv_determinant;
-
-  // Test if u-parameter is in the bounds [0,1].
-  if (u < 0.f || u > 1.f) return false;
-
-  auto q = glm::vec4(glm::cross(glm::vec3(d), glm::vec3(edge1)), 0.f);
-
-  // Calculate Barycentric v-parameter.
-  auto v = glm::dot(r.dir(), q) * inv_determinant;
-
-  // Test if v-parameter is in the bounds [0,1].
-  if (v < 0.f || v > 1.f) return false;
-
-  return true;
 }
 
 //==============================================================================

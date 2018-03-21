@@ -6,7 +6,7 @@
 
 #include <glm/vec4.hpp>
 
-#include "../extra/Utilities.h"
+#include "../core/Utilities.h"
 
 class Ray;
 

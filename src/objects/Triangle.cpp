@@ -2,82 +2,21 @@
 // Author: Haralambi Todorov <harrytodorov@gmail.com>
 
 #include "Triangle.h"
+#include "../core/Common.h"
 
 //==============================================================================
 bool Triangle::intersect(const Ray &r, isect_info &i) const {
+  float_t t, u, v;
+  bool fp{false};
 
-  auto edge1 = v1 - v0;
-  auto edge2 = v2 - v0;
-
-  auto p = glm::vec4(glm::cross(glm::vec3(r.dir()), glm::vec3(edge2)), 0.f);
-  auto determinant = glm::dot(edge1, p);
-
-  if (determinant > -kEpsilon && determinant < kEpsilon)
-    return false;
-
-  auto inv_determinant = 1.f / determinant;
-
-  // Calculate distance vector from vertex 0 to the ray origin.
-  auto d = r.orig() - v0;
-
-  // Calculate Barycentric u-parameter.
-  auto u = glm::dot(d, p) * inv_determinant;
-
-  // Test if u-parameter is in the bounds [0,1].
-  if (u < 0.f || u > 1.f) return false;
-
-  auto q = glm::vec4(glm::cross(glm::vec3(d), glm::vec3(edge1)), 0.f);
-
-  // Calculate Barycentric v-parameter.
-  auto v = glm::dot(r.dir(), q) * inv_determinant;
-
-  // Test if v-parameter is in the bounds [0,1].
-  if (v < 0.f || v > 1.f) return false;
-
-  // Calculate t.
-  auto t = glm::dot(edge2, q) * inv_determinant;
-
-  float_t flip_normal = 1.f;
-  if (determinant < kEpsilon) flip_normal *= -1.f;
+  auto intersected = triangle_intersect(r, v0, v1, v2, t, u, v, fp);
+  if (!intersected) return false;
 
   i.tn  = static_cast<float_t>(t);
   i.ip  = r.orig() + t*r.dir();
-  i.ipn = flip_normal * n;
+  i.ipn = (fp) ? -n : n;
   i.u   = static_cast<float_t>(u);
   i.v   = static_cast<float_t>(v);
-
-  return true;
-}
-
-//==============================================================================
-bool Triangle::shadow_intersect(const Ray &r) const {
-  auto edge1 = v1 - v0;
-  auto edge2 = v2 - v0;
-
-  auto p = glm::vec4(glm::cross(glm::vec3(r.dir()), glm::vec3(edge2)), 0.f);
-  auto determinant = glm::dot(edge1, p);
-
-  if (determinant > -kEpsilon && determinant < kEpsilon)
-    return false;
-
-  auto inv_determinant = 1.f / determinant;
-
-  // Calculate distance vector from vertex 0 to the ray origin.
-  auto d = r.orig() - v0;
-
-  // Calculate Barycentric u-parameter.
-  auto u = glm::dot(d, p) * inv_determinant;
-
-  // Test if u-parameter is in the bounds [0,1].
-  if (u < 0.f || u > 1.f) return false;
-
-  auto q = glm::vec4(glm::cross(glm::vec3(d), glm::vec3(edge1)), 0.f);
-
-  // Calculate Barycentric v-parameter.
-  auto v = glm::dot(r.dir(), q) * inv_determinant;
-
-  // Test if v-parameter is in the bounds [0,1].
-  if (v < 0.f || v > 1.f) return false;
 
   return true;
 }

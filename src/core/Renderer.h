@@ -26,22 +26,9 @@ class Renderer {
       lights(_lights)
   {}
 
-  glm::vec3 cast_ray(const Ray &ray,
-                     const uint32_t &depth);
+  glm::vec3 cast_ray(const Ray &ray, const uint32_t &depth);
 
-  /**
-   * Determine if an intersection point is in shadow from a light source.
-   * @param ii:             The intersection point.
-   * @param direction:      A normalized vector pointing from the surface
-   *                        of the intersection point to a light source.
-   * @param light_distance: The distance from the intersection point to
-   *                        the light source.
-   * @return:               True, if the intersection point is in shadow
-   *                        from the light source, false otherwise.
-   */
-  bool in_shadow(const isect_info &ii,
-                 const glm::vec4 &direction,
-                 const float_t &light_distance);
+  bool trace_ray(const Ray &r, isect_info &i);
 
   /**
    * Calculate the amount of Lambertian.
@@ -52,7 +39,7 @@ class Renderer {
    * @return:                   The amount of Lambertian reflection.
    */
   float_t labertian_amount(const glm::vec4 &normal,
-                           const glm::vec4 &light_direction);
+                           const glm::vec4 &light_direction) const;
 
   /**
    * Reflects the vector "to_reflect" about the normal.
@@ -64,7 +51,7 @@ class Renderer {
    *                    reflected vector is also normalized by construction.
    */
   glm::vec4 reflect(const glm::vec4 &normal,
-                    const glm::vec4 &to_reflect);
+                    const glm::vec4 &to_reflect) const;
 
  protected:
   render_info                             ri;

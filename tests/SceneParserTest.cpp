@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 
-#include "../src/extra/Utilities.h"
+#include "../src/core/Utilities.h"
 
 // TODO: Replace hardcoded file paths!
 
@@ -470,7 +470,7 @@ TEST(SceneParser, exhaustiveSceneCreation) {
   // Sphere material; Material phong_basic.
   auto m_prop = obj_s1[0].material->properties;
   EXPECT_STREQ(obj_s1[0].material->name.c_str(), "phong_basic");
-  EXPECT_EQ(obj_s1[0].material->type, pm);
+  EXPECT_EQ(obj_s1[0].material->type, phong);
   EXPECT_EQ(m_prop.size(), 4);
   EXPECT_FLOAT_EQ(m_prop[ambient], 0.5f);
   EXPECT_FLOAT_EQ(m_prop[diffuse], 0.2f);

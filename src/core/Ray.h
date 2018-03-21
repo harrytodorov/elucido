@@ -4,11 +4,6 @@
 #ifndef ELUCIDO_RAY_H
 #define ELUCIDO_RAY_H
 
-#include "glm/vec4.hpp"
-
-#include <vector>
-
-#include "../objects/Object.h"
 #include "Utilities.h"
 
 class Ray {
@@ -17,10 +12,6 @@ class Ray {
 
   Ray() {}
   ~Ray() = default;
-
-  bool trace(const std::vector<std::shared_ptr<Object>> &objects,
-             isect_info &ii,
-             render_info &ri) const;
 
   inline glm::vec4 dir()     const { return this->d; }
   inline glm::vec4 inv_dir() const { return this->id; }

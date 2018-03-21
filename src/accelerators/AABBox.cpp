@@ -2,7 +2,7 @@
 // Author: Haralambi Todorov <harrytodorov@gmail.com>
 
 #include "AABBox.h"
-#include "../extra/Ray.h"
+#include "../core/Ray.h"
 
 //==============================================================================
 void AABBox::extend_by(const glm::vec4 &p) {
