@@ -40,9 +40,9 @@ glm::vec3 Renderer::evaluate_phong(const isect_info &i,
 
   for (auto const &light : lights) {
     glm::vec4 light_direction = light->get_direction(i.ip);
-    float_t light_distance    = light->get_distance(i.ip);
+    float_t   light_distance  = light->get_distance(i.ip);
     glm::vec3 light_intensity = (light->color() *
-        light->get_intensity(light_distance));
+                                light->get_intensity(light_distance));
 
     // Check if the intersection point is in shadow for the light
     // source.

@@ -34,7 +34,7 @@ class Light {
 // Function declarations
 //==============================================================================
   inline glm::vec3 color() const { return this->c; }
-  inline void      set_color(const glm::vec3 &_c) { c = glm::normalize(_c); }
+  inline void      set_color(const glm::vec3 &_c) { c = _c; }
   inline void      set_intensity(const float_t &_i) { i = _i; }
 
   /**

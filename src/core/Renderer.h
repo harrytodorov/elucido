@@ -16,9 +16,9 @@
 class Renderer {
  public:
   Renderer(const std::shared_ptr<AccelerationStructure> _ac,
-                    const std::shared_ptr<AABBox> _sbb,
-                    std::vector<std::shared_ptr<Object>> _objects,
-                    std::vector<std::shared_ptr<Light>> _lights) :
+           const std::shared_ptr<AABBox> _sbb,
+           std::vector<std::shared_ptr<Object>> _objects,
+           std::vector<std::shared_ptr<Light>> _lights) :
       ri(render_info()),
       ac(_ac.get()),
       sbb(_sbb.get()),
@@ -30,8 +30,18 @@ class Renderer {
 
   bool trace_ray(const Ray &r, isect_info &i);
 
+
+  /**
+   * Evaluate the radiance at the intersection point (i) in direction of the
+   * ray (ray_direction) using the empirical Phong reflection model.
+   * One uses the standard equation.
+   * (see: https://en.wikipedia.org/wiki/Phong_reflection_model)
+   * @param i:              Intersection point.
+   * @param ray_direction:  The direction of the incoming ray.
+   * @return:               The computed radiance.
+   */
   glm::vec3 evaluate_phong(const isect_info &i,
-                             const glm::vec4 &ray_direction);
+                           const glm::vec4 &ray_direction);
 
   /**
    * Calculate the amount of Lambertian.
