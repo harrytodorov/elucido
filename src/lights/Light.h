@@ -34,7 +34,14 @@ class Light {
 // Function declarations
 //==============================================================================
   inline glm::vec3 color() const { return this->c; }
-  inline void      set_color(const glm::vec3 &_c) { c = _c; }
+  /**
+   * Set the color (RGB) for a light source. Each component of the color
+   * is clamped in range [0,1].
+   * @param _c: The RGB vector containing the color.
+   */
+  inline void      set_color(const glm::vec3 &_c) {
+    c = glm::clamp(_c, 0.f, 1.f);
+  }
   inline void      set_intensity(const float_t &_i) { i = _i; }
 
   /**

@@ -105,12 +105,12 @@ bool Renderer::trace_ray(const Ray &r, isect_info &i) {
   // Increment refraction rays.
   if (r.rt == refraction) __sync_fetch_and_add(&ri.nrrr, 1);
 
-  // Leave the acceleration structure to intersect the scene.
-  // TODO: increment intersections count (primitive and object)
-  if (ac != nullptr && r.rt != shadow) return ac->intersect(r, i);
-
   // Check if the ray intersects within the scene bounds.
   if (sbb != nullptr && !sbb->intersect(r)) return false;
+
+  // Leave the acceleration structure to find the intersection point.
+  // TODO: increment intersections count (primitive and object)
+  if (ac != nullptr && r.rt != shadow) return ac->intersect(r, i);
 
   // Iterate through objects and find the closest intersection.
   for (const auto &object : objects) {

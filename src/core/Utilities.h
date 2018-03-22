@@ -572,7 +572,7 @@ struct grid_info {
 
 struct material {
   glm::vec3       c{white};       // material's color
-  MaterialType    mt{phong};         // material's type (see MaterialType enum)
+  MaterialType    mt{phong};      // material's type (see MaterialType enum)
   float_t         ac{0.2f};       // ambient constant
   float_t         dc{0.8f};       // diffuse constant
   float_t         sc{0.2f};       // specular constant
