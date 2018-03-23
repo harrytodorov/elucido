@@ -11,9 +11,9 @@ void ImagePlane::save_to_ppm(const std::string &fn) {
   std::ofstream ri(fn, std::ios::out | std::ios::binary);
   ri << "P6\n" << hres << " " << vres << "\n255\n";
   for (uint32_t i = 0; i < hres * vres; ++i) {
-    auto r = static_cast<char>(255 * encode_gamma(fb.get()[i].r));
-    auto g = static_cast<char>(255 * encode_gamma(fb.get()[i].g));
-    auto b = static_cast<char>(255 * encode_gamma(fb.get()[i].b));
+    auto r = static_cast<char>(255 * encode_gamma(fb[i].r));
+    auto g = static_cast<char>(255 * encode_gamma(fb[i].g));
+    auto b = static_cast<char>(255 * encode_gamma(fb[i].b));
     ri << r << g << b;
   }
   ri.close();
@@ -26,7 +26,7 @@ void ImagePlane::save_to_png(const std::string &fn) {
   for (size_t y = 0; y < vres; ++y) {
     for (size_t x = 0; x < hres; ++x) {
       // col at current pixel in the framebuffer
-      glm::vec3 cacp = fb.get()[y * hres + x];
+      glm::vec3 cacp = fb[y * hres + x];
 
       // convert float value of pixel in a png::byte [0, 255]
       auto r = (unsigned char) (255 * encode_gamma(cacp.r));

@@ -16,26 +16,32 @@
 class Renderer {
  public:
   Renderer(const std::shared_ptr<AccelerationStructure> _ac,
-           const std::shared_ptr<AABBox> _sbb,
+           const AABBox &_sbb,
            std::vector<std::shared_ptr<Object>> _objects,
            std::vector<std::shared_ptr<Light>> _lights) :
       ri(render_info()),
       ac(_ac.get()),
-      sbb(_sbb.get()),
+      sbb(_sbb),
       objects(_objects),
       lights(_lights)
   {}
 
   glm::vec3 cast_ray(const Ray &ray, const uint32_t &depth);
 
+  /**
+   *
+   * @param r
+   * @param i
+   * @return
+   */
   bool trace_ray(const Ray &r, isect_info &i);
-
 
   /**
    * Evaluate the radiance at the intersection point (i) in direction of the
    * ray (ray_direction) using the empirical Phong reflection model.
    * One uses the standard equation.
    * (see: https://en.wikipedia.org/wiki/Phong_reflection_model)
+   *
    * @param i:              Intersection point.
    * @param ray_direction:  The direction of the incoming ray.
    * @return:               The computed radiance.
@@ -69,7 +75,7 @@ class Renderer {
  protected:
   render_info                             ri;
   std::shared_ptr<AccelerationStructure>  ac;
-  std::shared_ptr<AABBox>                 sbb;
+  AABBox                                  sbb;
   std::vector<std::shared_ptr<Object>>    objects;
   std::vector<std::shared_ptr<Light>>     lights;
 };

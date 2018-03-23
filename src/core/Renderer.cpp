@@ -26,9 +26,10 @@ glm::vec3 Renderer::cast_ray(const Ray &ray, const uint32_t &depth) {
   MaterialType mt = i.ho->material().mt;
 
   // Evaluate Phong.
-  if (mt == phong) return evaluate_phong(i, ray.dir());
 
+  if (mt == phong) hr += glm::clamp(evaluate_phong(i, ray.dir()), 0.f, 1.f);
 
+  return hr;
 }
 
 //==============================================================================
@@ -66,6 +67,7 @@ glm::vec3 Renderer::evaluate_phong(const isect_info &i,
     if (labertian > 0.f) {
       auto lightDir_reflection  = reflect(i.ipn, light_direction);
       auto lr_vd_dot            = glm::dot(lightDir_reflection, -ray_direction);
+      lr_vd_dot                 = glm::clamp(lr_vd_dot, 0.f, 1.f);
       auto specular_term        = glm::pow(lr_vd_dot, m.se);
 
       // Increment specular component.
@@ -106,7 +108,7 @@ bool Renderer::trace_ray(const Ray &r, isect_info &i) {
   if (r.rt == refraction) __sync_fetch_and_add(&ri.nrrr, 1);
 
   // Check if the ray intersects within the scene bounds.
-  if (sbb != nullptr && !sbb->intersect(r)) return false;
+  if (!sbb.intersect(r)) return false;
 
   // Leave the acceleration structure to find the intersection point.
   // TODO: increment intersections count (primitive and object)

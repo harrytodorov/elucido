@@ -10,6 +10,7 @@
 #include "../cameras/OrthographicCamera.h"
 #include "../cameras/PerspectiveCamera.h"
 #include "../accelerators/Grid.h"
+#include "Renderer.h"
 
 //==============================================================================
 void Scene::convert_color01_range(glm::vec3 &color) {
@@ -332,6 +333,7 @@ bool Scene::load_scene(const scene_description &description) {
   // Generate acceleration structure.
   if (description.acceleration_structure != nullptr) {
     generate_as(*(description.acceleration_structure));
+    // TODO: print Grid creation information.
     std::static_pointer_cast<Grid>(acceleration_structure)->constructGrid();
   }
 
@@ -374,5 +376,32 @@ void Scene::set_as(const std::shared_ptr<AccelerationStructure> _ac) {
 
 //==============================================================================
 void Scene::render_image() {
+  Ray     primary_ray;
 
+  std::unique_ptr<Renderer> renderer(new Renderer(acceleration_structure,
+                                                  scene_bb,
+                                                  objects,
+                                                  lights));
+
+  // Apply inverse view transform on objects and light sources.
+  camera->apply_inverse_view_transform(objects, lights);
+
+  for (uint32_t row = 0; row < image_plane->vres; row++) {
+    for (uint32_t col = 0; col < image_plane->hres; col++) {
+      primary_ray = camera->get_ray(col, row, 0.5f, 0.5f);
+      auto pix_radiance = renderer->cast_ray(primary_ray, 1);
+      if (pix_radiance.x == 0.f &&
+          pix_radiance.y == 0.f &&
+          pix_radiance.z == 0.f) {
+        std::cout << col << ", " << row << std::endl;
+      }
+      image_plane->fb[row*image_plane->hres + col] = pix_radiance;
+    }
+  }
+
+  // Reverse inverse view transform.
+  camera->reverse_inverse_view_transform(objects, lights);
+
+  auto rendered_scene_name = name + ".png";
+  image_plane->save_to_png(rendered_scene_name);
 }

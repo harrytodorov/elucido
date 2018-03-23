@@ -18,11 +18,11 @@ class ImagePlane {
 //==============================================================================
 // Data members
 //==============================================================================
-  uint32_t hres;                  // Horizontal image resolution.
-  uint32_t vres;                  // Vertical image resolution.
-  glm::vec3 bc;                   // Background color.
-  uint32_t ns;                    // Number of samples per pixel.
-  std::shared_ptr<glm::vec3> fb;  // The frame buffer.
+  uint32_t hres;              // Horizontal image resolution.
+  uint32_t vres;              // Vertical image resolution.
+  glm::vec3 bc;               // Background color.
+  uint32_t ns;                // Number of samples per pixel.
+  std::vector<glm::vec3> fb;  // The frame buffer.
 
 //==============================================================================
 // Constructors & destructors
@@ -32,7 +32,7 @@ class ImagePlane {
   ImagePlane(const uint32_t &ip_x, const uint32_t &ip_y) {
     hres = ip_x;
     vres = ip_y;
-    fb = std::make_shared<glm::vec3>(hres*vres);
+    fb.reserve(hres*vres);
   }
   ImagePlane() : ImagePlane(640, 480) {}
 

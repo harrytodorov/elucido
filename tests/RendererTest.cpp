@@ -19,7 +19,7 @@ TEST(Lambertian, testMutlipleDirections) {
   auto ld_normal        = glm::vec4(0.f,    1.f,     0.f,    0.f);
   auto ld_arbitrary     = glm::vec4(0.483f, 0.782f, -0.391f, 0.f);
 
-  auto renderer = new Renderer(nullptr, nullptr, {}, {});
+  auto renderer = new Renderer(nullptr, AABBox(), {}, {});
 
   float_t la1 = renderer->labertian_amount(surface_normal, ld_parallel);
   float_t la2 = renderer->labertian_amount(surface_normal, ld_normal);
@@ -39,7 +39,7 @@ TEST(Reflection, testMutlipleDirections) {
   auto tr3              = glm::vec4( 0.f,     1.f,    0.f, 0.f);
   auto tr4              = glm::vec4(-0.707f, -0.707f, 0.f, 0.f);
 
-  auto renderer = new Renderer(nullptr, nullptr, {}, {});
+  auto renderer = new Renderer(nullptr, AABBox(), {}, {});
 
   auto r1 = renderer->reflect(surface_normal, tr1);
   auto r2 = renderer->reflect(surface_normal, tr2);
@@ -114,7 +114,7 @@ TEST(Phong, testEvaluation) {
 
   auto ray_direction = glm::vec4(1.f, 0.f, 0.f, 0.f);
 
-  Renderer renderer(nullptr, nullptr, {}, lights);
+  Renderer renderer(nullptr, AABBox(), {}, lights);
   auto radiance = renderer.evaluate_phong(i, ray_direction);
   EXPECT_NEAR(radiance.r, 0.193f, float_err);
   EXPECT_NEAR(radiance.g, 0.193f, float_err);

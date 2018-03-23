@@ -38,9 +38,9 @@ class Camera {
   void reverse_inverse_view_transform(const std::vector<std::shared_ptr<Object>> &objects,
                                       const std::vector<std::shared_ptr<Light>> &lights);
   virtual Ray get_ray(const uint32_t &pixel_x,
-                        const uint32_t &pixel_y,
-                        const float_t &sample_x,
-                        const float_t &sample_y) = 0;
+                      const uint32_t &pixel_y,
+                      const float_t &sample_x,
+                      const float_t &sample_y) = 0;
 
   inline void set_image_width (const uint32_t &_iw) {
     this->iw = _iw;
@@ -51,22 +51,6 @@ class Camera {
     calculate_ar();
   }
   inline void calculate_ar() { ar = (iw * 1.f) / ih; }
-
-  // TODO: Following functions should be removed from the Camera.
-  // Goes to Scene as render image.
-  virtual render_info render_scene(const std::vector<std::shared_ptr<Object>> &objects,
-                                   const std::vector<std::shared_ptr<Light>> &lights,
-                                   ImagePlane &ip) = 0;
-
-  // Goes to Renderer.
-  glm::vec4 refract(const glm::vec4 &incident_direction,
-                    const glm::vec4 &surface_normal,
-                    const float_t &ior);
-  // Goes to Renderer.
-  void compute_fresnel(const glm::vec4 &incident_direction,
-                       const glm::vec4 &surface_normal,
-                       const float_t &ior,
-                       float_t &reflectance);
 
  protected:
   glm::vec4 eye;
