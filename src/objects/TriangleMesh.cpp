@@ -12,7 +12,7 @@ loading_info TriangleMesh::load_mesh(const char *f) {
   std::vector<glm::vec4> tva;     // temporary array to store vertices
   std::vector<glm::vec4> tvna;    // temporary array to store vertex normals
   std::vector<uint32_t> vi;       // vertex index array
-  std::vector<uint32_t> ni;      // normal index array
+  std::vector<uint32_t> ni;       // normal index array
   loading_info ret;               // holder for the loading information
 
   // load file in memory

@@ -39,9 +39,11 @@ class Grid : public AccelerationStructure {
        const std::vector<std::shared_ptr<Object>> &objects) :
       AccelerationStructure(box, objects), cells(NULL) {}
   ~Grid() {
-    for (size_t i = 0; i < resolution[0] * resolution[1] * resolution[2]; i++) {
-      if (cells[i] != NULL) delete cells[i];
-      delete [] cells;
+    if (cells != nullptr) {
+      for (size_t i = 0; i < resolution[0] * resolution[1] * resolution[2]; i++) {
+        if (cells[i] != NULL) delete cells[i];
+        delete [] cells;
+      }
     }
   }
 
@@ -50,12 +52,13 @@ class Grid : public AccelerationStructure {
   inline size_t offset(size_t x, size_t y, size_t z) const {
     return z * resolution[0] * resolution[1] + y * resolution[0] + x;
   }
-  inline float_t getAlpha() const {
-    return this->alpha;
+  inline float_t getAlpha() const { return this->alpha; }
+  inline void set_alpha(const float_t _alhpa) { this->alpha = _alhpa; }
+
+  inline void set_max_res(const size_t &resolution) {
+    this->maxResolution = resolution;
   }
-  inline void setAlpha(const float_t _alhpa) {
-    this->alpha = _alhpa;
-  }
+
  private:
   Cell **cells;
   size_t resolution[3];

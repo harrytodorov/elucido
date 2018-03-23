@@ -112,11 +112,3 @@ void Camera::compute_fresnel(const glm::vec4 &incident_direction,
     reflectance = (fo * fo + fp * fp) / 2.f;
   }
 }
-
-//==============================================================================
-void Camera::extend_scene_bb(const std::vector<std::shared_ptr<Object>> &objects) {
-  for (auto &object : objects) {
-    scene_bb.extend_by(object->bounding_box().bounds[0]);
-    scene_bb.extend_by(object->bounding_box().bounds[1]);
-  }
-}

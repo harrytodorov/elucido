@@ -452,7 +452,7 @@ struct object_description {
       name(_name),
       type(not_set_ot),
       material(nullptr),
-      radius(0),
+      radius(0.f),
       center(nullptr),
       vertices({nullptr}),
       file_name({}),
@@ -466,9 +466,9 @@ struct image_plane_description {
   uint32_t      horizontal;
   uint32_t      vertical;
   uint8_t       use_gamma;  // One wants to encode 3 states:
-                        // 0: gamma is not set
-                        // 1: gamma is set to true
-                        // 2: gamma is set to false
+                            // 0: gamma is not set
+                            // 1: gamma is set to true
+                            // 2: gamma is set to false
   uint32_t      number_samples;
   image_plane_description(const std::string &_name) :
       name(_name),
@@ -476,7 +476,7 @@ struct image_plane_description {
       horizontal(0),
       vertical(0),
       use_gamma(0),
-      number_samples(0) {}
+      number_samples(1) {}
 };
 
 struct acceleration_structure_description {
@@ -506,13 +506,13 @@ struct animation_description {
 };
 
 struct scene_description {
-  std::string                         name;
-  std::shared_ptr<camera_description> camera;
-  std::shared_ptr<image_plane_description> image_plane;
-  std::shared_ptr<acceleration_structure_description>  acceleration_structure;
-  std::vector<object_description>     objects;
-  std::vector<light_description>      lights;
-  std::vector<animation_description>  animations;
+  std::string                                           name;
+  std::shared_ptr<camera_description>                   camera;
+  std::shared_ptr<image_plane_description>              image_plane;
+  std::shared_ptr<acceleration_structure_description>   acceleration_structure;
+  std::vector<object_description>                       objects;
+  std::vector<light_description>                        lights;
+  std::vector<animation_description>                    animations;
   scene_description(const std::string &_name) :
       name(_name),
       camera(nullptr),

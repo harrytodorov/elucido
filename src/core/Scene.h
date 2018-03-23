@@ -22,29 +22,41 @@ class Scene {
       lights({}),
       image_plane(nullptr),
       camera(nullptr),
-      acceleration_structure(nullptr)
+      acceleration_structure(nullptr),
+      scene_bb(AABBox())
       {};
 
   ~Scene() = default;
 
   void add_object(const std::shared_ptr<Object> object);
+  bool generate_object(const object_description &object);
+
   void add_light (const std::shared_ptr<Light>  light);
-  void set_camera(const std::unique_ptr<Camera> _camera);
-  void set_image_plane(const std::unique_ptr<ImagePlane> _ip);
+  bool generate_light(const light_description &light);
+
+  void set_camera(const std::shared_ptr<Camera> _camera);
+  bool generate_camera(const camera_description &c,
+                         const uint32_t &image_width,
+                         const uint32_t &image_height);
+
+  void set_image_plane(const std::shared_ptr<ImagePlane> _ip);
+
   void set_as(const std::shared_ptr<AccelerationStructure> _ac);
+  bool generate_as(const acceleration_structure_description &as);
 
   bool load_scene(const scene_description &description);
   void extend_scene_bb();
+  void convert_color01_range(glm::vec3 &color);
   void render_image();
 
  private:
   std::string                             name;
   std::vector<std::shared_ptr<Object>>    objects;
   std::vector<std::shared_ptr<Light>>     lights;
-  std::unique_ptr<ImagePlane>             image_plane;
-  std::unique_ptr<Camera>                 camera;
+  std::shared_ptr<ImagePlane>             image_plane;
+  std::shared_ptr<Camera>                 camera;
   std::shared_ptr<AccelerationStructure>  acceleration_structure;
-  std::shared_ptr<AABBox>                 scene_bb;
+  AABBox                                  scene_bb;
 };
 
 #endif //ELUCIDO_ALL_SCENE_H

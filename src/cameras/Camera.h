@@ -16,21 +16,17 @@ class Camera {
       eye(0, 0, 0, 1),
       lookat(0, 0, -1, 1),
       vm(1),
-      use_as(true),
-      iw(480),
-      ih(640),
-      scene_bb() {
-    ar = (iw * 1.f) / ih;
+      iw(1),
+      ih(1) {
+    calculate_ar();
   }
   Camera(const uint32_t &iw, const uint32_t &ih) :
       eye(0, 0, 0, 1),
       lookat(0, 0, -1, 1),
       vm(1),
-      use_as(true),
       iw(iw),
-      ih(ih),
-      scene_bb() {
-    ar = (iw * 1.f) / ih;
+      ih(ih) {
+    calculate_ar();
   }
   virtual ~Camera() = default;
 
@@ -45,6 +41,16 @@ class Camera {
                         const uint32_t &pixel_y,
                         const float_t &sample_x,
                         const float_t &sample_y) = 0;
+
+  inline void set_image_width (const uint32_t &_iw) {
+    this->iw = _iw;
+    calculate_ar();
+  }
+  inline void set_image_height(const uint32_t &_ih) {
+    this->ih = _ih;
+    calculate_ar();
+  }
+  inline void calculate_ar() { ar = (iw * 1.f) / ih; }
 
   // TODO: Following functions should be removed from the Camera.
   // Goes to Scene as render image.
@@ -62,21 +68,6 @@ class Camera {
                        const float_t &ior,
                        float_t &reflectance);
 
-  // Just pass a nullptr, when no Acceleration structure is defined.
-  inline void use_acceleration(const bool &as, const float_t &ga = 3) {
-    this->use_as = as;
-    this->grid_alpha = ga;
-  }
-  // Already implemented in the Renderer.
-  inline glm::vec4 reflect(const glm::vec4 &incident_direction,
-                           const glm::vec4 &surface_normal) {
-    return incident_direction
-        - 2.f * glm::dot(incident_direction, surface_normal) * surface_normal;
-  };
-  // Goes to Scene.
-  void extend_scene_bb(const std::vector<std::shared_ptr<Object>> &objects);
-
-
  protected:
   glm::vec4 eye;
   glm::vec4 lookat;
@@ -84,9 +75,5 @@ class Camera {
   uint32_t  ih;         // Image's width.
   float_t   ar;         // Aspect ratio [ width / height ]
   glm::mat4 vm;
-  AABBox    scene_bb;   // TODO: Remove
-  bool      use_as;     // TODO: Remove
-  float_t   grid_alpha; // TODO: Remove
-
 };
 #endif //ELUCIDO_CAMERA_H
