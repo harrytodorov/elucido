@@ -110,7 +110,7 @@ TEST(Filter, Box) {
 
   float_t extent = 1.f;
   uint32_t x(1), y(5);
-  glm::vec3 radiance = box_filter(samples, x, y, extent);
+  glm::vec3 radiance = evaluate_box_filter(samples, x, y, extent);
   EXPECT_FLOAT_EQ(radiance.x, 0.85);
   EXPECT_FLOAT_EQ(radiance.y, 0.85);
   EXPECT_FLOAT_EQ(radiance.z, 0.85);
@@ -134,7 +134,7 @@ TEST(Filter, Triangle) {
 
   float_t extent = 1.f;
   uint32_t x(1), y(5);
-  glm::vec3 radiance = triangle_filter(samples, x, y, extent);
+  glm::vec3 radiance = evaluate_triangle_filter(samples, x, y, extent);
   EXPECT_NEAR(radiance.x, 0.8285, float_err);
   EXPECT_NEAR(radiance.y, 0.8285, float_err);
   EXPECT_NEAR(radiance.z, 0.8285, float_err);
@@ -159,7 +159,7 @@ TEST(Filter, Gaussian) {
   float_t extent  = 1.f;
   float_t alpha   = 2.f;
   uint32_t x(1), y(5);
-  glm::vec3 radiance = gaussian_filter(samples, x, y, extent, alpha);
+  glm::vec3 radiance = evaluate_gaussian_filter(samples, x, y, extent, alpha);
   EXPECT_NEAR(radiance.x, 0.8397f, float_err);
   EXPECT_NEAR(radiance.y, 0.8397f, float_err);
   EXPECT_NEAR(radiance.z, 0.8397f, float_err);
@@ -185,7 +185,7 @@ TEST(Filter, Mitchell) {
   float_t b       = 1.f / 3.f;
   float_t c       = 1.f / 3.f;
   uint32_t x(1), y(5);
-  glm::vec3 radiance = mitchell_filter(samples, x, y, extent, b, c);
+  glm::vec3 radiance = evaluate_mitchell_filter(samples, x, y, extent, b, c);
   EXPECT_NEAR(radiance.x, 0.8679f, float_err);
   EXPECT_NEAR(radiance.y, 0.8679f, float_err);
   EXPECT_NEAR(radiance.z, 0.8679f, float_err);
@@ -210,7 +210,7 @@ TEST(Filter, Sinc) {
   float_t extent  = 1.f;
   float_t tau     = 3.f;
   uint32_t x(1), y(5);
-  glm::vec3 radiance = sinc_filter(samples, x, y, extent, tau);
+  glm::vec3 radiance = evaluate_sinc_filter(samples, x, y, extent, tau);
   EXPECT_NEAR(radiance.x, 0.7954f, float_err);
   EXPECT_NEAR(radiance.y, 0.7954f, float_err);
   EXPECT_NEAR(radiance.z, 0.7954f, float_err);

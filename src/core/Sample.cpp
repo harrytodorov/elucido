@@ -136,10 +136,10 @@ void generate_multi_jittered_samples(const uint32_t &number_of_samples,
 }
 
 //==============================================================================
-glm::vec3 box_filter(const std::vector<ip_sample> &samples,
-                     const uint32_t &x,
-                     const uint32_t &y,
-                     const float_t &extent) {
+glm::vec3 evaluate_box_filter(const std::vector<ip_sample> &samples,
+                              const uint32_t &x,
+                              const uint32_t &y,
+                              const float_t &extent) {
   auto weighted_radiance  = glm::vec3(0);
   float_t weights_sum = 0.f;
   float_t shifted_x   = x + 0.5f;
@@ -160,10 +160,10 @@ glm::vec3 box_filter(const std::vector<ip_sample> &samples,
 }
 
 //==============================================================================
-glm::vec3 triangle_filter(const std::vector<ip_sample> &samples,
-                          const uint32_t &x,
-                          const uint32_t &y,
-                          const float_t &extent) {
+glm::vec3 evaluate_triangle_filter(const std::vector<ip_sample> &samples,
+                                   const uint32_t &x,
+                                   const uint32_t &y,
+                                   const float_t &extent) {
   auto weighted_radiance = glm::vec3(0);
   float_t weights_sum = 0.f;
   float_t shifted_x   = x + 0.5f;
@@ -188,11 +188,11 @@ glm::vec3 triangle_filter(const std::vector<ip_sample> &samples,
 }
 
 //==============================================================================
-glm::vec3 gaussian_filter(const std::vector<ip_sample> &samples,
-                          const uint32_t &x,
-                          const uint32_t &y,
-                          const float_t &extent,
-                          const float_t &alpha) {
+glm::vec3 evaluate_gaussian_filter(const std::vector<ip_sample> &samples,
+                                   const uint32_t &x,
+                                   const uint32_t &y,
+                                   const float_t &extent,
+                                   const float_t &alpha) {
   auto weighted_radiance = glm::vec3(0);
   float_t weights_sum = 0.f;
   float_t shifted_x   = x + 0.5f;
@@ -218,12 +218,12 @@ glm::vec3 gaussian_filter(const std::vector<ip_sample> &samples,
 }
 
 //==============================================================================
-glm::vec3 mitchell_filter(const std::vector<ip_sample> &samples,
-                          const uint32_t &x,
-                          const uint32_t &y,
-                          const float_t &extent,
-                          const float_t &b,
-                          const float_t &c) {
+glm::vec3 evaluate_mitchell_filter(const std::vector<ip_sample> &samples,
+                                   const uint32_t &x,
+                                   const uint32_t &y,
+                                   const float_t &extent,
+                                   const float_t &b,
+                                   const float_t &c) {
   auto weighted_radiance = glm::vec3(0);
   float_t weights_sum = 0.f;
   float_t shifted_x   = x + 0.5f;
@@ -245,11 +245,11 @@ glm::vec3 mitchell_filter(const std::vector<ip_sample> &samples,
 }
 
 //==============================================================================
-glm::vec3 sinc_filter(const std::vector<ip_sample> &samples,
-                      const uint32_t &x,
-                      const uint32_t &y,
-                      const float_t &extent,
-                      const float_t &tau) {
+glm::vec3 evaluate_sinc_filter(const std::vector<ip_sample> &samples,
+                               const uint32_t &x,
+                               const uint32_t &y,
+                               const float_t &extent,
+                               const float_t &tau) {
   auto weighted_radiance = glm::vec3(0);
   float_t weights_sum = 0.f;
   float_t shifted_x   = x + 0.5f;

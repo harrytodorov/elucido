@@ -254,11 +254,8 @@ bool set_image_plane_property(const std::string &property,
   /// Output type.
   if (IMAGE_PLANE_PROPERTIES_MAP.at(property) == output_type &&
       IMAGE_PLANE_OUT_TYPES_MAP.find(property_value) != IMAGE_PLANE_OUT_TYPES_MAP.end()) {
-    if (IMAGE_PLANE_OUT_TYPES_MAP.at(property_value) == ppm_o) {
-      image_planes.at(name).output_type = ppm_o;
-    } else if (IMAGE_PLANE_OUT_TYPES_MAP.at(property_value) == png_o) {
-      image_planes.at(name).output_type = png_o;
-    }
+    auto ot = IMAGE_PLANE_OUT_TYPES_MAP.at(property_value);
+    image_planes.at(name).output_type = ot;
   /// Horizontal resolution.
   } else if (IMAGE_PLANE_PROPERTIES_MAP.at(property) == horizontal) {
     auto val = static_cast<uint32_t>(std::stoi(property_value));
@@ -276,6 +273,16 @@ bool set_image_plane_property(const std::string &property,
   } else if (IMAGE_PLANE_PROPERTIES_MAP.at(property) == number_samples) {
     auto val = static_cast<uint32_t>(std::stoi(property_value));
     image_planes.at(name).number_samples = val;
+  /// Sampling strategy.
+  } else if (IMAGE_PLANE_PROPERTIES_MAP.at(property) == sampling_strategy &&
+             SAMPLING_STRATEGIES_MAP.find(property_value) != SAMPLING_STRATEGIES_MAP.end()) {
+    auto ss = SAMPLING_STRATEGIES_MAP.at(property_value);
+    image_planes.at(name).sampling_strategy = ss;
+  /// Pixel filter.
+  } else if (IMAGE_PLANE_PROPERTIES_MAP.at(property) == pixel_filter &&
+             PIXEL_FILTER_MAP.find(property_value) != PIXEL_FILTER_MAP.end()) {
+    auto pf = PIXEL_FILTER_MAP.at(property_value);
+    image_planes.at(name).pixel_filter = pf;
   } else {
     // In case an invalid output type is specified.
     return false;

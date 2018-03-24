@@ -101,7 +101,7 @@ bool triangle_intersect(const Ray &r,
 
   // If the determinant is less tha epsilon, normal direction
   // should be flipped.
-  if (determinant > -kEpsilon) flip_normal = true;
+  if (determinant < kEpsilon) flip_normal = true;
 
   return true;
 }

@@ -265,14 +265,48 @@ enum ImagePlaneProperty {
   horizontal,
   vertical,
   use_gamma,
-  number_samples
+  number_samples,
+  sampling_strategy,
+  pixel_filter
 };
 const std::map<std::string, ImagePlaneProperty> IMAGE_PLANE_PROPERTIES_MAP = {
-    {"output_type",     output_type},
-    {"horizontal",      horizontal},
-    {"vertical",        vertical},
-    {"gamma",           use_gamma},
-    {"number_samples",  number_samples}
+    {"output_type",       output_type},
+    {"horizontal",        horizontal},
+    {"vertical",          vertical},
+    {"gamma",             use_gamma},
+    {"number_samples",    number_samples},
+    {"sampling_strategy", sampling_strategy},
+    {"pixel_filter",      pixel_filter}
+};
+
+// Available sampling strategies + corresponding mappings for the parser.
+enum SamplingStrategy {
+  random_sampling,
+  half_jittered_sampling,
+  nrooks_sampling,
+  multi_jittered_sampling
+};
+const std::map<std::string, SamplingStrategy> SAMPLING_STRATEGIES_MAP = {
+    {"random",          random_sampling},
+    {"half_jittered",   half_jittered_sampling},
+    {"nrooks",          nrooks_sampling},
+    {"multi_jittered",  multi_jittered_sampling}
+};
+
+// Available pixel filtering strategies + corresponding mappings for the parser.
+enum PixelFilter {
+  box_filter,
+  triangle_filter,
+  gaussian_filter,
+  mitchell_filter,
+  sinc_filter
+};
+const std::map<std::string, PixelFilter> PIXEL_FILTER_MAP = {
+    {"box",       box_filter},
+    {"triangle",  triangle_filter},
+    {"gaussian",  gaussian_filter},
+    {"mitchell",  mitchell_filter},
+    {"sinc",      sinc_filter}
 };
 
 // Available accelerators structure properties +
@@ -461,22 +495,27 @@ struct object_description {
 };
 
 struct image_plane_description {
-  std::string   name;
-  OutputType    output_type;
-  uint32_t      horizontal;
-  uint32_t      vertical;
-  uint8_t       use_gamma;  // One wants to encode 3 states:
-                            // 0: gamma is not set
-                            // 1: gamma is set to true
-                            // 2: gamma is set to false
-  uint32_t      number_samples;
+  std::string         name;
+  OutputType          output_type;
+  uint32_t            horizontal;
+  uint32_t            vertical;
+  uint8_t             use_gamma;  // One wants to encode 3 states:
+                                  // 0: gamma is not set
+                                  // 1: gamma is set to true
+                                  // 2: gamma is set to false
+  uint32_t            number_samples;
+  SamplingStrategy    sampling_strategy;
+  PixelFilter         pixel_filter;
   image_plane_description(const std::string &_name) :
       name(_name),
       output_type(not_set_out),
       horizontal(0),
       vertical(0),
       use_gamma(0),
-      number_samples(1) {}
+      number_samples(1),
+      sampling_strategy(random_sampling),
+      pixel_filter(box_filter)
+  {}
 };
 
 struct acceleration_structure_description {

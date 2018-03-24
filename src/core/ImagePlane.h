@@ -6,12 +6,17 @@
 
 #include <cstdint>
 #include <cmath>
-#include <memory>
+#include <vector>
 #include <fstream>
+
 #include <glm/vec3.hpp>
+#include <glm/vec2.hpp>
 #include <glm/common.hpp>
 
 #include "png++/png.hpp"
+
+#include "Utilities.h"
+#include "Sample.h"
 
 class ImagePlane {
  public:
@@ -22,6 +27,10 @@ class ImagePlane {
   uint32_t vres;              // Vertical image resolution.
   glm::vec3 bc;               // Background color.
   uint32_t ns;                // Number of samples per pixel.
+  std::vector<glm::vec2> us;  // Unit samples.
+  SamplingStrategy ss;        // Sampling strategy.
+  PixelFilter pf;             // Pixel filter.
+  OutputType ot;              // Output type.
   std::vector<glm::vec3> fb;  // The frame buffer.
 
 //==============================================================================
@@ -32,7 +41,7 @@ class ImagePlane {
   ImagePlane(const uint32_t &ip_x, const uint32_t &ip_y) {
     hres = ip_x;
     vres = ip_y;
-    fb.reserve(hres*vres);
+    fb.assign(hres*vres, bc);
   }
   ImagePlane() : ImagePlane(640, 480) {}
 
@@ -43,8 +52,13 @@ class ImagePlane {
 //==============================================================================
   void save_to_ppm(const std::string &fn);
   void save_to_png(const std::string &fn);
+  void set_number_of_samples(const uint32_t &_ns);
+  void set_sampling_strategy(const SamplingStrategy &_ss);
+  void generate_unit_samples();
+  void set_pixel_filter(const PixelFilter &_pf);
  private:
   float_t encode_gamma(const float_t &c);
+
 };
 
 #endif //ELUCIDO_IMAGEPLANE_H

@@ -78,7 +78,7 @@ bool Scene::generate_camera(const camera_description &cd,
   c->set_image_height(image_height);
 
   // Transformations.
-  if (cd.transformations.size() > 0) {
+  if (!cd.transformations.empty()) {
     for (auto const &t : cd.transformations) {
       switch (t.type) {
         case TransformationType::translation: {
@@ -133,7 +133,7 @@ bool Scene::generate_light(const light_description &light) {
   }
 
   // Transformations.
-  if (light.transformations.size() > 0) {
+  if (!light.transformations.empty()) {
     for (auto const &t : light.transformations) {
       switch (t.type) {
         case TransformationType::translation: {
@@ -217,7 +217,7 @@ bool Scene::generate_object(const object_description &object) {
 
     // Triangle mesh.
     case ObjectType::triangle_mesh: {
-      if (object.file_name.size() == 0) return false;
+      if (object.file_name.empty()) return false;
       obj = std::make_shared<TriangleMesh>(TriangleMesh());
 
       auto li = std::static_pointer_cast<TriangleMesh>(obj)->load_mesh(object.file_name.c_str());
@@ -232,7 +232,7 @@ bool Scene::generate_object(const object_description &object) {
   }
 
   // Transformations.
-  if (object.transformations.size() > 0) {
+  if (!object.transformations.empty()) {
     for (auto const &t : object.transformations) {
       switch (t.type) {
         case TransformationType::translation: {
@@ -301,7 +301,10 @@ bool Scene::load_scene(const scene_description &description) {
   // Generate image plane.
   auto ipd  = description.image_plane;
   auto ip   = std::make_shared<ImagePlane>(ipd->horizontal, ipd->vertical);
-  ip->ns    = ipd->number_samples;
+  ip->set_number_of_samples(ipd->number_samples);
+  ip->set_sampling_strategy(ipd->sampling_strategy);
+  ip->set_pixel_filter(ipd->pixel_filter);
+  ip->generate_unit_samples();
   set_image_plane(ip);
 
   // Generate camera.
@@ -377,6 +380,7 @@ void Scene::set_as(const std::shared_ptr<AccelerationStructure> _ac) {
 //==============================================================================
 void Scene::render_image() {
   Ray     primary_ray;
+  std::vector<ip_sample> ip_samples;
 
   std::unique_ptr<Renderer> renderer(new Renderer(acceleration_structure,
                                                   scene_bb,
@@ -386,16 +390,22 @@ void Scene::render_image() {
   // Apply inverse view transform on objects and light sources.
   camera->apply_inverse_view_transform(objects, lights);
 
+
   for (uint32_t row = 0; row < image_plane->vres; row++) {
     for (uint32_t col = 0; col < image_plane->hres; col++) {
-      primary_ray = camera->get_ray(col, row, 0.5f, 0.5f);
-      auto pix_radiance = renderer->cast_ray(primary_ray, 1);
-      if (pix_radiance.x == 0.f &&
-          pix_radiance.y == 0.f &&
-          pix_radiance.z == 0.f) {
-        std::cout << col << ", " << row << std::endl;
+      ip_samples.clear();
+
+      for (auto const &sample : image_plane->us) {
+        primary_ray = camera->get_ray(col, row, sample.x, sample.y);
+
+        auto sample_radiance = renderer->cast_ray(primary_ray, max_depth);
+        auto sample_position = glm::vec2(col + sample.x, row + sample.y);
+
+        ip_samples.emplace_back(sample_radiance, sample_position);
       }
-      image_plane->fb[row*image_plane->hres + col] = pix_radiance;
+
+      auto pixel_radiance = evaluate_sinc_filter(ip_samples, col, row, 1.f, 1.f);
+      image_plane->fb[row*image_plane->hres + col] = pixel_radiance;
     }
   }
 

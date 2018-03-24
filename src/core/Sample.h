@@ -78,10 +78,10 @@ void generate_multi_jittered_samples(const uint32_t &number_of_samples,
  * @param extent:   The extent of the Box filter.
  * @return:         The weighted average radiance at the pixel.
  */
-glm::vec3 box_filter(const std::vector<ip_sample> &samples,
-                     const uint32_t &x,
-                     const uint32_t &y,
-                     const float_t &extent);
+glm::vec3 evaluate_box_filter(const std::vector<ip_sample> &samples,
+                              const uint32_t &x,
+                              const uint32_t &y,
+                              const float_t &extent);
 
 /**
  * Calculate the weighted average radiance for a given pixel and a set of samples
@@ -97,10 +97,10 @@ glm::vec3 box_filter(const std::vector<ip_sample> &samples,
  * @param extent:   The extent of the Triangle filter.
  * @return:         TThe weighted average radiance at the pixel.
  */
-glm::vec3 triangle_filter(const std::vector<ip_sample> &samples,
-                          const uint32_t &x,
-                          const uint32_t &y,
-                          const float_t &extent);
+glm::vec3 evaluate_triangle_filter(const std::vector<ip_sample> &samples,
+                                   const uint32_t &x,
+                                   const uint32_t &y,
+                                   const float_t &extent);
 
 /**
  * TODO: find a good default alpha parameter for the Gaussian.
@@ -118,11 +118,11 @@ glm::vec3 triangle_filter(const std::vector<ip_sample> &samples,
  * @param alpha:    The alpha parameter of the Gaussian filter.
  * @return:         The weighted average radiance at the pixel.
  */
-glm::vec3 gaussian_filter(const std::vector<ip_sample> &samples,
-                          const uint32_t &x,
-                          const uint32_t &y,
-                          const float_t &extent,
-                          const float_t &alpha);
+glm::vec3 evaluate_gaussian_filter(const std::vector<ip_sample> &samples,
+                                   const uint32_t &x,
+                                   const uint32_t &y,
+                                   const float_t &extent,
+                                   const float_t &alpha);
 
 /**
  * Calculate the weighted average radiance for a given pixel and a set of samples
@@ -141,12 +141,12 @@ glm::vec3 gaussian_filter(const std::vector<ip_sample> &samples,
  * @param c:        The C parameter of the Mitchell filter.
  * @return:         The weighted average radiance at the pixel.
  */
-glm::vec3 mitchell_filter(const std::vector<ip_sample> &samples,
-                          const uint32_t &x,
-                          const uint32_t &y,
-                          const float_t &extent,
-                          const float_t &b = 1.f/3.f,
-                          const float_t &c = 1.f/3.f);
+glm::vec3 evaluate_mitchell_filter(const std::vector<ip_sample> &samples,
+                                   const uint32_t &x,
+                                   const uint32_t &y,
+                                   const float_t &extent,
+                                   const float_t &b = 1.f / 3.f,
+                                   const float_t &c = 1.f / 3.f);
 
 /**
  * ТОДО: find good default tau parameter.
@@ -164,10 +164,10 @@ glm::vec3 mitchell_filter(const std::vector<ip_sample> &samples,
  *                  passes before its clamped to 0.
  * @return:         The weighted average radiance at the pixel.
  */
-glm::vec3 sinc_filter(const std::vector<ip_sample> &samples,
-                      const uint32_t &x,
-                      const uint32_t &y,
-                      const float_t &extent,
-                      const float_t &tau);
+glm::vec3 evaluate_sinc_filter(const std::vector<ip_sample> &samples,
+                               const uint32_t &x,
+                               const uint32_t &y,
+                               const float_t &extent,
+                               const float_t &tau);
 
 #endif //ELUCIDO_SAMPLE_H
