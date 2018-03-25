@@ -603,10 +603,15 @@ struct isect_info {
 };
 
 struct grid_info {
-  size_t  r[3];     // grid's resolution
-  size_t  nfc{0};   // number of cells, which contain one or more primitives
-  size_t  np{0};    // number of primitives contained in the grid
-  float_t nppc{0};  // average number of primitives per non-empty cell
+  size_t  r[3];     // Grid's resolution.
+  size_t  nfc{0};   // Number of cells, which contain one or more primitives.
+  float_t nppc{0};  // Average number of primitives per non-empty cell.
+};
+
+struct scene_info {
+  uint32_t no{0}; // Number of objects.
+  uint32_t nl{0}; // Number of light sources.
+  uint32_t np{0}; // Number of primitives.
 };
 
 struct material {

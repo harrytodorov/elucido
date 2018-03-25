@@ -51,11 +51,12 @@ class AccelerationStructure {
 //==============================================================================
  public:
   AccelerationStructure(const AABBox &box,
-                        const std::vector<std::shared_ptr<Object>> &objects) :
+                        const std::vector<std::shared_ptr<Object>> &objects,
+                        const uint32_t &number_primitives) :
   bbox(box) {
+    primitives.reserve(number_primitives);
     for (auto const &object : objects) {
       std::vector<Primitive> toPrimitive = convert_to_primitive(object);
-      primitives.reserve(primitives.size() + toPrimitive.size());
       primitives.insert(primitives.end(),
                         toPrimitive.begin(),
                         toPrimitive.end());

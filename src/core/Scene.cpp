@@ -27,7 +27,7 @@ bool Scene::generate_as(const std::shared_ptr<acceleration_structure_description
   switch (asd->type) {
     // Grid.
     case AccelerationStructureType::grid : {
-      as = std::make_shared<Grid>(Grid(scene_bb, objects));
+      as = std::make_shared<Grid>(Grid(scene_bb, objects, si.np));
 
       // Alpha.
       if (asd->alpha != 0.f) {
@@ -38,6 +38,13 @@ bool Scene::generate_as(const std::shared_ptr<acceleration_structure_description
       if (asd->max_resolution != 0) {
         std::static_pointer_cast<Grid>(as)->set_max_res(asd->max_resolution);
       }
+
+      // Print grid's construction information.
+      auto sc = std::chrono::high_resolution_clock::now();
+      auto gi = std::static_pointer_cast<Grid>(as)->constructGrid();
+      auto fc = std::chrono::high_resolution_clock::now();
+      auto cd = std::chrono::duration_cast<std::chrono::milliseconds>(fc - sc).count();
+      print_as_construction_info(gi, cd);
     } break;
 
     default: break;
@@ -176,6 +183,7 @@ bool Scene::generate_object(const object_description &object) {
     // Sphere.
     case ObjectType::sphere: {
       obj = std::make_shared<Sphere>(Sphere());
+      si.np++;
 
       // Center.
       if (object.center != nullptr) {
@@ -196,6 +204,7 @@ bool Scene::generate_object(const object_description &object) {
     // Triangle.
     case ObjectType::triangle: {
       obj = std::make_shared<Triangle>(Triangle());
+      si.np++;
 
       // Vertices.
       if (object.vertices.size() != 0) {
@@ -222,12 +231,14 @@ bool Scene::generate_object(const object_description &object) {
       if (object.file_name.empty()) return false;
       obj = std::make_shared<TriangleMesh>(TriangleMesh());
 
+      // Print triangle mesh's loading information.
       auto sl = std::chrono::high_resolution_clock::now();
       auto li = std::static_pointer_cast<TriangleMesh>(obj)->load_mesh(object.file_name.c_str());
       auto fl = std::chrono::high_resolution_clock::now();
       auto ld = std::chrono::duration_cast<std::chrono::milliseconds>(fl - sl).count();
       if (!li.l) return false;
       print_tm_loading_info(li, ld, object.file_name);
+      si.np += li.nt;
 
       // TODO: does not make sense to have 3 integers for interpolation.
       if (object.interpolation == 1)
@@ -327,6 +338,7 @@ bool Scene::load_scene(const scene_description &description) {
                 << "'." << std::endl;
     }
   }
+  si.no = objects.size();
 
   // Generate lights.
   for (auto const &light : description.lights) {
@@ -335,6 +347,7 @@ bool Scene::load_scene(const scene_description &description) {
                 << "'." << std::endl;
     }
   }
+  si.nl = lights.size();
 
   // Extend scene's bounding box.
   extend_scene_bb();
@@ -342,16 +355,11 @@ bool Scene::load_scene(const scene_description &description) {
   // Generate acceleration structure.
   if (description.acceleration_structure != nullptr) {
     generate_as(description.acceleration_structure);
-
-    auto sc = std::chrono::high_resolution_clock::now();
-    auto gi = std::static_pointer_cast<Grid>(acceleration_structure)->constructGrid();
-    auto fc = std::chrono::high_resolution_clock::now();
-    auto cd = std::chrono::duration_cast<std::chrono::milliseconds>(fc - sc).count();
-    print_as_construction_info(gi, cd);
   }
 
   // TODO: Animations.
 
+  print_scene_info(si);
   return true;
 }
 
@@ -396,13 +404,10 @@ void Scene::print_as_construction_info(const grid_info &i,
   std::cout << "Grid's resoultion:\t\t\t\t\t\t"
             << i.r[0] << 'x' << i.r[1] << 'x' << i.r[2]
             << std::endl;
-  std::cout << "Number of cells:\t\t\t\t\t\t"
+  std::cout << "# of cells:\t\t\t\t\t\t\t\t"
             << i.r[0]*i.r[1]*i.r[2]
             << std::endl;
-  std::cout << "Number of  primitives:\t\t\t\t\t"
-            << i.np
-            << std::endl;
-  std::cout << "Number of non-empty cells:\t\t\t\t"
+  std::cout << "# of non-empty cells:\t\t\t\t\t"
             << i.nfc
             << std::endl;
   std::cout << "Average number of primitives per cell:\t"
@@ -453,6 +458,20 @@ void Scene::print_render_info(const render_info &ri,
   std::cout << "ratio (isect tests / isect):\t\t\t"
             << (1.f * ri.nrpt) / ri.nroi << std::endl;
   std::cout << "----------" << std::endl;
+  std::cout << std::endl;
+}
+
+//==============================================================================
+void Scene::print_scene_info(const scene_info &i) {
+  std::cout << "Scene consists of:" << std::endl;
+  std::cout << "# of primitives:\t\t\t\t\t\t"
+            << i.np << std::endl;
+  std::cout << "# of objects:\t\t\t\t\t\t\t"
+            << i.no << std::endl;
+  std::cout << "# of light sources:\t\t\t\t\t\t"
+            << i.nl << std::endl;
+  std::cout << "----------" << std::endl;
+  std::cout << std::endl;
 }
 
 //==============================================================================

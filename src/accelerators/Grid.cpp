@@ -120,7 +120,6 @@ grid_info Grid::constructGrid() {
     info.nppc += cells[i]->primitives.size();
   }
   info.nppc /= (1.f * info.nfc);
-  info.np = primitives.size();
 
   return info;
 }

@@ -49,6 +49,7 @@ class Scene {
                              const std::string &fn);
 
   bool load_scene(const scene_description &description);
+  void print_scene_info(const scene_info &i);
   void extend_scene_bb();
   void convert_color01_range(glm::vec3 &color);
   void render_image();
@@ -62,6 +63,7 @@ class Scene {
   std::shared_ptr<Camera>                 camera;
   std::shared_ptr<AccelerationStructure>  acceleration_structure;
   AABBox                                  scene_bb;
+  scene_info                              si;
 };
 
 #endif //ELUCIDO_ALL_SCENE_H
