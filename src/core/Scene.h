@@ -35,14 +35,14 @@ class Scene {
   bool generate_light(const light_description &light);
 
   void set_camera(const std::shared_ptr<Camera> _camera);
-  bool generate_camera(const camera_description &c,
-                         const uint32_t &image_width,
-                         const uint32_t &image_height);
+  bool generate_camera(const std::shared_ptr<camera_description> &c,
+                       const uint32_t &image_width,
+                       const uint32_t &image_height);
 
   void set_image_plane(const std::shared_ptr<ImagePlane> _ip);
 
   void set_as(const std::shared_ptr<AccelerationStructure> _ac);
-  bool generate_as(const acceleration_structure_description &as);
+  bool generate_as(const std::shared_ptr<acceleration_structure_description> &as);
 
   bool load_scene(const scene_description &description);
   void extend_scene_bb();

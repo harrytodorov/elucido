@@ -11,12 +11,21 @@
 #include "../objects/Object.h"
 
 struct Cell {
+//==============================================================================
+// Constructors & destructors
+//==============================================================================
   Cell() {}
-  void insert(const Primitive &primitive) {
+  ~Cell() {}
+
+//==============================================================================
+// Function declarations
+//==============================================================================
+  inline void insert(const Primitive &primitive) {
     primitives.emplace_back(primitive);
   }
-  bool intersect(const Ray &r, isect_info &i) {
-    for (auto primitive : primitives) {
+
+  inline bool intersect(const Ray &r, isect_info &i) const {
+    for (auto const &primitive : primitives) {
       // Information we got from the intersection with the current object.
       isect_info co;
 
@@ -28,43 +37,55 @@ struct Cell {
         }
       }
     }
+
     return (i.ho != nullptr);
   }
+
+//==============================================================================
+// Data members
+//==============================================================================
   std::vector<Primitive> primitives;
 };
 
 class Grid : public AccelerationStructure {
+//==============================================================================
+// Constructors & destructors
+//==============================================================================
  public:
   Grid(const AABBox &box,
        const std::vector<std::shared_ptr<Object>> &objects) :
-      AccelerationStructure(box, objects), cells(NULL) {}
-  ~Grid() {
-    if (cells != nullptr) {
-      for (size_t i = 0; i < resolution[0] * resolution[1] * resolution[2]; i++) {
-        if (cells[i] != NULL) delete cells[i];
-        delete [] cells;
-      }
-    }
-  }
+      AccelerationStructure(box, objects),
+      cells({nullptr})
+  {}
 
-  grid_info constructGrid();
-  bool intersect(const Ray &r, isect_info &i) const;
-  inline size_t offset(size_t x, size_t y, size_t z) const {
+  ~Grid() {}
+
+//==============================================================================
+// Function declarations
+//==============================================================================
+  grid_info       constructGrid();
+  bool            intersect(const Ray &r, isect_info &i) const;
+  inline uint32_t offset(const uint32_t &x,
+                         const uint32_t &y,
+                         const uint32_t &z) const {
     return z * resolution[0] * resolution[1] + y * resolution[0] + x;
   }
-  inline float_t getAlpha() const { return this->alpha; }
-  inline void set_alpha(const float_t _alhpa) { this->alpha = _alhpa; }
+  inline float_t  getAlpha() const { return this->alpha; }
+  inline void     set_alpha(const float_t _alhpa) { this->alpha = _alhpa; }
 
-  inline void set_max_res(const size_t &resolution) {
+  inline void     set_max_res(const uint32_t &resolution) {
     this->maxResolution = resolution;
   }
 
+//==============================================================================
+// Data members
+//==============================================================================
  private:
-  Cell **cells;
-  size_t resolution[3];
-  size_t maxResolution{64};
-  float_t alpha{3.f};
-  glm::vec4 cellDimension;
+  std::vector<std::shared_ptr<Cell>>    cells;
+  uint32_t                              resolution[3];
+  uint32_t                              maxResolution{64};
+  float_t                               alpha{3.f};
+  glm::vec4                             cellDimension{0.f};
 };
 
 #endif //ELUCIDO_ALL_GRID_H

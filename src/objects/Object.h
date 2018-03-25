@@ -36,7 +36,6 @@ class Object {
   inline void            set_material(const struct material &_m) { om = _m; }
 
   inline AABBox const& bounding_box() const { return this->bb; }
-  inline void          set_bounding_box(const AABBox &_bb) { bb = _bb; }
 
   inline ObjectType const& object_type() const { return this->ot; }
   inline void              set_object_type(const ObjectType &_ot) { ot = _ot; }

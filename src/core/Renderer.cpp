@@ -112,7 +112,7 @@ bool Renderer::trace_ray(const Ray &r, isect_info &i) {
 
   // Leave the acceleration structure to find the intersection point.
   // TODO: increment intersections count (primitive and object)
-  if (ac != nullptr && r.rt != shadow) return ac->intersect(r, i);
+  if (ac != nullptr) return ac->intersect(r, i);
 
   // Iterate through objects and find the closest intersection.
   for (const auto &object : objects) {

@@ -11,24 +11,17 @@
 class Ray;
 
 class AABBox {
-
-//==============================================================================
-// Data members
-//==============================================================================
- public:
-  glm::vec4 bounds[2] =
-      {glm::vec4(glm::vec3(infinity), 1),
-       glm::vec4(glm::vec3(-infinity), 1)};
-
 //==============================================================================
 // Constructors & destructors
-  AABBox() {}
-
 //==============================================================================
+ public:
+  AABBox() {}
   AABBox(const glm::vec4 &min, const glm::vec4 &max) {
     bounds[0] = min;
     bounds[1] = max;
   }
+
+  ~AABBox() {}
 
 //==============================================================================
 // Function declarations, inline functions
@@ -45,8 +38,14 @@ class AABBox {
     return glm::abs(glm::vec4(bounds[1] - bounds[0]));
   }
   bool intersect(const Ray &r) const;
-  bool intersect(const Ray &r, float_t &tBox) const;
+  bool intersect(const Ray &r, float_t &t_min) const;
   void extend_by(const glm::vec4 &p);
+
+//==============================================================================
+// Data members
+//==============================================================================
+  glm::vec4 bounds[2] = {glm::vec4(glm::vec3(infinity), 1.f),
+                         glm::vec4(glm::vec3(-infinity), 1.f)};
 };
 
 #endif //ELUCIDO_BBOX_H

@@ -99,6 +99,9 @@ bool triangle_intersect(const Ray &r,
   // Calculate t.
   t = static_cast<float_t>(glm::dot(edge2, q_vec) * inv_determinant);
 
+  // t should be positive.
+  if (t < 0.f) return false;
+
   // If the determinant is less tha epsilon, normal direction
   // should be flipped.
   if (determinant < kEpsilon) flip_normal = true;

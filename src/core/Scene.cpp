@@ -19,22 +19,22 @@ void Scene::convert_color01_range(glm::vec3 &color) {
 }
 
 //==============================================================================
-bool Scene::generate_as(const acceleration_structure_description &asd) {
-    std::shared_ptr<AccelerationStructure> as = nullptr;
+bool Scene::generate_as(const std::shared_ptr<acceleration_structure_description> &asd) {
+  std::shared_ptr<AccelerationStructure> as = nullptr;
 
-  switch (asd.type) {
+  switch (asd->type) {
     // Grid.
     case AccelerationStructureType::grid : {
       as = std::make_shared<Grid>(Grid(scene_bb, objects));
 
       // Alpha.
-      if (asd.alpha != 0.f) {
-        std::static_pointer_cast<Grid>(as)->set_alpha(asd.alpha);
+      if (asd->alpha != 0.f) {
+        std::static_pointer_cast<Grid>(as)->set_alpha(asd->alpha);
       }
 
       // Maximum grid resolution per axis.
-      if (asd.max_resolution != 0) {
-        std::static_pointer_cast<Grid>(as)->set_max_res(asd.max_resolution);
+      if (asd->max_resolution != 0) {
+        std::static_pointer_cast<Grid>(as)->set_max_res(asd->max_resolution);
       }
     } break;
 
@@ -46,18 +46,18 @@ bool Scene::generate_as(const acceleration_structure_description &asd) {
 }
 
 //==============================================================================
-bool Scene::generate_camera(const camera_description &cd,
+bool Scene::generate_camera(const std::shared_ptr<camera_description> &cd,
                             const uint32_t &image_width,
                             const uint32_t &image_height) {
   std::shared_ptr<Camera> c = nullptr;
 
-  switch (cd.type) {
+  switch (cd->type) {
     // Orthographic camera.
     case CameraType::orthographic : {
       c = std::make_shared<OrthographicCamera>(OrthographicCamera());
 
-      if (cd.property.first == zoom_factor) {
-        std::static_pointer_cast<OrthographicCamera>(c)->set_zoom_factor(cd.property.second);
+      if (cd->property.first == zoom_factor) {
+        std::static_pointer_cast<OrthographicCamera>(c)->set_zoom_factor(cd->property.second);
       }
     } break;
 
@@ -65,8 +65,8 @@ bool Scene::generate_camera(const camera_description &cd,
     case CameraType::perspective : {
       c = std::make_shared<PerspectiveCamera>(PerspectiveCamera());
 
-      if (cd.property.first == field_of_view) {
-        std::static_pointer_cast<PerspectiveCamera>(c)->set_fov(cd.property.second);
+      if (cd->property.first == field_of_view) {
+        std::static_pointer_cast<PerspectiveCamera>(c)->set_fov(cd->property.second);
       }
     } break;
 
@@ -78,8 +78,8 @@ bool Scene::generate_camera(const camera_description &cd,
   c->set_image_height(image_height);
 
   // Transformations.
-  if (!cd.transformations.empty()) {
-    for (auto const &t : cd.transformations) {
+  if (!cd->transformations.empty()) {
+    for (auto const &t : cd->transformations) {
       switch (t.type) {
         case TransformationType::translation: {
           c->translate(t.amount, t.axis);
@@ -308,7 +308,7 @@ bool Scene::load_scene(const scene_description &description) {
   set_image_plane(ip);
 
   // Generate camera.
-  if (!generate_camera(*(description.camera), ip->hres, ip->vres)) {
+  if (!generate_camera(description.camera, ip->hres, ip->vres)) {
     std::cout << "There was a problem while generating '"
               << description.camera->name << "'." << std::endl;
     return false;
@@ -335,7 +335,7 @@ bool Scene::load_scene(const scene_description &description) {
 
   // Generate acceleration structure.
   if (description.acceleration_structure != nullptr) {
-    generate_as(*(description.acceleration_structure));
+    generate_as(description.acceleration_structure);
     // TODO: print Grid creation information.
     std::static_pointer_cast<Grid>(acceleration_structure)->constructGrid();
   }
@@ -390,7 +390,8 @@ void Scene::render_image() {
   // Apply inverse view transform on objects and light sources.
   camera->apply_inverse_view_transform(objects, lights);
 
-
+  // Iterate through the image plane's pixels starting from the top left
+  // corner.
   for (uint32_t row = 0; row < image_plane->vres; row++) {
     for (uint32_t col = 0; col < image_plane->hres; col++) {
       ip_samples.clear();

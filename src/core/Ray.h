@@ -7,12 +7,18 @@
 #include "Utilities.h"
 
 class Ray {
+//==============================================================================
+// Constructors & destructors
+//==============================================================================
  public:
   RayType rt{primary};  // the type of the casted ray
 
   Ray() {}
   ~Ray() = default;
 
+//==============================================================================
+// Function declarations
+//==============================================================================
   inline glm::vec4 dir()     const { return this->d; }
   inline glm::vec4 inv_dir() const { return this->id; }
   void             set_dir(const glm::vec4 &_d);
@@ -22,7 +28,10 @@ class Ray {
 
   inline const uint32_t *sign() const { return this->s; }
 
- protected:
+//==============================================================================
+// Data members
+//==============================================================================
+ private:
   glm::vec4 o{0.f};                   // the origin point of the ray
   glm::vec4 d{0.f,  0.f, -1.f, 0.f};  // the direction of the ray
   glm::vec4 id{0.f, 0.f,  1.f, 0.f};; // the inverse of the ray direction,

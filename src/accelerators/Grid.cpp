@@ -3,9 +3,10 @@
 
 #include "Grid.h"
 
+//==============================================================================
 grid_info Grid::constructGrid() {
   // Initialize the grid statistical gathering structure.
-  grid_info info;
+  grid_info info = grid_info();
 
   // Precompute bounding box's inverse volume and cube root from the
   // formula used for determining resolution size.
@@ -25,14 +26,17 @@ grid_info Grid::constructGrid() {
 
   // Convert resolution from floating number to an integer.
   for (size_t i = 0; i < 3; i++) {
-    if (resFloat[i] > static_cast<float_t>(maxResolution))
+    if (resFloat[i] > static_cast<float_t>(maxResolution)) {
       resFloat[i] = static_cast<float_t>(maxResolution);
-    if (resFloat[i] < 1.f)
-      resFloat[i] = 1.f;
+    }
 
-    // Static cast to size_t is equivalent to std::floor of the
+    if (resFloat[i] < 1.f) {
+      resFloat[i] = 1.f;
+    }
+
+    // Static cast to uint32_t is equivalent to std::floor of the
     // floating value.
-    resolution[i] = static_cast<size_t>(resFloat[i]);
+    resolution[i] = static_cast<uint32_t>(resFloat[i]);
     info.r[i] = resolution[i];
   }
 
@@ -43,10 +47,7 @@ grid_info Grid::constructGrid() {
 
   // Allocate memory for cells in the grid.
   size_t numOfCells = resolution[0] * resolution[1] * resolution[2];
-  cells = new Cell*[numOfCells];
-
-  // Set the cell's content initially to NULL.
-  memset(cells, 0x0, sizeof(Cell*) * numOfCells);
+  cells.assign(numOfCells, nullptr);
 
   glm::vec3 minPrimCellCoord{0}, maxPrimCellCoord{0};
   size_t minCell[3];
@@ -56,8 +57,8 @@ grid_info Grid::constructGrid() {
   for (auto primitive : primitives) {
     // Represent the bounding box in grid's coordinates, relative to
     // the cell dimension.
-    minPrimCellCoord = glm::vec4((primitive.getBB()->bounds[0] - bbox.bounds[0]) / cellDimension);
-    maxPrimCellCoord = glm::vec4((primitive.getBB()->bounds[1] - bbox.bounds[0]) / cellDimension);
+    minPrimCellCoord = glm::vec4((primitive.getBB().bounds[0] - bbox.bounds[0]) / cellDimension);
+    maxPrimCellCoord = glm::vec4((primitive.getBB().bounds[1] - bbox.bounds[0]) / cellDimension);
 
     // Convert the minimum and maximum coordinates for the cell's encapsulating
     // a primitive into integers.
@@ -99,8 +100,11 @@ grid_info Grid::constructGrid() {
         for (size_t x = minCell[0]; x <= maxCell[0]; ++x) {
           // Compute the cell's index.
           size_t cellIndex = offset(x, y, z);
+
           // Initialize cell, if needed.
-          if (cells[cellIndex] == nullptr) cells[cellIndex] = new Cell;
+          if (cells[cellIndex] == nullptr) {
+            cells[cellIndex] = std::make_shared<Cell>(Cell());
+          }
           cells[cellIndex]->insert(primitive);
         }
       }
@@ -111,7 +115,7 @@ grid_info Grid::constructGrid() {
   // about the grid (e.g. number of non-empty cells, av number of primitives
   // per cell)
   for (size_t i = 0; i < resolution[0] * resolution[1] * resolution[2]; i++) {
-    if (cells[i] == NULL) continue;
+    if (cells[i] == nullptr) continue;
     info.nfc++;
     info.nppc += cells[i]->primitives.size();
   }
@@ -121,6 +125,7 @@ grid_info Grid::constructGrid() {
   return info;
 }
 
+//==============================================================================
 bool Grid::intersect(const Ray &r, isect_info &ii) const {
   // Scalar distance from the ray's origin to the nearest hit point of
   // the ray with the grid's bounding box.
@@ -134,7 +139,6 @@ bool Grid::intersect(const Ray &r, isect_info &ii) const {
   int currentCell[3];
   int step[3];  // Steps could be also negative.
   int exit[3];  // The same argument.
-
 
   // Compute delta t, the parametric distance along the ray between two
   // planes perpendicular to x,y or z.
@@ -175,7 +179,7 @@ bool Grid::intersect(const Ray &r, isect_info &ii) const {
 
   // The actual traversal of the grid.
   while (1) {
-    size_t cellIndex = offset(currentCell[0], currentCell[1], currentCell[2]);
+    uint32_t cellIndex = offset(currentCell[0], currentCell[1], currentCell[2]);
 
     // Check if there are any primitives in the current cell and if yes
     // check if the ray intersects any of the primitives in the cell.
@@ -196,5 +200,6 @@ bool Grid::intersect(const Ray &r, isect_info &ii) const {
     if (currentCell[planeIndex] == exit[planeIndex]) break;
     nextCrossingT[planeIndex] += deltaT[planeIndex];
   }
+
   return (ii.ho != nullptr);
 }

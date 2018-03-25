@@ -41,7 +41,7 @@ class TriangleMesh : public Object {
    * @param i:  A structure containing intersection information.
    */
   void compute_normal(isect_info &i) const;
-  const AABBox* get_BB(const uint32_t &ti) const;
+  const AABBox & get_BB(const uint32_t &ti) const;
   loading_info load_mesh(const char *f);
 
   void apply_camera_transformation(const glm::mat4 &ctm);

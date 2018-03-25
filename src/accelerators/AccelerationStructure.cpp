@@ -3,8 +3,9 @@
 
 #include "AccelerationStructure.h"
 
-std::vector<Primitive> AccelerationStructure::convertToPrimitive(
-    const std::shared_ptr<Object> &obj) {
+//==============================================================================
+std::vector<Primitive> AccelerationStructure::convert_to_primitive(
+    const std::shared_ptr<Object> &obj) const {
   std::vector<Primitive> result;
 
   // If the object is not a triangle mesh, it's already a primitive.
@@ -19,5 +20,6 @@ std::vector<Primitive> AccelerationStructure::convertToPrimitive(
   for (size_t i = 0; i < mesh->nt; i++) {
     result.emplace_back(obj, i);
   }
+
   return result;
 }

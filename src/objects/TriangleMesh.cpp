@@ -133,9 +133,6 @@ bool TriangleMesh::intersect(const Ray &r, isect_info &i) const {
     }
   }
 
-  // Compute the normal when there was an intersection.
-  if (intersected) compute_normal(i);
-
   return intersected;
 }
 
@@ -162,6 +159,9 @@ bool TriangleMesh::intersect_triangle(const Ray &r,
     i.ti = ti;
     i.fp = flip_normal;
   }
+
+  // Compute the normal when there was an intersection.
+  if (intersected) compute_normal(i);
 
   return intersected;
 }
@@ -261,8 +261,8 @@ TriangleMesh::TriangleMesh(const TriangleMesh &tm) : Object(tm) {
 }
 
 //==============================================================================
-const AABBox* TriangleMesh::get_BB(const uint32_t &ti) const {
-  auto *box = new AABBox();
+const AABBox & TriangleMesh::get_BB(const uint32_t &ti) const {
+  auto box = new AABBox();
 
   glm::vec4 v0, v1, v2;
   v0 = va[via[3 * ti] - 1];
@@ -271,5 +271,6 @@ const AABBox* TriangleMesh::get_BB(const uint32_t &ti) const {
   box->extend_by(v0);
   box->extend_by(v1);
   box->extend_by(v2);
-  return box;
+  auto const &ret = *box;
+  return ret;
 }

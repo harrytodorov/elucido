@@ -20,7 +20,7 @@ class Renderer {
            std::vector<std::shared_ptr<Object>> _objects,
            std::vector<std::shared_ptr<Light>> _lights) :
       ri(render_info()),
-      ac(_ac.get()),
+      ac(_ac),
       sbb(_sbb),
       objects(_objects),
       lights(_lights)
