@@ -5,14 +5,13 @@
 #define ELUCIDO_ALL_SCENE_H
 
 #include <string>
-#include <unordered_map>
-#include <fstream>
-#include "../objects/Object.h"
-#include "../lights/Light.h"
 #include "glm/vec3.hpp"
 #include "glm/vec4.hpp"
-#include "ImagePlane.h"
+
 #include "../cameras/Camera.h"
+#include "../objects/Object.h"
+#include "../lights/Light.h"
+#include "ImagePlane.h"
 
 class Scene {
  public:
@@ -43,11 +42,17 @@ class Scene {
 
   void set_as(const std::shared_ptr<AccelerationStructure> _ac);
   bool generate_as(const std::shared_ptr<acceleration_structure_description> &as);
+  void print_as_construction_info(const grid_info &i,
+                                  const size_t &construction_time);
+  void print_tm_loading_info(const loading_info &i,
+                             const size_t &loading_time,
+                             const std::string &fn);
 
   bool load_scene(const scene_description &description);
   void extend_scene_bb();
   void convert_color01_range(glm::vec3 &color);
   void render_image();
+  void print_render_info(const render_info &ri, const size_t &render_time);
 
  private:
   std::string                             name;

@@ -55,7 +55,7 @@ class Grid : public AccelerationStructure {
   Grid(const AABBox &box,
        const std::vector<std::shared_ptr<Object>> &objects) :
       AccelerationStructure(box, objects),
-      cells({nullptr})
+      cells({})
   {}
 
   ~Grid() {}

@@ -1,6 +1,9 @@
 // Copyright (c) 2018, University of Freiburg.
 // Author: Haralambi Todorov <harrytodorov@gmail.com>
 
+#include <iostream>
+
+
 #include "Scene.h"
 #include "../objects/Sphere.h"
 #include "../objects/Triangle.h"
@@ -220,8 +223,12 @@ bool Scene::generate_object(const object_description &object) {
       if (object.file_name.empty()) return false;
       obj = std::make_shared<TriangleMesh>(TriangleMesh());
 
+      auto sl = std::chrono::high_resolution_clock::now();
       auto li = std::static_pointer_cast<TriangleMesh>(obj)->load_mesh(object.file_name.c_str());
-      if (li.nt == 0) return false;
+      auto fl = std::chrono::high_resolution_clock::now();
+      auto ld = std::chrono::duration_cast<std::chrono::milliseconds>(fl - sl).count();
+      if (!li.l) return false;
+      print_tm_loading_info(li, ld, object.file_name);
 
       // TODO: does not make sense to have 3 integers for interpolation.
       if (object.interpolation == 1)
@@ -336,8 +343,12 @@ bool Scene::load_scene(const scene_description &description) {
   // Generate acceleration structure.
   if (description.acceleration_structure != nullptr) {
     generate_as(description.acceleration_structure);
-    // TODO: print Grid creation information.
-    std::static_pointer_cast<Grid>(acceleration_structure)->constructGrid();
+
+    auto sc = std::chrono::high_resolution_clock::now();
+    auto gi = std::static_pointer_cast<Grid>(acceleration_structure)->constructGrid();
+    auto fc = std::chrono::high_resolution_clock::now();
+    auto cd = std::chrono::duration_cast<std::chrono::milliseconds>(fc - sc).count();
+    print_as_construction_info(gi, cd);
   }
 
   // TODO: Animations.
@@ -378,6 +389,74 @@ void Scene::set_as(const std::shared_ptr<AccelerationStructure> _ac) {
 }
 
 //==============================================================================
+void Scene::print_as_construction_info(const grid_info &i,
+                                       const size_t &construction_time) {
+  std::cout << "Grid's construction time:\t\t\t\t"
+            << construction_time << "ms"
+            << std::endl;
+  std::cout << "Grid's resoultion:\t\t\t\t\t\t"
+            << i.r[0] << 'x' << i.r[1] << 'x' << i.r[2]
+            << std::endl;
+  std::cout << "Number of cells:\t\t\t\t\t\t"
+            << i.r[0]*i.r[1]*i.r[2]
+            << std::endl;
+  std::cout << "Number of  primitives:\t\t\t\t\t"
+            << i.np
+            << std::endl;
+  std::cout << "Number of non-empty cells:\t\t\t\t"
+            << i.nfc
+            << std::endl;
+  std::cout << "Average number of primitives per cell:\t"
+            << i.nppc
+            << std::endl;
+  std::cout << "----------" << std::endl;
+  std::cout << std::endl;
+}
+
+//==============================================================================
+void Scene::print_tm_loading_info(const loading_info &li,
+                           const size_t &loading_time,
+                           const std::string &fn) {
+  std::cout << "Done loading '"
+            << fn << "'." << std::endl;
+  std::cout << "Loading time:\t\t\t\t\t\t\t"
+            << loading_time << "ms" << std::endl;
+  std::cout << "# of vertices in the mesh:\t\t\t\t"
+            << li.nv << std::endl;
+  std::cout << "# of vertex normals in the mesh:\t\t"
+            << li.nvn << std::endl;
+  std::cout << "# of triangles in the mesh:\t\t\t\t"
+            << li.nt << std::endl;
+  std::cout << "# of faces in the mesh:\t\t\t\t\t"
+            << li.nf << std::endl;
+  std::cout << "----------" << std::endl;
+  std::cout << std::endl;
+}
+
+//==============================================================================
+void Scene::print_render_info(const render_info &ri,
+                              const size_t &render_time) {
+  std::cout << "Done rendering." << std::endl;
+  std::cout << "Rendering time:\t\t\t\t\t\t\t"
+            << render_time << "sec" << std::endl;
+  std::cout << "# of primary rays:\t\t\t\t\t\t"
+            << ri.npr << std::endl;
+  std::cout << "# of shadow rays:\t\t\t\t\t\t"
+            << ri.nsr << std::endl;
+  std::cout << "# of reflection rays:\t\t\t\t\t"
+            << ri.nrr << std::endl;
+  std::cout << "# of refraction rays:\t\t\t\t\t"
+            << ri.nrrr << std::endl;
+  std::cout << "# of ray-primitive intersection tests:\t"
+            << ri.nrpt << std::endl;
+  std::cout << "# of ray-object intersections:\t\t\t"
+            << ri.nroi << std::endl;
+  std::cout << "ratio (isect tests / isect):\t\t\t"
+            << (1.f * ri.nrpt) / ri.nroi << std::endl;
+  std::cout << "----------" << std::endl;
+}
+
+//==============================================================================
 void Scene::render_image() {
   Ray     primary_ray;
   std::vector<ip_sample> ip_samples;
@@ -390,6 +469,7 @@ void Scene::render_image() {
   // Apply inverse view transform on objects and light sources.
   camera->apply_inverse_view_transform(objects, lights);
 
+  auto sr = std::chrono::high_resolution_clock::now();
   // Iterate through the image plane's pixels starting from the top left
   // corner.
   for (uint32_t row = 0; row < image_plane->vres; row++) {
@@ -409,6 +489,12 @@ void Scene::render_image() {
       image_plane->fb[row*image_plane->hres + col] = pixel_radiance;
     }
   }
+
+  // Print render time and statistics.
+  auto fr = std::chrono::high_resolution_clock::now();
+  auto rd = std::chrono::duration_cast<std::chrono::seconds>(fr - sr).count();
+  auto ri = renderer->finished();
+  print_render_info(ri, rd);
 
   // Reverse inverse view transform.
   camera->reverse_inverse_view_transform(objects, lights);

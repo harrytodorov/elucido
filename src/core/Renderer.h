@@ -72,6 +72,8 @@ class Renderer {
   glm::vec4 reflect(const glm::vec4 &normal,
                     const glm::vec4 &to_reflect) const;
 
+  inline const render_info & finished() const { return ri; }
+
  protected:
   render_info                             ri;
   std::shared_ptr<AccelerationStructure>  ac;

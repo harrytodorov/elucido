@@ -19,8 +19,9 @@ loading_info TriangleMesh::load_mesh(const char *f) {
   std::ifstream fs(f);
 
   // if we fail to load file from memory, exit the function
-  if (!fs.good())
+  if (!fs.good()) {
     return ret;
+  }
 
   // read the file line by line
   while (std::getline(fs, line)) {
@@ -115,10 +116,11 @@ loading_info TriangleMesh::load_mesh(const char *f) {
     fs.close();
   }
 
-  ret.nv = (uint32_t) va.size();
+  ret.l   = true;
+  ret.nv  = (uint32_t) va.size();
   ret.nvn = (uint32_t) vna.size();
-  ret.nf = nf;
-  ret.nt = nt;
+  ret.nf  = nf;
+  ret.nt  = nt;
 
   return ret;
 }

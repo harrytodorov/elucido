@@ -563,10 +563,11 @@ struct scene_description {
 };
 
 struct loading_info {
-  uint32_t nv{0};     // number of vertices
-  uint32_t nvn{0};    // number of vertex normals
-  uint32_t nf{0};     // number of faces
-  uint32_t nt{0};     // number of triangles
+  uint32_t nv{0};     // Number of vertices.
+  uint32_t nvn{0};    // Number of vertex normals.
+  uint32_t nf{0};     // Number of faces.
+  uint32_t nt{0};     // Number of triangles.
+  bool     l{false};  // Successfully loaded mesh.
 };
 
 struct render_info {
