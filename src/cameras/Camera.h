@@ -11,6 +11,9 @@
 #include "../accelerators/Grid.h"
 
 class Camera {
+//==============================================================================
+// Constructors & destructors
+//==============================================================================
  public:
   Camera() :
       eye(0, 0, 0, 1),
@@ -30,6 +33,9 @@ class Camera {
   }
   virtual ~Camera() = default;
 
+//==============================================================================
+// Function declarations
+//==============================================================================
   void translate(const float_t &translation,
                  const Axis &translation_axis);
   void rotate(const float_t &rot_angle, const Axis &rotation_axis);
@@ -52,12 +58,15 @@ class Camera {
   }
   inline void calculate_ar() { ar = (iw * 1.f) / ih; }
 
+//==============================================================================
+// Data members
+//==============================================================================
  protected:
   glm::vec4 eye;
   glm::vec4 lookat;
-  uint32_t  iw;         // Image's height.
-  uint32_t  ih;         // Image's width.
-  float_t   ar;         // Aspect ratio [ width / height ]
-  glm::mat4 vm;
+  uint32_t  iw;     // Image's height.
+  uint32_t  ih;     // Image's width.
+  float_t   ar;     // Aspect ratio [ width / height ]
+  glm::mat4 vm;     // View matrix.
 };
 #endif //ELUCIDO_CAMERA_H

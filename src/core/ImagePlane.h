@@ -19,25 +19,12 @@
 #include "Sample.h"
 
 class ImagePlane {
- public:
-//==============================================================================
-// Data members
-//==============================================================================
-  uint32_t hres;              // Horizontal image resolution.
-  uint32_t vres;              // Vertical image resolution.
-  glm::vec3 bc;               // Background color.
-  uint32_t ns;                // Number of samples per pixel.
-  std::vector<glm::vec2> us;  // Unit samples.
-  SamplingStrategy ss;        // Sampling strategy.
-  PixelFilter pf;             // Pixel filter.
-  OutputType ot;              // Output type.
-  std::vector<glm::vec3> fb;  // The frame buffer.
-
 //==============================================================================
 // Constructors & destructors
 //==============================================================================
 // - default resolution of the image plane if not specified is 640x480
 // - default background col is black (0, 0, 0)
+ public:
   ImagePlane(const uint32_t &ip_x, const uint32_t &ip_y) {
     hres = ip_x;
     vres = ip_y;
@@ -59,6 +46,19 @@ class ImagePlane {
  private:
   float_t encode_gamma(const float_t &c);
 
+//==============================================================================
+// Data members
+//==============================================================================
+ public:
+  uint32_t hres;              // Horizontal image resolution.
+  uint32_t vres;              // Vertical image resolution.
+  glm::vec3 bc;               // Background color.
+  uint32_t ns;                // Number of samples per pixel.
+  std::vector<glm::vec2> us;  // Unit samples.
+  SamplingStrategy ss;        // Sampling strategy.
+  PixelFilter pf;             // Pixel filter.
+  OutputType ot;              // Output type.
+  std::vector<glm::vec3> fb;  // The frame buffer.
 };
 
 #endif //ELUCIDO_IMAGEPLANE_H

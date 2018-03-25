@@ -571,14 +571,13 @@ struct loading_info {
 };
 
 struct render_info {
-  uint64_t npr{0};    // number of primary rays
-  uint64_t nsr{0};    // number of secondary rays
-  uint64_t nrr{0};    // number of reflection rays
-  uint64_t nrrr{0};   // number of refraction rays
-  uint64_t no{0};     // number of objects in the scene
-  uint64_t nls{0};    // number of light sources in the scene
-  uint64_t nrpt{0};   // number of ray-primitive intersection tests
-  uint64_t nroi{0};   // number of ray-object intersections; ray-bounding box intersection does not count
+  uint64_t npr{0};    // Number of primary rays.
+  uint64_t nsr{0};    // Number of shadow rays
+  uint64_t nrr{0};    // Number of reflection rays.
+  uint64_t nrrr{0};   // Number of refraction rays.
+
+  uint64_t nrpt{0};   // Number of ray-primitive intersection tests.
+  uint64_t nroi{0};   // Number of ray-object intersections; ray-bounding box intersection does not count
                       // as a valid ray-object intersection; so just ray-object intersections are counted
 };
 
@@ -643,7 +642,6 @@ struct ip_sample {
 //------------------------------------------------------------------------------
 // FUNCTION DEFINITIONS
 //------------------------------------------------------------------------------
-
 /**
  * TODO: move to a parser class.
  * Reads a text file following given protocol (see Report) and extracts

@@ -3,7 +3,6 @@
 
 #include <iostream>
 
-
 #include "Scene.h"
 #include "../objects/Sphere.h"
 #include "../objects/Triangle.h"

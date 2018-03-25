@@ -4,7 +4,6 @@
 #include "Camera.h"
 #include "../core/Common.h"
 
-
 //==============================================================================
 void Camera::rotate(const float_t &rot_angle, const Axis &rotation_axis) {
   apply_rotation(rotation_axis, rot_angle, vm);
