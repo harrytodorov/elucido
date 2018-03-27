@@ -19,6 +19,9 @@ glm::vec3 Renderer::cast_ray(const Ray &ray, const uint32_t &depth) {
   // Trace a ray through the scene.
   if (!trace_ray(ray, i)) return hr;
 
+  // Increment the number of ray-object intersections.
+  __sync_fetch_and_add(&ri.nroi, 1);
+
   // If there is an intersection, reset the radiance to 0.
   hr = glm::vec3(0);
   
@@ -111,15 +114,18 @@ bool Renderer::trace_ray(const Ray &r, isect_info &i) {
   if (!sbb.intersect(r)) return false;
 
   // Leave the acceleration structure to find the intersection point.
-  // TODO: increment intersections count (primitive and object)
-  if (ac != nullptr) return ac->intersect(r, i);
+  if (ac != nullptr) {
+    bool intersected = ac->intersect(r, i);
+    __sync_fetch_and_add(&ri.nrpt, i.nrpt);
+    return intersected;
+  }
 
   // Iterate through objects and find the closest intersection.
   for (const auto &object : objects) {
     // Intersection information for the current object.
     isect_info co;
 
-    // Increment ray-object tests, bounding box.
+    // Increment ray-primitive tests, bounding box.
     __sync_fetch_and_add(&ri.nrpt, 1);
 
     // First intersect with object's bounding box.
@@ -143,9 +149,6 @@ bool Renderer::trace_ray(const Ray &r, isect_info &i) {
 
     i = co;
     i.ho = object;
-
-    // increment the number of ray-object intersections
-    __sync_fetch_and_add(&ri.nroi, 1);
   }
 
   return (i.ho != nullptr);

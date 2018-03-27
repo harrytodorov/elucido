@@ -590,6 +590,8 @@ struct isect_info {
   float_t                 v;    // Barycentric coordinate v of a triangle.
   uint32_t                ti;   // Index of the triangle in a triangulated mesh.
   bool                    fp;   // Flip normal.
+  uint64_t                nrpt; // Number of ray-primitive intersection tests.
+                                // It's used inside an acceleration structure.
   std::shared_ptr<Object> ho;   // Pointer to the object hit by a ray.
   isect_info() :
       ip{infinity},
@@ -599,7 +601,9 @@ struct isect_info {
       v{infinity},
       ti{},
       fp{false},
-      ho{nullptr} {}
+      ho{nullptr},
+      nrpt{0}
+  {}
 };
 
 struct grid_info {

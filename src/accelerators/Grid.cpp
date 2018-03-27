@@ -128,7 +128,8 @@ grid_info Grid::constructGrid() {
 bool Grid::intersect(const Ray &r, isect_info &ii) const {
   // Scalar distance from the ray's origin to the nearest hit point of
   // the ray with the grid's bounding box.
-  float_t tBoundingBox;
+  float_t   tBoundingBox;
+  uint64_t  primitive_hit{0};
 
   // Check if the ray intersect's the grid at all.
   if (!bbox.intersect(r, tBoundingBox))
@@ -182,8 +183,10 @@ bool Grid::intersect(const Ray &r, isect_info &ii) const {
 
     // Check if there are any primitives in the current cell and if yes
     // check if the ray intersects any of the primitives in the cell.
-    if (cells[cellIndex] != nullptr)
+    if (cells[cellIndex] != nullptr) {
       cells[cellIndex]->intersect(r, ii);
+      primitive_hit += cells[cellIndex]->primitives.size();
+    }
 
     // Find the plane with the smallest crossing.
     size_t planeIndex{0};
@@ -200,5 +203,6 @@ bool Grid::intersect(const Ray &r, isect_info &ii) const {
     nextCrossingT[planeIndex] += deltaT[planeIndex];
   }
 
+  ii.nrpt = primitive_hit;
   return (ii.ho != nullptr);
 }
