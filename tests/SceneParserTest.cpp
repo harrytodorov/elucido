@@ -22,7 +22,7 @@ TEST(SceneParser, checkForInvalidFile) {
 //==============================================================================
 TEST(SceneParser, checkForInvalidStatement) {
   std::string filename =
-    "/Users/harry/dev/elucido/test_resources/testSceneParser_checkForInvalidStatement.txt";
+    "test_resources/testSceneParser_checkForInvalidStatement.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, invalid_statement);
   EXPECT_EQ(result.second.size(), 0);
@@ -31,7 +31,7 @@ TEST(SceneParser, checkForInvalidStatement) {
 //==============================================================================
 TEST(SceneParser, checkForInvalidCreateStatement) {
   std::string filename =
-      "/Users/harry/dev/elucido/test_resources/testSceneParser_checkForInvalidCreateStatement.txt";
+      "test_resources/testSceneParser_checkForInvalidCreateStatement.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, invalid_syntax);
   EXPECT_EQ(result.second.size(), 0);
@@ -40,7 +40,7 @@ TEST(SceneParser, checkForInvalidCreateStatement) {
 //==============================================================================
 TEST(SceneParser, checkForDuplicate) {
   std::string filename =
-      "/Users/harry/dev/elucido/test_resources/testSceneParser_checkForDuplicate.txt";
+      "test_resources/testSceneParser_checkForDuplicate.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, duplicate);
   EXPECT_EQ(result.second.size(), 0);
@@ -48,7 +48,7 @@ TEST(SceneParser, checkForDuplicate) {
 
 //==============================================================================
 TEST(SceneParser, checkForInvalidSetStatement) {
-  std::string filename = "/Users/harry/dev/elucido/test_resources/testSceneParser_checkForInvalidSetStatement.txt";
+  std::string filename = "test_resources/testSceneParser_checkForInvalidSetStatement.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, invalid_syntax);
   EXPECT_EQ(result.second.size(), 0);
@@ -56,7 +56,7 @@ TEST(SceneParser, checkForInvalidSetStatement) {
 
 //==============================================================================
 TEST(SceneParser, checkForNotExistingThingToSet) {
-  std::string filename = "/Users/harry/dev/elucido/test_resources/testSceneParser_checkForNotExistingThingToSet.txt";
+  std::string filename = "test_resources/testSceneParser_checkForNotExistingThingToSet.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, thing_not_created);
   EXPECT_EQ(result.second.size(), 0);
@@ -64,7 +64,7 @@ TEST(SceneParser, checkForNotExistingThingToSet) {
 
 //==============================================================================
 TEST(SceneParser, checkForInvalidSetProperty) {
-  std::string filename = "/Users/harry/dev/elucido/test_resources/testSceneParser_checkForInvalidSetProperty.txt";
+  std::string filename = "test_resources/testSceneParser_checkForInvalidSetProperty.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, invalid_set_property);
   EXPECT_EQ(result.second.size(), 0);
@@ -72,7 +72,7 @@ TEST(SceneParser, checkForInvalidSetProperty) {
 
 //==============================================================================
 TEST(SceneParser, checkForInvalidSetPropertyValue) {
-  std::string filename = "/Users/harry/dev/elucido/test_resources/testSceneParser_checkForInvalidSetPropertyValue.txt";
+  std::string filename = "test_resources/testSceneParser_checkForInvalidSetPropertyValue.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, invalid_set_property_value);
   EXPECT_EQ(result.second.size(), 0);
@@ -80,7 +80,7 @@ TEST(SceneParser, checkForInvalidSetPropertyValue) {
 
 //==============================================================================
 TEST(SceneParser, checkIfCameraTypeIsSet) {
-  std::string filename = "/Users/harry/dev/elucido/test_resources/testSceneParser_checkIfCameraTypeIsSet.txt";
+  std::string filename = "test_resources/testSceneParser_checkIfCameraTypeIsSet.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, invalid_set_property_value);
   EXPECT_EQ(result.second.size(), 0);
@@ -88,7 +88,7 @@ TEST(SceneParser, checkIfCameraTypeIsSet) {
 
 //==============================================================================
 TEST(SceneParser, checkIfCameraTypeParameterMatchOrtho) {
-  std::string filename = "/Users/harry/dev/elucido/test_resources/testSceneParser_checkIfCameraTypeParameterMatchOrtho.txt";
+  std::string filename = "test_resources/testSceneParser_checkIfCameraTypeParameterMatchOrtho.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, invalid_set_property_value);
   EXPECT_EQ(result.second.size(), 0);
@@ -96,7 +96,7 @@ TEST(SceneParser, checkIfCameraTypeParameterMatchOrtho) {
 
 //==============================================================================
 TEST(SceneParser, checkIfCameraTypeParameterMatchPersp) {
-  std::string filename = "/Users/harry/dev/elucido/test_resources/testSceneParser_checkIfCameraTypeParameterMatchPersp.txt";
+  std::string filename = "test_resources/testSceneParser_checkIfCameraTypeParameterMatchPersp.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, invalid_set_property_value);
   EXPECT_EQ(result.second.size(), 0);
@@ -104,7 +104,7 @@ TEST(SceneParser, checkIfCameraTypeParameterMatchPersp) {
 
 //==============================================================================
 TEST(SceneParser, checkIfColorParamerterValueHasThreeDigits) {
-  std::string filename = "/Users/harry/dev/elucido/test_resources/testSceneParser_checkIfColorParamerterValueHasThreeDigits.txt";
+  std::string filename = "test_resources/testSceneParser_checkIfColorParamerterValueHasThreeDigits.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, invalid_set_property_value);
   EXPECT_EQ(result.second.size(), 0);
@@ -112,7 +112,7 @@ TEST(SceneParser, checkIfColorParamerterValueHasThreeDigits) {
 
 //==============================================================================
 TEST(SceneParser, checkIfColorParamerterValueIsInRange) {
-  std::string filename = "/Users/harry/dev/elucido/test_resources/testSceneParser_checkIfColorParamerterValueIsInRange.txt";
+  std::string filename = "test_resources/testSceneParser_checkIfColorParamerterValueIsInRange.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, invalid_set_property_value);
   EXPECT_EQ(result.second.size(), 0);
@@ -120,7 +120,7 @@ TEST(SceneParser, checkIfColorParamerterValueIsInRange) {
 
 //==============================================================================
 TEST(SceneParser, checkIfMaterialTypeIsSupported) {
-  std::string filename = "/Users/harry/dev/elucido/test_resources/testSceneParser_checkIfMaterialTypeIsSupported.txt";
+  std::string filename = "test_resources/testSceneParser_checkIfMaterialTypeIsSupported.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, invalid_set_property_value);
   EXPECT_EQ(result.second.size(), 0);
@@ -128,7 +128,7 @@ TEST(SceneParser, checkIfMaterialTypeIsSupported) {
 
 //==============================================================================
 TEST(SceneParser, checkIfMaterialColorIsAlreadyDefined) {
-  std::string filename = "/Users/harry/dev/elucido/test_resources/testSceneParser_checkIfMaterialColorIsAlreadyDefined.txt";
+  std::string filename = "test_resources/testSceneParser_checkIfMaterialColorIsAlreadyDefined.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, invalid_set_property_value);
   EXPECT_EQ(result.second.size(), 0);
@@ -136,7 +136,7 @@ TEST(SceneParser, checkIfMaterialColorIsAlreadyDefined) {
 
 //==============================================================================
 TEST(SceneParser, checkIfLightTypeIsDefined) {
-  std::string filename = "/Users/harry/dev/elucido/test_resources/testSceneParser_checkIfLighTypeIsDefined.txt";
+  std::string filename = "test_resources/testSceneParser_checkIfLighTypeIsDefined.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, invalid_set_property_value);
   EXPECT_EQ(result.first.second, 9);
@@ -145,7 +145,7 @@ TEST(SceneParser, checkIfLightTypeIsDefined) {
 
 //==============================================================================
 TEST(SceneParser, checkIfLightTypeAndPropertyMatch) {
-  std::string filename = "/Users/harry/dev/elucido/test_resources/testSceneParser_checkIfLighTypeAndPropertyMatch.txt";
+  std::string filename = "test_resources/testSceneParser_checkIfLighTypeAndPropertyMatch.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, invalid_set_property_value);
   EXPECT_EQ(result.first.second, 11);
@@ -154,7 +154,7 @@ TEST(SceneParser, checkIfLightTypeAndPropertyMatch) {
 
 //==============================================================================
 TEST(SceneParser, checkForObjectIfMaterialIsDefinedBeforeSettingIt) {
-  std::string filename = "/Users/harry/dev/elucido/test_resources/testSceneParser_checkForObjectIfMaterialIsDefinedBeforeSettingIt.txt";
+  std::string filename = "test_resources/testSceneParser_checkForObjectIfMaterialIsDefinedBeforeSettingIt.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, invalid_set_property_value);
   EXPECT_EQ(result.first.second, 6);
@@ -163,7 +163,7 @@ TEST(SceneParser, checkForObjectIfMaterialIsDefinedBeforeSettingIt) {
 
 //==============================================================================
 TEST(SceneParser, checkForObjectIfTypeAndPropertyMatch) {
-  std::string filename = "/Users/harry/dev/elucido/test_resources/testSceneParser_checkForObjectIfTypeAndPropertyMatch.txt";
+  std::string filename = "test_resources/testSceneParser_checkForObjectIfTypeAndPropertyMatch.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, invalid_set_property_value);
   EXPECT_EQ(result.first.second, 10);
@@ -172,7 +172,7 @@ TEST(SceneParser, checkForObjectIfTypeAndPropertyMatch) {
 
 //==============================================================================
 TEST(SceneParser, checkForObjectIfVectorIsDefinedBeforeSettingIt) {
-  std::string filename = "/Users/harry/dev/elucido/test_resources/testSceneParser_checkForObjectIfVectorIsDefinedBeforeSettingIt.txt";
+  std::string filename = "test_resources/testSceneParser_checkForObjectIfVectorIsDefinedBeforeSettingIt.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, invalid_set_property_value);
   EXPECT_EQ(result.first.second, 8);
@@ -181,7 +181,7 @@ TEST(SceneParser, checkForObjectIfVectorIsDefinedBeforeSettingIt) {
 
 //==============================================================================
 TEST(SceneParser, checkForObjectIfVectorIsDefinedBeforeSettingIt2) {
-  std::string filename = "/Users/harry/dev/elucido/test_resources/testSceneParser_checkForObjectIfVectorIsDefinedBeforeSettingIt2.txt";
+  std::string filename = "test_resources/testSceneParser_checkForObjectIfVectorIsDefinedBeforeSettingIt2.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, invalid_set_property_value);
   EXPECT_EQ(result.first.second, 8);
@@ -190,7 +190,7 @@ TEST(SceneParser, checkForObjectIfVectorIsDefinedBeforeSettingIt2) {
 
 //==============================================================================
 TEST(SceneParser, checkForObjectIfVectorCountMatchForProperty) {
-  std::string filename = "/Users/harry/dev/elucido/test_resources/testSceneParser_checkForObjectIfVectorCountMatchForProperty.txt";
+  std::string filename = "test_resources/testSceneParser_checkForObjectIfVectorCountMatchForProperty.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, invalid_set_property_value);
   EXPECT_EQ(result.first.second, 10);
@@ -199,7 +199,7 @@ TEST(SceneParser, checkForObjectIfVectorCountMatchForProperty) {
 
 //==============================================================================
 TEST(SceneParser, checkForImagePlaneIfOutputTypeIsAvailable) {
-  std::string filename = "/Users/harry/dev/elucido/test_resources/testSceneParser_checkForImagePlaneIfOutputTypeIsAvailable.txt";
+  std::string filename = "test_resources/testSceneParser_checkForImagePlaneIfOutputTypeIsAvailable.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, invalid_set_property_value);
   EXPECT_EQ(result.first.second, 6);
@@ -208,7 +208,7 @@ TEST(SceneParser, checkForImagePlaneIfOutputTypeIsAvailable) {
 
 //==============================================================================
 TEST(SceneParser, checkForASIfTypeIsDefinedBeforeSettingParameter) {
-  std::string filename = "/Users/harry/dev/elucido/test_resources/testSceneParser_checkForASIfTypeIsDefinedBeforeSettingParameter.txt";
+  std::string filename = "test_resources/testSceneParser_checkForASIfTypeIsDefinedBeforeSettingParameter.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, invalid_set_property_value);
   EXPECT_EQ(result.first.second, 7);
@@ -217,7 +217,7 @@ TEST(SceneParser, checkForASIfTypeIsDefinedBeforeSettingParameter) {
 
 //==============================================================================
 TEST(SceneParser, checkForSceneIfCameraExistBeforeSetting) {
-  std::string filename = "/Users/harry/dev/elucido/test_resources/testSceneParser_checkForSceneIfCameraExistBeforeSetting.txt";
+  std::string filename = "test_resources/testSceneParser_checkForSceneIfCameraExistBeforeSetting.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, invalid_set_property_value);
   EXPECT_EQ(result.first.second, 6);
@@ -226,7 +226,7 @@ TEST(SceneParser, checkForSceneIfCameraExistBeforeSetting) {
 
 //==============================================================================
 TEST(SceneParser, checkForSceneIfImagePlaneExistBeforeSetting) {
-  std::string filename = "/Users/harry/dev/elucido/test_resources/testSceneParser_checkForSceneIfImagePlaneExistBeforeSetting.txt";
+  std::string filename = "test_resources/testSceneParser_checkForSceneIfImagePlaneExistBeforeSetting.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, invalid_set_property_value);
   EXPECT_EQ(result.first.second, 6);
@@ -235,7 +235,7 @@ TEST(SceneParser, checkForSceneIfImagePlaneExistBeforeSetting) {
 
 //==============================================================================
 TEST(SceneParser, checkForSceneIfASExistBeforeSetting) {
-  std::string filename = "/Users/harry/dev/elucido/test_resources/testSceneParser_checkForSceneIfASExistBeforeSetting.txt";
+  std::string filename = "test_resources/testSceneParser_checkForSceneIfASExistBeforeSetting.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, invalid_set_property_value);
   EXPECT_EQ(result.first.second, 6);
@@ -244,7 +244,7 @@ TEST(SceneParser, checkForSceneIfASExistBeforeSetting) {
 
 //==============================================================================
 TEST(SceneParser, checkForSceneIfObjectExistBeforeSetting) {
-  std::string filename = "/Users/harry/dev/elucido/test_resources/testSceneParser_checkForSceneIfObjectExistBeforeSetting.txt";
+  std::string filename = "test_resources/testSceneParser_checkForSceneIfObjectExistBeforeSetting.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, invalid_set_property_value);
   EXPECT_EQ(result.first.second, 6);
@@ -253,7 +253,7 @@ TEST(SceneParser, checkForSceneIfObjectExistBeforeSetting) {
 
 //==============================================================================
 TEST(SceneParser, checkForSceneIfLightExistBeforeSetting) {
-  std::string filename = "/Users/harry/dev/elucido/test_resources/testSceneParser_checkForSceneIfLightExistBeforeSetting.txt";
+  std::string filename = "test_resources/testSceneParser_checkForSceneIfLightExistBeforeSetting.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, invalid_set_property_value);
   EXPECT_EQ(result.first.second, 6);
@@ -262,7 +262,7 @@ TEST(SceneParser, checkForSceneIfLightExistBeforeSetting) {
 
 //==============================================================================
 TEST(SceneParser, checkForSceneIfAnimationExistBeforeSetting) {
-  std::string filename = "/Users/harry/dev/elucido/test_resources/testSceneParser_checkForSceneIfAnimationExistBeforeSetting.txt";
+  std::string filename = "test_resources/testSceneParser_checkForSceneIfAnimationExistBeforeSetting.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, invalid_set_property_value);
   EXPECT_EQ(result.first.second, 6);
@@ -271,7 +271,7 @@ TEST(SceneParser, checkForSceneIfAnimationExistBeforeSetting) {
 
 //==============================================================================
 TEST(SceneParser, checkIfTransformationTypeIsValid) {
-  std::string filename = "/Users/harry/dev/elucido/test_resources/testSceneParser_checkIfTransformationTypeIsValid.txt";
+  std::string filename = "test_resources/testSceneParser_checkIfTransformationTypeIsValid.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, invalid_transformation_type);
   EXPECT_EQ(result.first.second, 7);
@@ -280,7 +280,7 @@ TEST(SceneParser, checkIfTransformationTypeIsValid) {
 
 //==============================================================================
 TEST(SceneParser, checkIfTransformationAxisIsValid) {
-  std::string filename = "/Users/harry/dev/elucido/test_resources/testSceneParser_checkIfTransformationAxisIsValid.txt";
+  std::string filename = "test_resources/testSceneParser_checkIfTransformationAxisIsValid.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, invalid_transformation_axix);
   EXPECT_EQ(result.first.second, 7);
@@ -289,7 +289,7 @@ TEST(SceneParser, checkIfTransformationAxisIsValid) {
 
 //==============================================================================
 TEST(SceneParser, checkIfThingSupportTransformation) {
-  std::string filename = "/Users/harry/dev/elucido/test_resources/testSceneParser_checkIfThingSupportTransformation.txt";
+  std::string filename = "test_resources/testSceneParser_checkIfThingSupportTransformation.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, invalid_thing_to_transform);
   EXPECT_EQ(result.first.second, 7);
@@ -298,7 +298,7 @@ TEST(SceneParser, checkIfThingSupportTransformation) {
 
 //==============================================================================
 TEST(SceneParser, checkTransformThingWhichIsCreated) {
-  std::string filename = "/Users/harry/dev/elucido/test_resources/testSceneParser_checkTransformThingWhichIsCreated.txt";
+  std::string filename = "test_resources/testSceneParser_checkTransformThingWhichIsCreated.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, thing_not_created);
   EXPECT_EQ(result.first.second, 3);
@@ -307,7 +307,7 @@ TEST(SceneParser, checkTransformThingWhichIsCreated) {
 
 //==============================================================================
 TEST(SceneParser, checkIfTransformationTypeIsSupported) {
-  std::string filename = "/Users/harry/dev/elucido/test_resources/testSceneParser_checkIfTransformationTypeIsSupported.txt";
+  std::string filename = "test_resources/testSceneParser_checkIfTransformationTypeIsSupported.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, invalid_transformation_type);
   EXPECT_EQ(result.first.second, 7);
@@ -316,7 +316,7 @@ TEST(SceneParser, checkIfTransformationTypeIsSupported) {
 
 //==============================================================================
 TEST(SceneParser, checkIfTransformationHasValidSyntax) {
-  std::string filename = "/Users/harry/dev/elucido/test_resources/testSceneParser_checkIfTransformationHasValidSyntax.txt";
+  std::string filename = "test_resources/testSceneParser_checkIfTransformationHasValidSyntax.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, invalid_syntax);
   EXPECT_EQ(result.first.second, 8);
@@ -325,7 +325,7 @@ TEST(SceneParser, checkIfTransformationHasValidSyntax) {
 
 //==============================================================================
 TEST(SceneParser, checkIfAnimationHasValidSyntax) {
-  std::string filename = "/Users/harry/dev/elucido/test_resources/testSceneParser_checkIfAnimationHasValidSyntax.txt";
+  std::string filename = "test_resources/testSceneParser_checkIfAnimationHasValidSyntax.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, invalid_syntax);
   EXPECT_EQ(result.first.second, 10);
@@ -334,7 +334,7 @@ TEST(SceneParser, checkIfAnimationHasValidSyntax) {
 
 //==============================================================================
 TEST(SceneParser, checkIfAnimationExist) {
-  std::string filename = "/Users/harry/dev/elucido/test_resources/testSceneParser_checkIfAnimationExist.txt";
+  std::string filename = "test_resources/testSceneParser_checkIfAnimationExist.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, thing_not_created);
   EXPECT_EQ(result.first.second, 6);
@@ -343,7 +343,7 @@ TEST(SceneParser, checkIfAnimationExist) {
 
 //==============================================================================
 TEST(SceneParser, checkForAnimationIfThingSupportAnimating) {
-  std::string filename = "/Users/harry/dev/elucido/test_resources/testSceneParser_checkForAnimationIfThingSupportAnimating.txt";
+  std::string filename = "test_resources/testSceneParser_checkForAnimationIfThingSupportAnimating.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, invalid_thing_to_transform);
   EXPECT_EQ(result.first.second, 10);
@@ -352,7 +352,7 @@ TEST(SceneParser, checkForAnimationIfThingSupportAnimating) {
 
 //==============================================================================
 TEST(SceneParser, checkForAnimationIfThingSupportTransformationType) {
-  std::string filename = "/Users/harry/dev/elucido/test_resources/testSceneParser_checkForAnimationIfThingSupportTransformationType.txt";
+  std::string filename = "test_resources/testSceneParser_checkForAnimationIfThingSupportTransformationType.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, invalid_transformation_type);
   EXPECT_EQ(result.first.second, 10);
@@ -361,7 +361,7 @@ TEST(SceneParser, checkForAnimationIfThingSupportTransformationType) {
 
 //==============================================================================
 TEST(SceneParser, checkForAnimationIfTransformationTypeIsValid) {
-  std::string filename = "/Users/harry/dev/elucido/test_resources/testSceneParser_checkForAnimationIfTransformationTypeIsValid.txt";
+  std::string filename = "test_resources/testSceneParser_checkForAnimationIfTransformationTypeIsValid.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, invalid_transformation_type);
   EXPECT_EQ(result.first.second, 10);
@@ -370,7 +370,7 @@ TEST(SceneParser, checkForAnimationIfTransformationTypeIsValid) {
 
 //==============================================================================
 TEST(SceneParser, checkForAnimationIfTransformationAxisIsValid) {
-  std::string filename = "/Users/harry/dev/elucido/test_resources/testSceneParser_checkForAnimationIfTransformationAxisIsValid.txt";
+  std::string filename = "test_resources/testSceneParser_checkForAnimationIfTransformationAxisIsValid.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, invalid_transformation_axix);
   EXPECT_EQ(result.first.second, 10);
@@ -379,7 +379,7 @@ TEST(SceneParser, checkForAnimationIfTransformationAxisIsValid) {
 
 //==============================================================================
 TEST(SceneParser, checkForAnimationIfThingToBeTransformedExist) {
-  std::string filename = "/Users/harry/dev/elucido/test_resources/testSceneParser_checkForAnimationIfThingToBeTransformedExist.txt";
+  std::string filename = "test_resources/testSceneParser_checkForAnimationIfThingToBeTransformedExist.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, thing_not_created);
   EXPECT_EQ(result.first.second, 7);
@@ -388,7 +388,7 @@ TEST(SceneParser, checkForAnimationIfThingToBeTransformedExist) {
 
 //==============================================================================
 TEST(SceneParser, checkForAnimationAnimatingMultipleCameras) {
-  std::string filename = "/Users/harry/dev/elucido/test_resources/testSceneParser_checkForAnimationAnimatingMultipleCameras.txt";
+  std::string filename = "test_resources/testSceneParser_checkForAnimationAnimatingMultipleCameras.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, invalid_animation_camera);
   EXPECT_EQ(result.first.second, 16);
@@ -398,7 +398,7 @@ TEST(SceneParser, checkForAnimationAnimatingMultipleCameras) {
 //==============================================================================
 TEST(SceneParser, exhaustiveSceneCreation) {
   std::string filename =
-      "/Users/harry/dev/elucido/test_resources/testSceneParser_exhaustiveSceneCreation.txt";
+      "test_resources/testSceneParser_exhaustiveSceneCreation.txt";
   auto result = read_scene_from_file(filename);
   EXPECT_EQ(result.first.first, success);
   EXPECT_EQ(result.first.second, 136);

@@ -931,7 +931,7 @@ TEST(Triangle, cameraTransformationTranslationAndRotation) {
 TEST(TriangleMesh, translation) {
   auto float_err = 0.0001f;
 
-  auto obj_file = "/Users/harry/dev/elucido/object_files/cube.obj";
+  auto obj_file = "test_resources/cube.obj";
   auto *tm = new TriangleMesh(obj_file);
 
   tm->translate(2.f, uniform);
@@ -1038,7 +1038,7 @@ TEST(TriangleMesh, translation) {
 TEST(TriangleMesh, scale) {
   auto float_err = 0.0001f;
 
-  auto obj_file = "/Users/harry/dev/elucido/object_files/cube.obj";
+  auto obj_file = "test_resources/cube.obj";
   auto *tm = new TriangleMesh(obj_file);
 
   tm->scale(2.f, uniform);
@@ -1145,7 +1145,7 @@ TEST(TriangleMesh, scale) {
 TEST(TriangleMesh, rotation) {
   auto float_err = 0.0001f;
 
-  auto obj_file = "/Users/harry/dev/elucido/object_files/cube.obj";
+  auto obj_file = "test_resources/cube.obj";
   auto *tm = new TriangleMesh(obj_file);
 
   tm->rotate(-90.f, Y);
@@ -1252,7 +1252,7 @@ TEST(TriangleMesh, rotation) {
 TEST(TriangleMesh, cameraTransformationIdentity) {
   auto float_err = 0.0001f;
 
-  auto obj_file = "/Users/harry/dev/elucido/object_files/cube.obj";
+  auto obj_file = "test_resources/cube.obj";
   auto *tm = new TriangleMesh(obj_file);
 
   auto mat = glm::mat4(1);
@@ -1361,7 +1361,7 @@ TEST(TriangleMesh, cameraTransformationIdentity) {
 TEST(TriangleMesh, cameraTransformationTranslation) {
   auto float_err = 0.0001f;
 
-  auto obj_file = "/Users/harry/dev/elucido/object_files/cube.obj";
+  auto obj_file = "test_resources/cube.obj";
   auto *tm = new TriangleMesh(obj_file);
 
   auto mat = glm::mat4(1);
@@ -1474,7 +1474,7 @@ TEST(TriangleMesh, cameraTransformationTranslation) {
 TEST(TriangleMesh, cameraTransformationRotation) {
   auto float_err = 0.0001f;
 
-  auto obj_file = "/Users/harry/dev/elucido/object_files/cube.obj";
+  auto obj_file = "test_resources/cube.obj";
   auto *tm = new TriangleMesh(obj_file);
 
   auto mat = glm::mat4(1);
@@ -1587,7 +1587,7 @@ TEST(TriangleMesh, cameraTransformationRotation) {
 TEST(TriangleMesh, cameraTransformationTranslationAndRotation) {
   auto float_err = 0.0001f;
 
-  auto obj_file = "/Users/harry/dev/elucido/object_files/cube.obj";
+  auto obj_file = "test_resources/cube.obj";
   auto *tm = new TriangleMesh(obj_file);
 
   auto mat = glm::mat4(1);

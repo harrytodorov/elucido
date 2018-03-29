@@ -6,7 +6,6 @@ project(elucido_test)
 
 # Add sources for tests files
 set(ELUCIDO_TEST_SOURCE_FILES
-        RayTest.cpp
         AABBTest.cpp
         SceneParserTest.cpp
         TransformationTest.cpp
@@ -15,7 +14,7 @@ set(ELUCIDO_TEST_SOURCE_FILES
         RendererTest.cpp
         LightTest.cpp
         ObjectTest.cpp
-        AccelerationStructureTest.cpp)
+        AccelerationStructuresTest.cpp)
 
 # Create tests executable
 add_executable(elucido_test TestMain.cpp ${ELUCIDO_TEST_SOURCE_FILES})

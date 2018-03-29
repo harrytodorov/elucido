@@ -75,12 +75,16 @@ class AccelerationStructure {
    * @return:       The compound primitives of the object.
    */
   std::vector<Primitive> convert_to_primitive(const std::shared_ptr<Object> &obj) const;
+  inline const std::vector<Primitive> & get_primitives() const {
+    return primitives;
+  };
 
   virtual bool intersect(const Ray &r, isect_info &i) const = 0;
 
 //==============================================================================
 // Data members
 //==============================================================================
+ protected:
   AABBox                  bbox{};
   std::vector<Primitive>  primitives;
 };

@@ -9,4 +9,7 @@ elucido uses [Cmake](https://cmake.org/) as its build system. Following external
 
 The source file for both libraries glm and png++ reside in the _include/_ directory. Although to be able to use and build png++ one needs to have [libpng](http://www.libpng.org/pub/png/libpng.html) installed. Installation instructions for it can be found on the [libpng](http://www.libpng.org/pub/png/libpng.html) webpage.
 
-To be able to run the tests, one needs to have [gtest](https://github.com/google/googletest) installed.  
+To be able to run the tests, one needs to have [gtest](https://github.com/google/googletest) installed.
+
+# Testing
+There is a folder inside _tests_ called _test_resources_, which contains files needed for testing (e.g. example test scenes, object files, etc.). This folder needs to be placed in the folder, where the compiled test-executable resides.  
