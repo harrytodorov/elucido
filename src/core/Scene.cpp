@@ -2,6 +2,7 @@
 // Author: Haralambi Todorov <harrytodorov@gmail.com>
 
 #include <iostream>
+#include "glm/ext.hpp"    // glm::to_string
 
 #include "Scene.h"
 #include "../objects/Sphere.h"
@@ -27,7 +28,7 @@ bool Scene::generate_as(const std::shared_ptr<acceleration_structure_description
   switch (asd->type) {
     // Grid.
     case AccelerationStructureType::grid : {
-      as = std::make_shared<Grid>(Grid(scene_bb, objects, si.np));
+      as = std::make_shared<Grid>(Grid());
 
       // Alpha.
       if (asd->alpha != 0.f) {
@@ -38,13 +39,6 @@ bool Scene::generate_as(const std::shared_ptr<acceleration_structure_description
       if (asd->max_resolution != 0) {
         std::static_pointer_cast<Grid>(as)->set_max_res(asd->max_resolution);
       }
-
-      // Print grid's construction information.
-      auto sc = std::chrono::high_resolution_clock::now();
-      auto gi = std::static_pointer_cast<Grid>(as)->constructGrid();
-      auto fc = std::chrono::high_resolution_clock::now();
-      auto cd = std::chrono::duration_cast<std::chrono::milliseconds>(fc - sc).count();
-      print_as_construction_info(gi, cd);
     } break;
 
     default: break;
@@ -349,9 +343,6 @@ bool Scene::load_scene(const scene_description &description) {
   }
   si.nl = lights.size();
 
-  // Extend scene's bounding box.
-  extend_scene_bb();
-
   // Generate acceleration structure.
   if (description.acceleration_structure != nullptr) {
     generate_as(description.acceleration_structure);
@@ -365,6 +356,7 @@ bool Scene::load_scene(const scene_description &description) {
 
 //==============================================================================
 void Scene::extend_scene_bb() {
+  scene_bb.reset();
   for (auto const &object : objects) {
     scene_bb.extend_by(object->bounding_box().bounds[0]);
     scene_bb.extend_by(object->bounding_box().bounds[1]);
@@ -396,29 +388,38 @@ void Scene::set_as(const std::shared_ptr<AccelerationStructure> _ac) {
 }
 
 //==============================================================================
-void Scene::print_as_construction_info(const grid_info &i,
-                                       const size_t &construction_time) {
-  std::cout << "Grid's construction time:\t\t\t\t"
-            << construction_time << "ms"
+void Scene::print_as_construction_info(const as_construct_info &i,
+                                       const AccelerationStructureType &type) {
+  std::cout << "Construction time:\t\t\t\t\t\t"
+            << i.d << "ms"
             << std::endl;
-  std::cout << "Grid's resoultion:\t\t\t\t\t\t"
-            << i.r[0] << 'x' << i.r[1] << 'x' << i.r[2]
+  std::cout << "Size:\t\t\t\t\t\t\t\t\t"
+            << i.s << " bytes"
             << std::endl;
-  std::cout << "# of cells:\t\t\t\t\t\t\t\t"
-            << i.r[0]*i.r[1]*i.r[2]
-            << std::endl;
-  std::cout << "# of non-empty cells:\t\t\t\t\t"
-            << i.nfc
-            << std::endl;
-  std::cout << "Average number of primitives per cell:\t"
-            << i.nppc
-            << std::endl;
+  std::cout << "Type:\t\t\t\t\t\t\t\t\t";
+
+  if (type == grid) {
+    std::cout << "grid" << std::endl;
+    std::cout << "Grid's resolution:\t\t\t\t\t\t"
+              << i.r[0] << 'x' << i.r[1] << 'x' << i.r[2]
+              << std::endl;
+    std::cout << "# of cells:\t\t\t\t\t\t\t\t"
+              << i.r[0] * i.r[1] * i.r[2]
+              << std::endl;
+    std::cout << "# of non-empty cells:\t\t\t\t\t"
+              << i.nfc
+              << std::endl;
+    std::cout << "Average number of primitives per cell:\t"
+              << i.npnc
+              << std::endl;
+  }
+
   std::cout << "----------" << std::endl;
   std::cout << std::endl;
 }
 
 //==============================================================================
-void Scene::print_tm_loading_info(const loading_info &li,
+void Scene::print_tm_loading_info(const mesh_loading_info &li,
                            const size_t &loading_time,
                            const std::string &fn) {
   std::cout << "Done loading '"
@@ -433,6 +434,9 @@ void Scene::print_tm_loading_info(const loading_info &li,
             << li.nt << std::endl;
   std::cout << "# of faces in the mesh:\t\t\t\t\t"
             << li.nf << std::endl;
+  std::cout << "Size:\t\t\t\t\t\t\t\t\t"
+            << li.s << " bytes"
+            << std::endl;
   std::cout << "----------" << std::endl;
   std::cout << std::endl;
 }
@@ -475,17 +479,35 @@ void Scene::print_scene_info(const scene_info &i) {
 }
 
 //==============================================================================
+void Scene::prepare_scene() {
+  // Compute scene's bounding box.
+  extend_scene_bb();
+
+  if (acceleration_structure != nullptr) {
+    // Construct acceleration structure.
+    as_construct_info info;
+    auto sc   = std::chrono::high_resolution_clock::now();
+    acceleration_structure->construct(scene_bb, objects, si.np, info);
+    auto fc   = std::chrono::high_resolution_clock::now();
+    info.d = std::chrono::duration_cast<std::chrono::milliseconds>(fc - sc).count();
+    print_as_construction_info(info, acceleration_structure->get_type());
+  }
+}
+
+//==============================================================================
 void Scene::render_image() {
   Ray     primary_ray;
   std::vector<ip_sample> ip_samples;
+
+  // Apply inverse view transform on objects and light sources.
+  camera->apply_inverse_view_transform(objects, lights);
+
+  prepare_scene();
 
   std::unique_ptr<Renderer> renderer(new Renderer(acceleration_structure,
                                                   scene_bb,
                                                   objects,
                                                   lights));
-
-  // Apply inverse view transform on objects and light sources.
-  camera->apply_inverse_view_transform(objects, lights);
 
   auto sr = std::chrono::high_resolution_clock::now();
   // Iterate through the image plane's pixels starting from the top left

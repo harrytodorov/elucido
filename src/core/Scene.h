@@ -42,15 +42,16 @@ class Scene {
 
   void set_as(const std::shared_ptr<AccelerationStructure> _ac);
   bool generate_as(const std::shared_ptr<acceleration_structure_description> &as);
-  void print_as_construction_info(const grid_info &i,
-                                  const size_t &construction_time);
-  void print_tm_loading_info(const loading_info &i,
+  void print_as_construction_info(const as_construct_info &i,
+                                    const AccelerationStructureType &type);
+  void print_tm_loading_info(const mesh_loading_info &i,
                              const size_t &loading_time,
                              const std::string &fn);
 
   bool load_scene(const scene_description &description);
   void print_scene_info(const scene_info &i);
   void extend_scene_bb();
+  void prepare_scene();
   void convert_color01_range(glm::vec3 &color);
   void render_image();
   void print_render_info(const render_info &ri, const size_t &render_time);

@@ -115,7 +115,7 @@ bool Renderer::trace_ray(const Ray &r, isect_info &i) {
 
   // Leave the acceleration structure to find the intersection point.
   if (ac != nullptr) {
-    bool intersected = ac->intersect(r, i);
+    bool intersected = ac->traverse(r, i);
     __sync_fetch_and_add(&ri.nrpt, i.nrpt);
     return intersected;
   }

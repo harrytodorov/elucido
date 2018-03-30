@@ -15,10 +15,10 @@
 
 class Renderer {
  public:
-  Renderer(const std::shared_ptr<AccelerationStructure> _ac,
+  Renderer(const std::shared_ptr<AccelerationStructure> &_ac,
            const AABBox &_sbb,
-           std::vector<std::shared_ptr<Object>> _objects,
-           std::vector<std::shared_ptr<Light>> _lights) :
+           const std::vector<std::shared_ptr<Object>> &_objects,
+           const std::vector<std::shared_ptr<Light>> &_lights) :
       ri(render_info()),
       ac(_ac),
       sbb(_sbb),

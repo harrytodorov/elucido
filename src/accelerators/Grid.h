@@ -52,20 +52,23 @@ class Grid : public AccelerationStructure {
 // Constructors & destructors
 //==============================================================================
  public:
-  Grid(const AABBox &box,
-       const std::vector<std::shared_ptr<Object>> &objects,
-       const uint32_t &number_primitives) :
-      AccelerationStructure(box, objects, number_primitives),
-      cells({})
-  {}
+  Grid() :
+      AccelerationStructure()
+  {
+    as_type = grid;
+  }
 
   ~Grid() {}
 
 //==============================================================================
 // Function declarations
 //==============================================================================
-  grid_info       constructGrid();
-  bool            intersect(const Ray &r, isect_info &i) const;
+  void            construct(const AABBox &box,
+                            const std::vector<std::shared_ptr<Object>> &objects,
+                            const uint32_t &number_primitives,
+                            as_construct_info &info);
+  bool            traverse(const Ray &r, isect_info &i) const;
+
   inline uint32_t offset(const uint32_t &x,
                          const uint32_t &y,
                          const uint32_t &z) const {
@@ -82,7 +85,7 @@ class Grid : public AccelerationStructure {
 // Data members
 //==============================================================================
  private:
-  std::vector<std::shared_ptr<Cell>>    cells;
+  std::vector<std::shared_ptr<Cell>>    cells{};
   uint32_t                              resolution[3];
   uint32_t                              maxResolution{64};
   float_t                               alpha{3.f};

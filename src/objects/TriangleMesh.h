@@ -41,8 +41,15 @@ class TriangleMesh : public Object {
    * @param i:  A structure containing intersection information.
    */
   void compute_normal(isect_info &i) const;
+
+  /**
+   * Returns the bounding box for the triangle part of the triangle mesh
+   * with index ti.
+   * @param ti: The index of the triangle.
+   * @return:   The bounding box of the triangle.
+   */
   const AABBox & get_BB(const uint32_t &ti) const;
-  loading_info load_mesh(const char *f);
+  mesh_loading_info load_mesh(const char *f);
 
   void apply_camera_transformation(const glm::mat4 &ctm);
   void apply_transformations();

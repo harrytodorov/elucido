@@ -50,18 +50,7 @@ class AccelerationStructure {
 // Constructors & destructors.
 //==============================================================================
  public:
-  AccelerationStructure(const AABBox &box,
-                        const std::vector<std::shared_ptr<Object>> &objects,
-                        const uint32_t &number_primitives) :
-  bbox(box) {
-    primitives.reserve(number_primitives);
-    for (auto const &object : objects) {
-      std::vector<Primitive> toPrimitive = convert_to_primitive(object);
-      primitives.insert(primitives.end(),
-                        toPrimitive.begin(),
-                        toPrimitive.end());
-    }
-  }
+  AccelerationStructure() {}
 
   ~AccelerationStructure() {}
 
@@ -78,15 +67,32 @@ class AccelerationStructure {
   inline const std::vector<Primitive> & get_primitives() const {
     return primitives;
   };
+  inline void compute_primitives(const uint32_t &number_primitives,
+                                 const std::vector<std::shared_ptr<Object>> &objects) {
+    primitives.reserve(number_primitives);
+    for (auto const &object : objects) {
+      std::vector<Primitive> toPrimitive = convert_to_primitive(object);
+      primitives.insert(primitives.end(),
+                        toPrimitive.begin(),
+                        toPrimitive.end());
+    }
+  };
 
-  virtual bool intersect(const Ray &r, isect_info &i) const = 0;
+  inline const AccelerationStructureType & get_type() const { return as_type; }
+
+  virtual bool traverse(const Ray &r, isect_info &i) const = 0;
+  virtual void construct(const AABBox &box,
+                         const std::vector<std::shared_ptr<Object>> &objects,
+                         const uint32_t &number_primitives,
+                         as_construct_info &info) = 0;
 
 //==============================================================================
 // Data members
 //==============================================================================
  protected:
-  AABBox                  bbox{};
-  std::vector<Primitive>  primitives;
+  AABBox                      bbox{};
+  std::vector<Primitive>      primitives{};
+  AccelerationStructureType   as_type{not_set_act};
 };
 
 #endif //ELUCIDO_ACCELERATIONSTRUCTURE_H

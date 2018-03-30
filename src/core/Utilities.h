@@ -562,11 +562,12 @@ struct scene_description {
       animations({}) {}
 };
 
-struct loading_info {
+struct mesh_loading_info {
   uint32_t nv{0};     // Number of vertices.
   uint32_t nvn{0};    // Number of vertex normals.
   uint32_t nf{0};     // Number of faces.
   uint32_t nt{0};     // Number of triangles.
+  size_t   s{0};      // Size in bytes.
   bool     l{false};  // Successfully loaded mesh.
 };
 
@@ -606,10 +607,14 @@ struct isect_info {
   {}
 };
 
-struct grid_info {
-  size_t  r[3];     // Grid's resolution.
-  size_t  nfc{0};   // Number of cells, which contain one or more primitives.
-  float_t nppc{0};  // Average number of primitives per non-empty cell.
+struct as_construct_info {
+  size_t    d{0};     // Duration of the construction in ms.
+  size_t    s{0};     // Size in bytes.
+
+  // Grid-related information.
+  uint32_t  r[3];    // Grid's resolution.
+  uint32_t  nfc{0};  // Number of non-empty cells.
+  float_t   npnc{0}; // Number of primitives per non-empty cell.
 };
 
 struct scene_info {

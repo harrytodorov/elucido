@@ -6,14 +6,14 @@
 #include "../core/Common.h"
 
 //==============================================================================
-loading_info TriangleMesh::load_mesh(const char *f) {
+mesh_loading_info TriangleMesh::load_mesh(const char *f) {
   std::string type;               // type of the object read on the current line
   std::string line;               // one line of the file
   std::vector<glm::vec4> tva;     // temporary array to store vertices
   std::vector<glm::vec4> tvna;    // temporary array to store vertex normals
   std::vector<uint32_t> vi;       // vertex index array
   std::vector<uint32_t> ni;       // normal index array
-  loading_info ret;               // holder for the loading information
+  mesh_loading_info ret;          // holder for the loading information
 
   // load file in memory
   std::ifstream fs(f);
@@ -121,6 +121,7 @@ loading_info TriangleMesh::load_mesh(const char *f) {
   ret.nvn = (uint32_t) vna.size();
   ret.nf  = nf;
   ret.nt  = nt;
+  ret.s   = sizeof(*this);
 
   return ret;
 }

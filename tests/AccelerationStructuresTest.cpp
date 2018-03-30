@@ -2,12 +2,26 @@
 // Author: Haralambi Todorov <harrytodorov@gmail.com>
 
 #include <gtest/gtest.h>
-#include "glm/ext.hpp"    // glm::to_string
+
+#include <string>
+#include <vector>
+#include <memory>
 
 #include "../src/accelerators/Grid.h"
+#include "../src/objects/TriangleMesh.h"
+#include "../src/accelerators/AABBox.h"
 
 //==============================================================================
 TEST(AccelerationStructure, convertToPrimitives) {
+  const char *fp = "test_resources/cube.obj";
+  std::shared_ptr<Object> cube = std::make_shared<TriangleMesh>(TriangleMesh(fp));
 
-//  Grid grid_structure = new Grid();
+  AABBox box;
+  Grid *grid_structure = new Grid(box, {}, 0);
+
+  auto primitives = grid_structure->convert_to_primitive(cube);
+
+  EXPECT_EQ(primitives.size(), 12);
+
+  delete grid_structure;
 }

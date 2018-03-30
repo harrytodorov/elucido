@@ -3,10 +3,15 @@
 
 #include "Grid.h"
 
-//==============================================================================
-grid_info Grid::constructGrid() {
-  // Initialize the grid statistical gathering structure.
-  grid_info info = grid_info();
+void Grid::construct(const AABBox &box,
+                     const std::vector<std::shared_ptr<Object>> &objects,
+                     const uint32_t &number_primitives,
+                     as_construct_info &info) {
+  // Assign bounding box.
+  bbox = box;
+
+  // Compute primitives.
+  compute_primitives(number_primitives, objects);
 
   // Precompute bounding box's inverse volume and cube root from the
   // formula used for determining resolution size.
@@ -37,7 +42,6 @@ grid_info Grid::constructGrid() {
     // Static cast to uint32_t is equivalent to std::floor of the
     // floating value.
     resolution[i] = static_cast<uint32_t>(resFloat[i]);
-    info.r[i] = resolution[i];
   }
 
   // Compute cell's dimension.
@@ -66,33 +70,33 @@ grid_info Grid::constructGrid() {
     // min, x
     minCell[0] = static_cast<size_t>(
         glm::clamp(minPrimCellCoord.x,
-        0.f,
-        1.f * (resolution[0] - 1)));
+                   0.f,
+                   1.f * (resolution[0] - 1)));
     // min, y
     minCell[1] = static_cast<size_t>(
         glm::clamp(minPrimCellCoord.y,
-        0.f,
-        1.f * (resolution[1] - 1)));
+                   0.f,
+                   1.f * (resolution[1] - 1)));
     // min, z
     minCell[2] = static_cast<size_t>(
         glm::clamp(minPrimCellCoord.z,
-        0.f,
-        1.f * (resolution[2] - 1)));
+                   0.f,
+                   1.f * (resolution[2] - 1)));
     // max, x
     maxCell[0] = static_cast<size_t>(
         glm::clamp(maxPrimCellCoord.x,
-        0.f,
-        1.f * (resolution[0] - 1)));
+                   0.f,
+                   1.f * (resolution[0] - 1)));
     // max, y
     maxCell[1] = static_cast<size_t>(
         glm::clamp(maxPrimCellCoord.y,
-        0.f,
-        1.f * (resolution[1] - 1)));
+                   0.f,
+                   1.f * (resolution[1] - 1)));
     // max, z
     maxCell[2] = static_cast<size_t>(
         glm::clamp(maxPrimCellCoord.z,
-        0.f,
-        1.f * (resolution[2] - 1)));
+                   0.f,
+                   1.f * (resolution[2] - 1)));
 
     // Iterate over corresponding grid cells and add primitive to it.
     for (size_t z = minCell[2]; z <= maxCell[2]; ++z) {
@@ -117,15 +121,17 @@ grid_info Grid::constructGrid() {
   for (size_t i = 0; i < resolution[0] * resolution[1] * resolution[2]; i++) {
     if (cells[i] == nullptr) continue;
     info.nfc++;
-    info.nppc += cells[i]->primitives.size();
+    info.npnc += cells[i]->primitives.size();
   }
-  info.nppc /= (1.f * info.nfc);
-
-  return info;
+  info.npnc /= (1.f * info.nfc);
+  info.r[0] = resolution[0];
+  info.r[1] = resolution[1];
+  info.r[2] = resolution[2];
+  info.s    = sizeof(*this);
 }
 
 //==============================================================================
-bool Grid::intersect(const Ray &r, isect_info &ii) const {
+bool Grid::traverse(const Ray &r, isect_info &ii) const {
   // Scalar distance from the ray's origin to the nearest hit point of
   // the ray with the grid's bounding box.
   float_t   tBoundingBox;
