@@ -121,7 +121,6 @@ mesh_loading_info TriangleMesh::load_mesh(const char *f) {
   ret.nvn = (uint32_t) vna.size();
   ret.nf  = nf;
   ret.nt  = nt;
-  ret.s   = sizeof(*this);
 
   return ret;
 }

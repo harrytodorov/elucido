@@ -567,7 +567,6 @@ struct mesh_loading_info {
   uint32_t nvn{0};    // Number of vertex normals.
   uint32_t nf{0};     // Number of faces.
   uint32_t nt{0};     // Number of triangles.
-  size_t   s{0};      // Size in bytes.
   bool     l{false};  // Successfully loaded mesh.
 };
 
@@ -609,7 +608,6 @@ struct isect_info {
 
 struct as_construct_info {
   size_t    d{0};     // Duration of the construction in ms.
-  size_t    s{0};     // Size in bytes.
 
   // Grid-related information.
   uint32_t  r[3];    // Grid's resolution.

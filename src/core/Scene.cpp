@@ -393,9 +393,6 @@ void Scene::print_as_construction_info(const as_construct_info &i,
   std::cout << "Construction time:\t\t\t\t\t\t"
             << i.d << "ms"
             << std::endl;
-  std::cout << "Size:\t\t\t\t\t\t\t\t\t"
-            << i.s << " bytes"
-            << std::endl;
   std::cout << "Type:\t\t\t\t\t\t\t\t\t";
 
   if (type == grid) {
@@ -434,9 +431,6 @@ void Scene::print_tm_loading_info(const mesh_loading_info &li,
             << li.nt << std::endl;
   std::cout << "# of faces in the mesh:\t\t\t\t\t"
             << li.nf << std::endl;
-  std::cout << "Size:\t\t\t\t\t\t\t\t\t"
-            << li.s << " bytes"
-            << std::endl;
   std::cout << "----------" << std::endl;
   std::cout << std::endl;
 }

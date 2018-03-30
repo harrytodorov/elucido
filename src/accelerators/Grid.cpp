@@ -127,7 +127,6 @@ void Grid::construct(const AABBox &box,
   info.r[0] = resolution[0];
   info.r[1] = resolution[1];
   info.r[2] = resolution[2];
-  info.s    = sizeof(*this);
 }
 
 //==============================================================================
