@@ -17,7 +17,7 @@ TEST(AccelerationStructure, convertToPrimitives) {
   std::shared_ptr<Object> cube = std::make_shared<TriangleMesh>(TriangleMesh(fp));
 
   AABBox box;
-  Grid *grid_structure = new Grid(box, {}, 0);
+  Grid *grid_structure = new Grid();
 
   auto primitives = grid_structure->convert_to_primitive(cube);
 
