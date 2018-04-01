@@ -125,15 +125,16 @@ bool Renderer::trace_ray(const Ray &r, isect_info &i) {
     // Intersection information for the current object.
     isect_info co;
 
-    // Increment ray-primitive tests, bounding box.
-    __sync_fetch_and_add(&ri.nrpt, 1);
-
     // First intersect with object's bounding box.
     // One only intersect triangulated meshes with their bounding boxes,
     // because tests for spheres and triangles are already cheap enough.
     if (object->object_type() == triangle_mesh &&
-        !object->bounding_box().intersect(r))
+        !object->bounding_box().intersect(r)) {
+
+      // Increment ray-primitive tests, bounding box.
+      __sync_fetch_and_add(&ri.nrpt, 1);
       continue;
+    }
 
     // The number of ray-primitive intersections for triangulated mesh
     // is equal to the number of triangles in the mesh.

@@ -38,8 +38,8 @@ bool Sphere::intersect(const Ray &r, isect_info &i) const {
   if (l2 > r2) t = s - q;
   else t = s + q;
 
-  i.tn = t;
-  i.ip = r.orig() + t * r.dir();
+  i.tn  = t;
+  i.ip  = r.orig() + t * r.dir();
   i.ipn = glm::normalize(i.ip - c);
 
   return true;
