@@ -204,3 +204,103 @@ TEST(Grid, intersectSingleTriangle) {
   EXPECT_NEAR(ii.ipn.z, 1.f, float_err);
   EXPECT_NEAR(ii.ipn.w, 0.f, float_err);
 }
+
+//==============================================================================
+TEST(Grid, intersectSingleTriangleBack) {
+  float_t float_err = 0.001;
+
+  Ray ray;
+  ray.set_orig({0.f, 0.f,  2.f, 1.f});
+  ray.set_dir( {0.f, 0.f, -1.f, 0.f});
+
+  auto v0 = glm::vec4(-1.f, -1.f, 0.f, 1.f);
+  auto v1 = glm::vec4( 1.f, -1.f, 0.f, 1.f);
+  auto v2 = glm::vec4( 0.f,  1.f, 0.f, 1.f);
+  // Normal = {0, 0, 1, 0}
+
+  std::shared_ptr<Object> t = std::make_shared<Triangle>(Triangle());
+  std::static_pointer_cast<Triangle>(t)->set_vertices(v0, v1, v2);
+
+  auto ci = as_construct_info();
+  auto ii = isect_info();
+
+  std::vector<std::shared_ptr<Object>> objs;
+  objs.push_back(t);
+
+  Grid *g = new Grid();
+  g->construct(std::static_pointer_cast<Triangle>(t)->bounding_box(),
+               objs, 1, ci);
+
+  auto intersected = g->traverse(ray, ii);
+
+  EXPECT_TRUE(intersected);
+  EXPECT_NEAR(ii.tn, 2.f, float_err);
+
+  EXPECT_NEAR(ii.ip.x, 0.f, float_err);
+  EXPECT_NEAR(ii.ip.y, 0.f, float_err);
+  EXPECT_NEAR(ii.ip.z, 0.f, float_err);
+  EXPECT_NEAR(ii.ip.w, 1.f, float_err);
+
+  EXPECT_NEAR(ii.ipn.x,  0.f, float_err);
+  EXPECT_NEAR(ii.ipn.y,  0.f, float_err);
+  EXPECT_NEAR(ii.ipn.z,  1.f, float_err);
+  EXPECT_NEAR(ii.ipn.w,  0.f, float_err);
+}
+
+//==============================================================================
+TEST(Grid, intersectSingleTriangleParallel) {
+  Ray ray;
+  ray.set_orig({0.f,  2.f,  0.f, 1.f});
+  ray.set_dir( {0.f, -1.f,  0.f, 0.f});
+
+  auto v0 = glm::vec4(-1.f, -1.f, 0.f, 1.f);
+  auto v1 = glm::vec4( 1.f, -1.f, 0.f, 1.f);
+  auto v2 = glm::vec4( 0.f,  1.f, 0.f, 1.f);
+  // Normal = {0, 0, 1, 0}
+
+  std::shared_ptr<Object> t = std::make_shared<Triangle>(Triangle());
+  std::static_pointer_cast<Triangle>(t)->set_vertices(v0, v1, v2);
+
+  auto ci = as_construct_info();
+  auto ii = isect_info();
+
+  std::vector<std::shared_ptr<Object>> objs;
+  objs.push_back(t);
+
+  Grid *g = new Grid();
+  g->construct(std::static_pointer_cast<Triangle>(t)->bounding_box(),
+               objs, 1, ci);
+
+  auto intersected = g->traverse(ray, ii);
+
+  EXPECT_TRUE(!intersected);
+}
+
+//==============================================================================
+TEST(Grid, intersectSingleTriangleOutside) {
+  Ray ray;
+  ray.set_orig({-1.f,  0.f,  2.f, 1.f});
+  ray.set_dir( { 0.f,  0.f, -1.f, 0.f});
+
+  auto v0 = glm::vec4(-1.f, -1.f, 0.f, 1.f);
+  auto v1 = glm::vec4( 1.f, -1.f, 0.f, 1.f);
+  auto v2 = glm::vec4( 0.f,  1.f, 0.f, 1.f);
+  // Normal = {0, 0, 1, 0}
+
+  std::shared_ptr<Object> t = std::make_shared<Triangle>(Triangle());
+  std::static_pointer_cast<Triangle>(t)->set_vertices(v0, v1, v2);
+
+  auto ci = as_construct_info();
+  auto ii = isect_info();
+
+  std::vector<std::shared_ptr<Object>> objs;
+  objs.push_back(t);
+
+  Grid *g = new Grid();
+  g->construct(std::static_pointer_cast<Triangle>(t)->bounding_box(),
+               objs, 1, ci);
+
+  auto intersected = g->traverse(ray, ii);
+
+  EXPECT_TRUE(!intersected);
+}
