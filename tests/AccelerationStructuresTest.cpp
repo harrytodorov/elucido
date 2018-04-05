@@ -7,7 +7,7 @@
 #include <vector>
 #include <memory>
 
-#include "../src/accelerators/Grid.h"
+#include "../src/accelerators/DynamicGrid.h"
 #include "../src/accelerators/AABBox.h"
 #include "../src/objects/TriangleMesh.h"
 #include "../src/objects/Triangle.h"
@@ -19,7 +19,7 @@ TEST(AccelerationStructure, convertToPrimitives) {
   std::shared_ptr<Object> cube = std::make_shared<TriangleMesh>(TriangleMesh(fp));
 
   AABBox box;
-  Grid *grid_structure = new Grid();
+  DynamicGrid *grid_structure = new DynamicGrid();
 
   auto primitives = grid_structure->convert_to_primitive(cube);
 
@@ -44,7 +44,7 @@ TEST(Grid, intersectSingleSphere) {
   auto ci = as_construct_info();
   auto ii = isect_info();
 
-  Grid *g = new Grid();
+  DynamicGrid *g = new DynamicGrid();
   g->construct(std::static_pointer_cast<Sphere>(s)->bounding_box(),
                objs, 1, ci);
 
@@ -80,7 +80,7 @@ TEST(Grid, intersectSingleSphereParallel) {
   std::vector<std::shared_ptr<Object>> objs;
   objs.push_back(s);
 
-  Grid *g = new Grid();
+  DynamicGrid *g = new DynamicGrid();
   g->construct(std::static_pointer_cast<Sphere>(s)->bounding_box(),
                objs, 1, ci);
 
@@ -118,7 +118,7 @@ TEST(Grid, intersectSingleSphereInside) {
   std::vector<std::shared_ptr<Object>> objs;
   objs.push_back(s);
 
-  Grid *g = new Grid();
+  DynamicGrid *g = new DynamicGrid();
   g->construct(std::static_pointer_cast<Sphere>(s)->bounding_box(),
                objs, 1, ci);
 
@@ -154,7 +154,7 @@ TEST(Grid, intersectSingleSphereOutside) {
   std::vector<std::shared_ptr<Object>> objs;
   objs.push_back(s);
 
-  Grid *g = new Grid();
+  DynamicGrid *g = new DynamicGrid();
   g->construct(std::static_pointer_cast<Sphere>(s)->bounding_box(),
                objs, 1, ci);
 
@@ -185,7 +185,7 @@ TEST(Grid, intersectSingleTriangle) {
   std::vector<std::shared_ptr<Object>> objs;
   objs.push_back(t);
 
-  Grid *g = new Grid();
+  DynamicGrid *g = new DynamicGrid();
   g->construct(std::static_pointer_cast<Triangle>(t)->bounding_box(),
                objs, 1, ci);
 
@@ -227,7 +227,7 @@ TEST(Grid, intersectSingleTriangleBack) {
   std::vector<std::shared_ptr<Object>> objs;
   objs.push_back(t);
 
-  Grid *g = new Grid();
+  DynamicGrid *g = new DynamicGrid();
   g->construct(std::static_pointer_cast<Triangle>(t)->bounding_box(),
                objs, 1, ci);
 
@@ -267,7 +267,7 @@ TEST(Grid, intersectSingleTriangleParallel) {
   std::vector<std::shared_ptr<Object>> objs;
   objs.push_back(t);
 
-  Grid *g = new Grid();
+  DynamicGrid *g = new DynamicGrid();
   g->construct(std::static_pointer_cast<Triangle>(t)->bounding_box(),
                objs, 1, ci);
 
@@ -296,7 +296,7 @@ TEST(Grid, intersectSingleTriangleOutside) {
   std::vector<std::shared_ptr<Object>> objs;
   objs.push_back(t);
 
-  Grid *g = new Grid();
+  DynamicGrid *g = new DynamicGrid();
   g->construct(std::static_pointer_cast<Triangle>(t)->bounding_box(),
                objs, 1, ci);
 

@@ -326,10 +326,12 @@ const std::map<std::string, AccelerationStructureProperties> AC_PROPERTIES_MAP =
 // corresponding mappings.
 enum AccelerationStructureType {
   not_set_act,
-  grid
+  grid,
+  compact_grid
 };
 const std::map<std::string, AccelerationStructureType> AC_TYPES_MAP = {
-    {"grid",  grid}
+    {"grid",          grid},
+    {"compact_grid",  compact_grid}
 };
 
 // Available animation properties +

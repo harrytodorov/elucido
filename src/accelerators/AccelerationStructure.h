@@ -31,7 +31,7 @@ struct Primitive {
     return obj->intersect(r, ii);
   }
 
-  const AABBox & getBB() {
+  const AABBox & getBB() const {
     if (obj->object_type() != triangle_mesh) {
       return obj->bounding_box();
     }

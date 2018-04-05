@@ -5,15 +5,6 @@
 #include "glm/ext.hpp"    // glm::to_string
 
 #include "Scene.h"
-#include "../objects/Sphere.h"
-#include "../objects/Triangle.h"
-#include "../objects/TriangleMesh.h"
-#include "../lights/PointLight.h"
-#include "../lights/DirectionalLight.h"
-#include "../cameras/OrthographicCamera.h"
-#include "../cameras/PerspectiveCamera.h"
-#include "../accelerators/Grid.h"
-#include "Renderer.h"
 
 //==============================================================================
 void Scene::convert_color01_range(glm::vec3 &color) {
@@ -28,16 +19,16 @@ bool Scene::generate_as(const std::shared_ptr<acceleration_structure_description
   switch (asd->type) {
     // Grid.
     case AccelerationStructureType::grid : {
-      as = std::make_shared<Grid>(Grid());
+      as = std::make_shared<DynamicGrid>(DynamicGrid());
 
       // Alpha.
       if (asd->alpha != 0.f) {
-        std::static_pointer_cast<Grid>(as)->set_alpha(asd->alpha);
+        std::static_pointer_cast<DynamicGrid>(as)->set_alpha(asd->alpha);
       }
 
       // Maximum grid resolution per axis.
       if (asd->max_resolution != 0) {
-        std::static_pointer_cast<Grid>(as)->set_max_res(asd->max_resolution);
+        std::static_pointer_cast<DynamicGrid>(as)->set_max_res(asd->max_resolution);
       }
     } break;
 
@@ -397,7 +388,7 @@ void Scene::print_as_construction_info(const as_construct_info &i,
 
   if (type == grid) {
     std::cout << "grid" << std::endl;
-    std::cout << "Grid's resolution:\t\t\t\t\t\t"
+    std::cout << "DynamicGrid's resolution:\t\t\t\t\t\t"
               << i.r[0] << 'x' << i.r[1] << 'x' << i.r[2]
               << std::endl;
     std::cout << "# of cells:\t\t\t\t\t\t\t\t"

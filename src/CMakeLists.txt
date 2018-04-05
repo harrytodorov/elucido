@@ -20,6 +20,8 @@ set(ELUCIDO_SOURCE_FILES
         accelerators/AABBox.cpp
         accelerators/AccelerationStructure.cpp
         accelerators/Grid.cpp
+        accelerators/DynamicGrid.cpp
+        accelerators/CompactGrid.cpp
         cameras/Camera.cpp
         cameras/OrthographicCamera.cpp
         cameras/PerspectiveCamera.cpp
@@ -43,6 +45,8 @@ set(ELUCIDO_HEADER_FILES
         accelerators/AABBox.h
         accelerators/AccelerationStructure.h
         accelerators/Grid.h
+        accelerators/DynamicGrid.h
+        accelerators/CompactGrid.h
         lights/Light.h
         lights/DirectionalLight.h
         lights/PointLight.h

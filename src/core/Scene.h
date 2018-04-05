@@ -9,8 +9,23 @@
 #include "glm/vec4.hpp"
 
 #include "../cameras/Camera.h"
+#include "../cameras/OrthographicCamera.h"
+#include "../cameras/PerspectiveCamera.h"
+
 #include "../objects/Object.h"
+#include "../objects/Sphere.h"
+#include "../objects/Triangle.h"
+#include "../objects/TriangleMesh.h"
+
 #include "../lights/Light.h"
+#include "../lights/PointLight.h"
+#include "../lights/DirectionalLight.h"
+
+#include "../accelerators/AccelerationStructure.h"
+#include "../accelerators/DynamicGrid.h"
+
+
+#include "Renderer.h"
 #include "ImagePlane.h"
 
 class Scene {

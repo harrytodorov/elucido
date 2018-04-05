@@ -4,11 +4,12 @@
 #ifndef ELUCIDO_CAMERA_H
 #define ELUCIDO_CAMERA_H
 
-#include "../core/Utilities.h"
-#include "../core/ImagePlane.h"
+#include <cstdint>
+#include <glm/mat4x4.hpp>
+
+#include "../core/Ray.h"
 #include "../lights/Light.h"
-#include "../accelerators/AccelerationStructure.h"
-#include "../accelerators/Grid.h"
+#include "../objects/Object.h"
 
 class Camera {
 //==============================================================================

@@ -30,11 +30,11 @@ class AABBox {
     bounds[0] = glm::vec4(glm::vec3(infinity), 1);
     bounds[1] = glm::vec4(glm::vec3(-infinity), 1);
   }
-  inline float_t getVolume() {
+  inline float_t getVolume() const {
     glm::vec3 size(bounds[1] - bounds[0]);
     return glm::abs(size.x) * glm::abs(size.y) * glm::abs(size.z);
   }
-  inline glm::vec4 getDiagonal() {
+  inline glm::vec4 getDiagonal() const {
     return glm::abs(glm::vec4(bounds[1] - bounds[0]));
   }
   bool intersect(const Ray &r) const;
