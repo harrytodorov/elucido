@@ -50,9 +50,9 @@ class AccelerationStructure {
 // Constructors & destructors.
 //==============================================================================
  public:
-  AccelerationStructure() {}
+  AccelerationStructure() = default;
 
-  ~AccelerationStructure() {}
+  virtual ~AccelerationStructure() {}
 
 //==============================================================================
 // Function declarations

@@ -23,7 +23,7 @@
 
 #include "../accelerators/AccelerationStructure.h"
 #include "../accelerators/DynamicGrid.h"
-
+#include "../accelerators/CompactGrid.h"
 
 #include "Renderer.h"
 #include "ImagePlane.h"

@@ -53,7 +53,8 @@ class DynamicGrid : public AccelerationStructure, public Grid {
 //==============================================================================
  public:
   DynamicGrid() :
-      AccelerationStructure()
+      AccelerationStructure(),
+      Grid()
   {
     as_type = grid;
   }

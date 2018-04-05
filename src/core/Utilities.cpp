@@ -298,9 +298,7 @@ bool set_accel_str_property(const std::string &property,
   /// Type.
   if (AC_PROPERTIES_MAP.at(property) == as_type &&
       AC_TYPES_MAP.find(property_value) != AC_TYPES_MAP.end()) {
-    if (AC_TYPES_MAP.at(property_value) == grid) {
-      acc_strs.at(name).type = grid;
-    }
+      acc_strs.at(name).type = AC_TYPES_MAP.at(property_value);
   } else if (acc_strs.at(name).type != not_set_act) {
     /// Alpha.
     if (AC_PROPERTIES_MAP.at(property) == alpha) {

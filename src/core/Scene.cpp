@@ -17,7 +17,7 @@ bool Scene::generate_as(const std::shared_ptr<acceleration_structure_description
   std::shared_ptr<AccelerationStructure> as = nullptr;
 
   switch (asd->type) {
-    // Grid.
+    // Dynamic grid.
     case AccelerationStructureType::grid : {
       as = std::make_shared<DynamicGrid>(DynamicGrid());
 
@@ -29,6 +29,21 @@ bool Scene::generate_as(const std::shared_ptr<acceleration_structure_description
       // Maximum grid resolution per axis.
       if (asd->max_resolution != 0) {
         std::static_pointer_cast<DynamicGrid>(as)->set_max_res(asd->max_resolution);
+      }
+    } break;
+
+    // Compact grid.
+    case AccelerationStructureType::compact_grid : {
+      as = std::make_shared<CompactGrid>(CompactGrid());
+
+      // Alpha.
+      if (asd->alpha != 0.f) {
+        std::static_pointer_cast<CompactGrid>(as)->set_alpha(asd->alpha);
+      }
+
+      // Maximum grid resolution per axis.
+      if (asd->max_resolution != 0) {
+        std::static_pointer_cast<CompactGrid>(as)->set_max_res(asd->max_resolution);
       }
     } break;
 
@@ -387,8 +402,22 @@ void Scene::print_as_construction_info(const as_construct_info &i,
   std::cout << "Type:\t\t\t\t\t\t\t\t\t";
 
   if (type == grid) {
-    std::cout << "grid" << std::endl;
-    std::cout << "DynamicGrid's resolution:\t\t\t\t\t\t"
+    std::cout << "dynamic grid" << std::endl;
+    std::cout << "Resolution:\t\t\t\t\t\t\t\t"
+              << i.r[0] << 'x' << i.r[1] << 'x' << i.r[2]
+              << std::endl;
+    std::cout << "# of cells:\t\t\t\t\t\t\t\t"
+              << i.r[0] * i.r[1] * i.r[2]
+              << std::endl;
+    std::cout << "# of non-empty cells:\t\t\t\t\t"
+              << i.nfc
+              << std::endl;
+    std::cout << "Average number of primitives per cell:\t"
+              << i.npnc
+              << std::endl;
+  } else if (type == compact_grid) {
+    std::cout << "compact grid" << std::endl;
+    std::cout << "Resolution:\t\t\t\t\t\t\t\t"
               << i.r[0] << 'x' << i.r[1] << 'x' << i.r[2]
               << std::endl;
     std::cout << "# of cells:\t\t\t\t\t\t\t\t"

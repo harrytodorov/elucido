@@ -18,9 +18,9 @@ class Grid {
 //==============================================================================
  public:
   Grid() {}
-  ~Grid() {}
+  ~Grid() = default;
 
-//==============================================================================
+  //==============================================================================
 // Function declarations
 //==============================================================================
   inline uint32_t offset(const uint32_t &x,
@@ -40,19 +40,19 @@ class Grid {
   uint32_t* compute_primitive_bound_cell(const glm::vec4 & primitive_bound,
                                          const glm::vec4 & box_bound) const;
   void traversal_initialization(glm::vec4 &delta_t,
-                                  glm::vec4 &next_crossing_t,
-                                  uint32_t *current_cell,
-                                  int32_t *step,
-                                  int32_t *exit,
-                                  const Ray &ray,
-                                  const float_t &t_bb,
-                                  const glm::vec4 &box_min_bound) const;
+                                glm::vec4 &next_crossing_t,
+                                uint32_t *current_cell,
+                                int32_t *step,
+                                int32_t *exit,
+                                const Ray &ray,
+                                const float_t &t_bb,
+                                const glm::vec4 &box_min_bound) const;
 
 //==============================================================================
 // Data members
 //==============================================================================
  protected:
-  uint32_t                              resolution[3];
+  uint32_t                              resolution[3]{};
   uint32_t                              maxResolution{64};
   float_t                               alpha{3.f};
   glm::vec4                             cellDimension{0.f};

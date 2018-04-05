@@ -13,14 +13,18 @@ class CompactGrid : public AccelerationStructure, public Grid {
 //==============================================================================
  public:
   CompactGrid() :
-      AccelerationStructure()
+      AccelerationStructure(),
+      Grid()
   {
     as_type = compact_grid;
   }
 
-  ~CompactGrid() {}
+  ~CompactGrid() {
+    delete[] cells;
+    delete[] object_lists;
+  };
 
-//==============================================================================
+  //==============================================================================
 // Function declarations
 //==============================================================================
   void            construct(const AABBox &box,
@@ -33,8 +37,8 @@ class CompactGrid : public AccelerationStructure, public Grid {
 // Data members
 //==============================================================================
  private:
-  std::unique_ptr<uint32_t[]>           object_lists;
-  std::unique_ptr<uint32_t[]>           cells;
+  uint32_t  *object_lists;
+  uint32_t  *cells;
 };
 
 #endif //ELUCIDO_COMPACTGRID_H

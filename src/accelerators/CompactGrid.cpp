@@ -19,7 +19,8 @@ void CompactGrid::construct(const AABBox &box,
   compute_resolution(bbox, primitives.size());
 
   // Initialize cell's array and set all entries to 0.
-  cells.reset(new uint32_t[resolution[0] * resolution[1] * resolution[2] + 1]());
+  uint32_t cells_size = resolution[0] * resolution[1] * resolution[2] + 1;
+  cells = new uint32_t[cells_size]();
 
   uint32_t *min_cell = nullptr;
   uint32_t *max_cell = nullptr;
@@ -44,13 +45,12 @@ void CompactGrid::construct(const AABBox &box,
   }
 
   // Accumulate the size for the object lists.
-  for (size_t i = 1; i <= primitives.size(); i++) {
+  for (size_t i = 1; i <= cells_size; i++) {
     cells[i] += cells[i - 1];
   }
 
   // Initialize the object's list array.
-  uint32_t le = resolution[0] * resolution[1] * resolution[2];
-  object_lists.reset(new uint32_t[cells[le]]);
+  object_lists = new uint32_t[cells[cells_size - 1]];
 
   // Iterate over the primitives in reverse order and
   //  1. decrement the offset for of the cell entry;
@@ -74,6 +74,21 @@ void CompactGrid::construct(const AABBox &box,
       }
     }
   }
+
+  // Iterate once more over all cells to gather statistical information
+  // about the grid (e.g. number of non-empty cells, av number of primitives
+  // per cell)
+  for (size_t i = 0; i < cells_size - 1; i++) {
+    uint32_t num_primitives_in_cell = cells[i + 1] - cells[i];
+    if (num_primitives_in_cell > 0) {
+      info.nfc++;
+      info.npnc += num_primitives_in_cell;
+    }
+  }
+  info.npnc /= (1.f * info.nfc);
+  info.r[0] = resolution[0];
+  info.r[1] = resolution[1];
+  info.r[2] = resolution[2];
 }
 
 //==============================================================================
@@ -104,7 +119,11 @@ bool CompactGrid::traverse(const Ray &r, isect_info &i) const {
 
     // Intersect all objects in the cell.
     for (size_t j = cells[ci]; j < cells[ci + 1]; j++) {
-      primitives[object_lists[j]].intersect(r, i);
+      isect_info cp;
+      if (primitives[object_lists[j]].intersect(r, cp) && cp.tn < i.tn) {
+        i = cp;
+        i.ho = primitives[object_lists[j]].obj;
+      }
       intersected_primitives++;
     }
 
