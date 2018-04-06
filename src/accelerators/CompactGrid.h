@@ -31,7 +31,7 @@ class CompactGrid : public AccelerationStructure, public Grid {
                             const std::vector<std::shared_ptr<Object>> &objects,
                             const uint32_t &number_primitives,
                             as_construct_info &info);
-  bool            traverse(const Ray &r, isect_info &i) const;
+  bool            traverse(const Ray &r, isect_info &ii) const;
 
 //==============================================================================
 // Data members

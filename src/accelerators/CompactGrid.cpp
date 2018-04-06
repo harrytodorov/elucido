@@ -92,7 +92,7 @@ void CompactGrid::construct(const AABBox &box,
 }
 
 //==============================================================================
-bool CompactGrid::traverse(const Ray &r, isect_info &i) const {
+bool CompactGrid::traverse(const Ray &r, isect_info &ii) const {
   // Scalar distance from the ray's origin to the nearest hit point of
   // the ray with the grid's bounding box.
   float_t   tBoundingBox;
@@ -111,7 +111,7 @@ bool CompactGrid::traverse(const Ray &r, isect_info &i) const {
                            tBoundingBox, bbox.bounds[0]);
 
   // Reset the intersection information.
-  i = isect_info();
+  ii = isect_info();
 
   // The actual traversal of the grid.
   while (true) {
@@ -120,9 +120,9 @@ bool CompactGrid::traverse(const Ray &r, isect_info &i) const {
     // Intersect all objects in the cell.
     for (size_t j = cells[ci]; j < cells[ci + 1]; j++) {
       isect_info cp;
-      if (primitives[object_lists[j]].intersect(r, cp) && cp.tn < i.tn) {
-        i = cp;
-        i.ho = primitives[object_lists[j]].obj;
+      if (primitives[object_lists[j]].intersect(r, cp) && cp.tn < ii.tn) {
+        ii = cp;
+        ii.ho = primitives[object_lists[j]].obj;
       }
       intersected_primitives++;
     }
@@ -136,12 +136,12 @@ bool CompactGrid::traverse(const Ray &r, isect_info &i) const {
     }
 
     // Advance the grid.
-    if (i.tn < nextCrossingT[planeIndex]) break;
+    if (ii.tn < nextCrossingT[planeIndex]) break;
     currentCell[planeIndex] += step[planeIndex];
     if (currentCell[planeIndex] == exit[planeIndex]) break;
     nextCrossingT[planeIndex] += deltaT[planeIndex];
   }
 
-  i.nrpt = intersected_primitives;
-  return (i.ho != nullptr);
+  ii.nrpt = intersected_primitives;
+  return (ii.ho != nullptr);
 }
