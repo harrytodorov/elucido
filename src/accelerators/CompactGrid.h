@@ -37,8 +37,8 @@ class CompactGrid : public AccelerationStructure, public Grid {
 // Data members
 //==============================================================================
  private:
-  uint32_t  *object_lists;
-  uint32_t  *cells;
+  uint32_t  *object_lists{nullptr};
+  uint32_t  *cells{nullptr};
 };
 
 #endif //ELUCIDO_COMPACTGRID_H
