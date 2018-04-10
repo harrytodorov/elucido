@@ -37,6 +37,21 @@ class AABBox {
   inline glm::vec4 getDiagonal() const {
     return glm::abs(glm::vec4(bounds[1] - bounds[0]));
   }
+  inline float_t getSurface() const {
+    glm::vec4 diagonal = getDiagonal();
+    float_t base = diagonal.x * diagonal.y;
+    return base * diagonal.z;
+  }
+  inline Axis longestAxis() const {
+    glm::vec4 diagonal = getDiagonal();
+    if (diagonal.x >= diagonal.y) {
+      if (diagonal.x >= diagonal.z) return X;
+    } else {
+      if (diagonal.y >= diagonal.z) return Y;
+    }
+    return Z;
+  }
+
   bool intersect(const Ray &r) const;
   bool intersect(const Ray &r, float_t &t_min) const;
   void extend_by(const glm::vec4 &p);

@@ -40,6 +40,8 @@ class Object {
   inline ObjectType const& object_type() const { return this->ot; }
   inline void              set_object_type(const ObjectType &_ot) { ot = _ot; }
 
+  virtual glm::vec4 centroid(const uint32_t &ti) const = 0;
+
   virtual bool intersect(const Ray &r, isect_info &i) const = 0;
 
   virtual void apply_camera_transformation(const glm::mat4 &ctm) = 0;

@@ -109,3 +109,59 @@ TEST(AABBox, intersectParallel) {
   auto intersected = box.intersect(r);
   EXPECT_TRUE(!intersected);
 }
+
+//==============================================================================
+TEST(AABBox, getSurfaceArea) {
+  glm::vec4 min_extent(0.f);
+  glm::vec4 max_extent(2.f);
+  
+  AABBox box;
+  box.extend_by(min_extent);
+  box.extend_by(max_extent);
+  
+  float_t surface_area = box.getSurface();
+  
+  EXPECT_FLOAT_EQ(surface_area, 8.f);
+}
+
+//==============================================================================
+TEST(AABBox, longestAxisX) {
+  glm::vec4 min_extent(0.f);
+  glm::vec4 max_extent(2.f, 1.f, 1.f, 1.f);
+
+  AABBox box;
+  box.extend_by(min_extent);
+  box.extend_by(max_extent);
+
+  Axis longest = box.longestAxis();
+
+  EXPECT_EQ(longest, X);
+}
+
+//==============================================================================
+TEST(AABBox, longestAxisY) {
+  glm::vec4 min_extent(0.f);
+  glm::vec4 max_extent(1.f, 2.f, 1.f, 1.f);
+  
+  AABBox box;
+  box.extend_by(min_extent);
+  box.extend_by(max_extent);
+  
+  Axis longest = box.longestAxis();
+  
+  EXPECT_EQ(longest, Y);
+}
+
+//==============================================================================
+TEST(AABBox, longestAxisZ) {
+  glm::vec4 min_extent(0.f);
+  glm::vec4 max_extent(1.f, 1.f, 2.f, 1.f);
+  
+  AABBox box;
+  box.extend_by(min_extent);
+  box.extend_by(max_extent);
+  
+  Axis longest = box.longestAxis();
+  
+  EXPECT_EQ(longest, Z);
+}

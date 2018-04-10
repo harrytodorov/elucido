@@ -42,6 +42,8 @@ class TriangleMesh : public Object {
    */
   void compute_normal(isect_info &i) const;
 
+  glm::vec4 centroid(const uint32_t &ti) const;
+
   /**
    * Returns the bounding box for the triangle part of the triangle mesh
    * with index ti.

@@ -24,7 +24,7 @@ class CompactGrid : public AccelerationStructure, public Grid {
     delete[] object_lists;
   };
 
-  //==============================================================================
+//==============================================================================
 // Function declarations
 //==============================================================================
   void            construct(const AABBox &box,

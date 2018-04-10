@@ -57,6 +57,8 @@ class Triangle : public Object {
 
   inline glm::vec4 normal() const { return this->n; }
 
+  glm::vec4 centroid(const uint32_t &ti) const;
+
   /**
    * Determine if the given ray intersects the triangle. If so, write
    * return intersection information.

@@ -367,6 +367,11 @@ void Scene::extend_scene_bb() {
     scene_bb.extend_by(object->bounding_box().bounds[0]);
     scene_bb.extend_by(object->bounding_box().bounds[1]);
   }
+
+  // Scene's bounding box is slightly larger than the bounding box encapsulating
+  // the objects. (e.g. axis aligned triangle would have volume 0).
+  scene_bb.bounds[0] -= kEpsilon;
+  scene_bb.bounds[1] += kEpsilon;
 }
 
 //==============================================================================

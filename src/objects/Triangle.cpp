@@ -74,3 +74,9 @@ void Triangle::reshape_bb() {
   bb.extend_by(v1);
   bb.extend_by(v2);
 }
+
+//==============================================================================
+glm::vec4 Triangle::centroid(const uint32_t &ti) const {
+  glm::vec4 centroid = (v0 + v1 + v2) / 3.f;
+  return centroid;
+}

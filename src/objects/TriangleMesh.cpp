@@ -276,3 +276,14 @@ const AABBox & TriangleMesh::get_BB(const uint32_t &ti) const {
   auto const &ret = *box;
   return ret;
 }
+
+//==============================================================================
+glm::vec4 TriangleMesh::centroid(const uint32_t &ti) const {
+  glm::vec4 v0, v1, v2, centroid;
+  v0 = va[via[3 * ti] - 1];
+  v1 = va[via[3 * ti + 1] - 1];
+  v2 = va[via[3 * ti + 2] - 1];
+  centroid = (v0 + v1 + v2) / 3.f;
+
+  return centroid;
+}

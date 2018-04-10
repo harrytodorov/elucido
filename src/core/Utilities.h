@@ -379,7 +379,6 @@ enum Axis {
   X,
   Y,
   Z,
-  YZ,
   uniform
 };
 const std::map<std::string, Axis> AXES_MAP = {

@@ -38,6 +38,10 @@ struct Primitive {
     return std::static_pointer_cast<TriangleMesh>(obj)->get_BB(tri_ind);
   }
 
+  glm::vec4 centroid() const {
+    return obj->centroid(tri_ind);
+  }
+
 //==============================================================================
 // Data members
 //==============================================================================

@@ -36,6 +36,8 @@ class Sphere : public Object {
   inline glm::vec4 center() { return this->c; }
   void             set_center(const glm::vec4 &p);
 
+  glm::vec4 centroid(const uint32_t &ti) const;
+
   bool intersect(const Ray &r, isect_info &i) const;
 
   void apply_camera_transformation(const glm::mat4 &ivm);

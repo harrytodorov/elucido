@@ -22,6 +22,7 @@ set(ELUCIDO_SOURCE_FILES
         accelerators/Grid.cpp
         accelerators/DynamicGrid.cpp
         accelerators/CompactGrid.cpp
+        accelerators/KDtreeMidpoint.cpp
         cameras/Camera.cpp
         cameras/OrthographicCamera.cpp
         cameras/PerspectiveCamera.cpp
@@ -47,6 +48,7 @@ set(ELUCIDO_HEADER_FILES
         accelerators/Grid.h
         accelerators/DynamicGrid.h
         accelerators/CompactGrid.h
+        accelerators/KDtreeMidpoint.h
         lights/Light.h
         lights/DirectionalLight.h
         lights/PointLight.h

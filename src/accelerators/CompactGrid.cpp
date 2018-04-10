@@ -11,10 +11,8 @@ void CompactGrid::construct(const AABBox &box,
   // Compute primitives.
   compute_primitives(number_primitives, objects);
 
-  // Grid's bounding box is slightly larger than the bounding box encapsulating
-  // the objects. (e.g. axis aligned triangle would have volume 0).
-  bbox.bounds[0] = box.bounds[0] - kEpsilon;
-  bbox.bounds[1] = box.bounds[1] + kEpsilon;
+  bbox.bounds[0] = box.bounds[0];
+  bbox.bounds[1] = box.bounds[1];
 
   compute_resolution(bbox, primitives.size());
 

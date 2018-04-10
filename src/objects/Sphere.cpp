@@ -89,3 +89,8 @@ void Sphere::apply_transformations() {
   // Reset model transform matrix.
   mt = glm::mat4(1);
 }
+
+//==============================================================================
+glm::vec4 Sphere::centroid(const uint32_t &ti) const {
+  return c;
+}
