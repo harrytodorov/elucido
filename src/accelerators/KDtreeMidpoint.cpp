@@ -2,10 +2,48 @@
 // Author: Haralambi Todorov <harrytodorov@gmail.com>
 
 #include "KDtreeMidpoint.h"
+#include <deque>
 
 //==============================================================================
 bool KDtreeMidpoint::traverse(const Ray &r, isect_info &ii) const {
-  return false;
+  // Scalar distance from the ray's origin to the nearest hit point of
+  // the ray with the tree.
+  float_t   tBoundingBox;
+  uint64_t  intersected_primitives{0};
+
+  // Check if the ray intersect's the tree at all.
+  if (!bbox.intersect(r, tBoundingBox))
+    return false;
+
+  // Reset the intersection information.
+  ii = isect_info();
+
+  // Initially put just the root node of the tree.
+  std::deque<uint32_t> nodes_to_intersect = {0};
+
+  bool intersected = false;
+
+  while (!nodes_to_intersect.empty()) {
+    uint32_t cn = nodes_to_intersect.front();
+    nodes_to_intersect.pop_front();
+
+    // Process leaf node.
+    if (nodes[cn]->leaf()) {
+      if (nodes[cn]->intersect(r, ii)) {
+        intersected = true;
+      }
+      intersected_primitives += nodes[cn]->primitives_size();
+    // Process interior node.
+    } else {
+      if (nodes[cn]->box().intersect(r)) {
+        nodes_to_intersect.push_back(nodes[cn]->left_child());
+        nodes_to_intersect.push_back(nodes[cn]->right_child());
+      }
+    }
+  }
+
+  ii.nrpt = intersected_primitives;
+  return intersected;
 }
 
 //==============================================================================

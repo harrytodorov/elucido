@@ -94,7 +94,7 @@ bool CompactGrid::traverse(const Ray &r, isect_info &ii) const {
   // Scalar distance from the ray's origin to the nearest hit point of
   // the ray with the grid's bounding box.
   float_t   tBoundingBox;
-  uint64_t  intersected_primitives{0};
+  uint64_t  intersected_primitives{1};
 
   // Check if the ray intersect's the grid at all.
   if (!bbox.intersect(r, tBoundingBox))

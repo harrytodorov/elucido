@@ -2,6 +2,7 @@
 // Author: Haralambi Todorov <harrytodorov@gmail.com>
 
 #include <iostream>
+#include <memory>
 #include "glm/ext.hpp"    // glm::to_string
 
 #include "Scene.h"
@@ -19,7 +20,7 @@ bool Scene::generate_as(const std::shared_ptr<acceleration_structure_description
   switch (asd->type) {
     // Dynamic grid.
     case AccelerationStructureType::grid : {
-      as = std::make_shared<DynamicGrid>(DynamicGrid());
+      as = std::make_shared<DynamicGrid>();
 
       // Alpha.
       if (asd->alpha != 0.f) {
@@ -34,7 +35,7 @@ bool Scene::generate_as(const std::shared_ptr<acceleration_structure_description
 
     // Compact grid.
     case AccelerationStructureType::compact_grid : {
-      as = std::make_shared<CompactGrid>(CompactGrid());
+      as = std::make_shared<CompactGrid>();
 
       // Alpha.
       if (asd->alpha != 0.f) {
@@ -45,6 +46,15 @@ bool Scene::generate_as(const std::shared_ptr<acceleration_structure_description
       if (asd->max_resolution != 0) {
         std::static_pointer_cast<CompactGrid>(as)->set_max_res(asd->max_resolution);
       }
+    } break;
+
+    // KD-tree midpoint.
+    case AccelerationStructureType::kdtree_midpoint : {
+      as = std::make_shared<KDtreeMidpoint>();
+
+      // TODO:
+      // Maximum tree depth.
+      // Maximum primitives in node.
     } break;
 
     default: break;
@@ -434,6 +444,8 @@ void Scene::print_as_construction_info(const as_construct_info &i,
     std::cout << "Average number of primitives per cell:\t"
               << i.npnc
               << std::endl;
+  } else if (type == kdtree_midpoint) {
+    std::cout << "kd-tree with midpoint" << std::endl;
   }
 
   std::cout << "----------" << std::endl;

@@ -327,11 +327,13 @@ const std::map<std::string, AccelerationStructureProperties> AC_PROPERTIES_MAP =
 enum AccelerationStructureType {
   not_set_act,
   grid,
-  compact_grid
+  compact_grid,
+  kdtree_midpoint
 };
 const std::map<std::string, AccelerationStructureType> AC_TYPES_MAP = {
-    {"grid",          grid},
-    {"compact_grid",  compact_grid}
+    {"grid",            grid},
+    {"compact_grid",    compact_grid},
+    {"kdtree_midpoint", kdtree_midpoint}
 };
 
 // Available animation properties +

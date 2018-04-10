@@ -5,6 +5,7 @@
 #define ELUCIDO_KDTREE_H
 
 #include <vector>
+#include <utility>
 
 #include "AccelerationStructure.h"
 #include "AABBox.h"
@@ -30,25 +31,47 @@ struct KDNode {
     bbox    = overlapping_box;
   }
 
-  inline void set_left_child(const size_t &leftnode_index) {
+  inline void set_left_child(const uint32_t &leftnode_index) {
     left_child_index = leftnode_index;
   }
+  inline const uint32_t & left_child() const { return left_child_index; }
 
-  inline void set_right_child(const size_t &rightnode_index) {
+  inline void set_right_child(const uint32_t &rightnode_index) {
     right_child_index = rightnode_index;
   }
+  inline const uint32_t & right_child() const { return right_child_index; }
 
   inline bool leaf() { return is_leaf; }
+
+  inline const AABBox& box() const { return bbox; }
+  inline bool intersect(const Ray &r, isect_info &i) const {
+    for (auto const& p : overlapping_primitives) {
+      isect_info cp;
+
+      if (p.intersect(r, cp) && cp.tn < i.tn) {
+        i = cp;
+        i.ho = p.obj;
+        if (i.ho->object_type() == triangle_mesh) {
+          i.ti = p.tri_ind;
+        }
+      }
+    }
+
+    return (i.ho != nullptr);
+  }
+  inline uint32_t primitives_size() const {
+    return overlapping_primitives.size();
+  }
 
 //==============================================================================
 // Data members
 //==============================================================================
  private:
   bool                    is_leaf{false};
-  std::vector<Primitive>  overlapping_primitives{{}};
+  std::vector<Primitive>  overlapping_primitives{};
   AABBox                  bbox{};
-  size_t                  left_child_index{0};
-  size_t                  right_child_index{0};
+  uint32_t                left_child_index{0};
+  uint32_t                right_child_index{0};
 };
 
 class KDtreeMidpoint : public AccelerationStructure {
@@ -59,7 +82,9 @@ class KDtreeMidpoint : public AccelerationStructure {
   KDtreeMidpoint() :
     AccelerationStructure(),
     nodes(std::vector<std::unique_ptr<KDNode>>())
-  {}
+  {
+    as_type = kdtree_midpoint;
+  }
 
   ~KDtreeMidpoint() {}
 //==============================================================================
@@ -83,9 +108,9 @@ class KDtreeMidpoint : public AccelerationStructure {
 //==============================================================================
  private:
   std::vector<std::unique_ptr<KDNode>>  nodes;
-  uint32_t                              max_tree_depth{0};
   uint32_t                              next_free_position{0};
-  uint32_t                              max_primitves{1};
+  uint32_t                              max_tree_depth{0};
+  uint32_t                              max_primitves{5};
 };
 
 #endif //ELUCIDO_KDTREE_H
