@@ -567,7 +567,6 @@ std::pair<std::pair<SceneParserStatusCodes, size_t>,
                                        acceleration_structures);
           } break;
 
-
           case SceneThings::animation_d: {
             if (animations.find(name) == animations.end()) {
               return {{thing_not_created, line_number}, {}};

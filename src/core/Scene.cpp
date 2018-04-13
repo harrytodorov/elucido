@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <memory>
+#include <sstream>
 #include "glm/ext.hpp"    // glm::to_string
 
 #include "Scene.h"
@@ -97,21 +98,10 @@ bool Scene::generate_camera(const std::shared_ptr<camera_description> &cd,
   c->set_image_height(image_height);
 
   // Transformations.
-  if (!cd->transformations.empty()) {
-    for (auto const &t : cd->transformations) {
-      switch (t.type) {
-        case TransformationType::translation: {
-          c->translate(t.amount, t.axis);
-        } break;
-        case TransformationType::rotation: {
-          c->rotate(t.amount, t.axis);
-        } break;
-        default: return false;
-      }
-    }
-  }
+  apply_camera_transformations(c, cd->transformations);
 
-  set_camera(c);
+  set_camera(c, cd->name);
+
   return true;
 }
 
@@ -152,20 +142,7 @@ bool Scene::generate_light(const light_description &light) {
   }
 
   // Transformations.
-  if (!light.transformations.empty()) {
-    for (auto const &t : light.transformations) {
-      switch (t.type) {
-        case TransformationType::translation: {
-          l->translate(t.amount, t.axis);
-        } break;
-        case TransformationType::rotation: {
-          l->rotate(t.amount, t.axis);
-        } break;
-        default: return false;
-      }
-    }
-    l->apply_transformations();
-  }
+  apply_light_transformations(l, light.transformations);
 
   // Intensity.
   l->set_intensity(light.intensity);
@@ -180,6 +157,10 @@ bool Scene::generate_light(const light_description &light) {
   }
 
   add_light(l);
+
+  size_t light_index = lights.size() - 1;
+  add_light_for_animation(light_index, light.name);
+
   return true;
 }
 
@@ -259,24 +240,7 @@ bool Scene::generate_object(const object_description &object) {
   }
 
   // Transformations.
-  if (!object.transformations.empty()) {
-    for (auto const &t : object.transformations) {
-      switch (t.type) {
-        case TransformationType::translation: {
-          obj->translate(t.amount, t.axis);
-        } break;
-        case TransformationType::rotation: {
-          obj->rotate(t.amount, t.axis);
-        } break;
-        case TransformationType::scale: {
-          obj->scale(t.amount, t.axis);
-        } break;
-
-        default: break;
-      }
-    }
-    obj->apply_transformations();
-  }
+  apply_object_transformations(obj, object.transformations);
 
   // Material.
   material m = material();
@@ -299,6 +263,10 @@ bool Scene::generate_object(const object_description &object) {
   obj->set_material(m);
 
   add_object(obj);
+
+  size_t object_index = objects.size() - 1;
+  add_object_for_animation(object_index, object.name);
+
   return true;
 }
 
@@ -364,10 +332,65 @@ bool Scene::load_scene(const scene_description &description) {
     generate_as(description.acceleration_structure);
   }
 
-  // TODO: Animations.
+  animations = description.animations;
 
   print_scene_info(si);
   return true;
+}
+
+//==============================================================================
+void Scene::apply_object_transformations(const std::shared_ptr<Object> &ptr,
+                                         const std::vector<transformation_description> &desc) {
+  for (auto const &t : desc) {
+    switch (t.type) {
+      case TransformationType::translation: {
+        ptr->translate(t.amount, t.axis);
+      } break;
+      case TransformationType::rotation: {
+        ptr->rotate(t.amount, t.axis);
+      } break;
+      case TransformationType::scale: {
+        ptr->scale(t.amount, t.axis);
+      } break;
+
+      default: break;
+    }
+  }
+  ptr->apply_transformations();
+}
+
+//==============================================================================
+void Scene::apply_light_transformations(const std::shared_ptr<Light> &ptr,
+                                        const std::vector<transformation_description> &desc) {
+  for (auto const &t : desc) {
+    switch (t.type) {
+      case TransformationType::translation: {
+        ptr->translate(t.amount, t.axis);
+      } break;
+      case TransformationType::rotation: {
+        ptr->rotate(t.amount, t.axis);
+      } break;
+
+      default: break;
+    }
+  }
+  ptr->apply_transformations();
+}
+
+//==============================================================================
+void Scene::apply_camera_transformations(const std::shared_ptr<Camera> &ptr,
+                                         const std::vector<transformation_description> &desc) {
+  for (auto const &t : desc) {
+    switch (t.type) {
+      case TransformationType::translation: {
+        ptr->translate(t.amount, t.axis);
+      } break;
+      case TransformationType::rotation: {
+        ptr->rotate(t.amount, t.axis);
+      } break;
+      default: break;
+    }
+  }
 }
 
 //==============================================================================
@@ -395,8 +418,22 @@ void Scene::add_light(const std::shared_ptr<Light> light) {
 }
 
 //==============================================================================
-void Scene::set_camera(const std::shared_ptr<Camera> _camera) {
+void Scene::add_object_for_animation(const size_t &object_index,
+                                     const std::string &object_name) {
+  animated_objects[object_name] = object_index;
+}
+
+//==============================================================================
+void Scene::add_light_for_animation(const size_t &light_index,
+                                    const std::string &light_name) {
+  animated_lights[light_name] = light_index;
+}
+
+//==============================================================================
+void Scene::set_camera(const std::shared_ptr<Camera> _camera,
+                       const std::string &_camera_name) {
   camera = _camera;
+  camera_name = _camera_name;
 }
 
 //==============================================================================
@@ -526,9 +563,9 @@ void Scene::prepare_scene() {
 }
 
 //==============================================================================
-void Scene::render_image() {
-  Ray     primary_ray;
-  std::vector<ip_sample> ip_samples;
+void Scene::render_image(const std::string &image_name) {
+  Ray                     primary_ray;
+  std::vector<ip_sample>  ip_samples;
 
   // Apply inverse view transform on objects and light sources.
   camera->apply_inverse_view_transform(objects, lights);
@@ -570,6 +607,49 @@ void Scene::render_image() {
   // Reverse inverse view transform.
   camera->reverse_inverse_view_transform(objects, lights);
 
-  auto rendered_scene_name = name + ".png";
+  auto rendered_scene_name = image_name + ".png";
   image_plane->save_to_png(rendered_scene_name);
+}
+
+//==============================================================================
+void Scene::render_image_sequence(const size_t &animation_index) {
+  bool transform_camera = true;
+  auto animation = animations[animation_index];
+
+  // Check if scene's camera name matches camera name from the animation;
+  // if not, do not apply transformations on the camera.
+  if (camera_name != animation.camera.first) transform_camera = false;
+
+  // Check if animated objects are contained in the scene.
+
+  // Check if animated light sources are contained in the scene.
+
+  // Apply transformations on objects, light sources and camera for
+  // each frame and render it.
+  for (size_t f = 0; f < animation.num_of_images_in_sequence; f++) {
+
+    if (f != 0) {
+      // Apply transformations on objects.
+      for (auto const &o : animation.objects) {
+        size_t oi = animated_objects.at(o.first);
+        apply_object_transformations(objects.at(oi), o.second);
+      }
+
+      // Apply transformations on light sources.
+      for (auto const &l : animation.lights) {
+        size_t li = animated_lights.at(l.first);
+        apply_light_transformations(lights.at(li), l.second);
+      }
+
+      // Apply transformations on camera.
+      if (transform_camera) {
+        apply_camera_transformations(camera, animation.camera.second);
+      }
+    }
+
+    // Render frame.
+    std::stringstream fm;
+    fm << name << "_" << animation.name << "_" << f;
+    render_image(fm.str());
+  }
 }

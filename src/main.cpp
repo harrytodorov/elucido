@@ -23,7 +23,8 @@ int main(int argc, char **argv) {
     auto scene = new Scene();
     auto ret = scene->load_scene(result.second[0]);
     if (ret)
-      scene->render_image();
+//      scene->render_image(scene->get_name());
+      scene->render_image_sequence(0);
   } else {
     std::cout << "Line " << result.first.second << ": "
               << STATUS_CODES_MAP.at(result.first.first) << std::endl;
