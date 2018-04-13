@@ -16,6 +16,10 @@ void CompactGrid::construct(const AABBox &box,
 
   compute_resolution(bbox, primitives.size());
 
+  // Free cells and object lists memory, if they're not empty.
+  delete[] cells;
+  delete[] object_lists;
+
   // Initialize cell's array and set all entries to 0.
   uint32_t cells_size = resolution[0] * resolution[1] * resolution[2] + 1;
   cells = new uint32_t[cells_size]();
