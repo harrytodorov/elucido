@@ -65,6 +65,12 @@ void KDtreeMidpoint::construct(const AABBox &box,
         1.3f * glm::log(number_primitives));
   }
 
+  // Clear existing nodes.
+  if (!nodes.empty()) {
+    nodes.clear();
+    next_free_position = 0;
+  }
+
   // Reserve space for nodes.
   auto max_number_nodes = static_cast<size_t>(glm::pow(2, max_tree_depth + 1));
   nodes.reserve(max_number_nodes - 1);

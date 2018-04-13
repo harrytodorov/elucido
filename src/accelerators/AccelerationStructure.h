@@ -63,7 +63,7 @@ class AccelerationStructure {
 //==============================================================================
   /**
    * Converts an object (sphere, triangle or triangle mesh) into a vector
-   * of primitives.
+   * of primitives. Primitives vector is emptied before filling.
    * @param obj:    The object to be converted.
    * @return:       The compound primitives of the object.
    */
@@ -73,6 +73,8 @@ class AccelerationStructure {
   };
   inline void compute_primitives(const uint32_t &number_primitives,
                                  const std::vector<std::shared_ptr<Object>> &objects) {
+    // Clear existing primitives.
+    if (!primitives.empty()) primitives.clear();
     primitives.reserve(number_primitives);
     for (auto const &object : objects) {
       std::vector<Primitive> toPrimitive = convert_to_primitive(object);

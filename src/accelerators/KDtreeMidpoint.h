@@ -110,7 +110,7 @@ class KDtreeMidpoint : public AccelerationStructure {
   std::vector<std::unique_ptr<KDNode>>  nodes;
   uint32_t                              next_free_position{0};
   uint32_t                              max_tree_depth{0};
-  uint32_t                              max_primitves{5};
+  uint32_t                              max_primitves{10};
 };
 
 #endif //ELUCIDO_KDTREE_H
